@@ -87,6 +87,9 @@
 	</pluginRepositories>
 
 	<modules>
+		<module>insurance_dbcore</module>
+		<module>insurance_dependecies</module>
+		<module>insurance_client</module>
 		<module>server-sample</module>
 	</modules>
 </project>
