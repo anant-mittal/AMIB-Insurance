@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
 import com.insurance.response.ApiResponse;
 import com.insurance.response.ResponseStatus;
 import com.insurance.user_registartion.model.CustomerPersonalDetail;
@@ -25,29 +24,21 @@ public class CustomerRegistrationController
 	@Autowired
 	private CustomerRegistrationService customerRegistrationService;
 
+	@Autowired
+	private CustomerPersonalDetail customerPersonalDetail;
+
 	private static final Logger logger = LoggerFactory.getLogger(CustomerRegistrationController.class);
 
-	/*
-	 * @RequestMapping(value = "/send-otp/", method = RequestMethod.POST) public
-	 * ApiResponse sendOtp(@RequestBody CustomerPersonalDetail
-	 * customerPersonalDetail) { logger.info("send otp request: " +
-	 * customerPersonalDetail);
-	 * 
-	 * ApiResponse response = otpService.sendOtp(customerPersonalDetail);
-	 * 
-	 * return response; }
-	 */
-
 	@RequestMapping(value = "/customer-registration/", method = RequestMethod.POST)
-	public ApiResponse addNewCustomer(@RequestBody CustomerRegistrationDetails customerRegistrationDetails)
+	public ApiResponse addNewCustomer(@RequestBody CustomerPersonalDetail customerPersonalDetail)
 	{
 		ApiResponse apiResponse = null;
 
 		try
 		{
-			logger.info(TAG + " saveNewCustomer :: customerRegistrationDetails :" + customerRegistrationDetails.toString());
+			logger.info(TAG + " saveNewCustomer :: customerRegistrationDetails :" + customerPersonalDetail.toString());
 
-			apiResponse = customerRegistrationService.addNewCustomer(customerRegistrationDetails);
+			apiResponse = customerRegistrationService.addNewCustomer(customerPersonalDetail);
 
 		}
 		catch (Exception e)
@@ -56,8 +47,15 @@ public class CustomerRegistrationController
 			apiResponse.setResponseStatus(ResponseStatus.INTERNAL_ERROR);
 
 		}
-
 		return apiResponse;
+	}
+
+	@RequestMapping(value = "/send-otp/", method = RequestMethod.GET)
+	public ApiResponse sendOtp()
+	{
+		logger.info("in sendOtp Request");
+		ApiResponse response = customerRegistrationService.sendOtpForCivilId(null);
+		return response;
 	}
 
 }

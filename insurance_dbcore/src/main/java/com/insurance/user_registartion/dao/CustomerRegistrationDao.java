@@ -8,16 +8,26 @@ package com.insurance.user_registartion.dao;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.CallableStatementCreator;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SqlParameter;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.insurance.base.model.Business;
 import com.insurance.response.ApiResponse;
 import com.insurance.response.ResponseStatus;
 import com.insurance.services.AbstractService;
+import com.insurance.user_registartion.model.CustomerPersonalDetail;
 import com.insurance.user_registartion.model.CustomerRegistrationDetails;
 import oracle.jdbc.OracleTypes;
 
@@ -29,6 +39,9 @@ public class CustomerRegistrationDao extends AbstractService
 
 	@Autowired
 	JdbcTemplate jdbcTemplate;
+	
+	@Autowired
+	CustomerPersonalDetail customerPersonalDetail;
 
 	Connection connection;
 
@@ -38,9 +51,9 @@ public class CustomerRegistrationDao extends AbstractService
 		return null;
 	}
 
-	public ApiResponse addNewCustomer(CustomerRegistrationDetails customerRegistrationDetails)
+	public ApiResponse addNewCustomer(CustomerPersonalDetail customerPersonalDetail)
 	{
-		logger.info(TAG + " addNewCustomer :: customerRegistrationDetails :" + customerRegistrationDetails.toString());
+		logger.info(TAG + " addNewCustomer :: customerRegistrationDetails :" + customerPersonalDetail.toString());
 
 		ApiResponse response = getBlackApiResponse();
 
@@ -57,7 +70,7 @@ public class CustomerRegistrationDao extends AbstractService
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			
+
 			callableStatement.registerOutParameter(1, java.sql.Types.NUMERIC);
 			callableStatement.registerOutParameter(2, java.sql.Types.NUMERIC);
 			callableStatement.registerOutParameter(3, java.sql.Types.VARCHAR);
@@ -73,9 +86,9 @@ public class CustomerRegistrationDao extends AbstractService
 			callableStatement.registerOutParameter(13, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(14, java.sql.Types.NUMERIC);
 			callableStatement.registerOutParameter(15, java.sql.Types.VARCHAR);
-			
+
 			callableStatement.execute();
-			
+
 			ResultSet rs = (ResultSet) callableStatement.getObject(1);
 
 			while (rs.next())
@@ -107,6 +120,46 @@ public class CustomerRegistrationDao extends AbstractService
 		}
 		return response;
 	}
+
+	/*@Transactional
+	public Map<String, Object> createNewCustomer(CustomerPersonalDetail customerPersonalDetail)
+	{
+		String callProcedure = "{call IRB_REGISTER_USER(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+
+		String civilId = customerPersonalDetail.getCivilId();
+		String mobileNumber = customerPersonalDetail.getMobiileNumber();
+		String otp = customerPersonalDetail.getOtp();
+
+		Map<String, Object> output = null;
+
+		try
+		{
+			List<SqlParameter> declareInAndOutputParameters = Arrays.asList(new SqlParameter(Types.VARCHAR),
+					new SqlParameter(Types.VARCHAR), 
+					new SqlParameter(Types.VARCHAR));
+
+			output = jdbcTemplate.call(new CallableStatementCreator()
+			{
+				@Override
+				public CallableStatement createCallableStatement(Connection con) throws SQLException
+				{
+					CallableStatement cs = con.prepareCall(callProcedure);
+					cs.setString(1, civilId);
+					cs.setString(2, mobileNumber);
+					cs.setString(3, otp);
+					cs.executeQuery();
+					return cs;
+				}
+
+			}, declareInAndOutputParameters);
+
+		}
+		catch (Exception e)
+		{
+
+		}
+		return output;
+	}*/
 
 	private Connection getConnection()
 	{
