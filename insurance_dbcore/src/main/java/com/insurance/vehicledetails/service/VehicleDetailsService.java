@@ -26,4 +26,25 @@ public class VehicleDetailsService
 			throw new GlobalException("Kindly try after soem time .");
 		}
 	}
+	
+	
+	
+	public ApiResponse getModel(String make)
+	{
+		try
+		{
+			if(null == make || make.equals(""))
+			{
+				throw new GlobalException("Kindly provide make first .");
+			}
+			
+			ApiResponse apiResponse = vehicleDetailsDao.getModel(make);
+			return apiResponse;
+		}
+		catch (Exception e)
+		{
+			throw new GlobalException("Kindly try after soem time .");
+		}
+	}
+	
 }

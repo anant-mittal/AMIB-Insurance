@@ -28,6 +28,7 @@ public class InsuranceMain
 
 		System.out.println("InsuranceMain :: main ");
 		SpringApplication.run(InsuranceMain.class, args);
+		
 	}
 
 }

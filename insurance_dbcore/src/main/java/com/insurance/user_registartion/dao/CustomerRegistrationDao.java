@@ -121,14 +121,14 @@ public class CustomerRegistrationDao extends AbstractService
 		return response;
 	}
 
-	/*@Transactional
+	@Transactional
 	public Map<String, Object> createNewCustomer(CustomerPersonalDetail customerPersonalDetail)
 	{
 		String callProcedure = "{call IRB_REGISTER_USER(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
 
 		String civilId = customerPersonalDetail.getCivilId();
-		String mobileNumber = customerPersonalDetail.getMobiileNumber();
-		String otp = customerPersonalDetail.getOtp();
+		String mobileNumber = "";// = customerPersonalDetail.getMobiileNumber();
+		String otp = "";// = customerPersonalDetail.getOtp();
 
 		Map<String, Object> output = null;
 
@@ -159,7 +159,7 @@ public class CustomerRegistrationDao extends AbstractService
 
 		}
 		return output;
-	}*/
+	}
 
 	private Connection getConnection()
 	{

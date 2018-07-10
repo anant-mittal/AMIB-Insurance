@@ -11,14 +11,6 @@ import java.util.List;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BeanPropertyBindingResult;
-
-/*import com.amx.jax.postman.PostManException;
-import com.amx.jax.postman.PostManService;
-import com.amx.jax.postman.model.Email;
-import com.amx.jax.postman.model.Notipy;
-import com.amx.jax.postman.model.Notipy.Channel;
-import com.amx.jax.postman.model.SMS;
-import com.amx.jax.postman.model.Templates;*/
 import com.google.common.util.concurrent.ExecutionError;
 import com.insurance.constant.CommunicationChannel;
 import com.insurance.error.GlobalException;
@@ -41,6 +33,7 @@ public class CustomerRegistrationService extends AbstractService
 	@Autowired
 	CustomerPersonalDetail customerPersonalDetail;
 
+	//@Autowired
 	//public PostManService postManService;
 
 	@Override

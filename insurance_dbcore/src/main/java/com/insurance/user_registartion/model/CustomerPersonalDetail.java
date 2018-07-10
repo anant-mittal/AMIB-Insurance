@@ -29,6 +29,19 @@ public class CustomerPersonalDetail extends AbstractModel
 
 	@NotNull
 	private String title;
+	
+	@NotNull
+	private String civilId;
+	
+	public String getCivilId()
+	{
+		return civilId;
+	}
+
+	public void setCivilId(String civilId)
+	{
+		this.civilId = civilId;
+	}
 
 	@NotNull
 	@Size(min = 1)
