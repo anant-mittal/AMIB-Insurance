@@ -5,7 +5,7 @@
 	<name>amxeco</name>
 	<url>http://maven.apache.org</url>
 	<groupId>com.amx.jax</groupId>
-	<artifactId>amibx</artifactId>
+	<artifactId>amxeco</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
@@ -97,6 +97,6 @@
 		<module>insurance_client</module>
 		<module>server-sample</module>
 		
-    <module>insurance_models</module>
+   <!--  <module>insurance_models</module> -->
   </modules>
 </project>
