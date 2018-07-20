@@ -5,18 +5,9 @@
 
 package com.insurance.error;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-import com.insurance.utils.JaxUtil;
-
-
 public class GlobalException extends AbstractJaxException
 {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 	public GlobalException(AmxApiError error)
@@ -41,20 +32,18 @@ public class GlobalException extends AbstractJaxException
 
 	public GlobalException(JaxError error, Object... expressions)
 	{
-		JaxUtil util = new JaxUtil();
-		
+		/*JaxUtil util = new JaxUtil();
 		List<String> list = Arrays.asList(expressions).stream().map(i -> i.toString()).collect(Collectors.toList());
-		
-		this.errorCode = util.buildErrorExpressions(error.getCode(), list);
+		this.errorCode = util.buildErrorExpressions(error.getCode(), list);*/
 
 	}
 
 	public GlobalException(String errorMessage, JaxError error, Object... expressions)
 	{
-		JaxUtil util = new JaxUtil();
+		/*JaxUtil util = new JaxUtil();
 		List<String> list = Arrays.asList(expressions).stream().map(i -> i.toString()).collect(Collectors.toList());
 		this.errorCode = util.buildErrorExpressions(error.getCode(), list);
-		this.errorMessage = errorMessage;
+		this.errorMessage = errorMessage;*/
 
 	}
 }

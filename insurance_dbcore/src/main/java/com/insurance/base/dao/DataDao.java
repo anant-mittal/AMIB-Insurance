@@ -9,8 +9,15 @@ import java.util.List;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import oracle.jdbc.OracleTypes;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.InputStream;
+import java.sql.Blob;
 import java.sql.CallableStatement;
 import com.insurance.base.model.Business;
 import com.insurance.base.model.Nationality;
@@ -20,6 +27,8 @@ import com.insurance.services.AbstractService;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 @RestController
 public class DataDao extends AbstractService
@@ -164,6 +173,61 @@ public class DataDao extends AbstractService
 		return nationalityDataArray;
 	}
 
+	public ApiResponse fileUpload(MultipartFile aFile)
+	{
+		System.out.println("\n\n===========================================fileUpload==========================================");
+
+		ApiResponse response = getBlackApiResponse();
+		CallableStatement callableStatement = null;
+
+		response.getData().setType("fileUpload");
+
+		getConnection();
+
+		try
+		{
+
+			PreparedStatement ps = connection.prepareStatement("insert into OI_INSCOMP_LOGO values(?,?,?,?,?,?,?,?,?,?,?,?,?)");
+
+			ps.setInt(1, 91);
+			ps.setInt(2, 01);
+			ps.setInt(3, 100101);
+			ps.setBinaryStream(4, aFile.getInputStream());
+			ps.setString(5, "C");
+			ps.setString(6, null);
+			ps.setString(7, "abhi1427");
+			ps.setDate(8, getCurrentDate());
+			ps.setString(9, "IRBF067");
+			ps.setString(10, null);
+			ps.setString(11, null);
+			ps.setString(12, null);
+			ps.setString(13, null);
+			
+			ps.executeUpdate();
+			connection.commit();
+
+			response.setResponseStatus(ResponseStatus.OK);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			response.setResponseStatus(ResponseStatus.INTERNAL_ERROR);
+		}
+
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		return response;
+	}
+
+	
+	private static java.sql.Date getCurrentDate()
+	{
+		java.util.Date today = new java.util.Date();
+		return new java.sql.Date(today.getTime());
+	}
+	
 	private Connection getConnection()
 	{
 		try
