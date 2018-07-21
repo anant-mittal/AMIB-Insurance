@@ -32,39 +32,16 @@ public class CustomerRegistrationController
 	@RequestMapping(value = "/customer-registration", method = RequestMethod.POST)
 	public ApiResponse addNewCustomer(@RequestBody CustomerPersonalDetail customerPersonalDetail)
 	{
-		ApiResponse apiResponse = customerRegistrationService.addNewCustomer(dummyUserInfo());
-		return apiResponse;
+		return customerRegistrationService.addNewCustomer(dummyUserInfo());
+		
 	}
 	
 	@RequestMapping(value = "/companysetup", method = RequestMethod.GET)
 	public ApiResponse getCompanySetUp(@RequestParam("langind") int langind)
 	{
-		ApiResponse response = customerRegistrationService.getCompanySetUp(langind);
-		return response;
+		return customerRegistrationService.getCompanySetUp(langind);
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-
 	public CustomerPersonalDetail dummyUserInfo()
 	{
 		CustomerPersonalDetail customerPersonalDetail = new CustomerPersonalDetail();
