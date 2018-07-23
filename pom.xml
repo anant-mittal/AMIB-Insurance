@@ -89,7 +89,7 @@
 		<module>insurance_dbcore</module>
 		<module>insurance_dependecies</module>
 		<module>insurance_client</module>
-		<module>server-sample</module>
+		<module>server-ui</module>
 		
    <!--  <module>insurance_models</module> -->
   </modules>
