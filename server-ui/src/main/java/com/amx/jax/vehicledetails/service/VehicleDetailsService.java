@@ -3,7 +3,7 @@
 
 
 
-package com.insurance.vehicledetails.service;
+package com.amx.jax.vehicledetails.service;
 
 import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;

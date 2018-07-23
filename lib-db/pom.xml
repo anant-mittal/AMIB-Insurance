@@ -9,7 +9,7 @@
 		<relativePath>../pom.xml</relativePath> <!-- lookup parent from repository -->
 	</parent>
 
-	<artifactId>insurance_dbcore</artifactId>
+	<artifactId>lib-db</artifactId>
 	<packaging>jar</packaging>
 
 	<dependencies>

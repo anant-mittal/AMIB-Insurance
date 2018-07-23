@@ -3,7 +3,7 @@
 
 
 
-package com.insurance.user_registartion.controller;
+package com.amx.jax.userregistration.controller;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,8 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.amx.jax.userregistration.service.CustomerRegistrationService;
 import com.insurance.user_registartion.model.CustomerPersonalDetail;
-import com.insurance.user_registartion.services.CustomerRegistrationService;
 
 
 @RestController

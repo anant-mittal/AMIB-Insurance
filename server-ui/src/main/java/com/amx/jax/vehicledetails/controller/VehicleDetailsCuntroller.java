@@ -3,7 +3,7 @@
 
 
 
-package com.insurance.vehicledetails.controller;
+package com.amx.jax.vehicledetails.controller;
 
 import java.util.ArrayList;
 
@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.insurance.vehicledetails.service.VehicleDetailsService;
+
+import com.amx.jax.vehicledetails.service.VehicleDetailsService;
 
 @RestController
 public class VehicleDetailsCuntroller

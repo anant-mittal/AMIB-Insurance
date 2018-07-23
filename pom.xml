@@ -86,7 +86,7 @@
 
 	<modules>
 		<module>common-amib</module>
-		<module>insurance_dbcore</module>
+		<module>lib-db</module>
 		<module>server-ui</module>
 		
    <!--  <module>insurance_models</module> -->

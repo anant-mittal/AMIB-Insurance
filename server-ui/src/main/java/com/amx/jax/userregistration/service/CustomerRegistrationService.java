@@ -3,16 +3,13 @@
 
 
 
-package com.insurance.user_registartion.services;
+package com.amx.jax.userregistration.service;
 
 import java.util.ArrayList;
-import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.insurance.user_registartion.dao.CustomerRegistrationDao;
-import com.insurance.user_registartion.model.CivilIdOtpModel;
 import com.insurance.user_registartion.model.CustomerPersonalDetail;
-import com.insurance.user_registartion.model.PersonInfo;
 
 @Service
 public class CustomerRegistrationService
