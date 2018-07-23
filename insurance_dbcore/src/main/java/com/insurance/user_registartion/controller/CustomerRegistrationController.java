@@ -5,6 +5,7 @@
 
 package com.insurance.user_registartion.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.insurance.response.ApiResponse;
 import com.insurance.user_registartion.model.CustomerPersonalDetail;
 import com.insurance.user_registartion.services.CustomerRegistrationService;
 
@@ -30,14 +30,14 @@ public class CustomerRegistrationController
 	private static final Logger logger = LoggerFactory.getLogger(CustomerRegistrationController.class);
 
 	@RequestMapping(value = "/customer-registration", method = RequestMethod.POST)
-	public ApiResponse addNewCustomer(@RequestBody CustomerPersonalDetail customerPersonalDetail)
+	public String addNewCustomer(@RequestBody CustomerPersonalDetail customerPersonalDetail)
 	{
 		return customerRegistrationService.addNewCustomer(dummyUserInfo());
 		
 	}
 	
 	@RequestMapping(value = "/companysetup", method = RequestMethod.GET)
-	public ApiResponse getCompanySetUp(@RequestParam("langind") int langind)
+	public ArrayList getCompanySetUp(@RequestParam("langind") int langind)
 	{
 		return customerRegistrationService.getCompanySetUp(langind);
 	}

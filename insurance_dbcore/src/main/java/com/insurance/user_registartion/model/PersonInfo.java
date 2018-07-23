@@ -8,9 +8,8 @@ package com.insurance.user_registartion.model;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
-import com.insurance.model.AbstractModel;
 
-public class PersonInfo extends AbstractModel implements Cloneable
+public class PersonInfo
 {
 
 	private String title;

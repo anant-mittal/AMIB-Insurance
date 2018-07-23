@@ -5,7 +5,6 @@
 
 package com.insurance.base.controller;
 
-import java.sql.Blob;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,8 +25,6 @@ import org.springframework.web.servlet.ModelAndView;
 import com.insurance.base.dao.DataDao;
 import com.insurance.base.model.Business;
 import com.insurance.base.model.Nationality;
-import com.insurance.response.ApiResponse;
-import com.insurance.response.ResponseStatus;
 
 import net.bytebuddy.implementation.bytecode.constant.IntegerConstant;
 
@@ -56,26 +53,22 @@ public class DatabaseController
 	}
 
 	@RequestMapping(value = "/viewbusinessdemo", method = RequestMethod.POST, produces = { "application/json" })
-	public ApiResponse viewBusinessDemo()
+	public ArrayList viewBusinessDemo()
 	{
-		ApiResponse response = null;
 		try
 		{
-			response = dao.getBusinessDataDemo();
-			System.out.println("DatabaseController :: viewBusinessDemo :: response :" + response.toString());
+			return dao.getBusinessDataDemo();
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			response.setResponseStatus(ResponseStatus.INTERNAL_ERROR);
 		}
-		return response;
+		return null;
 	}
 
 	@RequestMapping(value = "/fileupload", method = RequestMethod.POST)
-	public ApiResponse fileUpload(HttpServletRequest request, @RequestParam MultipartFile fileUpload) throws Exception
+	public String fileUpload(HttpServletRequest request, @RequestParam MultipartFile fileUpload) throws Exception
 	{
-		ApiResponse response = null;
 		try
 		{
 			System.out.println("DatabaseController :: fileUpload ");
@@ -85,9 +78,8 @@ public class DatabaseController
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			response.setResponseStatus(ResponseStatus.INTERNAL_ERROR);
 		}
-		return response;
+		return "Ok";
 	}
 
 }

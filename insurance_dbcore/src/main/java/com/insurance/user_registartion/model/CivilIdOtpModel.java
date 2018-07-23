@@ -8,9 +8,8 @@ package com.insurance.user_registartion.model;
 import java.math.BigDecimal;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.insurance.model.AbstractModel;
 
-public class CivilIdOtpModel extends AbstractModel
+public class CivilIdOtpModel
 {
 
 	/**
@@ -114,12 +113,6 @@ public class CivilIdOtpModel extends AbstractModel
 	public void setIsActiveCustomer(Boolean isActiveCustomer)
 	{
 		this.isActiveCustomer = isActiveCustomer;
-	}
-
-	@Override
-	public String getModelType()
-	{
-		return "otp";
 	}
 
 	public String geteOtp()

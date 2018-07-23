@@ -5,10 +5,11 @@
 
 package com.insurance.personaldetails.service;
 
+import java.util.ArrayList;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.insurance.personaldetails.dao.PersonalDetailsDao;
-import com.insurance.response.ApiResponse;
 
 @Service
 public class PersonalDetailsService
@@ -16,63 +17,63 @@ public class PersonalDetailsService
 	@Autowired
 	public PersonalDetailsDao personalDetailsDao;
 
-	public ApiResponse getBusiness()
+	public ArrayList getBusiness()
 	{
-		ApiResponse apiResponse = null;
+		
 		try
 		{
-			apiResponse = personalDetailsDao.getBusiness();
+			return personalDetailsDao.getBusiness();
 			
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-		return apiResponse;
+		return null;
 	}
 	
-	public ApiResponse getNationality()
+	public ArrayList getNationality()
 	{
-		ApiResponse apiResponse = null;
+		
 		try
 		{
-			apiResponse = personalDetailsDao.getNationality();
+			return personalDetailsDao.getNationality();
 			
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-		return apiResponse;
+		return null;
 	}
 	
-	public ApiResponse getGovernorates()
+	public ArrayList getGovernorates()
 	{
-		ApiResponse apiResponse = null;
+		
 		try
 		{
-			apiResponse = personalDetailsDao.getGovernorates();
+			return personalDetailsDao.getGovernorates();
 			
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-		return apiResponse;
+		return null;
 	}
 	
-	public ApiResponse getArea(String gov)
+	public ArrayList getArea(String gov)
 	{
-		ApiResponse apiResponse = null;
+		
 		try
 		{
-			apiResponse = personalDetailsDao.getArea(gov);
+			return personalDetailsDao.getArea(gov);
 			
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-		return apiResponse;
+		return null;
 	}
 }

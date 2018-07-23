@@ -9,29 +9,21 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import com.insurance.base.model.Business;
-import com.insurance.response.ApiResponse;
-import com.insurance.response.ResponseStatus;
-import com.insurance.services.AbstractService;
-import com.insurance.user_registartion.controller.CustomerRegistrationController;
 import com.insurance.vehicledetails.model.Colour;
 import com.insurance.vehicledetails.model.FuelType;
 import com.insurance.vehicledetails.model.Make;
 import com.insurance.vehicledetails.model.Model;
 import com.insurance.vehicledetails.model.Purpose;
 import com.insurance.vehicledetails.model.Shape;
-import com.sleepycat.je.Cursor;
-
 import oracle.jdbc.OracleTypes;
 
 @Repository
-public class VehicleDetailsDao extends AbstractService
+public class VehicleDetailsDao
 {
 	String TAG = "com.insurance.vehicledetails.dao.VehicleDetailsDao :: ";
 
@@ -42,14 +34,13 @@ public class VehicleDetailsDao extends AbstractService
 
 	Connection connection;
 
-	public ApiResponse getMake()
+	public ArrayList getMake()
 	{
 		getConnection();
 
-		ApiResponse response = getBlackApiResponse();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_MAKES(?,?,?,?,?,?)}";
-		List<Make> makeArray = new ArrayList<Make>();
+		ArrayList<Make> makeArray = new ArrayList<Make>();
 
 		logger.info(TAG + " getMake ::");
 
@@ -77,13 +68,9 @@ public class VehicleDetailsDao extends AbstractService
 				makeArray.add(make);
 			}
 
-			response.getData().getValues().addAll(makeArray);
-			response.getData().setType("make");
-			response.setResponseStatus(ResponseStatus.OK);
 		}
 		catch (Exception e)
 		{
-			response.setResponseStatus(ResponseStatus.INTERNAL_ERROR);
 			e.printStackTrace();
 		}
 
@@ -92,17 +79,16 @@ public class VehicleDetailsDao extends AbstractService
 			CloseConnection(callableStatement, connection);
 		}
 
-		return response;
+		return makeArray;
 	}
 
-	public ApiResponse getModel(String make)
+	public ArrayList getModel(String make)
 	{
 		getConnection();
 
-		ApiResponse response = getBlackApiResponse();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_SUBMAKE(?,?,?,?,?,?,?)}";
-		List<Model> modelArray = new ArrayList<Model>();
+		ArrayList<Model> modelArray = new ArrayList<Model>();
 
 		logger.info(TAG + " getModel :: make :" + make);
 
@@ -136,16 +122,11 @@ public class VehicleDetailsDao extends AbstractService
 			}
 
 			logger.info(TAG + " getModel :: modelArray is Not Empty()");
-			response.getData().getValues().addAll(modelArray);
-			response.getData().setType("model");
-			response.setResponseStatus(ResponseStatus.OK);
-
 			logger.info(TAG + " getModel :: End");
 
 		}
 		catch (Exception e)
 		{
-			response.setResponseStatus(ResponseStatus.INTERNAL_ERROR);
 			e.printStackTrace();
 		}
 
@@ -154,17 +135,16 @@ public class VehicleDetailsDao extends AbstractService
 			CloseConnection(callableStatement, connection);
 		}
 
-		return response;
+		return modelArray;
 	}
 
-	public ApiResponse getFuleType()
+	public ArrayList getFuleType()
 	{
 		getConnection();
 
-		ApiResponse response = getBlackApiResponse();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_FUELTYPE(?,?,?,?,?,?)}";
-		List<FuelType> fuelArray = new ArrayList<FuelType>();
+		ArrayList<FuelType> fuelArray = new ArrayList<FuelType>();
 
 		logger.info(TAG + " getFuleType ::");
 
@@ -191,14 +171,9 @@ public class VehicleDetailsDao extends AbstractService
 				logger.info(TAG + " getFuleType :: fueltype disc :" + rs.getString(2));
 				fuelArray.add(fuelType);
 			}
-
-			response.getData().getValues().addAll(fuelArray);
-			response.getData().setType("fueltype");
-			response.setResponseStatus(ResponseStatus.OK);
 		}
 		catch (Exception e)
 		{
-			response.setResponseStatus(ResponseStatus.INTERNAL_ERROR);
 			e.printStackTrace();
 		}
 
@@ -207,17 +182,16 @@ public class VehicleDetailsDao extends AbstractService
 			CloseConnection(callableStatement, connection);
 		}
 
-		return response;
+		return fuelArray;
 	}
-	
-	public ApiResponse getPurpose()
+
+	public ArrayList getPurpose()
 	{
 		getConnection();
 
-		ApiResponse response = getBlackApiResponse();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_PURPOSE(?,?,?,?,?,?)}";
-		List<Purpose> purposeArray = new ArrayList<Purpose>();
+		ArrayList<Purpose> purposeArray = new ArrayList<Purpose>();
 
 		logger.info(TAG + " getPurpose ::");
 
@@ -245,13 +219,9 @@ public class VehicleDetailsDao extends AbstractService
 				purposeArray.add(purpose);
 			}
 
-			response.getData().getValues().addAll(purposeArray);
-			response.getData().setType("purpose");
-			response.setResponseStatus(ResponseStatus.OK);
 		}
 		catch (Exception e)
 		{
-			response.setResponseStatus(ResponseStatus.INTERNAL_ERROR);
 			e.printStackTrace();
 		}
 
@@ -260,18 +230,16 @@ public class VehicleDetailsDao extends AbstractService
 			CloseConnection(callableStatement, connection);
 		}
 
-		return response;
+		return purposeArray;
 	}
-	
-	
-	public ApiResponse getShape()
+
+	public ArrayList getShape()
 	{
 		getConnection();
 
-		ApiResponse response = getBlackApiResponse();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_SHAPES(?,?,?,?,?,?)}";
-		List<Shape> shapeArray = new ArrayList<Shape>();
+		ArrayList<Shape> shapeArray = new ArrayList<Shape>();
 
 		logger.info(TAG + " getShape ::");
 
@@ -299,13 +267,9 @@ public class VehicleDetailsDao extends AbstractService
 				shapeArray.add(shape);
 			}
 
-			response.getData().getValues().addAll(shapeArray);
-			response.getData().setType("shape");
-			response.setResponseStatus(ResponseStatus.OK);
 		}
 		catch (Exception e)
 		{
-			response.setResponseStatus(ResponseStatus.INTERNAL_ERROR);
 			e.printStackTrace();
 		}
 
@@ -314,17 +278,16 @@ public class VehicleDetailsDao extends AbstractService
 			CloseConnection(callableStatement, connection);
 		}
 
-		return response;
+		return shapeArray;
 	}
-	
-	public ApiResponse getColour()
+
+	public ArrayList getColour()
 	{
 		getConnection();
 
-		ApiResponse response = getBlackApiResponse();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_COLORS(?,?,?,?,?,?)}";
-		List<Colour> colourArray = new ArrayList<Colour>();
+		ArrayList<Colour> colourArray = new ArrayList<Colour>();
 
 		logger.info(TAG + " getColour ::");
 
@@ -351,14 +314,9 @@ public class VehicleDetailsDao extends AbstractService
 				logger.info(TAG + " getColour :: colour disc :" + rs.getString(2));
 				colourArray.add(colour);
 			}
-
-			response.getData().getValues().addAll(colourArray);
-			response.getData().setType("colour");
-			response.setResponseStatus(ResponseStatus.OK);
 		}
 		catch (Exception e)
 		{
-			response.setResponseStatus(ResponseStatus.INTERNAL_ERROR);
 			e.printStackTrace();
 		}
 
@@ -367,10 +325,8 @@ public class VehicleDetailsDao extends AbstractService
 			CloseConnection(callableStatement, connection);
 		}
 
-		return response;
+		return colourArray;
 	}
-	
-	
 
 	private Connection getConnection()
 	{
@@ -404,11 +360,5 @@ public class VehicleDetailsDao extends AbstractService
 		{
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public String getModelType()
-	{
-		return null;
 	}
 }

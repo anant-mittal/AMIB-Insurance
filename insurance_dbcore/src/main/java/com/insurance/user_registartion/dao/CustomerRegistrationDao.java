@@ -17,16 +17,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import com.insurance.response.ApiResponse;
-import com.insurance.response.ResponseStatus;
-import com.insurance.services.AbstractService;
 import com.insurance.user_registartion.model.CompanySetUp;
 import com.insurance.user_registartion.model.CustomerPersonalDetail;
 
 import oracle.jdbc.OracleTypes;
 
 @Repository
-public class CustomerRegistrationDao extends AbstractService
+public class CustomerRegistrationDao
 {
 	String TAG = "com.insurance.user_registartion.dao :: CustomerRegistrationDao :: ";
 
@@ -37,21 +34,11 @@ public class CustomerRegistrationDao extends AbstractService
 
 	Connection connection;
 
-	@Override
-	public String getModelType()
-	{
-		return null;
-	}
-
-	public ApiResponse addNewCustomer(CustomerPersonalDetail customerPersonalDetail)
+	public String addNewCustomer(CustomerPersonalDetail customerPersonalDetail)
 	{
 		logger.info(TAG + " addNewCustomer :: customerRegistrationDetails :" + customerPersonalDetail.toString());
 
-		ApiResponse response = getBlackApiResponse();
-
 		CallableStatement cs = null;
-
-		response.getData().setType("user_registartion");
 
 		getConnection();
 
@@ -111,31 +98,26 @@ public class CustomerRegistrationDao extends AbstractService
 			String recd = cs.getString(16);
 
 			String error = cs.getString(17);
-
-			response.setResponseStatus(ResponseStatus.OK);
-			response.getData().setType("user_registartion");
-
+		
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			response.setResponseStatus(ResponseStatus.INTERNAL_ERROR);
 		}
 
 		logger.info(TAG + " addNewCustomer :: output :" + output);
 
-		return response;
+		return "success";
 
 	}
 
-	public ApiResponse getCompanySetUp(int langid)
+	public ArrayList getCompanySetUp(int langid)
 	{
 		getConnection();
 
-		ApiResponse response = getBlackApiResponse();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_COMPANY_SETUP(?,?,?,?)}";
-		List<CompanySetUp> companySetUpArray = new ArrayList<CompanySetUp>();
+		ArrayList<CompanySetUp> companySetUpArray = new ArrayList<CompanySetUp>();
 
 		logger.info(TAG + " getUserDetails ::");
 
@@ -176,23 +158,16 @@ public class CustomerRegistrationDao extends AbstractService
 				
 				companySetUpArray.add(companySetUp);
 			}
-
-			response.getData().getValues().addAll(companySetUpArray);
-			response.getData().setType("companysetup");
-			response.setResponseStatus(ResponseStatus.OK);
 		}
 		catch (Exception e)
 		{
-			response.setResponseStatus(ResponseStatus.INTERNAL_ERROR);
 			e.printStackTrace();
 		}
-
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-
-		return response;
+		return companySetUpArray;
 	}
 
 	private static java.sql.Date getCurrentDate()

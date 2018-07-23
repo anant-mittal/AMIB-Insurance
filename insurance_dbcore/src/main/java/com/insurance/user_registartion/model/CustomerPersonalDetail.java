@@ -10,10 +10,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.Email;
 import org.springframework.format.annotation.NumberFormat;
-import com.insurance.model.AbstractModel;
 
 
-public class CustomerPersonalDetail extends AbstractModel
+public class CustomerPersonalDetail
 {
 	private static final long serialVersionUID = 1L;
 

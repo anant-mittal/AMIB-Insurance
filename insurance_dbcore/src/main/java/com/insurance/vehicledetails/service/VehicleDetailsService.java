@@ -5,9 +5,9 @@
 
 package com.insurance.vehicledetails.service;
 
+import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.insurance.response.ApiResponse;
 import com.insurance.vehicledetails.dao.VehicleDetailsDao;
 
 @Service
@@ -16,95 +16,93 @@ public class VehicleDetailsService
 	@Autowired
 	public VehicleDetailsDao vehicleDetailsDao;
 
-	public ApiResponse getMake()
+	public ArrayList getMake()
 	{
-		ApiResponse apiResponse = null;
 		try
 		{
-			apiResponse = vehicleDetailsDao.getMake();
+			return vehicleDetailsDao.getMake();
 			
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-		return apiResponse;
+		return null;
 	}
 
-	public ApiResponse getModel(String make)
+	public ArrayList getModel(String make)
 	{
-		ApiResponse apiResponse = null;
+		
 		try
 		{
-			apiResponse = vehicleDetailsDao.getModel(make);
-			return apiResponse;
+			return vehicleDetailsDao.getModel(make);
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-		return apiResponse;
+		return null;
 	}
 	
-	public ApiResponse getFuleType()
+	public ArrayList getFuleType()
 	{
-		ApiResponse apiResponse = null;
+		
 		try
 		{
-			apiResponse = vehicleDetailsDao.getFuleType();
+			return vehicleDetailsDao.getFuleType();
 			
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-		return apiResponse;
+		return null;
 	}
 	
 	
-	public ApiResponse getPurpose()
+	public ArrayList getPurpose()
 	{
-		ApiResponse apiResponse = null;
+		
 		try
 		{
-			apiResponse = vehicleDetailsDao.getPurpose();
+			return vehicleDetailsDao.getPurpose();
 			
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-		return apiResponse;
+		return null;
 	}
 	
-	public ApiResponse getShape()
+	public ArrayList getShape()
 	{
-		ApiResponse apiResponse = null;
+		
 		try
 		{
-			apiResponse = vehicleDetailsDao.getShape();
+			return vehicleDetailsDao.getShape();
 			
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-		return apiResponse;
+		return null;
 	}
 	
-	public ApiResponse getColour()
+	public ArrayList getColour()
 	{
-		ApiResponse apiResponse = null;
+		
 		try
 		{
-			apiResponse = vehicleDetailsDao.getColour();
+			return vehicleDetailsDao.getColour();
 			
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-		return apiResponse;
+		return null;
 	}
 
 }

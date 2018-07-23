@@ -12,22 +12,17 @@ import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
 import com.insurance.personaldetails.model.Area;
 import com.insurance.personaldetails.model.Business;
 import com.insurance.personaldetails.model.Governorates;
 import com.insurance.personaldetails.model.Nationality;
-import com.insurance.response.ApiResponse;
-import com.insurance.response.ResponseStatus;
-import com.insurance.services.AbstractService;
-
+import org.springframework.beans.factory.annotation.Autowired;
 import oracle.jdbc.OracleTypes;
 
 @Repository
-public class PersonalDetailsDao extends AbstractService
+public class PersonalDetailsDao
 {
 	String TAG = "com.insurance.personaldetails.dao.PersonalDetailsDao :: ";
 
@@ -38,14 +33,13 @@ public class PersonalDetailsDao extends AbstractService
 
 	Connection connection;
 
-	public ApiResponse getBusiness()
+	public ArrayList getBusiness()
 	{
 		getConnection();
 
-		ApiResponse response = getBlackApiResponse();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_BUSINESS(?,?,?,?,?,?)}";
-		List<Business> businessArray = new ArrayList<Business>();
+		ArrayList<Business> businessArray = new ArrayList<Business>();
 
 		logger.info(TAG + " getBusiness ::");
 
@@ -72,14 +66,9 @@ public class PersonalDetailsDao extends AbstractService
 				logger.info(TAG + " getBusiness :: Business disc :" + rs.getString(2).toString());
 				businessArray.add(business);
 			}
-
-			response.getData().getValues().addAll(businessArray);
-			response.getData().setType("business");
-			response.setResponseStatus(ResponseStatus.OK);
 		}
 		catch (Exception e)
 		{
-			response.setResponseStatus(ResponseStatus.INTERNAL_ERROR);
 			e.printStackTrace();
 		}
 
@@ -88,19 +77,18 @@ public class PersonalDetailsDao extends AbstractService
 			CloseConnection(callableStatement, connection);
 		}
 
-		return response;
+		return businessArray;
 	}
 	
 	
 	
-	public ApiResponse getNationality()
+	public ArrayList getNationality()
 	{
 		getConnection();
 
-		ApiResponse response = getBlackApiResponse();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_NATIONALITIES(?,?,?,?,?,?)}";
-		List<Nationality> nationalityArray = new ArrayList<Nationality>();
+		ArrayList<Nationality> nationalityArray = new ArrayList<Nationality>();
 
 		logger.info(TAG + " getNationality ::");
 
@@ -128,13 +116,9 @@ public class PersonalDetailsDao extends AbstractService
 				nationalityArray.add(nationality);
 			}
 
-			response.getData().getValues().addAll(nationalityArray);
-			response.getData().setType("nationality");
-			response.setResponseStatus(ResponseStatus.OK);
 		}
 		catch (Exception e)
 		{
-			response.setResponseStatus(ResponseStatus.INTERNAL_ERROR);
 			e.printStackTrace();
 		}
 
@@ -143,18 +127,17 @@ public class PersonalDetailsDao extends AbstractService
 			CloseConnection(callableStatement, connection);
 		}
 
-		return response;
+		return nationalityArray;
 	}
 	
 	
-	public ApiResponse getGovernorates()
+	public ArrayList getGovernorates()
 	{
 		getConnection();
 
-		ApiResponse response = getBlackApiResponse();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_GOVERNORATES(?,?,?,?,?,?)}";
-		List<Governorates> governoratesArray = new ArrayList<Governorates>();
+		ArrayList<Governorates> governoratesArray = new ArrayList<Governorates>();
 
 		logger.info(TAG + " getGovernorates ::");
 
@@ -182,13 +165,9 @@ public class PersonalDetailsDao extends AbstractService
 				governoratesArray.add(governorates);
 			}
 
-			response.getData().getValues().addAll(governoratesArray);
-			response.getData().setType("governorates");
-			response.setResponseStatus(ResponseStatus.OK);
 		}
 		catch (Exception e)
 		{
-			response.setResponseStatus(ResponseStatus.INTERNAL_ERROR);
 			e.printStackTrace();
 		}
 
@@ -197,20 +176,19 @@ public class PersonalDetailsDao extends AbstractService
 			CloseConnection(callableStatement, connection);
 		}
 
-		return response;
+		return governoratesArray;
 	}
 	
 	
 	
 	
-	public ApiResponse getArea(String gov)
+	public ArrayList getArea(String gov)
 	{
 		getConnection();
 
-		ApiResponse response = getBlackApiResponse();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_AREA(?,?,?,?,?,?,?)}";
-		List<Area> areaArray = new ArrayList<Area>();
+		ArrayList<Area> areaArray = new ArrayList<Area>();
 
 		logger.info(TAG + " getArea ::");
 
@@ -239,13 +217,9 @@ public class PersonalDetailsDao extends AbstractService
 				areaArray.add(area);
 			}
 
-			response.getData().getValues().addAll(areaArray);
-			response.getData().setType("area");
-			response.setResponseStatus(ResponseStatus.OK);
 		}
 		catch (Exception e)
 		{
-			response.setResponseStatus(ResponseStatus.INTERNAL_ERROR);
 			e.printStackTrace();
 		}
 
@@ -254,13 +228,8 @@ public class PersonalDetailsDao extends AbstractService
 			CloseConnection(callableStatement, connection);
 		}
 
-		return response;
+		return areaArray;
 	}
-	
-	
-	
-	
-	
 	
 	
 	
@@ -302,11 +271,5 @@ public class PersonalDetailsDao extends AbstractService
 		{
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public String getModelType()
-	{
-		return null;
 	}
 }

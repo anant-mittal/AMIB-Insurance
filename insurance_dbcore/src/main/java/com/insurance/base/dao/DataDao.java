@@ -21,17 +21,13 @@ import java.sql.Blob;
 import java.sql.CallableStatement;
 import com.insurance.base.model.Business;
 import com.insurance.base.model.Nationality;
-import com.insurance.response.ApiResponse;
-import com.insurance.response.ResponseStatus;
-import com.insurance.services.AbstractService;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 @RestController
-public class DataDao extends AbstractService
+public class DataDao
 {
 	String TAG = "com.insurance.base.dao.DataDao";
 
@@ -40,13 +36,13 @@ public class DataDao extends AbstractService
 
 	Connection connection;
 
-	public List<Business> getBusinessData()
+	public ArrayList getBusinessData()
 	{
 		System.out.println("\n\n===========================================BUSINESS==========================================");
 
 		getConnection();
 
-		List<Business> businessDataArray = new ArrayList<Business>();
+		ArrayList<Business> businessDataArray = new ArrayList<Business>();
 		CallableStatement callableStatement = null;
 
 		String getDBUSERByUserIdSql = "{call IRB_GET_BUSINESS(?,?)}";
@@ -82,16 +78,13 @@ public class DataDao extends AbstractService
 		return businessDataArray;
 	}
 
-	public ApiResponse getBusinessDataDemo()
+	public ArrayList getBusinessDataDemo()
 	{
 		System.out.println("\n\n===========================================BUSINESS==========================================");
 
-		ApiResponse response = getBlackApiResponse();
-		response.getData().setType("business");
-
 		getConnection();
 
-		List<Business> businessDataArray = new ArrayList<Business>();
+		ArrayList<Business> businessDataArray = new ArrayList<Business>();
 		CallableStatement callableStatement = null;
 
 		String getDBUSERByUserIdSql = "{call IRB_GET_BUSINESS(?,?)}";
@@ -117,30 +110,27 @@ public class DataDao extends AbstractService
 
 			System.out.println("DataDao :: getBusinessData :: businessDataArray :" + businessDataArray);
 
-			response.getData().getValues().addAll(businessDataArray);
-			response.setResponseStatus(ResponseStatus.OK);
-
 		}
 		catch (Exception e)
 		{
 			System.out.println(e.getMessage());
-			response.setResponseStatus(ResponseStatus.INTERNAL_ERROR);
 		}
 
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return response;
+		
+		return businessDataArray;
 	}
 
-	public List<Nationality> getNationalityData()
+	public ArrayList getNationalityData()
 	{
 		System.out.println("\n\n===========================================Nationality==========================================");
 
 		getConnection();
 
-		List<Nationality> nationalityDataArray = new ArrayList<Nationality>();
+		ArrayList<Nationality> nationalityDataArray = new ArrayList<Nationality>();
 		CallableStatement callableStatement = null;
 
 		String getDBUSERByUserIdSql = "{call IRB_GET_NATIONALITIES(?,?)}";
@@ -173,14 +163,11 @@ public class DataDao extends AbstractService
 		return nationalityDataArray;
 	}
 
-	public ApiResponse fileUpload(MultipartFile aFile)
+	public void fileUpload(MultipartFile aFile)
 	{
 		System.out.println("\n\n===========================================fileUpload==========================================");
 
-		ApiResponse response = getBlackApiResponse();
 		CallableStatement callableStatement = null;
-
-		response.getData().setType("fileUpload");
 
 		getConnection();
 
@@ -206,19 +193,16 @@ public class DataDao extends AbstractService
 			ps.executeUpdate();
 			connection.commit();
 
-			response.setResponseStatus(ResponseStatus.OK);
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			response.setResponseStatus(ResponseStatus.INTERNAL_ERROR);
 		}
 
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return response;
 	}
 
 	
@@ -261,10 +245,5 @@ public class DataDao extends AbstractService
 			e.printStackTrace();
 		}
 	}
-
-	@Override
-	public String getModelType()
-	{
-		return null;
-	}
+	
 }

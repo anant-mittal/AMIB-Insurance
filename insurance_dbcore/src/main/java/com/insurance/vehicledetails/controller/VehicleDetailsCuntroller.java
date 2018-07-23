@@ -5,16 +5,15 @@
 
 package com.insurance.vehicledetails.controller;
 
+import java.util.ArrayList;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.insurance.response.ApiResponse;
-import com.insurance.vehicledetails.dao.VehicleDetailsDao;
 import com.insurance.vehicledetails.service.VehicleDetailsService;
 
 @RestController
@@ -28,46 +27,43 @@ public class VehicleDetailsCuntroller
 	public VehicleDetailsService vehicleDetailsService;
 
 	@RequestMapping(value = "/make", method = RequestMethod.GET)
-	public ApiResponse getMake()
+	public ArrayList getMake()
 	{
-		ApiResponse response = vehicleDetailsService.getMake();
-		return response;
+		return vehicleDetailsService.getMake();
+		
 	}
 
 	@RequestMapping(value = "/model", method = RequestMethod.GET)
-	public ApiResponse getModel(@RequestParam("make") String make)
+	public ArrayList getModel(@RequestParam("make") String make)
 	{
 		logger.info(TAG + " getModel :: make :" + make);
-		ApiResponse response = vehicleDetailsService.getModel(make);
-		return response;
+		return vehicleDetailsService.getModel(make);
+		
 	}
 	
 	@RequestMapping(value = "/fueltype", method = RequestMethod.GET)
-	public ApiResponse getFuleType()
+	public ArrayList getFuleType()
 	{
-		ApiResponse response = vehicleDetailsService.getFuleType();
-		return response;
+		return vehicleDetailsService.getFuleType();
 	}
 	
 	@RequestMapping(value = "/purpose", method = RequestMethod.GET)
-	public ApiResponse getPurpose()
+	public ArrayList getPurpose()
 	{
-		ApiResponse response = vehicleDetailsService.getPurpose();
-		return response;
+		return vehicleDetailsService.getPurpose();
+		
 	}
 	
 	@RequestMapping(value = "/shape", method = RequestMethod.GET)
-	public ApiResponse getShape()
+	public ArrayList getShape()
 	{
-		ApiResponse response = vehicleDetailsService.getShape();
-		return response;
+		return vehicleDetailsService.getShape();
 	}
 	
 	@RequestMapping(value = "/colour", method = RequestMethod.GET)
-	public ApiResponse getColour()
+	public ArrayList getColour()
 	{
-		ApiResponse response = vehicleDetailsService.getColour();
-		return response;
+		return vehicleDetailsService.getColour();
 	}
 	
 	
