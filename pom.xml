@@ -76,13 +76,6 @@
 		</plugins>
 	</build>
 
-	<repositories>
-		<repository>
-			<id>gitlab.com.almullagroup.maven.mvn-amx</id>
-			<url>https://gitlab.com/almullagroup/maven/mvn-amx/raw/master/</url>
-		</repository>
-	</repositories>
-
 	<pluginRepositories>
 		<pluginRepository>
 			<id>sonatype-snapshots</id>
@@ -92,6 +85,7 @@
 	</pluginRepositories>
 
 	<modules>
+		<module>common-amib</module>
 		<module>insurance_dbcore</module>
 		<module>insurance_dependecies</module>
 		<module>insurance_client</module>

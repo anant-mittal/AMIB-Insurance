@@ -26,6 +26,12 @@
 	<dependencies>
 
 		<dependency>
+			<groupId>com.amx.jax</groupId>
+			<artifactId>common-lib</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
@@ -41,27 +47,6 @@
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
 		
-		<!-- https://mvnrepository.com/artifact/org.objenesis/objenesis -->
-		<dependency>
-			<groupId>org.objenesis</groupId>
-			<artifactId>objenesis</artifactId>
-			<version>2.1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.amx.jax</groupId>
-			<artifactId>common-utils</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>com.amx.jax</groupId>
-			<artifactId>common-lib</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
-
-		<!-- Swagger infos -->
-
 	</dependencies>
 
 	<build>
