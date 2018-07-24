@@ -6,6 +6,9 @@
 package com.amx.jax.vehicledetails.service;
 
 import java.util.ArrayList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.insurance.vehicledetails.dao.VehicleDetailsDao;
@@ -13,6 +16,10 @@ import com.insurance.vehicledetails.dao.VehicleDetailsDao;
 @Service
 public class VehicleDetailsService
 {
+	
+	private static final Logger logger = LoggerFactory.getLogger(VehicleDetailsService.class);
+	String TAG = "com.amx.jax.vehicledetails.service.PersonalDetailsCuntroller :- ";
+	
 	@Autowired
 	public VehicleDetailsDao vehicleDetailsDao;
 
@@ -95,6 +102,7 @@ public class VehicleDetailsService
 		
 		try
 		{
+			logger.info(TAG + " getColour :: ");
 			return vehicleDetailsDao.getColour();
 			
 		}

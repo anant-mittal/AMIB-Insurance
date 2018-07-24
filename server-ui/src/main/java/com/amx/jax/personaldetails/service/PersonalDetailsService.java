@@ -9,18 +9,17 @@ import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.insurance.personaldetails.dao.PersonalDetailsDao;
+import com.insurance.personaldetails.interfaces.IPersonalDetails;
 
 @Service
-public class PersonalDetailsService
+public class PersonalDetailsService implements IPersonalDetails
 {
 	@Autowired
 	public PersonalDetailsDao personalDetailsDao;
 
 	public ArrayList getBusiness()
 	{
-		
 		try
 		{
 			return personalDetailsDao.getBusiness();

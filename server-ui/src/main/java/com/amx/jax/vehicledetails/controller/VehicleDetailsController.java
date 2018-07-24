@@ -18,11 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.amx.jax.vehicledetails.service.VehicleDetailsService;
 
 @RestController
-public class VehicleDetailsCuntroller
+public class VehicleDetailsController
 {
-	private static final Logger logger = LoggerFactory.getLogger(VehicleDetailsCuntroller.class);
+	private static final Logger logger = LoggerFactory.getLogger(VehicleDetailsController.class);
 
-	String TAG = "com.insurance.vehicledetails.controller.PersonalDetailsCuntroller :- ";
+	String TAG = "com.amx.jax.vehicledetails.controller.PersonalDetailsCuntroller :- ";
 
 	@Autowired
 	public VehicleDetailsService vehicleDetailsService;
@@ -64,6 +64,7 @@ public class VehicleDetailsCuntroller
 	@RequestMapping(value = "/colour", method = RequestMethod.GET)
 	public ArrayList getColour()
 	{
+		logger.info(TAG + " getColour :: ");
 		return vehicleDetailsService.getColour();
 	}
 	

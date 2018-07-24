@@ -14,10 +14,8 @@ import com.insurance.user_registartion.model.CustomerPersonalDetail;
 @Service
 public class CustomerRegistrationService
 {
-
 	@Autowired
 	CustomerRegistrationDao customerRegistrationDao;
-
 	
 	public String addNewCustomer(CustomerPersonalDetail customerPersonalDetail)
 	{

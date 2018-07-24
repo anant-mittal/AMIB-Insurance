@@ -31,7 +31,7 @@ import net.bytebuddy.implementation.bytecode.constant.IntegerConstant;
 @RestController
 public class DatabaseController
 {
-	@Autowired
+	//@Autowired
 	DataDao dao;
 
 	String TAG = "com.insurance.base.controller.DatabaseController :- ";

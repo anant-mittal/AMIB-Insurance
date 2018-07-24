@@ -14,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import com.insurance.personaldetails.interfaces.IPersonalDetails;
 import com.insurance.personaldetails.model.Area;
 import com.insurance.personaldetails.model.Business;
 import com.insurance.personaldetails.model.Governorates;
@@ -22,7 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import oracle.jdbc.OracleTypes;
 
 @Repository
-public class PersonalDetailsDao
+public class PersonalDetailsDao implements IPersonalDetails
 {
 	String TAG = "com.insurance.personaldetails.dao.PersonalDetailsDao :: ";
 

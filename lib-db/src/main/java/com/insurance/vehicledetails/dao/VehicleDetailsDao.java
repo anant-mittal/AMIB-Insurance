@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import com.insurance.vehicledetails.model.Colour;
 import com.insurance.vehicledetails.model.FuelType;
@@ -22,7 +23,7 @@ import com.insurance.vehicledetails.model.Purpose;
 import com.insurance.vehicledetails.model.Shape;
 import oracle.jdbc.OracleTypes;
 
-@Repository
+@Component
 public class VehicleDetailsDao
 {
 	String TAG = "com.insurance.vehicledetails.dao.VehicleDetailsDao :: ";
@@ -30,7 +31,7 @@ public class VehicleDetailsDao
 	private static final Logger logger = LoggerFactory.getLogger(VehicleDetailsDao.class);
 
 	@Autowired
-	JdbcTemplate jdbcTemplate;
+	private JdbcTemplate jdbcTemplate;
 
 	Connection connection;
 
@@ -283,14 +284,14 @@ public class VehicleDetailsDao
 
 	public ArrayList getColour()
 	{
+		logger.info(TAG + " getColour :: ");
+		
 		getConnection();
 
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_COLORS(?,?,?,?,?,?)}";
 		ArrayList<Colour> colourArray = new ArrayList<Colour>();
-
-		logger.info(TAG + " getColour ::");
-
+		
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);

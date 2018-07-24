@@ -30,8 +30,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class DataDao
 {
 	String TAG = "com.insurance.base.dao.DataDao";
-
-	@Autowired
+	
+	//@Autowired
 	JdbcTemplate jdbcTemplate;
 
 	Connection connection;
