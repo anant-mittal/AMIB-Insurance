@@ -12,9 +12,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.insurance.vehicledetails.dao.VehicleDetailsDao;
+import com.insurance.vehicledetails.interfaces.IVehicleDetails;
 
 @Service
-public class VehicleDetailsService
+public class VehicleDetailsService implements IVehicleDetails
 {
 	
 	private static final Logger logger = LoggerFactory.getLogger(VehicleDetailsService.class);

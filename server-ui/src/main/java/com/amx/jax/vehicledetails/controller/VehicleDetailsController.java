@@ -16,9 +16,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.amx.jax.vehicledetails.service.VehicleDetailsService;
+import com.insurance.vehicledetails.interfaces.IVehicleDetails;
 
 @RestController
-public class VehicleDetailsController
+public class VehicleDetailsController implements IVehicleDetails
 {
 	private static final Logger logger = LoggerFactory.getLogger(VehicleDetailsController.class);
 
@@ -66,10 +67,5 @@ public class VehicleDetailsController
 	{
 		logger.info(TAG + " getColour :: ");
 		return vehicleDetailsService.getColour();
-	}
-	
-	
-	
-	
-	
+	}		
 }

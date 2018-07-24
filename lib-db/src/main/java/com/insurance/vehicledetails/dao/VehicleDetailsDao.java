@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
+
+import com.insurance.vehicledetails.interfaces.IVehicleDetails;
 import com.insurance.vehicledetails.model.Colour;
 import com.insurance.vehicledetails.model.FuelType;
 import com.insurance.vehicledetails.model.Make;
@@ -24,7 +26,7 @@ import com.insurance.vehicledetails.model.Shape;
 import oracle.jdbc.OracleTypes;
 
 @Component
-public class VehicleDetailsDao
+public class VehicleDetailsDao implements IVehicleDetails
 {
 	String TAG = "com.insurance.vehicledetails.dao.VehicleDetailsDao :: ";
 

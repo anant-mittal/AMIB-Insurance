@@ -17,13 +17,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import com.insurance.user_registartion.interfaces.ICustomerRegistration;
 import com.insurance.user_registartion.model.CompanySetUp;
 import com.insurance.user_registartion.model.CustomerPersonalDetail;
 
 import oracle.jdbc.OracleTypes;
 
 @Repository
-public class CustomerRegistrationDao
+public class CustomerRegistrationDao implements ICustomerRegistration
 {
 	String TAG = "com.insurance.user_registartion.dao :: CustomerRegistrationDao :: ";
 

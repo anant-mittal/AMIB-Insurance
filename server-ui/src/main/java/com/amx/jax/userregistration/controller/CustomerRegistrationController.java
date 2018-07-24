@@ -16,11 +16,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.amx.jax.userregistration.service.CustomerRegistrationService;
+import com.insurance.user_registartion.interfaces.ICustomerRegistration;
 import com.insurance.user_registartion.model.CustomerPersonalDetail;
 
 
 @RestController
-public class CustomerRegistrationController
+public class CustomerRegistrationController implements ICustomerRegistration
 {
 	String TAG = "com.insurance.user_registartion.controller :: CustomerRegistrationController :: ";
 
@@ -33,7 +34,6 @@ public class CustomerRegistrationController
 	public String addNewCustomer(@RequestBody CustomerPersonalDetail customerPersonalDetail)
 	{
 		return customerRegistrationService.addNewCustomer(dummyUserInfo());
-		
 	}
 	
 	@RequestMapping(value = "/companysetup", method = RequestMethod.GET)
@@ -69,5 +69,6 @@ public class CustomerRegistrationController
 		
 		return customerPersonalDetail;
 	}
-
+	
+	//bkdnh18204097928
 }
