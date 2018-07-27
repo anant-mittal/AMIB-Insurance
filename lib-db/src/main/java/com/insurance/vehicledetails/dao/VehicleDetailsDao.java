@@ -9,6 +9,8 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,7 @@ import com.insurance.vehicledetails.model.Shape;
 import oracle.jdbc.OracleTypes;
 
 @Component
-public class VehicleDetailsDao implements IVehicleDetails
+public class VehicleDetailsDao
 {
 	String TAG = "com.insurance.vehicledetails.dao.VehicleDetailsDao :: ";
 
@@ -85,7 +87,7 @@ public class VehicleDetailsDao implements IVehicleDetails
 		return makeArray;
 	}
 
-	public ArrayList getModel(String make)
+	public List<Model> getModel(String make)
 	{
 		getConnection();
 
@@ -269,7 +271,6 @@ public class VehicleDetailsDao implements IVehicleDetails
 				logger.info(TAG + " getShape :: shape disc :" + rs.getString(2));
 				shapeArray.add(shape);
 			}
-
 		}
 		catch (Exception e)
 		{

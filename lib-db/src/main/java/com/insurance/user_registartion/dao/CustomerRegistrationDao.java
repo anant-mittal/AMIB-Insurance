@@ -8,16 +8,13 @@ package com.insurance.user_registartion.dao;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.util.Date;
+import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
 import com.insurance.user_registartion.interfaces.ICustomerRegistration;
 import com.insurance.user_registartion.model.CompanySetUp;
 import com.insurance.user_registartion.model.CustomerPersonalDetail;
@@ -28,7 +25,6 @@ import oracle.jdbc.OracleTypes;
 public class CustomerRegistrationDao implements ICustomerRegistration
 {
 	String TAG = "com.insurance.user_registartion.dao :: CustomerRegistrationDao :: ";
-
 	private static final Logger logger = LoggerFactory.getLogger(CustomerRegistrationDao.class);
 
 	@Autowired
@@ -36,19 +32,120 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 
 	Connection connection;
 
+	public boolean isValidCivilId(String civilid)
+	{
+		logger.info(TAG + " isValidCivilId :: civilid :" + civilid);
+
+		getConnection();
+		CallableStatement callableStatement = null;
+		String callFunction = "{ ? = call O_VALIDATE_CIVILID(?)}";
+
+		try
+		{
+			callableStatement = connection.prepareCall(callFunction);
+			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
+			callableStatement.setString(2, civilid);
+			callableStatement.executeUpdate();
+			String result = callableStatement.getString(1);
+			logger.info(TAG + " isValidCivilId :: result :" + result);
+
+			if (null == result)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean isCivilIdExist(String civilid)
+	{
+		logger.info(TAG + " isCivilIdExist :: civilid :" + civilid);
+
+		getConnection();
+		CallableStatement callableStatement = null;
+		String callFunction = "{ ? = call IRB_IF_ONLINE_USEREXIST(?,?,?,?)}";
+
+		try
+		{
+			callableStatement = connection.prepareCall(callFunction);
+			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
+			callableStatement.setInt(2, 1);
+			callableStatement.setInt(3, 10);
+			callableStatement.setString(4, "D");
+			callableStatement.setString(5, civilid);
+			callableStatement.executeUpdate();
+			String result = callableStatement.getString(1);
+			logger.info(TAG + " isCivilIdExist :: result :" + result);
+
+			if (result.equalsIgnoreCase("Y"))
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public boolean isValidMobileNumber(String mobileNumber)
+	{
+		logger.info(TAG + " isValidMobileNumber :: civilid :" + mobileNumber);
+
+		getConnection();
+		CallableStatement callableStatement = null;
+		String callProcedure = "{call O_VALIDATE_TELEPHONE(?,?,?)}";
+
+		try
+		{
+			callableStatement = connection.prepareCall(callProcedure);
+			callableStatement.setString(1, mobileNumber);
+			callableStatement.setString(2, "M");
+			callableStatement.registerOutParameter(3, java.sql.Types.VARCHAR);
+			callableStatement.executeUpdate();
+			String result = callableStatement.getString(3);
+			logger.info(TAG + " isValidMobileNumber :: result :" + result);
+
+			if (null == result)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 	public String addNewCustomer(CustomerPersonalDetail customerPersonalDetail)
 	{
 		logger.info(TAG + " addNewCustomer :: customerRegistrationDetails :" + customerPersonalDetail.toString());
 
-		CallableStatement cs = null;
-
 		getConnection();
-
+		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_REGISTER_USER(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
 
 		int countyId = customerPersonalDetail.getCountryId();
 		int compCd = customerPersonalDetail.getCompCd();
-		int userSeqNumber = customerPersonalDetail.getUserSeqNumber();
 		String userType = customerPersonalDetail.getUserType();
 		String userCivilId = customerPersonalDetail.getCivilId();
 		String userPassword = customerPersonalDetail.getPassword();
@@ -56,67 +153,53 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 		String emailId = customerPersonalDetail.getEmail();
 		String mobVerificationCode = customerPersonalDetail.getMobVerificationCode();
 		String emailVerificationCode = customerPersonalDetail.getEmailVerificationCode();
-		String mobileVerified = customerPersonalDetail.getMobileVerified();
-		String emailVerified = customerPersonalDetail.getEmailVerified();
-		String refAmibcd = customerPersonalDetail.getRefAmibcd();
-		String status = customerPersonalDetail.getStatus();
 		String deviceType = customerPersonalDetail.getDeviceType();
-		Date date = customerPersonalDetail.getDate();
 		String createdDeviceId = customerPersonalDetail.getCreatedDeviceId();
 		String createdBy = customerPersonalDetail.getCreatedBy();
-		Date updateOn = customerPersonalDetail.getUpdateOn();
-		String updateDeviceId = customerPersonalDetail.getUpdateDeviceId();
-
-		Map<String, Object> output = null;
 
 		try
 		{
-			cs = connection.prepareCall(callProcedure);
+			callableStatement = connection.prepareCall(callProcedure);
 
-			cs.setInt(1, countyId);
-			cs.setInt(2, compCd);
-			cs.setString(3, userType);
-			cs.setString(4, userCivilId);
-			cs.setString(5, userPassword);
-			cs.setString(6, mobileNumber);
-			cs.setString(7, mobVerificationCode);
-			cs.setString(8, emailId);
-			cs.setString(9, emailVerificationCode);
-			cs.setInt(10, 0);
-			cs.setString(11, deviceType);
-			cs.setDate(12, getCurrentDate());
-			cs.setString(13, createdDeviceId);
-			cs.setString(14, createdBy);
-			cs.registerOutParameter(15, java.sql.Types.INTEGER);
-			cs.registerOutParameter(16, java.sql.Types.VARCHAR);
-			cs.registerOutParameter(17, java.sql.Types.VARCHAR);
+			callableStatement.setInt(1, countyId);
+			callableStatement.setInt(2, compCd);
+			callableStatement.setString(3, userType);
+			callableStatement.setString(4, userCivilId);
+			callableStatement.setString(5, userPassword);
+			callableStatement.setString(6, mobileNumber);
+			callableStatement.setString(7, mobVerificationCode);
+			callableStatement.setString(8, emailId);
+			callableStatement.setString(9, emailVerificationCode);
+			callableStatement.setInt(10, 0);
+			callableStatement.setString(11, deviceType);
+			callableStatement.setDate(12, getCurrentDate());
+			callableStatement.setString(13, createdDeviceId);
+			callableStatement.setString(14, createdBy);
+			callableStatement.registerOutParameter(15, java.sql.Types.INTEGER);
+			callableStatement.registerOutParameter(16, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(17, java.sql.Types.VARCHAR);
+			callableStatement.executeUpdate();
 
-			cs.executeUpdate();
-
-			int userSequenceNumber = cs.getInt(15);
+			int userSequenceNumber = callableStatement.getInt(15);
+			String recd = callableStatement.getString(16);
+			String error = callableStatement.getString(17);
 
 			logger.info(TAG + " addNewCustomer :: userSequenceNumber :" + userSequenceNumber);
+			logger.info(TAG + " addNewCustomer :: recd :" + recd);
+			logger.info(TAG + " addNewCustomer :: error :" + error);
 
-			String recd = cs.getString(16);
-
-			String error = cs.getString(17);
-		
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
 
-		logger.info(TAG + " addNewCustomer :: output :" + output);
-
 		return "success";
-
 	}
 
-	public ArrayList getCompanySetUp(int langid)
+	public ArrayList getCompanySetUp(int langId)
 	{
 		getConnection();
-
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_COMPANY_SETUP(?,?,?,?)}";
 		ArrayList<CompanySetUp> companySetUpArray = new ArrayList<CompanySetUp>();
@@ -127,7 +210,7 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setInt(1, 0);
+			callableStatement.setInt(1, langId);
 			callableStatement.registerOutParameter(2, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(3, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(4, java.sql.Types.VARCHAR);
@@ -157,7 +240,7 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 				companySetUp.setLangId(rs.getInt(16));
 				companySetUp.setAppName(rs.getString(17));
 				companySetUp.setSmsSenderId(rs.getString(18));
-				
+
 				companySetUpArray.add(companySetUp);
 			}
 		}

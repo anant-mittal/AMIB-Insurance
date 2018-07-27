@@ -2,13 +2,15 @@ package com.insurance.vehicledetails.interfaces;
 
 import java.util.ArrayList;
 
+import com.insurance.vehicledetails.model.Model;
 import org.springframework.web.bind.annotation.RequestParam;
+import com.amx.jax.api.AmxApiResponse;
 
 public interface IVehicleDetails
 {
 	public ArrayList getMake();
 	
-	public ArrayList getModel(@RequestParam("make") String make);
+	public AmxApiResponse<Model, Object> getModel(String make);
 	
 	public ArrayList getFuleType();
 	

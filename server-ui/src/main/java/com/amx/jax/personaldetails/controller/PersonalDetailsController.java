@@ -27,25 +27,25 @@ public class PersonalDetailsController implements IPersonalDetails
 	@Autowired
 	public PersonalDetailsService personalDetailsService;
 
-	@RequestMapping(value = "/business", method = RequestMethod.GET)
+	@RequestMapping(value = "/business", method = RequestMethod.GET , produces = "application/json")
 	public ArrayList getBusiness()
 	{
 		return personalDetailsService.getBusiness();
 	}
 	
-	@RequestMapping(value = "/nationality", method = RequestMethod.GET)
+	@RequestMapping(value = "/nationality", method = RequestMethod.GET , produces = "application/json")
 	public ArrayList getNationality()
 	{
 		return personalDetailsService.getNationality();
 	}
 	
-	@RequestMapping(value = "/governorates", method = RequestMethod.GET)
+	@RequestMapping(value = "/governorates", method = RequestMethod.GET , produces = "application/json")
 	public ArrayList getGovernorates()
 	{
 		return personalDetailsService.getGovernorates();
 	}
 	
-	@RequestMapping(value = "/area", method = RequestMethod.GET)
+	@RequestMapping(value = "/area", method = RequestMethod.GET , produces = "application/json")
 	public ArrayList getArea(@RequestParam("gov") String gov)
 	{
 		return personalDetailsService.getArea(gov);
