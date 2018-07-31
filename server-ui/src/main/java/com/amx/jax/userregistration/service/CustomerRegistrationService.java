@@ -6,6 +6,7 @@
 package com.amx.jax.userregistration.service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,6 +21,9 @@ import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.userregistration.controller.CustomerRegistrationController;
 import com.insurance.email.dao.EmailNotification;
 import com.insurance.email.model.Email;
+import com.insurance.generateotp.ResponseOtpModel;
+import com.insurance.generateotp.CreateOtpToken;
+import com.insurance.generateotp.RequestOtpModel;
 import com.insurance.user_registartion.dao.CustomerRegistrationDao;
 import com.insurance.user_registartion.interfaces.ICustomerRegistration;
 import com.insurance.user_registartion.model.CustomerPersonalDetail;
@@ -38,6 +42,9 @@ public class CustomerRegistrationService implements ICustomerRegistration
 	@Autowired
 	EmailNotification emailNotification;
 
+	@Autowired
+	CreateOtpToken createOtpToken;
+
 	public AmxApiResponse<BoolRespModel, Object> isValidCivilId(String civilid)
 	{
 		AmxApiResponse<BoolRespModel, Object> resp = new AmxApiResponse<BoolRespModel, Object>();
@@ -45,14 +52,14 @@ public class CustomerRegistrationService implements ICustomerRegistration
 		resp.setStatus(ApiConstants.Success);
 		return resp;
 	}
-	
+
 	public AmxApiResponse<BoolRespModel, Object> isCivilIdExist(String civilid)
 	{
 		AmxApiResponse<BoolRespModel, Object> resp = new AmxApiResponse<BoolRespModel, Object>();
 		resp.build(new BoolRespModel(customerRegistrationDao.isCivilIdExist(civilid)));
 		resp.setStatus(ApiConstants.Success);
 		return resp;
-			
+
 	}
 
 	public AmxApiResponse<BoolRespModel, Object> isValidEmailId(String emailId)
@@ -78,17 +85,9 @@ public class CustomerRegistrationService implements ICustomerRegistration
 		return resp;
 	}
 
-	public String addNewCustomer(CustomerPersonalDetail customerPersonalDetail)
+	public AmxApiResponse<CustomerPersonalDetail, Object> addNewCustomer(CustomerPersonalDetail customerPersonalDetail)
 	{
-		try
-		{
-			return customerRegistrationDao.addNewCustomer(customerPersonalDetail);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		return null;
+		return customerRegistrationDao.addNewCustomer(customerPersonalDetail);
 	}
 
 	public ArrayList getCompanySetUp(int langId)
@@ -104,17 +103,40 @@ public class CustomerRegistrationService implements ICustomerRegistration
 		return null;
 	}
 
-	public void sendEmail(Email email)
+	public AmxApiResponse<ResponseOtpModel, Object> sendOtp(RequestOtpModel requestOtpModel)
 	{
+		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
+
 		try
 		{
-			logger.info(TAG + " sendEmail :: email :" + email);
-			emailNotification.sendEmail(email);
+			ResponseOtpModel responseOtpModel = createOtpToken.generateToken(requestOtpModel.getCivilId());
+			responseOtpModel.setEmailId(requestOtpModel.getEmailId());
+			responseOtpModel.setMobileNumber(requestOtpModel.getMobileNumber());
+			
+			ArrayList<ResponseOtpModel> responseOtpModelArray = new ArrayList<ResponseOtpModel>();
+			responseOtpModelArray.add(responseOtpModel);
+
+			Email email = emailNotification.sendEmail(requestOtpModel, responseOtpModel);
+			
+			if(email.getEmailSentStatus())
+			{
+				resp.setResults(responseOtpModelArray);
+				resp.setStatus(ApiConstants.Success);
+			}
+			else
+			{
+				resp.setResults(null);
+				resp.setException(email.getEmailSendingException());
+				resp.setStatus(ApiConstants.Failure);
+			}
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
+			resp.setResults(null);
+			resp.setException(e.toString());
+			resp.setStatus(ApiConstants.Failure);
 		}
+		return resp;
 	}
-
 }

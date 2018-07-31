@@ -15,6 +15,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import com.amx.jax.api.AmxApiResponse;
+import com.amx.jax.api.BoolRespModel;
+import com.amx.jax.constants.ApiConstants;
 import com.insurance.user_registartion.interfaces.ICustomerRegistration;
 import com.insurance.user_registartion.model.CompanySetUp;
 import com.insurance.user_registartion.model.CustomerPersonalDetail;
@@ -136,10 +140,12 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 		return false;
 	}
 
-	public String addNewCustomer(CustomerPersonalDetail customerPersonalDetail)
+	public AmxApiResponse<CustomerPersonalDetail, Object> addNewCustomer(CustomerPersonalDetail customerPersonalDetail)
 	{
 		logger.info(TAG + " addNewCustomer :: customerRegistrationDetails :" + customerPersonalDetail.toString());
 
+		AmxApiResponse<CustomerPersonalDetail, Object> resp = new AmxApiResponse<CustomerPersonalDetail, Object>();
+		
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_REGISTER_USER(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
@@ -155,7 +161,7 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 		String emailVerificationCode = customerPersonalDetail.getEmailVerificationCode();
 		String deviceType = customerPersonalDetail.getDeviceType();
 		String createdDeviceId = customerPersonalDetail.getCreatedDeviceId();
-		String createdBy = customerPersonalDetail.getCreatedBy();
+		String createdBy = customerPersonalDetail.getCivilId();
 
 		try
 		{
@@ -175,6 +181,7 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 			callableStatement.setDate(12, getCurrentDate());
 			callableStatement.setString(13, createdDeviceId);
 			callableStatement.setString(14, createdBy);
+			
 			callableStatement.registerOutParameter(15, java.sql.Types.INTEGER);
 			callableStatement.registerOutParameter(16, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(17, java.sql.Types.VARCHAR);
@@ -184,6 +191,23 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 			String recd = callableStatement.getString(16);
 			String error = callableStatement.getString(17);
 
+			customerPersonalDetail.setUserSeqNumber(userSequenceNumber);
+			
+			if(error == null)
+			{
+				resp.setData(customerPersonalDetail);
+				resp.setError(error);
+				resp.setMessage("User Registration SuccessFull");
+				resp.setStatus(ApiConstants.Success);
+			}
+			else
+			{
+				resp.setData(null);
+				resp.setError(error);
+				resp.setMessage("User Registration Fail Kindly Try After Some Time...");
+				resp.setStatus(ApiConstants.Failure);
+			}
+			
 			logger.info(TAG + " addNewCustomer :: userSequenceNumber :" + userSequenceNumber);
 			logger.info(TAG + " addNewCustomer :: recd :" + recd);
 			logger.info(TAG + " addNewCustomer :: error :" + error);
@@ -191,10 +215,13 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 		}
 		catch (Exception e)
 		{
+			resp.setData(null);
+			resp.setStatus(ApiConstants.Failure);
+			resp.setMessage("User Registration Fail Some Error Occured On Server Kindly Try After Some Time...");
+			resp.setException(e.toString());
 			e.printStackTrace();
 		}
-
-		return "success";
+		return resp;
 	}
 
 	public ArrayList getCompanySetUp(int langId)
@@ -204,7 +231,7 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 		String callProcedure = "{call IRB_GET_COMPANY_SETUP(?,?,?,?)}";
 		ArrayList<CompanySetUp> companySetUpArray = new ArrayList<CompanySetUp>();
 
-		logger.info(TAG + " getUserDetails ::");
+		logger.info(TAG + " getCompanySetUp ::");
 
 		try
 		{

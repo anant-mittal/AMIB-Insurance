@@ -21,10 +21,7 @@ public class CustomerPersonalDetail
 	
 	@NotNull
 	private int compCd;
-
-	@NotNull
-	private int userSeqNumber;
-
+	
 	@NotNull
 	private String userType;
 	
@@ -40,44 +37,26 @@ public class CustomerPersonalDetail
 	private String mobile;
 	
 	@NotNull
+	private String mobVerificationCode;
+	
+	@NotNull
 	@Email
 	private String email;
-
-	@NotNull
-	private String mobVerificationCode;
 	
 	@NotNull
 	private String emailVerificationCode;
 	
 	@NotNull
-	private String mobileVerified;
-	
-	@NotNull
-	private String emailVerified;
-	
-	@NotNull
-	private String refAmibcd;
-
-	@NotNull
-	private String status;
+	private int languageId;
 	
 	@NotNull
 	private String deviceType;
 
 	@NotNull
-	private Date date;
-	
-	@NotNull
 	private String createdDeviceId;
 	
 	@NotNull
-	private String createdBy;
-	
-	@NotNull
-	private Date updateOn;
-	
-	@NotNull
-	private String updateDeviceId;
+	private int userSeqNumber;
 	
 	public int getCountryId()
 	{
@@ -88,7 +67,7 @@ public class CustomerPersonalDetail
 	{
 		this.countryId = countryId;
 	}
-	
+
 	public int getCompCd()
 	{
 		return compCd;
@@ -98,17 +77,7 @@ public class CustomerPersonalDetail
 	{
 		this.compCd = compCd;
 	}
-	
-	public int getUserSeqNumber()
-	{
-		return userSeqNumber;
-	}
 
-	public void setUserSeqNumber(int userSeqNumber)
-	{
-		this.userSeqNumber = userSeqNumber;
-	}
-	
 	public String getUserType()
 	{
 		return userType;
@@ -118,7 +87,7 @@ public class CustomerPersonalDetail
 	{
 		this.userType = userType;
 	}
-	
+
 	public String getCivilId()
 	{
 		return civilId;
@@ -128,7 +97,7 @@ public class CustomerPersonalDetail
 	{
 		this.civilId = civilId;
 	}
-	
+
 	public String getPassword()
 	{
 		return password;
@@ -148,17 +117,7 @@ public class CustomerPersonalDetail
 	{
 		this.mobile = mobile;
 	}
-	
-	public String getEmail()
-	{
-		return email;
-	}
 
-	public void setEmail(String email)
-	{
-		this.email = email;
-	}
-	
 	public String getMobVerificationCode()
 	{
 		return mobVerificationCode;
@@ -167,6 +126,16 @@ public class CustomerPersonalDetail
 	public void setMobVerificationCode(String mobVerificationCode)
 	{
 		this.mobVerificationCode = mobVerificationCode;
+	}
+
+	public String getEmail()
+	{
+		return email;
+	}
+
+	public void setEmail(String email)
+	{
+		this.email = email;
 	}
 
 	public String getEmailVerificationCode()
@@ -178,45 +147,15 @@ public class CustomerPersonalDetail
 	{
 		this.emailVerificationCode = emailVerificationCode;
 	}
-	
-	public String getMobileVerified()
+
+	public int getLanguageId()
 	{
-		return mobileVerified;
+		return languageId;
 	}
 
-	public void setMobileVerified(String mobileVerified)
+	public void setLanguageId(int languageId)
 	{
-		this.mobileVerified = mobileVerified;
-	}
-
-	public String getEmailVerified()
-	{
-		return emailVerified;
-	}
-
-	public void setEmailVerified(String emailVerified)
-	{
-		this.emailVerified = emailVerified;
-	}
-	
-	public String getRefAmibcd()
-	{
-		return refAmibcd;
-	}
-
-	public void setRefAmibcd(String refAmibcd)
-	{
-		this.refAmibcd = refAmibcd;
-	}
-
-	public String getStatus()
-	{
-		return status;
-	}
-
-	public void setStatus(String status)
-	{
-		this.status = status;
+		this.languageId = languageId;
 	}
 
 	public String getDeviceType()
@@ -229,16 +168,6 @@ public class CustomerPersonalDetail
 		this.deviceType = deviceType;
 	}
 
-	public Date getDate()
-	{
-		return date;
-	}
-
-	public void setDate(Date date)
-	{
-		this.date = date;
-	}
-
 	public String getCreatedDeviceId()
 	{
 		return createdDeviceId;
@@ -249,44 +178,26 @@ public class CustomerPersonalDetail
 		this.createdDeviceId = createdDeviceId;
 	}
 
-	public String getCreatedBy()
+	public int getUserSeqNumber()
 	{
-		return createdBy;
+		return userSeqNumber;
 	}
 
-	public void setCreatedBy(String createdBy)
+	public void setUserSeqNumber(int userSeqNumber)
 	{
-		this.createdBy = createdBy;
+		this.userSeqNumber = userSeqNumber;
 	}
 
-	public Date getUpdateOn()
+	public static long getSerialversionuid()
 	{
-		return updateOn;
-	}
-
-	public void setUpdateOn(Date updateOn)
-	{
-		this.updateOn = updateOn;
-	}
-
-	public String getUpdateDeviceId()
-	{
-		return updateDeviceId;
-	}
-
-	public void setUpdateDeviceId(String updateDeviceId)
-	{
-		this.updateDeviceId = updateDeviceId;
+		return serialVersionUID;
 	}
 	
 	@Override
 	public String toString()
 	{
-		return "CustomerPersonalDetail [countryId=" + countryId + ", compCd=" + compCd + ", userSeqNumber=" + userSeqNumber + ", userType=" + userType + ", civilId=" + civilId + ", password=" + password + ", mobile=" + mobile + ", email=" + email + ", mobVerificationCode=" + mobVerificationCode
-				+ ", emailVerificationCode=" + emailVerificationCode + ", mobileVerified=" + mobileVerified + ", emailVerified=" + emailVerified + ", refAmibcd=" + refAmibcd + ", status=" + status + ", deviceType=" + deviceType + ", date=" + date + ", createdDeviceId=" + createdDeviceId
-				+ ", createdBy=" + createdBy + ", updateOn=" + updateOn + ", updateDeviceId=" + updateDeviceId + "]";
+		return "CustomerPersonalDetail [countryId=" + countryId + ", compCd=" + compCd + ", userType=" + userType + ", civilId=" + civilId + ", password=" + password + ", mobile=" + mobile + ", mobVerificationCode=" + mobVerificationCode + ", email=" + email + ", emailVerificationCode="
+				+ emailVerificationCode + ", languageId=" + languageId + ", deviceType=" + deviceType + ", createdDeviceId=" + createdDeviceId + ", userSeqNumber=" + userSeqNumber + "]";
 	}
-
-
-
+	
 }
