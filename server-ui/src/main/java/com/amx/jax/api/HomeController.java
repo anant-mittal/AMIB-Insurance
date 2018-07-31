@@ -62,8 +62,8 @@ public class HomeController {
 		long checkTimeNew = System.currentTimeMillis() / (1000 * 60 * 5);
 		if (checkTimeNew != checkTime) {
 			try {
-				Map<String, Object> map = JsonUtil.toMap(
-						restService.ajax(webConfig.getCdnURL() + "/dist/build.json?_=" + checkTimeNew).asObject());
+				Map<String, Object> map = JsonUtil.toMap(restService
+						.ajax(webConfig.getCdnURL() + "/dist/build.json?_=" + checkTimeNew).get().asObject());
 				if (map.containsKey("version")) {
 					versionNew = ArgUtil.parseAsString(map.get("version"));
 				}
