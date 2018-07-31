@@ -26,8 +26,8 @@
 
 	<repositories>
 		<repository>
-			<id>gitlab.com.almullagroup.maven.mvn-amx</id>
-			<url>https://gitlab.com/almullagroup/maven/mvn-amx/raw/master/</url>
+			<id>gitlab.com.almullagroup.maven.amx-maven</id>
+			<url>https://gitlab.com/almullagroup/maven/amx-maven/raw/1.0.2/</url>
 		</repository>
 	</repositories>
 
@@ -36,13 +36,11 @@
 		<dependency>
 			<groupId>com.amx.jax</groupId>
 			<artifactId>common-utils</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.amx.jax</groupId>
 			<artifactId>common-lib</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 	</dependencies>

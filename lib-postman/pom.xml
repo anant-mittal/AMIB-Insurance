@@ -12,7 +12,7 @@
 	</parent>
 
 	<artifactId>lib-postman</artifactId>
-	<name>postman-notification</name>
+	<name>lib-postman</name>
 	
 	<url>http://maven.apache.org</url>
 	
