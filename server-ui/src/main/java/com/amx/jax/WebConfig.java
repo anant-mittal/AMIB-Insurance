@@ -26,8 +26,8 @@ public class WebConfig {
 	public static final String APP_AUTH_KEY = "${app.auth.key}";
 	public static final String APP_AUTH_ENABLED = "${app.auth.enabled}";
 
-	public static final String AMX_CDN_URL = "${jax.cdn.url}";
-	public static final String AMX_APP_URL = "${jax.app.url}";
+	public static final String AMX_CDN_URL = "${amx.cdn.url}";
+	public static final String AMX_APP_URL = "${amx.app.url}";
 
 	@Value(APP_NAME)
 	@AppParamKey(AppParam.APP_NAME)
