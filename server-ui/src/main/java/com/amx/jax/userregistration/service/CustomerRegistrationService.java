@@ -1,8 +1,4 @@
 
-
-
-
-
 package com.amx.jax.userregistration.service;
 
 import java.util.ArrayList;
@@ -30,8 +26,7 @@ import com.insurance.user_registartion.model.CustomerPersonalDetail;
 import com.insurance.vehicledetails.model.Model;
 
 @Service
-public class CustomerRegistrationService implements ICustomerRegistration
-{
+public class CustomerRegistrationService implements ICustomerRegistration {
 	String TAG = "com.amx.jax.userregistration.service :: CustomerRegistrationService :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(CustomerRegistrationService.class);
@@ -45,16 +40,14 @@ public class CustomerRegistrationService implements ICustomerRegistration
 	@Autowired
 	CreateOtpToken createOtpToken;
 
-	public AmxApiResponse<BoolRespModel, Object> isValidCivilId(String civilid)
-	{
-		AmxApiResponse<BoolRespModel, Object> resp = new AmxApiResponse<BoolRespModel, Object>();
-		resp.build(new BoolRespModel(customerRegistrationDao.isValidCivilId(civilid)));
+	public AmxApiResponse<BoolRespModel, Object> isValidCivilId(String civilid) {
+		AmxApiResponse<BoolRespModel, Object> resp = AmxApiResponse
+				.build(new BoolRespModel(customerRegistrationDao.isValidCivilId(civilid)));
 		resp.setStatus(ApiConstants.Success);
 		return resp;
 	}
 
-	public AmxApiResponse<BoolRespModel, Object> isCivilIdExist(String civilid)
-	{
+	public AmxApiResponse<BoolRespModel, Object> isCivilIdExist(String civilid) {
 		AmxApiResponse<BoolRespModel, Object> resp = new AmxApiResponse<BoolRespModel, Object>();
 		resp.build(new BoolRespModel(customerRegistrationDao.isCivilIdExist(civilid)));
 		resp.setStatus(ApiConstants.Success);
@@ -62,76 +55,63 @@ public class CustomerRegistrationService implements ICustomerRegistration
 
 	}
 
-	public AmxApiResponse<BoolRespModel, Object> isValidEmailId(String emailId)
-	{
+	public AmxApiResponse<BoolRespModel, Object> isValidEmailId(String emailId) {
 		AmxApiResponse<BoolRespModel, Object> resp = new AmxApiResponse<BoolRespModel, Object>();
 		resp.build(new BoolRespModel(validate(emailId)));
 		resp.setStatus(ApiConstants.Success);
 		return resp;
 	}
 
-	public static boolean validate(String emailStr)
-	{
-		Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+	public static boolean validate(String emailStr) {
+		Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
+				Pattern.CASE_INSENSITIVE);
 		Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
 		return matcher.find();
 	}
 
-	public AmxApiResponse<BoolRespModel, Object> isValidMobileNumber(String mobileNumber)
-	{
+	public AmxApiResponse<BoolRespModel, Object> isValidMobileNumber(String mobileNumber) {
 		AmxApiResponse<BoolRespModel, Object> resp = new AmxApiResponse<BoolRespModel, Object>();
 		resp.build(new BoolRespModel(customerRegistrationDao.isValidMobileNumber(mobileNumber)));
 		resp.setStatus(ApiConstants.Success);
 		return resp;
 	}
 
-	public AmxApiResponse<CustomerPersonalDetail, Object> addNewCustomer(CustomerPersonalDetail customerPersonalDetail)
-	{
+	public AmxApiResponse<CustomerPersonalDetail, Object> addNewCustomer(
+			CustomerPersonalDetail customerPersonalDetail) {
 		return customerRegistrationDao.addNewCustomer(customerPersonalDetail);
 	}
 
-	public ArrayList getCompanySetUp(int langId)
-	{
-		try
-		{
+	public ArrayList getCompanySetUp(int langId) {
+		try {
 			return customerRegistrationDao.getCompanySetUp(langId);
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public AmxApiResponse<ResponseOtpModel, Object> sendOtp(RequestOtpModel requestOtpModel)
-	{
+	public AmxApiResponse<ResponseOtpModel, Object> sendOtp(RequestOtpModel requestOtpModel) {
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
 
-		try
-		{
+		try {
 			ResponseOtpModel responseOtpModel = createOtpToken.generateToken(requestOtpModel.getCivilId());
 			responseOtpModel.setEmailId(requestOtpModel.getEmailId());
 			responseOtpModel.setMobileNumber(requestOtpModel.getMobileNumber());
-			
+
 			ArrayList<ResponseOtpModel> responseOtpModelArray = new ArrayList<ResponseOtpModel>();
 			responseOtpModelArray.add(responseOtpModel);
 
 			Email email = emailNotification.sendEmail(requestOtpModel, responseOtpModel);
-			
-			if(email.getEmailSentStatus())
-			{
+
+			if (email.getEmailSentStatus()) {
 				resp.setResults(responseOtpModelArray);
 				resp.setStatus(ApiConstants.Success);
-			}
-			else
-			{
+			} else {
 				resp.setResults(null);
 				resp.setException(email.getEmailSendingException());
 				resp.setStatus(ApiConstants.Failure);
 			}
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 			resp.setResults(null);
 			resp.setException(e.toString());
