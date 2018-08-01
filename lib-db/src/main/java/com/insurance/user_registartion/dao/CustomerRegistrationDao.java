@@ -22,6 +22,7 @@ import com.amx.jax.constants.ApiConstants;
 import com.insurance.user_registartion.interfaces.ICustomerRegistration;
 import com.insurance.user_registartion.model.CompanySetUp;
 import com.insurance.user_registartion.model.CustomerPersonalDetail;
+import com.insurance.user_registartion.model.Validate;
 
 import oracle.jdbc.OracleTypes;
 
@@ -36,11 +37,12 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 
 	Connection connection;
 
-	public boolean isValidCivilId(String civilid)
+	public AmxApiResponse<Validate, Object> isValidCivilId(String civilid)
 	{
-		logger.info(TAG + " isValidCivilId :: civilid :" + civilid);
-
 		getConnection();
+		
+		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
+		Validate validate = new Validate();
 		CallableStatement callableStatement = null;
 		String callFunction = "{ ? = call O_VALIDATE_CIVILID(?)}";
 
@@ -52,28 +54,39 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
 			logger.info(TAG + " isValidCivilId :: result :" + result);
-
+			
 			if (null == result)
 			{
-				return true;
+				validate.setValid(true);
+				resp.setStatusKey(ApiConstants.Success);
+				resp.setMessage("Valid Civil ID");
+				resp.setMessageKey("");
+				resp.setData(validate);
 			}
 			else
 			{
-				return false;
+				validate.setValid(false);
+				resp.setStatusKey(ApiConstants.Failure);
+				resp.setMessage("Invalid Civil ID");
+				resp.setMessageKey("");
+				resp.setData(validate);
 			}
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
+			resp.setException(e.toString());
 		}
-		return false;
+		return resp;
 	}
 
-	public boolean isCivilIdExist(String civilid)
+	public AmxApiResponse<Validate, Object> isCivilIdExist(String civilid)
 	{
 		logger.info(TAG + " isCivilIdExist :: civilid :" + civilid);
 
 		getConnection();
+		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
+		Validate validate = new Validate();
 		CallableStatement callableStatement = null;
 		String callFunction = "{ ? = call IRB_IF_ONLINE_USEREXIST(?,?,?,?)}";
 
@@ -91,25 +104,36 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 
 			if (result.equalsIgnoreCase("Y"))
 			{
-				return true;
+				validate.setValid(true);
+				resp.setStatusKey(ApiConstants.Success);
+				resp.setMessage("Civil Id Exist");
+				resp.setMessageKey("");
+				resp.setData(validate);
 			}
 			else
 			{
-				return false;
+				validate.setValid(false);
+				resp.setStatusKey(ApiConstants.Failure);
+				resp.setMessage("Civil Id Not Exist");
+				resp.setMessageKey("");
+				resp.setData(validate);
 			}
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
+			resp.setException(e.toString());
 		}
-		return false;
+		return resp;
 	}
 
-	public boolean isValidMobileNumber(String mobileNumber)
+	public AmxApiResponse<Validate, Object> isValidMobileNumber(String mobileNumber)
 	{
 		logger.info(TAG + " isValidMobileNumber :: civilid :" + mobileNumber);
 
 		getConnection();
+		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
+		Validate validate = new Validate();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call O_VALIDATE_TELEPHONE(?,?,?)}";
 
@@ -125,19 +149,27 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 
 			if (null == result)
 			{
-				return true;
+				validate.setValid(true);
+				resp.setStatusKey(ApiConstants.Success);
+				resp.setMessage("Valid Mobile Number");
+				resp.setMessageKey("");
+				resp.setData(validate);
 			}
 			else
 			{
-				return false;
+				validate.setValid(false);
+				resp.setStatusKey(ApiConstants.Failure);
+				resp.setMessage("Invalid Mobile Number");
+				resp.setMessageKey("");
+				resp.setData(validate);
 			}
-
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
+			resp.setException(e.toString());
 		}
-		return false;
+		return resp;
 	}
 
 	public AmxApiResponse<CustomerPersonalDetail, Object> addNewCustomer(CustomerPersonalDetail customerPersonalDetail)
@@ -198,14 +230,14 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 				resp.setData(customerPersonalDetail);
 				resp.setError(error);
 				resp.setMessage("User Registration SuccessFull");
-				resp.setStatus(ApiConstants.Success);
+				resp.setStatusKey(ApiConstants.Success);
 			}
 			else
 			{
 				resp.setData(null);
 				resp.setError(error);
 				resp.setMessage("User Registration Fail Kindly Try After Some Time...");
-				resp.setStatus(ApiConstants.Failure);
+				resp.setStatusKey(ApiConstants.Failure);
 			}
 			
 			logger.info(TAG + " addNewCustomer :: userSequenceNumber :" + userSequenceNumber);

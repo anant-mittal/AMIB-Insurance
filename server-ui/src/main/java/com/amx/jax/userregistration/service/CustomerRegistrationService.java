@@ -10,11 +10,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.api.BoolRespModel;
 import com.amx.jax.constants.ApiConstants;
-import com.amx.jax.userregistration.controller.CustomerRegistrationController;
 import com.insurance.email.dao.EmailNotification;
 import com.insurance.email.model.Email;
 import com.insurance.generateotp.ResponseOtpModel;
@@ -23,7 +21,7 @@ import com.insurance.generateotp.RequestOtpModel;
 import com.insurance.user_registartion.dao.CustomerRegistrationDao;
 import com.insurance.user_registartion.interfaces.ICustomerRegistration;
 import com.insurance.user_registartion.model.CustomerPersonalDetail;
-import com.insurance.vehicledetails.model.Model;
+import com.insurance.user_registartion.model.Validate;
 
 @Service
 public class CustomerRegistrationService implements ICustomerRegistration {
@@ -40,25 +38,38 @@ public class CustomerRegistrationService implements ICustomerRegistration {
 	@Autowired
 	CreateOtpToken createOtpToken;
 
-	public AmxApiResponse<BoolRespModel, Object> isValidCivilId(String civilid) {
-		AmxApiResponse<BoolRespModel, Object> resp = AmxApiResponse
-				.build(new BoolRespModel(customerRegistrationDao.isValidCivilId(civilid)));
-		resp.setStatus(ApiConstants.Success);
-		return resp;
+	public AmxApiResponse<Validate, Object> isValidCivilId(String civilid)
+	{
+		return customerRegistrationDao.isValidCivilId(civilid);
 	}
 
-	public AmxApiResponse<BoolRespModel, Object> isCivilIdExist(String civilid) {
-		AmxApiResponse<BoolRespModel, Object> resp = new AmxApiResponse<BoolRespModel, Object>();
-		resp.build(new BoolRespModel(customerRegistrationDao.isCivilIdExist(civilid)));
-		resp.setStatus(ApiConstants.Success);
-		return resp;
-
+	public AmxApiResponse<Validate, Object> isCivilIdExist(String civilid)
+	{
+		return customerRegistrationDao.isCivilIdExist(civilid);
+		
 	}
 
-	public AmxApiResponse<BoolRespModel, Object> isValidEmailId(String emailId) {
-		AmxApiResponse<BoolRespModel, Object> resp = new AmxApiResponse<BoolRespModel, Object>();
-		resp.build(new BoolRespModel(validate(emailId)));
-		resp.setStatus(ApiConstants.Success);
+	public AmxApiResponse<Validate, Object> isValidEmailId(String emailId)
+	{
+		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
+		Validate validate = new Validate();
+		
+		if (validate(emailId))
+		{
+			validate.setValid(true);
+			resp.setStatusKey(ApiConstants.Success);
+			resp.setMessage("");
+			resp.setMessageKey("");
+			resp.setData(validate);
+		}
+		else
+		{
+			validate.setValid(false);
+			resp.setStatusKey(ApiConstants.Failure);
+			resp.setMessage("");
+			resp.setMessageKey("");
+			resp.setData(validate);
+		}
 		return resp;
 	}
 
@@ -69,11 +80,9 @@ public class CustomerRegistrationService implements ICustomerRegistration {
 		return matcher.find();
 	}
 
-	public AmxApiResponse<BoolRespModel, Object> isValidMobileNumber(String mobileNumber) {
-		AmxApiResponse<BoolRespModel, Object> resp = new AmxApiResponse<BoolRespModel, Object>();
-		resp.build(new BoolRespModel(customerRegistrationDao.isValidMobileNumber(mobileNumber)));
-		resp.setStatus(ApiConstants.Success);
-		return resp;
+	public AmxApiResponse<Validate, Object> isValidMobileNumber(String mobileNumber)
+	{
+		return customerRegistrationDao.isValidMobileNumber(mobileNumber);
 	}
 
 	public AmxApiResponse<CustomerPersonalDetail, Object> addNewCustomer(

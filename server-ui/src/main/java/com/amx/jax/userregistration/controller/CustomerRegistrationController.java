@@ -24,6 +24,7 @@ import com.insurance.generateotp.RequestOtpModel;
 import com.insurance.generateotp.ResponseOtpModel;
 import com.insurance.user_registartion.interfaces.ICustomerRegistration;
 import com.insurance.user_registartion.model.CustomerPersonalDetail;
+import com.insurance.user_registartion.model.Validate;
 
 @RestController
 public class CustomerRegistrationController implements ICustomerRegistration
@@ -37,25 +38,25 @@ public class CustomerRegistrationController implements ICustomerRegistration
 
 	
 	@RequestMapping(value = "/validate-civilid", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<BoolRespModel, Object> isValidCivilId(@RequestParam("civilId") String civilid)
+	public AmxApiResponse<Validate, Object> isValidCivilId(@RequestParam("civilId") String civilid)
 	{
 		return customerRegistrationService.isValidCivilId(civilid);
 	}
 
 	@RequestMapping(value = "/civilid-exists", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<BoolRespModel, Object> isCivilIdExist(@RequestParam("civilId") String civilid)
+	public AmxApiResponse<Validate, Object> isCivilIdExist(@RequestParam("civilId") String civilid)
 	{
 		return customerRegistrationService.isCivilIdExist(civilid);
 	}
 
 	@RequestMapping(value = "/validate-mobile", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<BoolRespModel, Object> isValidMobileNumber(@RequestParam("mobileNumber") String mobileNumber)
+	public AmxApiResponse<Validate, Object> isValidMobileNumber(@RequestParam("mobileNumber") String mobileNumber)
 	{
 		return customerRegistrationService.isValidMobileNumber(mobileNumber);
 	}
 
 	@RequestMapping(value = "/validate-emailId", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<BoolRespModel, Object> isValidEmailId(@RequestParam("emailId") String emailId)
+	public AmxApiResponse<Validate, Object> isValidEmailId(@RequestParam("emailId") String emailId)
 	{
 		return customerRegistrationService.isValidEmailId(emailId);
 	}
