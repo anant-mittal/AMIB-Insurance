@@ -104,5 +104,17 @@ public class CustomerRegistrationController implements ICustomerRegistration
 	{
 		return customerRegistrationService.getCompanySetUp(langId);
 	}
+	
+	@RequestMapping(value = "/validate-civilid", method = RequestMethod.POST, produces = "application/json")
+	public AmxApiResponse<Validate, Object> isValidCivilId(@RequestParam("civilId") String civilid)
+	{
+		return customerRegistrationService.isValidCivilId(civilid);
+	}
+
+	@RequestMapping(value = "/civilid-exists", method = RequestMethod.POST, produces = "application/json")
+	public AmxApiResponse<Validate, Object> isCivilIdExist(@RequestParam("civilId") String civilid)
+	{
+		return customerRegistrationService.isCivilIdExist(civilid);
+	}
 
 }
