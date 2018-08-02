@@ -127,6 +127,58 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 		}
 		return resp;
 	}
+	
+	
+	public AmxApiResponse<Validate, Object> isMobileNumberExist(String mobilenumber)
+	{
+		logger.info(TAG + " isMobileNumberExist :: mobilenumber :" + mobilenumber);
+
+		getConnection();
+		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
+		Validate validate = new Validate();
+		CallableStatement callableStatement = null;
+		String callFunction = "{ ? = call IRB_IF_DUP_MOBILE(?,?,?,?)}";
+
+		try
+		{
+			callableStatement = connection.prepareCall(callFunction);
+			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
+			callableStatement.setInt(2, 1);
+			callableStatement.setInt(3, 10);
+			callableStatement.setString(4, "D");
+			callableStatement.setString(5, mobilenumber);
+			callableStatement.executeUpdate();
+			String result = callableStatement.getString(1);
+			logger.info(TAG + " isMobileNumberExist :: result :" + result);
+
+			if (result.equalsIgnoreCase("N"))
+			{
+				validate.setValid(true);
+				resp.setStatusKey(ApiConstants.Success);
+				resp.setMessage("Mobile Number Not Exist");
+				
+			}
+			else
+			{
+				validate.setValid(false);
+				resp.setStatusKey(ApiConstants.Failure);
+				resp.setMessage("Mobile Number Already Registered");
+			}
+			resp.setMessageKey("isMobileNumberExist");
+			resp.setData(validate);
+			
+			logger.info(TAG + " isMobileNumberExist :: resp :" + resp);
+			
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			resp.setStatusKey(ApiConstants.Failure);
+			resp.setException(e.toString());
+		}
+		return resp;
+	}
+	
 
 	public AmxApiResponse<Validate, Object> isValidMobileNumber(String mobileNumber)
 	{

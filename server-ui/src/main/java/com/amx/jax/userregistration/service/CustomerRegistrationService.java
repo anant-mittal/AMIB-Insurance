@@ -92,9 +92,27 @@ public class CustomerRegistrationService implements ICustomerRegistration
 	{
 		return customerRegistrationDao.isValidMobileNumber(mobileNumber);
 	}
+	
+	public AmxApiResponse<Validate, Object> isMobileNumberExist(String mobileNumber)
+	{
+		return customerRegistrationDao.isMobileNumberExist(mobileNumber);
+	}
 
 	public AmxApiResponse<CustomerPersonalDetail, Object> addNewCustomer(CustomerPersonalDetail customerPersonalDetail)
 	{
+		customerPersonalDetail.setCountryId(1);
+		customerPersonalDetail.setCompCd(10);
+		customerPersonalDetail.setUserType("D");
+		logger.info(TAG + " addNewCustomer :: regSession.getMobileNumber() :" + regSession.getMobileNumber());
+		customerPersonalDetail.setMobile(regSession.getMobileNumber());
+		logger.info(TAG + " addNewCustomer :: regSession.getMotp() :" + regSession.getMotp());
+		customerPersonalDetail.setMobVerificationCode(regSession.getMotp());
+		logger.info(TAG + " addNewCustomer :: regSession.getEmailId() :" + regSession.getEmailId());
+		customerPersonalDetail.setEmail(regSession.getEmailId());
+		logger.info(TAG + " addNewCustomer :: regSession.getEotp() :" + regSession.getEotp());
+		customerPersonalDetail.setEmailVerificationCode(regSession.getEotp());
+		customerPersonalDetail.setLanguageId(0);
+		
 		return customerRegistrationDao.addNewCustomer(customerPersonalDetail);
 	}
 

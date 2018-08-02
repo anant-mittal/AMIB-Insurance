@@ -17,13 +17,13 @@ public class CustomerPersonalDetail
 	private static final long serialVersionUID = 1L;
 
 	@NotNull
-	private int countryId;
+	private int countryId;//Server
 	
 	@NotNull
-	private int compCd;
+	private int compCd;//Server
 	
 	@NotNull
-	private String userType;
+	private String userType;//Server
 	
 	@NotNull
 	private String civilId;
@@ -34,20 +34,20 @@ public class CustomerPersonalDetail
 	@NotNull
 	@Size(min = 1)
 	@NumberFormat
-	private String mobile;
+	private String mobile;//Server
 	
 	@NotNull
-	private String mobVerificationCode;
+	private String mobVerificationCode;//Server
 	
 	@NotNull
 	@Email
-	private String email;
+	private String email;//Server
 	
 	@NotNull
-	private String emailVerificationCode;
+	private String emailVerificationCode;//Server
 	
 	@NotNull
-	private int languageId;
+	private int languageId;//Server
 	
 	@NotNull
 	private String deviceType;
