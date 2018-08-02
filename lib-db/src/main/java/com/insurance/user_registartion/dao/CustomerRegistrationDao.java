@@ -30,6 +30,7 @@ import oracle.jdbc.OracleTypes;
 public class CustomerRegistrationDao implements ICustomerRegistration
 {
 	String TAG = "com.insurance.user_registartion.dao :: CustomerRegistrationDao :: ";
+
 	private static final Logger logger = LoggerFactory.getLogger(CustomerRegistrationDao.class);
 
 	@Autowired
@@ -40,7 +41,7 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 	public AmxApiResponse<Validate, Object> isValidCivilId(String civilid)
 	{
 		getConnection();
-		
+
 		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
 		Validate validate = new Validate();
 		CallableStatement callableStatement = null;
@@ -54,7 +55,7 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
 			logger.info(TAG + " isValidCivilId :: result :" + result);
-			
+
 			if (null == result)
 			{
 				validate.setValid(true);
@@ -66,11 +67,11 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 				validate.setValid(false);
 				resp.setStatusKey(ApiConstants.Failure);
 				resp.setMessage("Invalid Civil ID");
-				
+
 			}
 			resp.setData(validate);
 			resp.setMessageKey("isValidCivilId");
-			
+
 		}
 		catch (SQLException e)
 		{
@@ -78,6 +79,12 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 			resp.setStatusKey(ApiConstants.Failure);
 			resp.setException(e.toString());
 		}
+		
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		
 		return resp;
 	}
 
@@ -108,7 +115,7 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 				validate.setValid(true);
 				resp.setStatusKey(ApiConstants.Success);
 				resp.setMessage("Civil Id Not Exist");
-				
+
 			}
 			else
 			{
@@ -125,10 +132,15 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 			resp.setStatusKey(ApiConstants.Failure);
 			resp.setException(e.toString());
 		}
+		
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		
 		return resp;
 	}
-	
-	
+
 	public AmxApiResponse<Validate, Object> isMobileNumberExist(String mobilenumber)
 	{
 		logger.info(TAG + " isMobileNumberExist :: mobilenumber :" + mobilenumber);
@@ -156,7 +168,7 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 				validate.setValid(true);
 				resp.setStatusKey(ApiConstants.Success);
 				resp.setMessage("Mobile Number Not Exist");
-				
+
 			}
 			else
 			{
@@ -166,9 +178,9 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 			}
 			resp.setMessageKey("isMobileNumberExist");
 			resp.setData(validate);
-			
+
 			logger.info(TAG + " isMobileNumberExist :: resp :" + resp);
-			
+
 		}
 		catch (SQLException e)
 		{
@@ -176,9 +188,14 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 			resp.setStatusKey(ApiConstants.Failure);
 			resp.setException(e.toString());
 		}
+		
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		
 		return resp;
 	}
-	
 
 	public AmxApiResponse<Validate, Object> isValidMobileNumber(String mobileNumber)
 	{
@@ -205,7 +222,7 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 				validate.setValid(true);
 				resp.setStatusKey(ApiConstants.Success);
 				resp.setMessage("Valid Mobile Number");
-				
+
 			}
 			else
 			{
@@ -222,6 +239,12 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 			resp.setStatusKey(ApiConstants.Failure);
 			resp.setException(e.toString());
 		}
+		
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		
 		return resp;
 	}
 
@@ -230,7 +253,7 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 		logger.info(TAG + " addNewCustomer :: customerRegistrationDetails :" + customerPersonalDetail.toString());
 
 		AmxApiResponse<CustomerPersonalDetail, Object> resp = new AmxApiResponse<CustomerPersonalDetail, Object>();
-		
+
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_REGISTER_USER(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
@@ -266,7 +289,6 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 			callableStatement.setDate(12, getCurrentDate());
 			callableStatement.setString(13, createdDeviceId);
 			callableStatement.setString(14, createdBy);
-			
 			callableStatement.registerOutParameter(15, java.sql.Types.INTEGER);
 			callableStatement.registerOutParameter(16, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(17, java.sql.Types.VARCHAR);
@@ -277,8 +299,8 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 			String error = callableStatement.getString(17);
 
 			customerPersonalDetail.setUserSeqNumber(userSequenceNumber);
-			
-			if(error == null)
+
+			if (error == null)
 			{
 				resp.setData(customerPersonalDetail);
 				resp.setError(error);
@@ -292,7 +314,7 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 				resp.setMessage("User Registration Fail Kindly Try After Some Time...");
 				resp.setStatusKey(ApiConstants.Failure);
 			}
-			
+
 			logger.info(TAG + " addNewCustomer :: userSequenceNumber :" + userSequenceNumber);
 			logger.info(TAG + " addNewCustomer :: recd :" + recd);
 			logger.info(TAG + " addNewCustomer :: error :" + error);
@@ -306,6 +328,12 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 			resp.setException(e.toString());
 			e.printStackTrace();
 		}
+		
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		
 		return resp;
 	}
 

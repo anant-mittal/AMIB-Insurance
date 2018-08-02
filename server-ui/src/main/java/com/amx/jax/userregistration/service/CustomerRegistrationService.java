@@ -1,8 +1,4 @@
 
-
-
-
-
 package com.amx.jax.userregistration.service;
 
 import java.util.ArrayList;
@@ -92,7 +88,7 @@ public class CustomerRegistrationService implements ICustomerRegistration
 	{
 		return customerRegistrationDao.isValidMobileNumber(mobileNumber);
 	}
-	
+
 	public AmxApiResponse<Validate, Object> isMobileNumberExist(String mobileNumber)
 	{
 		return customerRegistrationDao.isMobileNumberExist(mobileNumber);
@@ -112,7 +108,7 @@ public class CustomerRegistrationService implements ICustomerRegistration
 		logger.info(TAG + " addNewCustomer :: regSession.getEotp() :" + regSession.getEotp());
 		customerPersonalDetail.setEmailVerificationCode(regSession.getEotp());
 		customerPersonalDetail.setLanguageId(0);
-		
+
 		return customerRegistrationDao.addNewCustomer(customerPersonalDetail);
 	}
 
@@ -133,23 +129,22 @@ public class CustomerRegistrationService implements ICustomerRegistration
 	{
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
 		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
-		
+
 		try
 		{
 			regSession.setCivilId(requestOtpModel.getCivilId());
 			regSession.setEmailId(requestOtpModel.getEmailId());
 			regSession.setMobileNumber(requestOtpModel.getMobileNumber());
-			
-			
+
 			String emailOtpPrefix = Random.randomAlpha(3);
 			String mobileOtpPrefix = Random.randomAlpha(3);
-			
+
 			String emailOtp = Random.randomNumeric(6);
 			String mobileOtp = Random.randomNumeric(6);
-			
-			String emailOtpToSend = emailOtpPrefix+"-"+emailOtp;
-			String mobileOtpToSend = mobileOtpPrefix+"-"+mobileOtp;
-			
+
+			String emailOtpToSend = emailOtpPrefix + "-" + emailOtp;
+			String mobileOtpToSend = mobileOtpPrefix + "-" + mobileOtp;
+
 			responseOtpModel.setEotpPrefix(emailOtpPrefix);
 			responseOtpModel.setMotpPrefix(mobileOtpPrefix);
 
@@ -158,7 +153,7 @@ public class CustomerRegistrationService implements ICustomerRegistration
 			regSession.setEotp(emailOtp);
 			regSession.setMotp(mobileOtp);
 
-			Email email = emailNotification.sendEmail(emailOtpToSend, mobileOtpToSend,requestOtpModel.getEmailId());
+			Email email = emailNotification.sendEmail(emailOtpToSend, mobileOtpToSend, requestOtpModel.getEmailId());
 
 			if (email.getEmailSentStatus())
 			{
@@ -181,13 +176,13 @@ public class CustomerRegistrationService implements ICustomerRegistration
 		}
 		return resp;
 	}
-	
-	public AmxApiResponse<Validate, Object> validateOtp(String mOtp,String eOtp)
+
+	public AmxApiResponse<Validate, Object> validateOtp(String mOtp, String eOtp)
 	{
 		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
 		Validate validate = new Validate();
-		
-		if(regSession.getMotp().equals(mOtp) && regSession.getEotp().equals(eOtp))
+
+		if (regSession.getMotp().equals(mOtp) && regSession.getEotp().equals(eOtp))
 		{
 			validate.setValid(true);
 			resp.setStatusKey(ApiConstants.Success);
@@ -198,14 +193,12 @@ public class CustomerRegistrationService implements ICustomerRegistration
 			validate.setValid(false);
 			resp.setStatusKey(ApiConstants.Failure);
 			resp.setMessage("Invalid Otp");
-			
+
 		}
 		resp.setData(validate);
 		resp.setMessageKey("validateOtp");
-		
+
 		return resp;
 	}
-	
-	
-	
+
 }

@@ -1,8 +1,4 @@
 
-
-
-
-
 package com.amx.jax.userregistration.controller;
 
 import java.util.ArrayList;
@@ -45,10 +41,7 @@ public class CustomerRegistrationController implements ICustomerRegistration
 	{
 
 		logger.info(TAG + " getMobileNumber :: getMobileNumber :" + regSession.getMobileNumber());
-
 		logger.info(TAG + " sendOtp :: requestOtpModel :" + requestOtpModel);
-
-		regSession.setMobileNumber(requestOtpModel.getMobileNumber());
 
 		AmxApiResponse<Validate, Object> validateCivilID = customerRegistrationService.isValidCivilId(requestOtpModel.getCivilId());
 
@@ -70,14 +63,13 @@ public class CustomerRegistrationController implements ICustomerRegistration
 		{
 			return validateMobileNumber;
 		}
-		
+
 		AmxApiResponse<Validate, Object> validateDuplicateMobile = customerRegistrationService.isMobileNumberExist(requestOtpModel.getMobileNumber());
 
 		if (validateDuplicateMobile.getStatusKey().equalsIgnoreCase(ApiConstants.Failure))
 		{
 			return validateDuplicateMobile;
 		}
-		
 
 		AmxApiResponse<Validate, Object> validateEmailID = customerRegistrationService.isValidEmailId(requestOtpModel.getEmailId());
 
@@ -93,10 +85,9 @@ public class CustomerRegistrationController implements ICustomerRegistration
 	@RequestMapping(value = "/pub/reg/verifyuserdetails", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<Validate, Object> validateOtp(@RequestHeader(value = "mOtp", required = false) String mOtpHeader, @RequestHeader(value = "eOtp", required = false) String eOtpHeader, @RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp)
 	{
-
 		mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
-		logger.info(TAG + " validateOtp :: requestOtpModel :" + mOtp);
 		eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
+		logger.info(TAG + " validateOtp :: requestOtpModel :" + mOtp);
 		logger.info(TAG + " validateOtp :: requestOtpModel :" + eOtp);
 
 		return customerRegistrationService.validateOtp(mOtp, eOtp);
@@ -113,5 +104,5 @@ public class CustomerRegistrationController implements ICustomerRegistration
 	{
 		return customerRegistrationService.getCompanySetUp(langId);
 	}
-	
+
 }
