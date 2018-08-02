@@ -137,9 +137,8 @@ public class CustomerRegistrationService implements ICustomerRegistration
 
 			regSession.setMotpPrefix(responseOtpModel.getMotpPrefix());
 			regSession.setEotpPrefix(responseOtpModel.getEotpPrefix());
-			
-			regSession.setEotp(Random.randomNumeric(6));
-			regSession.setMotp(Random.randomNumeric(6));
+			regSession.setEotp(emailOtp);
+			regSession.setMotp(mobileOtp);
 
 			Email email = emailNotification.sendEmail(emailOtpToSend, mobileOtpToSend,requestOtpModel.getEmailId());
 
