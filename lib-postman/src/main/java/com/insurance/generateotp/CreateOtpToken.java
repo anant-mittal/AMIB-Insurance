@@ -24,8 +24,7 @@ public class CreateOtpToken
 		String randOtp = createRandomPassword(6);
 		String hashedOtp = getHash(civilId, randOtp);
 		responseOtpModel.setCivilId(civilId);
-		responseOtpModel.setOtp(randOtp);
-		responseOtpModel.setOtpPrefix(Random.randomAlpha(3));
+		responseOtpModel.setEotpPrefix(Random.randomAlpha(3));
 
 		return responseOtpModel;
 	}

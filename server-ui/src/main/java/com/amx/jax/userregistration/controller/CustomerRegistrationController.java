@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.api.BoolRespModel;
+import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.userregistration.service.CustomerRegistrationService;
 import com.insurance.email.model.Email;
 import com.insurance.generateotp.RequestOtpModel;
@@ -61,18 +62,90 @@ public class CustomerRegistrationController implements ICustomerRegistration
 		return customerRegistrationService.isValidEmailId(emailId);
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+		
+	@RequestMapping(value = "/send-otp", method = RequestMethod.POST)
+	public AmxApiResponse<?, Object> sendOtp(@RequestBody RequestOtpModel requestOtpModel)
+	{
+		logger.info(TAG + " sendOtp :: requestOtpModel :" + requestOtpModel);
+		
+		AmxApiResponse<Validate, Object> validateCivilID = customerRegistrationService.isValidCivilId(requestOtpModel.getCivilId());
+		
+		if(validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.Failure))
+		{
+			return validateCivilID;
+		}
+		
+		AmxApiResponse<Validate, Object> civilIdExist =  customerRegistrationService.isCivilIdExist(requestOtpModel.getCivilId());
+		
+		if(civilIdExist.getStatusKey().equalsIgnoreCase(ApiConstants.Failure))
+		{
+			return civilIdExist;
+		}
+		
+		AmxApiResponse<Validate, Object> validateMobileNumber =  customerRegistrationService.isValidMobileNumber(requestOtpModel.getMobileNumber());
+		
+		if(validateMobileNumber.getStatusKey().equalsIgnoreCase(ApiConstants.Failure))
+		{
+			return validateMobileNumber;
+		}
+		
+		AmxApiResponse<Validate, Object> validateEmailID = customerRegistrationService.isValidEmailId(requestOtpModel.getEmailId());
+		
+		if(validateEmailID.getStatusKey().equalsIgnoreCase(ApiConstants.Failure))
+		{
+			return validateEmailID;
+		}
+		
+		
+		return customerRegistrationService.sendOtp(requestOtpModel);
+	
+	}
+	
+	/*@RequestMapping(value = "/validate-otp", method = RequestMethod.POST, produces = "application/json")
+	public AmxApiResponse<CustomerPersonalDetail, Object> validateOtp(@RequestBody CustomerPersonalDetail customerPersonalDetail)
+	{
+		return customerRegistrationService.validateOtp(customerPersonalDetail);
+	}*/
+	
+	
 	@RequestMapping(value = "/customer-registration", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<CustomerPersonalDetail, Object> addNewCustomer(@RequestBody CustomerPersonalDetail customerPersonalDetail)
 	{
-		return customerRegistrationService.addNewCustomer(dummyUserInfo());
+		return customerRegistrationService.addNewCustomer(customerPersonalDetail);
 	}
-
-	@RequestMapping(value = "/send-otp", method = RequestMethod.POST)
-	public AmxApiResponse<ResponseOtpModel, Object> sendOtp(@RequestBody RequestOtpModel requestOtpModel)
-	{
-		logger.info(TAG + " sendOtp :: requestOtpModel :" + requestOtpModel);
-		return customerRegistrationService.sendOtp(requestOtpModel);
-	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	@RequestMapping(value = "/companysetup", method = RequestMethod.GET, produces = "application/json")
 	public ArrayList getCompanySetUp(@RequestParam("langId") int langId)
@@ -101,4 +174,11 @@ public class CustomerRegistrationController implements ICustomerRegistration
 		
 		return customerPersonalDetail;
 	}
+	
+	
+	
+	
+	
+	
+	
 }

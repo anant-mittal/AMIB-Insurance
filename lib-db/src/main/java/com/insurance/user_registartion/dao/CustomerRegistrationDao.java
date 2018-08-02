@@ -60,21 +60,22 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 				validate.setValid(true);
 				resp.setStatusKey(ApiConstants.Success);
 				resp.setMessage("Valid Civil ID");
-				resp.setMessageKey("");
-				resp.setData(validate);
 			}
 			else
 			{
 				validate.setValid(false);
 				resp.setStatusKey(ApiConstants.Failure);
 				resp.setMessage("Invalid Civil ID");
-				resp.setMessageKey("");
-				resp.setData(validate);
+				
 			}
+			resp.setData(validate);
+			resp.setMessageKey("isValidCivilId");
+			
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
+			resp.setStatusKey(ApiConstants.Failure);
 			resp.setException(e.toString());
 		}
 		return resp;
@@ -102,26 +103,26 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 			String result = callableStatement.getString(1);
 			logger.info(TAG + " isCivilIdExist :: result :" + result);
 
-			if (result.equalsIgnoreCase("Y"))
+			if (result.equalsIgnoreCase("N"))
 			{
 				validate.setValid(true);
 				resp.setStatusKey(ApiConstants.Success);
 				resp.setMessage("Civil Id Exist");
-				resp.setMessageKey("");
-				resp.setData(validate);
+				
 			}
 			else
 			{
 				validate.setValid(false);
 				resp.setStatusKey(ApiConstants.Failure);
 				resp.setMessage("Civil Id Not Exist");
-				resp.setMessageKey("");
-				resp.setData(validate);
 			}
+			resp.setMessageKey("isCivilIdExist");
+			resp.setData(validate);
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
+			resp.setStatusKey(ApiConstants.Failure);
 			resp.setException(e.toString());
 		}
 		return resp;
@@ -152,21 +153,21 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 				validate.setValid(true);
 				resp.setStatusKey(ApiConstants.Success);
 				resp.setMessage("Valid Mobile Number");
-				resp.setMessageKey("");
-				resp.setData(validate);
+				
 			}
 			else
 			{
 				validate.setValid(false);
 				resp.setStatusKey(ApiConstants.Failure);
 				resp.setMessage("Invalid Mobile Number");
-				resp.setMessageKey("");
-				resp.setData(validate);
 			}
+			resp.setMessageKey("isValidMobileNumber");
+			resp.setData(validate);
 		}
 		catch (SQLException e)
 		{
 			e.printStackTrace();
+			resp.setStatusKey(ApiConstants.Failure);
 			resp.setException(e.toString());
 		}
 		return resp;

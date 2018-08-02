@@ -16,9 +16,9 @@ public class ResponseOtpModel
 
 	private String mobileNumber;
 
-	private String otp;
-
-	private String otpPrefix;
+	private String motpPrefix;
+	
+	private String eotpPrefix;
 
 	public String getCivilId()
 	{
@@ -49,25 +49,25 @@ public class ResponseOtpModel
 	{
 		this.mobileNumber = mobileNumber;
 	}
-
-	public String getOtp()
+	
+	public String getMotpPrefix()
 	{
-		return otp;
+		return motpPrefix;
 	}
 
-	public void setOtp(String otp)
+	public void setMotpPrefix(String motpPrefix)
 	{
-		this.otp = otp;
+		this.motpPrefix = motpPrefix;
 	}
 
-	public String getOtpPrefix()
+	public String getEotpPrefix()
 	{
-		return otpPrefix;
+		return eotpPrefix;
 	}
 
-	public void setOtpPrefix(String otpPrefix)
+	public void setEotpPrefix(String eotpPrefix)
 	{
-		this.otpPrefix = otpPrefix;
+		this.eotpPrefix = eotpPrefix;
 	}
 
 }
