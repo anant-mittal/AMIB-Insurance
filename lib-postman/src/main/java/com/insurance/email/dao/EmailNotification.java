@@ -37,21 +37,28 @@ public class EmailNotification
 		try
 		{
 
+			Thread thread = new Thread()
+			{
+				public void run()
+				{
+					SimpleMailMessage mail = new SimpleMailMessage();
+					mail.setFrom("almulla.insurance.1427@gmail.com");
+					mail.setTo(emailId);
+					mail.setSubject("Almulla Insurance Registartion Otp");
+					mail.setText("Your Email OTP Generted For Registration of Almulla Insurance is : " + emailOtpToSend + "          And Mobile Otp is :"+mobileOtpToSend);
+
+					logger.info(TAG + " sendEmail :: Sending....");
+
+					javaMailSender.send(mail);
+
+					logger.info(TAG + " sendEmail :: Done!!!!");
+				}
+			};
+			thread.start();
+			
 			logger.info(TAG + " sendEmail :: emailOtpToSend  :" + emailOtpToSend);
 			logger.info(TAG + " sendEmail :: mobileOtpToSend :" + mobileOtpToSend);
 			
-			SimpleMailMessage mail = new SimpleMailMessage();
-			mail.setFrom("almulla.insurance.1427@gmail.com");
-			mail.setTo(emailId);
-			mail.setSubject("Almulla Insurance Registartion Otp");
-			mail.setText("Your Email OTP Generted For Registration of Almulla Insurance is : " + emailOtpToSend + "          And Mobile Otp is :"+mobileOtpToSend);
-
-			logger.info(TAG + " sendEmail :: Sending....");
-
-			javaMailSender.send(mail);
-
-			logger.info(TAG + " sendEmail :: Done!!!!");
-
 			email.setEmailSentStatus(true);
 		}
 		catch (Exception e)

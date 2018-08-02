@@ -1,8 +1,4 @@
 
-
-
-
-
 package com.insurance.user_registartion.dao;
 
 import java.sql.CallableStatement;
@@ -79,12 +75,12 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 			resp.setStatusKey(ApiConstants.Failure);
 			resp.setException(e.toString());
 		}
-		
+
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		
+
 		return resp;
 	}
 
@@ -132,12 +128,12 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 			resp.setStatusKey(ApiConstants.Failure);
 			resp.setException(e.toString());
 		}
-		
+
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		
+
 		return resp;
 	}
 
@@ -188,12 +184,12 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 			resp.setStatusKey(ApiConstants.Failure);
 			resp.setException(e.toString());
 		}
-		
+
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		
+
 		return resp;
 	}
 
@@ -239,12 +235,12 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 			resp.setStatusKey(ApiConstants.Failure);
 			resp.setException(e.toString());
 		}
-		
+
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		
+
 		return resp;
 	}
 
@@ -328,12 +324,12 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 			resp.setException(e.toString());
 			e.printStackTrace();
 		}
-		
+
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		
+
 		return resp;
 	}
 
