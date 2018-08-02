@@ -38,7 +38,7 @@ public class EmailNotification
 		{
 
 			String emailId = requestOtpModel.getEmailId();
-			String actualOtp = responseOtpModel.getOtpPrefix() + "-" + responseOtpModel.getOtp();
+			String actualOtp = responseOtpModel.getEotpPrefix();// + "-" + responseOtpModel.getEotp();
 
 			logger.info(TAG + " sendEmail :: emailId :" + emailId);
 			logger.info(TAG + " sendEmail :: actualOtp :" + actualOtp);
