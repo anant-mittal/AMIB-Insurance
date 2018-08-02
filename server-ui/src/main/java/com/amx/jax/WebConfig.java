@@ -1,3 +1,8 @@
+
+
+
+
+
 package com.amx.jax;
 
 import java.lang.reflect.Field;
@@ -13,21 +18,32 @@ import com.amx.utils.ArgUtil;
 
 @Configuration
 @PropertySource("classpath:application-lib.properties")
-public class WebConfig {
+public class WebConfig
+{
 
 	public static final Pattern pattern = Pattern.compile("^\\$\\{(.*)\\}$");
+
 	public static final String APP_NAME = "${app.name}";
+
 	public static final String APP_TITLE = "${app.title}";
+
 	public static final String APP_PROD = "${app.prod}";
+
 	public static final String APP_SWAGGER = "${app.swagger}";
+
 	public static final String APP_DEBUG = "${app.debug}";
+
 	public static final String APP_CACHE = "${app.cache}";
 
 	public static final String APP_AUTH_KEY = "${app.auth.key}";
+
 	public static final String APP_AUTH_ENABLED = "${app.auth.enabled}";
 
 	public static final String AMX_CDN_URL = "${amx.cdn.url}";
+
 	public static final String AMX_APP_URL = "${amx.app.url}";
+
+	public static final String APP_COMP = "${app.company.code}";
 
 	@Value(APP_NAME)
 	@AppParamKey(AppParam.APP_NAME)
@@ -36,7 +52,16 @@ public class WebConfig {
 	@Value(APP_NAME)
 	private String appTitle;
 
-	public String getAppTitle() {
+	@Value(APP_COMP)
+	private String appComp;
+
+	public String getAppCompCode()
+	{
+		return appComp;
+	}
+
+	public String getAppTitle()
+	{
 		return appTitle;
 	}
 
@@ -77,67 +102,88 @@ public class WebConfig {
 	@Value("${server.session.cookie.secure}")
 	private boolean cookieSecure;
 
-	public boolean isCookieHttpOnly() {
+	public boolean isCookieHttpOnly()
+	{
 		return cookieHttpOnly;
 	}
 
-	public boolean isCookieSecure() {
+	public boolean isCookieSecure()
+	{
 		return cookieSecure;
 	}
 
-	public String getAppName() {
+	public String getAppName()
+	{
 		return appName;
 	}
 
-	public Boolean isProdMode() {
+	public Boolean isProdMode()
+	{
 		return prodMode;
 	}
 
-	public Boolean isSwaggerEnabled() {
+	public Boolean isSwaggerEnabled()
+	{
 		return swaggerEnabled;
 	}
 
-	public Boolean isDebug() {
+	public Boolean isDebug()
+	{
 		return debug;
 	}
 
-	public Boolean isCache() {
+	public Boolean isCache()
+	{
 		return cache;
 	}
 
-	public String getCdnURL() {
+	public String getCdnURL()
+	{
 		return cdnURL;
 	}
 
-	public String getAppURL() {
+	public String getAppURL()
+	{
 		return appURL;
 	}
 
 	@Bean
-	public AppParam loadAppParams() {
+	public AppParam loadAppParams()
+	{
 
-		for (Field field : WebConfig.class.getDeclaredFields()) {
+		for (Field field : WebConfig.class.getDeclaredFields())
+		{
 			AppParamKey s = field.getAnnotation(AppParamKey.class);
 			Value v = field.getAnnotation(Value.class);
-			if (s != null && v != null) {
+			if (s != null && v != null)
+			{
 				Matcher match = pattern.matcher(v.value());
-				if (match.find()) {
+				if (match.find())
+				{
 					s.value().setProperty(match.group(1));
 				}
 
 				String typeName = field.getGenericType().getTypeName();
 				Object value = null;
-				try {
+				try
+				{
 					value = field.get(this);
-				} catch (IllegalArgumentException e) {
+				}
+				catch (IllegalArgumentException e)
+				{
 					e.printStackTrace();
-				} catch (IllegalAccessException e) {
+				}
+				catch (IllegalAccessException e)
+				{
 					e.printStackTrace();
 				}
 
-				if ("java.lang.String".equals(typeName)) {
+				if ("java.lang.String".equals(typeName))
+				{
 					s.value().setValue(ArgUtil.parseAsString(value));
-				} else if ("boolean".equals(typeName) || "java.lang.Boolean".equals(typeName)) {
+				}
+				else if ("boolean".equals(typeName) || "java.lang.Boolean".equals(typeName))
+				{
 					s.value().setEnabled(ArgUtil.parseAsBoolean(value));
 				}
 			}

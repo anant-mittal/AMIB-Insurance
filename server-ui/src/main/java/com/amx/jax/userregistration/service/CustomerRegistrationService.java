@@ -1,4 +1,8 @@
 
+
+
+
+
 package com.amx.jax.userregistration.service;
 
 import java.util.ArrayList;
@@ -25,7 +29,8 @@ import com.insurance.user_registartion.model.CustomerPersonalDetail;
 import com.insurance.user_registartion.model.Validate;
 
 @Service
-public class CustomerRegistrationService implements ICustomerRegistration {
+public class CustomerRegistrationService implements ICustomerRegistration
+{
 	String TAG = "com.amx.jax.userregistration.service :: CustomerRegistrationService :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(CustomerRegistrationService.class);
@@ -42,25 +47,31 @@ public class CustomerRegistrationService implements ICustomerRegistration {
 	@Autowired
 	RegSession regSession;
 
-	public AmxApiResponse<Validate, Object> isValidCivilId(String civilid) {
+	public AmxApiResponse<Validate, Object> isValidCivilId(String civilid)
+	{
 		return customerRegistrationDao.isValidCivilId(civilid);
 	}
 
-	public AmxApiResponse<Validate, Object> isCivilIdExist(String civilid) {
+	public AmxApiResponse<Validate, Object> isCivilIdExist(String civilid)
+	{
 		return customerRegistrationDao.isCivilIdExist(civilid);
 
 	}
 
-	public AmxApiResponse<Validate, Object> isValidEmailId(String emailId) {
+	public AmxApiResponse<Validate, Object> isValidEmailId(String emailId)
+	{
 		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
 		Validate validate = new Validate();
 
-		if (validate(emailId)) {
+		if (validate(emailId))
+		{
 			validate.setValid(true);
 			resp.setStatusKey(ApiConstants.Success);
 			resp.setMessage("Valid Email Id");
 
-		} else {
+		}
+		else
+		{
 			validate.setValid(false);
 			resp.setStatusKey(ApiConstants.Failure);
 			resp.setMessage("Invalid Email ID");
@@ -70,58 +81,82 @@ public class CustomerRegistrationService implements ICustomerRegistration {
 		return resp;
 	}
 
-	public static boolean validate(String emailStr) {
-		Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
-				Pattern.CASE_INSENSITIVE);
+	public static boolean validate(String emailStr)
+	{
+		Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 		Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
 		return matcher.find();
 	}
 
-	public AmxApiResponse<Validate, Object> isValidMobileNumber(String mobileNumber) {
+	public AmxApiResponse<Validate, Object> isValidMobileNumber(String mobileNumber)
+	{
 		return customerRegistrationDao.isValidMobileNumber(mobileNumber);
 	}
 
-	public AmxApiResponse<CustomerPersonalDetail, Object> addNewCustomer(
-			CustomerPersonalDetail customerPersonalDetail) {
+	public AmxApiResponse<CustomerPersonalDetail, Object> addNewCustomer(CustomerPersonalDetail customerPersonalDetail)
+	{
 		return customerRegistrationDao.addNewCustomer(customerPersonalDetail);
 	}
 
-	public ArrayList getCompanySetUp(int langId) {
-		try {
+	public ArrayList getCompanySetUp(int langId)
+	{
+		try
+		{
 			return customerRegistrationDao.getCompanySetUp(langId);
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public AmxApiResponse<ResponseOtpModel, Object> sendOtp(RequestOtpModel requestOtpModel) {
+	public AmxApiResponse<ResponseOtpModel, Object> sendOtp(RequestOtpModel requestOtpModel)
+	{
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
-
-		try {
-
-			ResponseOtpModel responseOtpModel = new ResponseOtpModel();
-
-			responseOtpModel.setEotpPrefix(Random.randomAlpha(3));
-			responseOtpModel.setMotpPrefix(Random.randomAlpha(3));
+		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
+		
+		try
+		{
+			regSession.setCivilId(requestOtpModel.getCivilId());
+			regSession.setEmailId(requestOtpModel.getEmailId());
+			regSession.setMobileNumber(requestOtpModel.getMobileNumber());
+			
+			
+			String emailOtpPrefix = Random.randomAlpha(3);
+			String mobileOtpPrefix = Random.randomAlpha(3);
+			
+			String emailOtp = Random.randomNumeric(6);
+			String mobileOtp = Random.randomNumeric(6);
+			
+			String emailOtpToSend = emailOtpPrefix+"-"+emailOtp;
+			String mobileOtpToSend = mobileOtpPrefix+"-"+mobileOtp;
+			
+			responseOtpModel.setEotpPrefix(emailOtpPrefix);
+			responseOtpModel.setMotpPrefix(mobileOtpPrefix);
 
 			regSession.setMotpPrefix(responseOtpModel.getMotpPrefix());
 			regSession.setEotpPrefix(responseOtpModel.getEotpPrefix());
-
+			
 			regSession.setEotp(Random.randomNumeric(6));
 			regSession.setMotp(Random.randomNumeric(6));
 
-			Email email = emailNotification.sendEmail(requestOtpModel, responseOtpModel);
+			Email email = emailNotification.sendEmail(emailOtpToSend, mobileOtpToSend,requestOtpModel.getEmailId());
 
-			if (email.getEmailSentStatus()) {
+			if (email.getEmailSentStatus())
+			{
 				resp.setData(responseOtpModel);
 				resp.setStatus(ApiConstants.Success);
-			} else {
+			}
+			else
+			{
 				resp.setData(null);
 				resp.setException(email.getEmailSendingException());
 				resp.setStatus(ApiConstants.Failure);
 			}
-		} catch (Exception e) {
+		}
+		catch (Exception e)
+		{
 			e.printStackTrace();
 			resp.setData(null);
 			resp.setException(e.toString());
@@ -129,4 +164,31 @@ public class CustomerRegistrationService implements ICustomerRegistration {
 		}
 		return resp;
 	}
+	
+	public AmxApiResponse<Validate, Object> validateOtp(String mOtp,String eOtp)
+	{
+		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
+		Validate validate = new Validate();
+		
+		if(regSession.getMotp().equals(mOtp) && regSession.getEotp().equals(eOtp))
+		{
+			validate.setValid(true);
+			resp.setStatusKey(ApiConstants.Success);
+			resp.setMessage("Valid Otp");
+		}
+		else
+		{
+			validate.setValid(false);
+			resp.setStatusKey(ApiConstants.Failure);
+			resp.setMessage("Invalid Otp");
+			
+		}
+		resp.setData(validate);
+		resp.setMessageKey("validateOtp");
+		
+		return resp;
+	}
+	
+	
+	
 }

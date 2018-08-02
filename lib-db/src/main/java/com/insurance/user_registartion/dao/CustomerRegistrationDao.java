@@ -107,14 +107,14 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 			{
 				validate.setValid(true);
 				resp.setStatusKey(ApiConstants.Success);
-				resp.setMessage("Civil Id Exist");
+				resp.setMessage("Civil Id Not Exist");
 				
 			}
 			else
 			{
 				validate.setValid(false);
 				resp.setStatusKey(ApiConstants.Failure);
-				resp.setMessage("Civil Id Not Exist");
+				resp.setMessage("Civil Id Already Registered");
 			}
 			resp.setMessageKey("isCivilIdExist");
 			resp.setData(validate);

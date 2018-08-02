@@ -30,25 +30,21 @@ public class EmailNotification
 	
 	private String username;
 
-	public Email sendEmail(RequestOtpModel requestOtpModel, ResponseOtpModel responseOtpModel)
+	public Email sendEmail(String emailOtpToSend, String mobileOtpToSend , String emailId)
 	{
 		Email email = new Email();
 
 		try
 		{
 
-			String emailId = requestOtpModel.getEmailId();
-			String actualOtp = responseOtpModel.getEotpPrefix();// + "-" + responseOtpModel.getEotp();
-
-			logger.info(TAG + " sendEmail :: emailId :" + emailId);
-			logger.info(TAG + " sendEmail :: actualOtp :" + actualOtp);
-			logger.info(TAG + " sendEmail :: configureOuremail :" + this.username);
-
+			logger.info(TAG + " sendEmail :: emailOtpToSend  :" + emailOtpToSend);
+			logger.info(TAG + " sendEmail :: mobileOtpToSend :" + mobileOtpToSend);
+			
 			SimpleMailMessage mail = new SimpleMailMessage();
 			mail.setFrom("almulla.insurance.1427@gmail.com");
 			mail.setTo(emailId);
 			mail.setSubject("Almulla Insurance Registartion Otp");
-			mail.setText("Your OTP Generted For Registration of Almulla Insurance is : " + actualOtp);
+			mail.setText("Your Email OTP Generted For Registration of Almulla Insurance is : " + emailOtpToSend + "          And Mobile Otp is :"+mobileOtpToSend);
 
 			logger.info(TAG + " sendEmail :: Sending....");
 
