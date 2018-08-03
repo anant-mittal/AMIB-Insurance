@@ -29,7 +29,8 @@ import io.swagger.annotations.Api;
  */
 @Controller
 @Api(value = "Auth APIs")
-public class HomeController {
+public class HomeController
+{
 
 	/** The Constant LOGGER. */
 	private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
@@ -59,21 +60,28 @@ public class HomeController {
 	 *
 	 * @return the version
 	 */
-	public String getVersion() {
-		long checkTimeNew = System.currentTimeMillis() / (1000 * 60 * 5);
-		if (checkTimeNew != checkTime) {
-			try {
-				Map<String, Object> map = JsonUtil.toMap(restService
-						.ajax(webConfig.getCdnURL() + "/dist/build.json?_=" + checkTimeNew).get().asObject());
-				if (map.containsKey("version")) {
+	public String getVersion()
+	{
+		/*long checkTimeNew = System.currentTimeMillis() / (1000 * 60 * 5);
+		if (checkTimeNew != checkTime)
+		{
+			try
+			{
+				Map<String, Object> map = JsonUtil.toMap(restService.ajax(webConfig.getCdnURL() + "/dist/build.json?_=" + checkTimeNew).get().asObject());
+				if (map.containsKey("version"))
+				{
 					versionNew = ArgUtil.parseAsString(map.get("version"));
 				}
 				checkTime = checkTimeNew;
-			} catch (Exception e) {
+			}
+			catch (Exception e)
+			{
 				LOGGER.error("getVersion Exception", e);
 			}
 		}
-		return versionNew;
+		return versionNew;*/
+		
+		return "1.0.1";
 	}
 
 	/**
@@ -85,7 +93,8 @@ public class HomeController {
 	 */
 	@RequestMapping(value = "/pub/meta/**", method = { RequestMethod.GET })
 	@ResponseBody
-	public String loginPing(HttpServletRequest request) {
+	public String loginPing(HttpServletRequest request)
+	{
 		AmxApiResponse<Object, Object> wrapper = new AmxApiResponse<Object, Object>();
 		return JsonUtil.toJson(wrapper);
 	}
@@ -98,7 +107,8 @@ public class HomeController {
 	 * @return the string
 	 */
 	@RequestMapping(value = "/login/**", method = { RequestMethod.GET })
-	public String loginJPage(Model model) {
+	public String loginJPage(Model model)
+	{
 		model.addAttribute("lang", httpService.getLanguage());
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
 		model.addAttribute("cdnUrl", webConfig.getCdnURL());
@@ -111,10 +121,10 @@ public class HomeController {
 	 *
 	 * @return the string
 	 */
-	@RequestMapping(value = "/login/**", method = { RequestMethod.GET, RequestMethod.POST }, headers = {
-			"Accept=application/json", "Accept=application/v0+json" })
+	@RequestMapping(value = "/login/**", method = { RequestMethod.GET, RequestMethod.POST }, headers = { "Accept=application/json", "Accept=application/v0+json" })
 	@ResponseBody
-	public String loginPJson() {
+	public String loginPJson()
+	{
 		AmxApiResponse<Object, Object> wrapper = new AmxApiResponse<Object, Object>();
 		// wrapper.setMessage(WebResponseStatus.UNAUTHORIZED,
 		// ResponseMessage.UNAUTHORIZED);
@@ -129,12 +139,13 @@ public class HomeController {
 	 * @return the string
 	 */
 	@RequestMapping(value = { "/register/**", "/app/**", "/home/**", "/" }, method = { RequestMethod.GET })
-	public String defaultPage(Model model) {
+	public String defaultPage(Model model)
+	{
 		model.addAttribute("lang", httpService.getLanguage());
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
 		model.addAttribute("cdnUrl", webConfig.getCdnURL());
 		model.addAttribute("cdnVerion", getVersion());
 		return "app";
 	}
-	
+
 }
