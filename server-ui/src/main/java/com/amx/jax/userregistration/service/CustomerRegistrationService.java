@@ -48,7 +48,7 @@ public class CustomerRegistrationService implements ICustomerRegistration
 		return customerRegistrationDao.isValidCivilId(civilid);
 	}
 
-	public AmxApiResponse<Validate, Object> isCivilIdExist(String civilid)
+	public boolean isCivilIdExist(String civilid)
 	{
 		return customerRegistrationDao.isCivilIdExist(civilid);
 
@@ -99,13 +99,9 @@ public class CustomerRegistrationService implements ICustomerRegistration
 		customerPersonalDetail.setCountryId(1);
 		customerPersonalDetail.setCompCd(10);
 		customerPersonalDetail.setUserType("D");
-		logger.info(TAG + " addNewCustomer :: regSession.getMobileNumber() :" + regSession.getMobileNumber());
 		customerPersonalDetail.setMobile(regSession.getMobileNumber());
-		logger.info(TAG + " addNewCustomer :: regSession.getMotp() :" + regSession.getMotp());
 		customerPersonalDetail.setMobVerificationCode(regSession.getMotp());
-		logger.info(TAG + " addNewCustomer :: regSession.getEmailId() :" + regSession.getEmailId());
 		customerPersonalDetail.setEmail(regSession.getEmailId());
-		logger.info(TAG + " addNewCustomer :: regSession.getEotp() :" + regSession.getEotp());
 		customerPersonalDetail.setEmailVerificationCode(regSession.getEotp());
 		customerPersonalDetail.setLanguageId(0);
 
@@ -193,7 +189,6 @@ public class CustomerRegistrationService implements ICustomerRegistration
 			validate.setValid(false);
 			resp.setStatusKey(ApiConstants.Failure);
 			resp.setMessage("Invalid Otp");
-
 		}
 		resp.setData(validate);
 		resp.setMessageKey("validateOtp");

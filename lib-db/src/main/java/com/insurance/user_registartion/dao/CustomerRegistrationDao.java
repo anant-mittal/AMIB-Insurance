@@ -84,7 +84,48 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 		return resp;
 	}
 
-	public AmxApiResponse<Validate, Object> isCivilIdExist(String civilid)
+	public boolean isCivilIdExist(String civilid)
+	{
+		logger.info(TAG + " isCivilIdExist :: civilid :" + civilid);
+
+		getConnection();
+
+		CallableStatement callableStatement = null;
+		String callFunction = "{ ? = call IRB_IF_ONLINE_USEREXIST(?,?,?,?)}";
+
+		try
+		{
+			callableStatement = connection.prepareCall(callFunction);
+			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
+			callableStatement.setInt(2, 1);
+			callableStatement.setInt(3, 10);
+			callableStatement.setString(4, "D");
+			callableStatement.setString(5, civilid);
+			callableStatement.executeUpdate();
+			String result = callableStatement.getString(1);
+			logger.info(TAG + " isCivilIdExist :: result :" + result);
+
+			if (result.equalsIgnoreCase("Y"))
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		return false;
+	}
+
+	public AmxApiResponse<Validate, Object> isCivilIdExistOld(String civilid)
 	{
 		logger.info(TAG + " isCivilIdExist :: civilid :" + civilid);
 
@@ -110,15 +151,16 @@ public class CustomerRegistrationDao implements ICustomerRegistration
 			{
 				validate.setValid(true);
 				resp.setStatusKey(ApiConstants.Success);
-				resp.setMessage("Civil Id Not Exist");
+				resp.setMessage("CivilId Not Exist");
 
 			}
 			else
 			{
 				validate.setValid(false);
 				resp.setStatusKey(ApiConstants.Failure);
-				resp.setMessage("Civil Id Already Registered");
+				resp.setMessage("CivilId Already Registered");
 			}
+
 			resp.setMessageKey("isCivilIdExist");
 			resp.setData(validate);
 		}

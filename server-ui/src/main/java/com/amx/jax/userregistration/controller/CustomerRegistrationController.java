@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
+import com.amx.jax.constants.StatusKey;
 import com.amx.jax.session.RegSession;
 import com.amx.jax.userregistration.service.CustomerRegistrationService;
 import com.amx.utils.ArgUtil;
@@ -50,11 +51,17 @@ public class CustomerRegistrationController implements ICustomerRegistration
 			return validateCivilID;
 		}
 
-		AmxApiResponse<Validate, Object> civilIdExist = customerRegistrationService.isCivilIdExist(requestOtpModel.getCivilId());
-
-		if (civilIdExist.getStatusKey().equalsIgnoreCase(ApiConstants.Failure))
+		boolean civilIdExistCheck = customerRegistrationService.isCivilIdExist(requestOtpModel.getCivilId());
+		AmxApiResponse<Validate, Object> respCivilIdExist = new AmxApiResponse<Validate, Object>();
+		Validate validate = new Validate();
+		if (civilIdExistCheck)
 		{
-			return civilIdExist;
+			validate.setValid(false);
+			respCivilIdExist.setStatusKey(ApiConstants.Failure);
+			respCivilIdExist.setMessage("CivilId Already Registered");
+			respCivilIdExist.setMessageKey("isCivilIdExist");
+			respCivilIdExist.setData(validate);
+			return respCivilIdExist;
 		}
 
 		AmxApiResponse<Validate, Object> validateMobileNumber = customerRegistrationService.isValidMobileNumber(requestOtpModel.getMobileNumber());
@@ -99,22 +106,48 @@ public class CustomerRegistrationController implements ICustomerRegistration
 		return customerRegistrationService.addNewCustomer(customerPersonalDetail);
 	}
 
-	@RequestMapping(value = "/companysetup", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/pub/reg/civilid-exists", method = RequestMethod.POST, produces = "application/json")
+	public AmxApiResponse<Validate, Object> isCivilIdExist(@RequestParam("civilId") String civilid)
+	{
+		AmxApiResponse<Validate, Object> validateCivilID = customerRegistrationService.isValidCivilId(civilid);
+
+		if (validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.Failure))
+		{
+			return validateCivilID;
+		}
+
+		boolean civilIdExistCheck = customerRegistrationService.isCivilIdExist(civilid);
+
+		AmxApiResponse<Validate, Object> respCivilIdExist = new AmxApiResponse<Validate, Object>();
+		Validate validate = new Validate();
+
+		if (civilIdExistCheck)
+		{
+			validate.setValid(true);
+			respCivilIdExist.setStatusKey(ApiConstants.Success);
+			respCivilIdExist.setMessage("CivilId Already Registered");
+			respCivilIdExist.setMessageKey(StatusKey.CIVIL_ID_ALREADY_REGISTER);
+			respCivilIdExist.setData(validate);
+		}
+		else
+		{
+			validate.setValid(false);
+			respCivilIdExist.setStatusKey(ApiConstants.Failure);
+			respCivilIdExist.setMessage("CivilId Not Registered");
+			respCivilIdExist.setMessageKey(StatusKey.CIVIL_ID_ALREADY_REGISTER);
+			respCivilIdExist.setData(validate);
+		}
+
+		return respCivilIdExist;
+	}
+
+	
+	@RequestMapping(value = "/pub/reg/companysetup", method = RequestMethod.GET, produces = "application/json")
 	public ArrayList getCompanySetUp(@RequestParam("langId") int langId)
 	{
 		return customerRegistrationService.getCompanySetUp(langId);
 	}
 	
-	@RequestMapping(value = "/validate-civilid", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<Validate, Object> isValidCivilId(@RequestParam("civilId") String civilid)
-	{
-		return customerRegistrationService.isValidCivilId(civilid);
-	}
-
-	@RequestMapping(value = "/civilid-exists", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<Validate, Object> isCivilIdExist(@RequestParam("civilId") String civilid)
-	{
-		return customerRegistrationService.isCivilIdExist(civilid);
-	}
+	
 
 }
