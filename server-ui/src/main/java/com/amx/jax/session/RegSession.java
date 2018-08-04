@@ -32,6 +32,17 @@ public class RegSession implements Serializable
 	
 	private String emailId;
 	
+	private int countryId;
+	
+	private int countryCd;
+	
+	
+	
+	
+	
+	
+	
+	
 	
 
 	public String getMotpPrefix()
