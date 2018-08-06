@@ -111,7 +111,7 @@ public class CustomerRegistrationService
 		}
 		validMobileNumber.setMessage(isValidMobileNumber.getErrorMessage());
 		validMobileNumber.setError(isValidMobileNumber.getErrorCode());
-		validMobileNumber.setMessageKey(MessageKey.KEY_MOBILE_NO_INVALID);
+		validMobileNumber.setMessageKey(isValidMobileNumber.getErrorCode());//Error Code Coming From DB/Procedure
 
 		return validMobileNumber;
 	}
