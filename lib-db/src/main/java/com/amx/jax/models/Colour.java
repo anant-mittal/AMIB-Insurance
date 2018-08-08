@@ -1,5 +1,6 @@
 package com.amx.jax.models;
 
+
 public class Colour
 {
 	public String colourCode = "";

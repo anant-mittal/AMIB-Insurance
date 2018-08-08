@@ -1,7 +1,8 @@
-
 package com.amx.jax.models;
 
-public class CustomerRegistrationModel
+import java.sql.Date;
+
+public class CustomerDetailModel
 {
 	private String userType;
 
@@ -15,24 +16,36 @@ public class CustomerRegistrationModel
 
 	private int userSequenceNumber;
 
-	private int countryId;
+	private int countryId;//
 
-	private int compCd;//
+	private int compCd;
 
 	private String mobile;
 
 	private String email;
 
 	private int languageId;
-	
+
 	private boolean status;
-	
+
 	private String errorMessage;
-	
+
 	private String errorCode;
-	
+
 	private String deviceType;
-	
+
+	private String mobileVerify;
+
+	private String mailVerify;
+
+	private Date lastLogin;
+
+	private String deviceId;
+
+	private String dbStatus;
+
+	private String otp;
+
 	public String getUserType()
 	{
 		return userType;
@@ -112,7 +125,7 @@ public class CustomerRegistrationModel
 	{
 		this.compCd = compCd;
 	}
-	
+
 	public String getMobile()
 	{
 		return mobile;
@@ -142,7 +155,7 @@ public class CustomerRegistrationModel
 	{
 		this.languageId = languageId;
 	}
-	
+
 	public boolean getStatus()
 	{
 		return status;
@@ -172,7 +185,7 @@ public class CustomerRegistrationModel
 	{
 		this.errorCode = errorCode;
 	}
-	
+
 	public String getDeviceType()
 	{
 		return deviceType;
@@ -182,4 +195,73 @@ public class CustomerRegistrationModel
 	{
 		this.deviceType = deviceType;
 	}
+
+	public String getMobileVerify()
+	{
+		return mobileVerify;
+	}
+
+	public void setMobileVerify(String mobileVerify)
+	{
+		this.mobileVerify = mobileVerify;
+	}
+
+	public String getMailVerify()
+	{
+		return mailVerify;
+	}
+
+	public void setMailVerify(String mailVerify)
+	{
+		this.mailVerify = mailVerify;
+	}
+
+	public Date getLastLogin()
+	{
+		return lastLogin;
+	}
+
+	public void setLastLogin(Date lastLogin)
+	{
+		this.lastLogin = lastLogin;
+	}
+
+	public String getDeviceId()
+	{
+		return deviceId;
+	}
+
+	public void setDeviceId(String deviceId)
+	{
+		this.deviceId = deviceId;
+	}
+
+	public String getDbStatus()
+	{
+		return dbStatus;
+	}
+
+	public void setDbStatus(String dbStatus)
+	{
+		this.dbStatus = dbStatus;
+	}
+
+	public String getOtp()
+	{
+		return otp;
+	}
+
+	public void setOtp(String otp)
+	{
+		this.otp = otp;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "CustomerDetailModel [userType=" + userType + ", civilId=" + civilId + ", password=" + password + ", createdDeviceId=" + createdDeviceId + ", civilid=" + civilid + ", userSequenceNumber=" + userSequenceNumber + ", countryId=" + countryId + ", compCd=" + compCd + ", mobile=" + mobile
+				+ ", email=" + email + ", languageId=" + languageId + ", status=" + status + ", errorMessage=" + errorMessage + ", errorCode=" + errorCode + ", deviceType=" + deviceType + ", mobileVerify=" + mobileVerify + ", mailVerify=" + mailVerify + ", lastLogin=" + lastLogin + ", deviceId="
+				+ deviceId + ", dbStatus=" + dbStatus + "]";
+	}
+
 }
