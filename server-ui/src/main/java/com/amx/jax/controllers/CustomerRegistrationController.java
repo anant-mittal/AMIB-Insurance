@@ -16,7 +16,6 @@ import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.models.ChangePasswordOtpRequest;
 import com.amx.jax.models.ChangePasswordRequest;
 import com.amx.jax.models.ChangePasswordResponse;
-import com.amx.jax.models.CompanySetupRequest;
 import com.amx.jax.models.CustomerLoginRequest;
 import com.amx.jax.models.CustomerLoginResponse;
 import com.amx.jax.models.CustomerRegistrationRequest;
@@ -100,7 +99,7 @@ public class CustomerRegistrationController
 	@RequestMapping(value = "/pub/login/changepass", method = RequestMethod.POST)
 	public AmxApiResponse<ChangePasswordResponse, Object> updatePassword(@RequestBody ChangePasswordRequest changePasswordRequest)
 	{
-		return customerRegistrationService.updatePassword(changePasswordRequest);
+		return customerRegistrationService.updatePassword(changePasswordRequest);//
 	}
 
 }
