@@ -482,6 +482,7 @@ public class CustomerRegistrationDao
 			callableStatement.registerOutParameter(11, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(12, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
+			
 			customerDetailModel = new CustomerDetailModel();
 			
 			String errorCode = callableStatement.getString(11);
@@ -489,6 +490,9 @@ public class CustomerRegistrationDao
 			
 			logger.info(TAG + " updatePassword :: errorCode :" + errorCode);
 			logger.info(TAG + " updatePassword :: errorMessage :" + errorMessage);
+			
+			customerDetailModel.setErrorCode(errorCode);
+			customerDetailModel.setErrorMessage(errorMessage);
 			
 			if (errorCode == null)
 			{

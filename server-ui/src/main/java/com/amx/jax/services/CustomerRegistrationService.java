@@ -469,6 +469,7 @@ public class CustomerRegistrationService
 	{
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
 		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
+		regSession.setCivilId(changePasswordOtpRequest.getCivilId());
 
 		AmxApiResponse<Validate, Object> validateCivilID = isValidCivilId(changePasswordOtpRequest.getCivilId());
 		if (validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
