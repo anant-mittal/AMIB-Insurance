@@ -1,8 +1,4 @@
 
-
-
-
-
 package com.amx.jax.session;
 
 import java.io.Serializable;
@@ -25,25 +21,36 @@ public class RegSession implements Serializable
 	private String motp;
 
 	private String eotp;
-	
+
 	private String civilId;
-	
+
 	private String mobileNumber;
-	
+
 	private String emailId;
-	
+
+	private String changePasswordOtp;
+
 	private int countryId;
+
+	private int compCd;
+
+	private String userType;
+
+	private String deviceType;
 	
-	private int countryCd;
+	private String deviceId;
 	
-	
-	
-	
-	
-	
-	
-	
-	
+	private int languageId;
+
+	public String getChangePasswordOtp()
+	{
+		return changePasswordOtp;
+	}
+
+	public void setChangePasswordOtp(String changePasswordOtp)
+	{
+		this.changePasswordOtp = changePasswordOtp;
+	}
 
 	public String getMotpPrefix()
 	{
@@ -84,7 +91,7 @@ public class RegSession implements Serializable
 	{
 		this.eotp = eotp;
 	}
-	
+
 	public String getCivilId()
 	{
 		return civilId;
@@ -113,6 +120,66 @@ public class RegSession implements Serializable
 	public void setEmailId(String emailId)
 	{
 		this.emailId = emailId;
+	}
+
+	public int getCountryId()
+	{
+		return countryId;
+	}
+
+	public void setCountryId(int countryId)
+	{
+		this.countryId = countryId;
+	}
+
+	public int getCompCd()
+	{
+		return compCd;
+	}
+
+	public void setCompCd(int compCd)
+	{
+		this.compCd = compCd;
+	}
+	
+	public String getUserType()
+	{
+		return userType;
+	}
+
+	public void setUserType(String userType)
+	{
+		this.userType = userType;
+	}
+
+	public String getDeviceType()
+	{
+		return deviceType;
+	}
+
+	public void setDeviceType(String deviceType)
+	{
+		this.deviceType = deviceType;
+	}
+
+	public String getDeviceId()
+	{
+		return deviceId;
+	}
+
+	public void setDeviceId(String deviceId)
+	{
+		this.deviceId = deviceId;
+	}
+
+	public int getLanguageId()
+	{
+		return languageId;
+	}
+
+	public void setLanguageId(int languageId)
+	{
+		this.languageId = languageId;
 	}
 
 }

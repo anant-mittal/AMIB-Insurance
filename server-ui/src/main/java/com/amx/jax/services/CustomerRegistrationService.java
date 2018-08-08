@@ -4,17 +4,26 @@ package com.amx.jax.services;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.amx.jax.WebConfig;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.Message;
 import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.CustomerRegistrationDao;
+import com.amx.jax.models.ChangePasswordOtpRequest;
+import com.amx.jax.models.ChangePasswordOtpResponse;
+import com.amx.jax.models.ChangePasswordRequest;
+import com.amx.jax.models.ChangePasswordResponse;
+import com.amx.jax.models.CompanySetUp;
+import com.amx.jax.models.CompanySetupRequest;
+import com.amx.jax.models.CustomerDetailModel;
+import com.amx.jax.models.CustomerLoginModel;
+import com.amx.jax.models.CustomerLoginRequest;
+import com.amx.jax.models.CustomerLoginResponse;
 import com.amx.jax.models.CustomerRegistrationModel;
 import com.amx.jax.models.CustomerRegistrationRequest;
 import com.amx.jax.models.CustomerRegistrationResponse;
@@ -45,6 +54,43 @@ public class CustomerRegistrationService
 
 	@Autowired
 	RegSession regSession;
+
+	@Autowired
+	private WebConfig webConfig;
+
+	public AmxApiResponse<Validate, Object> getCompanySetUp(int languageId,String deviceId)
+	{
+		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
+
+		try
+		{
+			ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao.getCompanySetUp(languageId);
+
+			logger.info(TAG + " getCompanySetUp :: Init After getCompanySetUp :");
+
+			regSession.setCountryId(getCompanySetUp.get(0).getCntryCd());
+			regSession.setCompCd(getCompanySetUp.get(0).getCompCd());
+			regSession.setUserType("D");
+			regSession.setDeviceId(deviceId);
+			regSession.setDeviceType("ONLINE");
+
+			
+			logger.info(TAG + " getCompanySetUp :: getCountryId   :" + regSession.getCountryId());
+			logger.info(TAG + " getCompanySetUp :: getCompCd      :" + regSession.getCompCd());
+			logger.info(TAG + " getCompanySetUp :: getUserType    :" + regSession.getUserType());
+			logger.info(TAG + " getCompanySetUp :: getDeviceId    :" + regSession.getDeviceId());
+			logger.info(TAG + " getCompanySetUp :: getDeviceType  :" + regSession.getDeviceType());
+
+			resp.setData(null);
+			resp.setStatus(ApiConstants.SUCCESS);
+		}
+		catch (Exception e)
+		{
+			resp.setException(e.toString());
+			e.printStackTrace();
+		}
+		return resp;
+	}
 
 	public static boolean validate(String emailStr)
 	{
@@ -111,7 +157,7 @@ public class CustomerRegistrationService
 		}
 		validMobileNumber.setMessage(isValidMobileNumber.getErrorMessage());
 		validMobileNumber.setError(isValidMobileNumber.getErrorCode());
-		validMobileNumber.setMessageKey(isValidMobileNumber.getErrorCode());//Error Code Coming From DB/Procedure
+		validMobileNumber.setMessageKey(isValidMobileNumber.getErrorCode());
 
 		return validMobileNumber;
 	}
@@ -158,6 +204,19 @@ public class CustomerRegistrationService
 		resp.setMessageKey(MessageKey.KEY_EMAID_INVALID);
 		resp.setData(validate);
 		return resp;
+	}
+
+	public CustomerDetailModel userDetails(String civilId)
+	{
+		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(civilId);
+
+		logger.info(TAG + " userDetails :: customerDetailModel :" + customerDetailModel.toString());
+
+		if (customerDetailModel.getStatus())
+		{
+			return customerDetailModel;
+		}
+		return null;
 	}
 
 	public AmxApiResponse<Validate, Object> isCivilIdExistCheck(String civilid)
@@ -265,7 +324,12 @@ public class CustomerRegistrationService
 			regSession.setEotp(emailOtp);
 			regSession.setMotp(mobileOtp);
 
-			Email email = emailNotification.sendEmail(emailOtpToSend, mobileOtpToSend, requestOtpModel.getEmailId());
+			String emailIdFrom = webConfig.getConfigEmail();
+			String emailITo = requestOtpModel.getEmailId();
+			String Subject = "Almulla Insurance Registartion Otp";
+			String mailData = "Your Email OTP Generted For Registration of Almulla Insurance is : " + emailOtpToSend + "          And Mobile Otp is :" + mobileOtpToSend + "";
+
+			Email email = emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
 
 			if (email.getEmailSentStatus())
 			{
@@ -317,7 +381,7 @@ public class CustomerRegistrationService
 		AmxApiResponse<CustomerRegistrationResponse, Object> resp = new AmxApiResponse<CustomerRegistrationResponse, Object>();
 		CustomerRegistrationResponse customerRegistrationResponse = new CustomerRegistrationResponse();
 		CustomerRegistrationModel customerRegistrationModel = new CustomerRegistrationModel();
-		
+
 		customerRegistrationModel.setCountryId(1);
 		customerRegistrationModel.setCompCd(10);
 		customerRegistrationModel.setUserType(userRegistartionRequest.getUserType());
@@ -328,12 +392,23 @@ public class CustomerRegistrationService
 		customerRegistrationModel.setPassword(userRegistartionRequest.getPassword());
 		customerRegistrationModel.setCreatedDeviceId(userRegistartionRequest.getCreatedDeviceId());
 		customerRegistrationModel.setDeviceType(userRegistartionRequest.getDeviceType());
-		
+
 		customerRegistrationModel = customerRegistrationDao.addNewCustomer(customerRegistrationModel);
 
 		if (customerRegistrationModel.getStatus())
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
+
+			String emailIdFrom = webConfig.getConfigEmail();
+			String emailITo = regSession.getEmailId();
+			String Subject = "Almulla Insurance Registartion Confirmation";
+			String mailData = "Almulla Insurance Registartion Completed Successfuill.";
+
+			Email email = emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
+			if (email.getEmailSentStatus())
+			{
+			}
+
 		}
 		else
 		{
@@ -341,7 +416,7 @@ public class CustomerRegistrationService
 		}
 
 		resp.setMessage(customerRegistrationModel.getErrorMessage());
-		resp.setError(customerRegistrationModel.getErrorCode());
+		resp.setMessageKey(customerRegistrationModel.getErrorCode());
 
 		customerRegistrationResponse.setCivilid(customerRegistrationModel.getCivilid());
 		customerRegistrationResponse.setUserSequenceNumber(customerRegistrationModel.getUserSequenceNumber());
@@ -352,17 +427,156 @@ public class CustomerRegistrationService
 
 	}
 
-	public ArrayList getCompanySetUp(int langId)
+	public AmxApiResponse<CustomerLoginResponse, Object> validateUserLogin(CustomerLoginRequest customerLoginRequest)
 	{
-		try
+		AmxApiResponse<CustomerLoginResponse, Object> resp = new AmxApiResponse<CustomerLoginResponse, Object>();
+
+		CustomerLoginModel customerLoginModel = new CustomerLoginModel();
+		customerLoginModel.setCountryId(regSession.getCountryId());
+		customerLoginModel.setCompCd(regSession.getCompCd());
+		customerLoginModel.setUserType(regSession.getUserType());
+		customerLoginModel.setCivilId(customerLoginRequest.getCivilId());
+		customerLoginModel.setPassword(customerLoginRequest.getPassword());
+
+		customerLoginModel = customerRegistrationDao.validateUserLogin(customerLoginModel);
+
+		if (customerLoginModel.getStatus())
 		{
-			return customerRegistrationDao.getCompanySetUp(langId);
+			resp.setStatusKey(ApiConstants.SUCCESS);
+
 		}
-		catch (Exception e)
+		else
 		{
-			e.printStackTrace();
+			resp.setStatusKey(ApiConstants.FAILURE);
 		}
-		return null;
+
+		resp.setMessageKey(customerLoginModel.getErrorCode());
+		resp.setMessage(customerLoginModel.getErrorCode());
+
+		CustomerLoginResponse customerLoginResponse = new CustomerLoginResponse();
+		customerLoginResponse.setAmibRef(customerLoginModel.getAmibRef());
+		customerLoginResponse.setUserSeqNum(customerLoginModel.getUserSeqNum());
+
+		resp.setData(customerLoginResponse);
+
+		logger.info(TAG + " validateUserLogin :: customerLoginModel :" + customerLoginModel);
+
+		return resp;
 	}
 
+	public AmxApiResponse<?, Object> changePasswordOtpInitiate(ChangePasswordOtpRequest changePasswordOtpRequest)
+	{
+		AmxApiResponse<ChangePasswordOtpResponse, Object> resp = new AmxApiResponse<ChangePasswordOtpResponse, Object>();
+
+		AmxApiResponse<Validate, Object> validateCivilID = isValidCivilId(changePasswordOtpRequest.getCivilId());
+		if (validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+		{
+			return validateCivilID;
+		}
+
+		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(changePasswordOtpRequest.getCivilId());
+		if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+		{
+			return civilIdExistCheck;
+		}
+
+		CustomerDetailModel customerDetailModel = userDetails(changePasswordOtpRequest.getCivilId());
+
+		if (null == customerDetailModel || customerDetailModel.getErrorCode() != null)
+		{
+			resp.setMessageKey(customerDetailModel.getErrorCode());
+			resp.setMessage(customerDetailModel.getErrorMessage());
+			resp.setStatus(ApiConstants.FAILURE);
+			return resp;
+		}
+		else
+		{
+			ChangePasswordOtpResponse changePasswordOtpResponse = new ChangePasswordOtpResponse();
+			String emailOtpPrefix = Random.randomAlpha(3);
+			String emailOtp = Random.randomNumeric(6);
+			String emailOtpToSend = emailOtpPrefix + "-" + emailOtp;
+
+			String emailIdFrom = webConfig.getConfigEmail();
+			String emailITo = customerDetailModel.getEmail();
+			String Subject = "Almulla Insurance Chanage Password Request";
+			String mailData = "Almulla Insurance Change Password OTP   :- " + emailOtpToSend;
+
+			Email email = emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
+
+			if (email.getEmailSentStatus())
+			{
+				changePasswordOtpResponse.setOtpPrefix(emailOtpPrefix);
+				regSession.setChangePasswordOtp(emailOtp);
+				regSession.setCivilId(changePasswordOtpRequest.getCivilId());
+
+				resp.setMessageKey(null);
+				resp.setError(null);
+				resp.setStatus(ApiConstants.SUCCESS);
+				resp.setData(changePasswordOtpResponse);
+
+				return resp;
+			}
+			else
+			{
+				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setMessage(Message.CP_EMAIL_NOT_SENT);
+				resp.setMessageKey(MessageKey.KEY_CP_OTP_NOT_GENERATED);
+			}
+			
+		}
+
+		return resp;
+	}
+
+	public AmxApiResponse<ChangePasswordResponse, Object> updatePassword(ChangePasswordRequest changePasswordRequest)
+	{
+		AmxApiResponse<ChangePasswordResponse, Object> resp = new AmxApiResponse<ChangePasswordResponse, Object>();
+
+		CustomerDetailModel customerDetailModel = new CustomerDetailModel();
+		customerDetailModel.setPassword(changePasswordRequest.getNewPassword());
+		customerDetailModel.setOtp(changePasswordRequest.getChangePasswordOtp());
+		customerDetailModel.setCivilId(regSession.getCivilId());
+		customerDetailModel.setCountryId(regSession.getCountryId());
+		customerDetailModel.setCompCd(regSession.getCompCd());
+		customerDetailModel.setUserType(regSession.getUserType());
+		customerDetailModel.setDeviceId(regSession.getDeviceId());
+		customerDetailModel.setDeviceType(regSession.getDeviceType());
+		
+		logger.info(TAG + " updatePassword :: getCountryId :" + customerDetailModel.getCountryId());
+		logger.info(TAG + " updatePassword :: getCompCd :" + customerDetailModel.getCompCd());
+		logger.info(TAG + " updatePassword :: getUserType :" + customerDetailModel.getUserType());
+		logger.info(TAG + " updatePassword :: getCivilId :" + customerDetailModel.getCivilId());
+		logger.info(TAG + " updatePassword :: getPassword :" + customerDetailModel.getPassword());
+		logger.info(TAG + " updatePassword :: getDeviceId :" + customerDetailModel.getDeviceId());
+
+		if (regSession.getChangePasswordOtp().equals(changePasswordRequest.getChangePasswordOtp()))
+		{
+			customerDetailModel = customerRegistrationDao.updatePassword(customerDetailModel);
+
+			if (customerDetailModel.getStatus())
+			{
+				resp.setMessageKey(customerDetailModel.getErrorCode());
+				resp.setError(customerDetailModel.getErrorMessage());
+				resp.setStatus(ApiConstants.SUCCESS);
+				resp.setData(null);
+			}
+			else
+			{
+				resp.setMessageKey(customerDetailModel.getErrorCode());
+				resp.setError(customerDetailModel.getErrorMessage());
+				resp.setStatus(ApiConstants.FAILURE);
+				resp.setData(null);
+			}
+		}
+		else
+		{
+			resp.setMessageKey(customerDetailModel.getErrorCode());
+			resp.setError(customerDetailModel.getErrorMessage());
+			resp.setStatus(ApiConstants.FAILURE);
+			resp.setData(null);
+		}
+
+		return resp;
+
+	}
 }

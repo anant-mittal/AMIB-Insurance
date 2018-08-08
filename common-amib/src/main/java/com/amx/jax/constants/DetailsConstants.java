@@ -9,4 +9,6 @@ public class DetailsConstants
 	public static String ERROR_CODE = "";
 	
 	public static String ERROR_MESSAGE = "";
+	
+	public static String CONFIGURED_EMAILID = "almulla.insurance.1427@gmail.com";
 }

@@ -26,5 +26,8 @@ public class Message
 	public static String REG_VALID_OTP = "Valid Otp";
 
 	public static String REG_INVALID_OTP = "Invalid Otp";
+	
+	public static String CP_EMAIL_NOT_SENT = "Email Not Sent to the respective user";
+	
 
 }

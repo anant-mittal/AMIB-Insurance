@@ -223,4 +223,10 @@ public class CompanySetUp
 		this.smsSenderId = smsSenderId;
 	}
 
+	@Override
+	public String toString()
+	{
+		return "CompanySetUp [cntryCd=" + cntryCd + ", compCd=" + compCd + ", companyName=" + companyName + ", cbox=" + cbox + ", cpo=" + cpo + ", teli=" + teli + ", teli2=" + teli2 + ", fax=" + fax + ", email=" + email + ", regNumber=" + regNumber + ", mainAct=" + mainAct + ", mainActCenter="
+				+ mainActCenter + ", heading=" + heading + ", decplc=" + decplc + ", currency=" + currency + ", langId=" + langId + ", appName=" + appName + ", smsSenderId=" + smsSenderId + "]";
+	}
 }

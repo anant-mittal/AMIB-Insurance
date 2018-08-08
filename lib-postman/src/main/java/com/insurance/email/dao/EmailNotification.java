@@ -1,8 +1,4 @@
 
-
-
-
-
 package com.insurance.email.dao;
 
 import org.slf4j.Logger;
@@ -27,10 +23,9 @@ public class EmailNotification
 	@Autowired
 	JavaMailSender javaMailSender;
 
-	
 	private String username;
 
-	public Email sendEmail(String emailOtpToSend, String mobileOtpToSend , String emailId)
+	public Email sendEmail(String emailFrom, String emailTo, String Subject, String emailData)
 	{
 		Email email = new Email();
 
@@ -42,23 +37,17 @@ public class EmailNotification
 				public void run()
 				{
 					SimpleMailMessage mail = new SimpleMailMessage();
-					mail.setFrom("almulla.insurance.1427@gmail.com");
-					mail.setTo(emailId);
-					mail.setSubject("Almulla Insurance Registartion Otp");
-					mail.setText("Your Email OTP Generted For Registration of Almulla Insurance is : " + emailOtpToSend + "          And Mobile Otp is :"+mobileOtpToSend);
+					mail.setFrom(emailFrom);
+					mail.setTo(emailTo);
+					mail.setSubject(Subject);
+					mail.setText(emailData);
 
 					logger.info(TAG + " sendEmail :: Sending....");
-
 					javaMailSender.send(mail);
-
 					logger.info(TAG + " sendEmail :: Done!!!!");
 				}
 			};
 			thread.start();
-			
-			logger.info(TAG + " sendEmail :: emailOtpToSend  :" + emailOtpToSend);
-			logger.info(TAG + " sendEmail :: mobileOtpToSend :" + mobileOtpToSend);
-			
 			email.setEmailSentStatus(true);
 		}
 		catch (Exception e)

@@ -15,6 +15,8 @@ import com.amx.jax.WebConfig;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.rest.RestService;
 import com.amx.jax.service.HttpService;
+import com.amx.jax.services.CustomerRegistrationService;
+import com.amx.jax.session.RegSession;
 import com.amx.utils.JsonUtil;
 import io.swagger.annotations.Api;
 
@@ -43,11 +45,17 @@ public class HomeController
 	@Autowired
 	RestService restService;
 
+	@Autowired
+	RegSession regSession;
+
 	/** The check time. */
 	private long checkTime = 0L;
 
 	/** The version new. */
 	private String versionNew = "_";
+
+	@Autowired
+	private CustomerRegistrationService customerRegistrationService;
 
 	/**
 	 * Gets the version.
@@ -56,25 +64,17 @@ public class HomeController
 	 */
 	public String getVersion()
 	{
-		/*long checkTimeNew = System.currentTimeMillis() / (1000 * 60 * 5);
-		if (checkTimeNew != checkTime)
-		{
-			try
-			{
-				Map<String, Object> map = JsonUtil.toMap(restService.ajax(webConfig.getCdnURL() + "/dist/build.json?_=" + checkTimeNew).get().asObject());
-				if (map.containsKey("version"))
-				{
-					versionNew = ArgUtil.parseAsString(map.get("version"));
-				}
-				checkTime = checkTimeNew;
-			}
-			catch (Exception e)
-			{
-				LOGGER.error("getVersion Exception", e);
-			}
-		}
-		return versionNew;*/
-		
+		/*
+		 * long checkTimeNew = System.currentTimeMillis() / (1000 * 60 * 5); if
+		 * (checkTimeNew != checkTime) { try { Map<String, Object> map =
+		 * JsonUtil.toMap(restService.ajax(webConfig.getCdnURL() +
+		 * "/dist/build.json?_=" + checkTimeNew).get().asObject()); if
+		 * (map.containsKey("version")) { versionNew =
+		 * ArgUtil.parseAsString(map.get("version")); } checkTime =
+		 * checkTimeNew; } catch (Exception e) {
+		 * LOGGER.error("getVersion Exception", e); } } return versionNew;
+		 */
+
 		return "1.0.1";
 	}
 
@@ -135,7 +135,18 @@ public class HomeController
 	@RequestMapping(value = { "/register/**", "/app/**", "/home/**", "/" }, method = { RequestMethod.GET })
 	public String defaultPage(Model model)
 	{
+		System.out.println("HomeController defaultPage  ");
+
 		model.addAttribute("lang", httpService.getLanguage());
+
+		System.out.println("HomeController defaultPage httpService.getLanguage() " + httpService.getLanguage());
+		if (httpService.getLanguage().toString().equalsIgnoreCase("EN"))
+		{
+			regSession.setLanguageId(0);
+			customerRegistrationService.getCompanySetUp(0,httpService.getDeviceId());
+		}
+		
+
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
 		model.addAttribute("cdnUrl", webConfig.getCdnURL());
 		model.addAttribute("cdnVerion", getVersion());

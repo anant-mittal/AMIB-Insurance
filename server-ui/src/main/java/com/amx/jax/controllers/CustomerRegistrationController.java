@@ -13,6 +13,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.amx.jax.api.AmxApiResponse;
+import com.amx.jax.models.ChangePasswordOtpRequest;
+import com.amx.jax.models.ChangePasswordRequest;
+import com.amx.jax.models.ChangePasswordResponse;
+import com.amx.jax.models.CompanySetupRequest;
+import com.amx.jax.models.CustomerLoginRequest;
+import com.amx.jax.models.CustomerLoginResponse;
 import com.amx.jax.models.CustomerRegistrationRequest;
 import com.amx.jax.models.CustomerRegistrationResponse;
 import com.amx.jax.models.Validate;
@@ -34,6 +40,12 @@ public class CustomerRegistrationController
 	@Autowired
 	RegSession regSession;
 
+	@RequestMapping(value = "/pub/reg/companysetup", method = RequestMethod.POST, produces = "application/json")
+	public AmxApiResponse<Validate, Object> getCompanySetUp(int languageId)
+	{
+		return customerRegistrationService.getCompanySetUp(languageId,"");
+	}
+
 	@RequestMapping(value = "/pub/reg/civilid-exists", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<Validate, Object> isCivilIdExistCheck(@RequestParam("civilId") String civilid)
 	{
@@ -45,13 +57,13 @@ public class CustomerRegistrationController
 	{
 		return customerRegistrationService.isMobileNumberExistCheck(mobile);
 	}
-	
+
 	@RequestMapping(value = "/pub/reg/email-exists", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<Validate, Object> isEmailIdExistCheck(@RequestParam("emailId") String emailId)
 	{
 		return customerRegistrationService.isEmailIdExistCheck(emailId);
 	}
-	
+
 	@RequestMapping(value = "/pub/reg/userdetails", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> sendOtp(@RequestBody RequestOtpModel requestOtpModel)
 	{
@@ -72,17 +84,23 @@ public class CustomerRegistrationController
 		return customerRegistrationService.addNewCustomer(customerRegistrationRequest);
 	}
 
-	
-	@RequestMapping(value = "/pub/reg/companysetup", method = RequestMethod.GET, produces = "application/json")
-	public ArrayList getCompanySetUp(@RequestParam("langId") int langId)
+	@RequestMapping(value = "/pub/login/changepass-otpinitiate", method = RequestMethod.POST)
+	public AmxApiResponse<?, Object> changePasswordOtpInitiate(@RequestBody ChangePasswordOtpRequest changePasswordRequest)
 	{
-		return customerRegistrationService.getCompanySetUp(langId);
+		return customerRegistrationService.changePasswordOtpInitiate(changePasswordRequest);
+	}
+
+	
+	@RequestMapping(value = "/pub/login/validate-userlogin", method = RequestMethod.POST)
+	public AmxApiResponse<CustomerLoginResponse, Object> validateUserLogin(@RequestBody CustomerLoginRequest customerLoginRequest)
+	{
+		return customerRegistrationService.validateUserLogin(customerLoginRequest);
 	}
 	
-	/*@RequestMapping(value = "/pub/login/validate-user", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<Validate, Object> validateUserLogin(@RequestParam("civilId") String civilid)
+	@RequestMapping(value = "/pub/login/changepass", method = RequestMethod.POST)
+	public AmxApiResponse<ChangePasswordResponse, Object> updatePassword(@RequestBody ChangePasswordRequest changePasswordRequest)
 	{
-		return customerRegistrationService.validateUserLogin(civilid);
-	}*/
+		return customerRegistrationService.updatePassword(changePasswordRequest);
+	}
 
 }
