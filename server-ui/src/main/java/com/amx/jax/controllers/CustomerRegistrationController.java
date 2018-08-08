@@ -42,7 +42,7 @@ public class CustomerRegistrationController
 	@RequestMapping(value = "/pub/reg/companysetup", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<Validate, Object> getCompanySetUp(int languageId)
 	{
-		return customerRegistrationService.getCompanySetUp(languageId,"");
+		return customerRegistrationService.getCompanySetUp(languageId, "");
 	}
 
 	@RequestMapping(value = "/pub/reg/civilid-exists", method = RequestMethod.POST, produces = "application/json")
@@ -83,19 +83,18 @@ public class CustomerRegistrationController
 		return customerRegistrationService.addNewCustomer(customerRegistrationRequest);
 	}
 
+	@RequestMapping(value = "/pub/login/validate-userlogin", method = RequestMethod.POST)
+	public AmxApiResponse<CustomerLoginResponse, Object> validateUserLogin(@RequestBody CustomerLoginRequest customerLoginRequest)
+	{
+		return customerRegistrationService.validateUserLogin(customerLoginRequest);
+	}
+
 	@RequestMapping(value = "/pub/login/changepass-otpinitiate", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> changePasswordOtpInitiate(@RequestBody ChangePasswordOtpRequest changePasswordRequest)
 	{
 		return customerRegistrationService.changePasswordOtpInitiate(changePasswordRequest);
 	}
 
-	
-	@RequestMapping(value = "/pub/login/validate-userlogin", method = RequestMethod.POST)
-	public AmxApiResponse<CustomerLoginResponse, Object> validateUserLogin(@RequestBody CustomerLoginRequest customerLoginRequest)
-	{
-		return customerRegistrationService.validateUserLogin(customerLoginRequest);
-	}
-	
 	@RequestMapping(value = "/pub/login/changepass", method = RequestMethod.POST)
 	public AmxApiResponse<ChangePasswordResponse, Object> updatePassword(@RequestBody ChangePasswordRequest changePasswordRequest)
 	{

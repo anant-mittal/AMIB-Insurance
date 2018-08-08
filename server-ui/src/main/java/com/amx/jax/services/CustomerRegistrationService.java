@@ -58,7 +58,7 @@ public class CustomerRegistrationService
 	@Autowired
 	private WebConfig webConfig;
 
-	public AmxApiResponse<Validate, Object> getCompanySetUp(int languageId,String deviceId)
+	public AmxApiResponse<Validate, Object> getCompanySetUp(int languageId, String deviceId)
 	{
 		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
 
@@ -74,7 +74,6 @@ public class CustomerRegistrationService
 			regSession.setDeviceId(deviceId);
 			regSession.setDeviceType("ONLINE");
 
-			
 			logger.info(TAG + " getCompanySetUp :: getCountryId   :" + regSession.getCountryId());
 			logger.info(TAG + " getCompanySetUp :: getCompCd      :" + regSession.getCompCd());
 			logger.info(TAG + " getCompanySetUp :: getUserType    :" + regSession.getUserType());
@@ -466,7 +465,8 @@ public class CustomerRegistrationService
 
 	public AmxApiResponse<?, Object> changePasswordOtpInitiate(ChangePasswordOtpRequest changePasswordOtpRequest)
 	{
-		AmxApiResponse<ChangePasswordOtpResponse, Object> resp = new AmxApiResponse<ChangePasswordOtpResponse, Object>();
+		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
+		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 
 		AmxApiResponse<Validate, Object> validateCivilID = isValidCivilId(changePasswordOtpRequest.getCivilId());
 		if (validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
@@ -491,38 +491,62 @@ public class CustomerRegistrationService
 		}
 		else
 		{
-			ChangePasswordOtpResponse changePasswordOtpResponse = new ChangePasswordOtpResponse();
-			String emailOtpPrefix = Random.randomAlpha(3);
-			String emailOtp = Random.randomNumeric(6);
-			String emailOtpToSend = emailOtpPrefix + "-" + emailOtp;
-
-			String emailIdFrom = webConfig.getConfigEmail();
-			String emailITo = customerDetailModel.getEmail();
-			String Subject = "Almulla Insurance Chanage Password Request";
-			String mailData = "Almulla Insurance Change Password OTP   :- " + emailOtpToSend;
-
-			Email email = emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
-
-			if (email.getEmailSentStatus())
+			try
 			{
-				changePasswordOtpResponse.setOtpPrefix(emailOtpPrefix);
-				regSession.setChangePasswordOtp(emailOtp);
-				regSession.setCivilId(changePasswordOtpRequest.getCivilId());
+				String emailOtpPrefix = Random.randomAlpha(3);
+				String mobileOtpPrefix = Random.randomAlpha(3);
 
-				resp.setMessageKey(null);
-				resp.setError(null);
-				resp.setStatus(ApiConstants.SUCCESS);
-				resp.setData(changePasswordOtpResponse);
+				String emailOtp = Random.randomNumeric(6);
+				String mobileOtp = Random.randomNumeric(6);
 
-				return resp;
+				String emailOtpToSend = emailOtpPrefix + "-" + emailOtp;
+				String mobileOtpToSend = mobileOtpPrefix + "-" + mobileOtp;
+
+				responseOtpModel.setEotpPrefix(emailOtpPrefix);
+				responseOtpModel.setMotpPrefix(mobileOtpPrefix);
+
+				regSession.setMotpPrefix(responseOtpModel.getMotpPrefix());
+				regSession.setEotpPrefix(responseOtpModel.getEotpPrefix());
+				regSession.setEotp(emailOtp);
+				regSession.setMotp(mobileOtp);
+
+				String emailIdFrom = webConfig.getConfigEmail();
+				String emailITo = customerDetailModel.getEmail();
+				String Subject = "Almulla Insurance Registartion Otp";
+				String mailData = "Your Email OTP Generted For Change Password of Almulla Insurance is : " + emailOtpToSend + "          And Mobile Otp is :" + mobileOtpToSend + "";
+
+				Email email = emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
+
+				if (email.getEmailSentStatus())
+				{
+					resp.setData(responseOtpModel);
+					resp.setStatus(ApiConstants.SUCCESS);
+				}
+				else
+				{
+					resp.setStatusKey(ApiConstants.FAILURE);
+					resp.setMessage(Message.CP_EMAIL_NOT_SENT);
+					resp.setMessageKey(MessageKey.KEY_CP_OTP_NOT_GENERATED);
+				}
+
+				/*
+				 * Code Needed Here For Mobile Otp
+				 * 
+				 * 
+				 * 
+				 * Code Needed Here For Mobile Otp
+				 * 
+				 */
+
 			}
-			else
+			catch (Exception e)
 			{
+				e.printStackTrace();
 				resp.setStatusKey(ApiConstants.FAILURE);
 				resp.setMessage(Message.CP_EMAIL_NOT_SENT);
 				resp.setMessageKey(MessageKey.KEY_CP_OTP_NOT_GENERATED);
 			}
-			
+
 		}
 
 		return resp;
@@ -541,7 +565,7 @@ public class CustomerRegistrationService
 		customerDetailModel.setUserType(regSession.getUserType());
 		customerDetailModel.setDeviceId(regSession.getDeviceId());
 		customerDetailModel.setDeviceType(regSession.getDeviceType());
-		
+
 		logger.info(TAG + " updatePassword :: getCountryId :" + customerDetailModel.getCountryId());
 		logger.info(TAG + " updatePassword :: getCompCd :" + customerDetailModel.getCompCd());
 		logger.info(TAG + " updatePassword :: getUserType :" + customerDetailModel.getUserType());
@@ -549,24 +573,14 @@ public class CustomerRegistrationService
 		logger.info(TAG + " updatePassword :: getPassword :" + customerDetailModel.getPassword());
 		logger.info(TAG + " updatePassword :: getDeviceId :" + customerDetailModel.getDeviceId());
 
-		if (regSession.getChangePasswordOtp().equals(changePasswordRequest.getChangePasswordOtp()))
-		{
-			customerDetailModel = customerRegistrationDao.updatePassword(customerDetailModel);
+		customerDetailModel = customerRegistrationDao.updatePassword(customerDetailModel);
 
-			if (customerDetailModel.getStatus())
-			{
-				resp.setMessageKey(customerDetailModel.getErrorCode());
-				resp.setError(customerDetailModel.getErrorMessage());
-				resp.setStatus(ApiConstants.SUCCESS);
-				resp.setData(null);
-			}
-			else
-			{
-				resp.setMessageKey(customerDetailModel.getErrorCode());
-				resp.setError(customerDetailModel.getErrorMessage());
-				resp.setStatus(ApiConstants.FAILURE);
-				resp.setData(null);
-			}
+		if (customerDetailModel.getStatus())
+		{
+			resp.setMessageKey(customerDetailModel.getErrorCode());
+			resp.setError(customerDetailModel.getErrorMessage());
+			resp.setStatus(ApiConstants.SUCCESS);
+			resp.setData(null);
 		}
 		else
 		{
@@ -577,6 +591,5 @@ public class CustomerRegistrationService
 		}
 
 		return resp;
-
 	}
 }
