@@ -17,7 +17,7 @@ public class CustomerRegistrationResponse
 		this.civilid = civilid;
 	}
 
-	public int getUserSequenceNumber()
+	public int getUserSequenceNumber()//
 	{
 		return userSequenceNumber;
 	}

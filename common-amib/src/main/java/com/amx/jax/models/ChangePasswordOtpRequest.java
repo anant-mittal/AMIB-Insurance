@@ -11,6 +11,6 @@ public class ChangePasswordOtpRequest
 
 	public void setCivilId(String civilId)
 	{
-		this.civilId = civilId;
+		this.civilId = civilId;//
 	}
 }

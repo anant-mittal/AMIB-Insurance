@@ -17,7 +17,7 @@ public class CustomerDetailModel
 
 	private int userSequenceNumber;
 
-	private int countryId;
+	private int countryId;//
 
 	private int compCd;
 

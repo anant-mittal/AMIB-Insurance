@@ -11,6 +11,6 @@ public class ChangePasswordOtpResponse
 
 	public void setOtpPrefix(String otpPrefix)
 	{
-		this.otpPrefix = otpPrefix;
+		this.otpPrefix = otpPrefix;//
 	}
 }

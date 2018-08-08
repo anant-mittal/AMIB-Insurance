@@ -25,7 +25,7 @@ public class ChangePasswordRequest
 
 	public void setChangePasswordOtp(String changePasswordOtp)
 	{
-		this.changePasswordOtp = changePasswordOtp;
+		this.changePasswordOtp = changePasswordOtp;//
 	}
 
 }

@@ -17,7 +17,7 @@ public class CustomerLoginResponse
 		this.userSeqNum = userSeqNum;
 	}
 
-	public int getAmibRef()
+	public int getAmibRef()//
 	{
 		return amibRef;
 	}

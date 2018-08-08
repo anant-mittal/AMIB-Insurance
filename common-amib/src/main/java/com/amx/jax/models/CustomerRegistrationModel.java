@@ -17,7 +17,7 @@ public class CustomerRegistrationModel
 
 	private int countryId;
 
-	private int compCd;
+	private int compCd;//
 
 	private String mobile;
 

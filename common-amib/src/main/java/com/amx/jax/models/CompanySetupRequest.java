@@ -17,7 +17,7 @@ public class CompanySetupRequest
 
 	public void setLanguageId(int languageId)
 	{
-		this.languageId = languageId;
+		this.languageId = languageId;//
 	}
 
 	public String getUserType()

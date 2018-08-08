@@ -18,7 +18,7 @@ public class CustomerRegistrationRequest
 		return userType;
 	}
 
-	public void setUserType(String userType)
+	public void setUserType(String userType)//
 	{
 		this.userType = userType;
 	}

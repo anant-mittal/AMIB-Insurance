@@ -17,7 +17,7 @@ public class CustomerLoginModel
 
 	public int amibRef;
 
-	public String errorCode;
+	public String errorCode;//
 
 	public String errorMessage;
 	

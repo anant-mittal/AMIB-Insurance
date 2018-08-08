@@ -24,6 +24,6 @@ public class Colour
 	public void setColourDesc(String colourDesc)
 	{
 		this.colourDesc = colourDesc;
-	}
+	}//
 	
 }
