@@ -319,6 +319,7 @@ public class CustomerRegistrationService
 			AmxApiResponse<Validate, Object> emailIdExists = isEmailIdExist(requestOtpModel.getEmailId());
 			if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
+				emailIdExists.setStatusKey(ApiConstants.FAILURE);
 				return emailIdExists;
 			}
 			
