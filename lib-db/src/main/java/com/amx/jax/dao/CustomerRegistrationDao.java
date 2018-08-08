@@ -470,25 +470,18 @@ public class CustomerRegistrationDao
 			callableStatement = connection.prepareCall(callProcedure);
 			
 			callableStatement.setInt(1, customerDetailModel.getCountryId());
-			logger.info(TAG + " updatePassword :: getCountryId :" + customerDetailModel.getCountryId());
 			callableStatement.setInt(2, customerDetailModel.getCompCd());
-			logger.info(TAG + " updatePassword :: getCompCd :" + customerDetailModel.getCompCd());
 			callableStatement.setString(3, customerDetailModel.getUserType());
-			logger.info(TAG + " updatePassword :: getUserType :" + customerDetailModel.getUserType());
 			callableStatement.setString(4, customerDetailModel.getCivilId());
-			logger.info(TAG + " updatePassword :: getCivilId :" + customerDetailModel.getCivilId());
 			callableStatement.setString(5, customerDetailModel.getPassword());
-			logger.info(TAG + " updatePassword :: getPassword :" + customerDetailModel.getPassword());
 			callableStatement.setBigDecimal(6, null);
 			callableStatement.setDate(7, getCurrentDate());
 			callableStatement.setString(8, customerDetailModel.getDeviceId());//Device ID
-			logger.info(TAG + " updatePassword :: getDeviceId :" + customerDetailModel.getDeviceId());
 			callableStatement.setString(9, customerDetailModel.getDeviceType());//Device Type
 			callableStatement.setString(10, customerDetailModel.getCivilId());//CivilId
 			callableStatement.registerOutParameter(11, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(12, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
-
 			customerDetailModel = new CustomerDetailModel();
 			
 			String errorCode = callableStatement.getString(11);

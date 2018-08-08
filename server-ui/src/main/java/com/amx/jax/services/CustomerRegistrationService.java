@@ -122,7 +122,9 @@ public class CustomerRegistrationService
 	public AmxApiResponse<Validate, Object> isCivilIdExist(String civilid)
 	{
 		boolean civilIdExistCheck = customerRegistrationDao.isCivilIdExist(civilid);
-
+		
+		logger.info(TAG + " isCivilIdExist :: civilIdExistCheck :" + civilIdExistCheck);
+		
 		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
 
 		if (civilIdExistCheck)
@@ -475,6 +477,7 @@ public class CustomerRegistrationService
 		}
 
 		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(changePasswordOtpRequest.getCivilId());
+		logger.info(TAG + " changePasswordOtpInitiate :: civilIdExistCheck :" + civilIdExistCheck.getStatusKey());
 		if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 		{
 			return civilIdExistCheck;
@@ -512,6 +515,7 @@ public class CustomerRegistrationService
 
 				String emailIdFrom = webConfig.getConfigEmail();
 				String emailITo = customerDetailModel.getEmail();
+				logger.info(TAG + " changePasswordOtpInitiate :: civilIdExistCheck :" + customerDetailModel.getEmail());
 				String Subject = "Almulla Insurance Registartion Otp";
 				String mailData = "Your Email OTP Generted For Change Password of Almulla Insurance is : " + emailOtpToSend + "          And Mobile Otp is :" + mobileOtpToSend + "";
 
@@ -558,7 +562,6 @@ public class CustomerRegistrationService
 
 		CustomerDetailModel customerDetailModel = new CustomerDetailModel();
 		customerDetailModel.setPassword(changePasswordRequest.getNewPassword());
-		customerDetailModel.setOtp(changePasswordRequest.getChangePasswordOtp());
 		customerDetailModel.setCivilId(regSession.getCivilId());
 		customerDetailModel.setCountryId(regSession.getCountryId());
 		customerDetailModel.setCompCd(regSession.getCompCd());
