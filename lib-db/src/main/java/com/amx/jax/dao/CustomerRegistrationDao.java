@@ -262,6 +262,47 @@ public class CustomerRegistrationDao
 		}
 		return false;
 	}
+	
+	public boolean isEmailIdExist(String email)
+	{
+		logger.info(TAG + " isEmailIdExist :: email :" + email);
+
+		getConnection();
+
+		CallableStatement callableStatement = null;
+		String callFunction = "{ ? = call IRB_IF_DUP_EMAIL(?,?,?,?)}";
+
+		try
+		{
+			callableStatement = connection.prepareCall(callFunction);
+			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
+			callableStatement.setInt(2, 1);
+			callableStatement.setInt(3, 10);
+			callableStatement.setString(4, "D");
+			callableStatement.setString(5, email);
+			callableStatement.executeUpdate();
+			String result = callableStatement.getString(1);
+			logger.info(TAG + " isCivilIdExist :: result :" + result);
+
+			if (result.equalsIgnoreCase("Y"))
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		return false;
+	}
 
 	public CustomerRegistrationModel addNewCustomer(CustomerRegistrationModel customerRegistrationModel)
 	{

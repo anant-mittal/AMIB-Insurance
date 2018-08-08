@@ -206,6 +206,30 @@ public class CustomerRegistrationService
 		resp.setData(validate);
 		return resp;
 	}
+	
+	public AmxApiResponse<Validate, Object> isEmailIdExist(String emailId)
+	{
+		boolean emailIdExistCheck = customerRegistrationDao.isEmailIdExist(emailId);
+		
+		logger.info(TAG + " isCivilIdExist :: civilIdExistCheck :" + emailIdExistCheck);
+		
+		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
+
+		if (emailIdExistCheck)
+		{
+			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setMessage(Message.EMAIL_ALREDAY_REGISTER);
+		}
+		else
+		{
+			resp.setStatusKey(ApiConstants.FAILURE);
+			resp.setMessage(Message.EMAIL_ALREDAY_NOT_REGISTER);
+		}
+		resp.setMessageKey(MessageKey.KEY_EMAID_ALREADY_REGISTER);
+		return resp;
+
+	}
+
 
 	public CustomerDetailModel userDetails(String civilId)
 	{
@@ -242,15 +266,15 @@ public class CustomerRegistrationService
 		return isMobileNumberExist(mobilenumber);
 	}
 
-	public AmxApiResponse<Validate, Object> isEmailIdExistCheck(String mobileNumber)
+	public AmxApiResponse<Validate, Object> isEmailIdExistCheck(String emailId)
 	{
-		AmxApiResponse<Validate, Object> isValidEmailId = isValidEmailId(mobileNumber);
+		AmxApiResponse<Validate, Object> isValidEmailId = isValidEmailId(emailId);
 
 		if (isValidEmailId.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 		{
 			return isValidEmailId;
 		}
-		return null;
+		return isEmailIdExist(emailId);
 	}
 
 	public AmxApiResponse<?, Object> sendOtp(RequestOtpModel requestOtpModel)
@@ -287,11 +311,17 @@ public class CustomerRegistrationService
 			}
 
 			AmxApiResponse<Validate, Object> validateEmailID = isValidEmailId(requestOtpModel.getEmailId());
-
 			if (validateEmailID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 			{
 				return validateEmailID;
 			}
+			
+			AmxApiResponse<Validate, Object> emailIdExists = isEmailIdExist(requestOtpModel.getEmailId());
+			if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+			{
+				return emailIdExists;
+			}
+			
 		}
 		catch (Exception e)
 		{
