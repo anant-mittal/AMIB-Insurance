@@ -137,7 +137,7 @@ public class CustomerRegistrationService
 		{
 			resp.setStatusKey(ApiConstants.FAILURE);
 			resp.setMessage(Message.CIVILID_ALREDAY_NOT_REGISTER);
-			resp.setMessageKey(MessageKey.KEY_CIVIL_ID_NOT_REGISTERED);//
+			resp.setMessageKey(MessageKey.KEY_CIVIL_ID_NOT_REGISTERED);//Commit
 		}
 		
 		return resp;
