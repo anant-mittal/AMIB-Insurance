@@ -24,6 +24,5 @@ public class Model
 	public void setModelDesc(String modelDesc)
 	{
 		this.modelDesc = modelDesc;
-	}
-	
+	}	
 }

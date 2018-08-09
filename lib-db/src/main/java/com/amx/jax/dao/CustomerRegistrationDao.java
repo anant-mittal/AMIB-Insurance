@@ -79,7 +79,7 @@ public class CustomerRegistrationDao
 				companySetUp.setLangId(rs.getInt(16));
 				companySetUp.setAppName(rs.getString(17));
 				companySetUp.setSmsSenderId(rs.getString(18));
-				
+
 				logger.info(TAG + " getCompanySetUp :: companySetUp :" + companySetUp.toString());
 
 				companySetUpArray.add(companySetUp);
@@ -95,7 +95,7 @@ public class CustomerRegistrationDao
 		}
 		return companySetUpArray;
 	}
-	
+
 	public boolean isValidCivilId(String civilid)
 	{
 		getConnection();
@@ -262,7 +262,7 @@ public class CustomerRegistrationDao
 		}
 		return false;
 	}
-	
+
 	public boolean isEmailIdExist(String email)
 	{
 		logger.info(TAG + " isEmailIdExist :: email :" + email);
@@ -468,7 +468,7 @@ public class CustomerRegistrationDao
 			int amibRef = callableStatement.getInt(7);
 			String errorCode = callableStatement.getString(8);
 			String errorMessage = callableStatement.getString(9);
-			
+
 			logger.info(TAG + " validateUserLogin :: errorCode :" + errorCode);
 			logger.info(TAG + " validateUserLogin :: errorMessage :" + errorMessage);
 
@@ -498,8 +498,7 @@ public class CustomerRegistrationDao
 		}
 		return customerLoginModel;
 	}
-	
-	
+
 	public CustomerDetailModel updatePassword(CustomerDetailModel customerDetailModel)
 	{
 		getConnection();
@@ -509,7 +508,7 @@ public class CustomerRegistrationDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			
+
 			callableStatement.setInt(1, customerDetailModel.getCountryId());
 			callableStatement.setInt(2, customerDetailModel.getCompCd());
 			callableStatement.setString(3, customerDetailModel.getUserType());
@@ -517,24 +516,26 @@ public class CustomerRegistrationDao
 			callableStatement.setString(5, customerDetailModel.getPassword());
 			callableStatement.setBigDecimal(6, null);
 			callableStatement.setDate(7, getCurrentDate());
-			callableStatement.setString(8, customerDetailModel.getDeviceId());//Device ID
-			callableStatement.setString(9, customerDetailModel.getDeviceType());//Device Type
-			callableStatement.setString(10, customerDetailModel.getCivilId());//CivilId
+			callableStatement.setString(8, customerDetailModel.getDeviceId());// Device
+																				// ID
+			callableStatement.setString(9, customerDetailModel.getDeviceType());// Device
+																				// Type
+			callableStatement.setString(10, customerDetailModel.getCivilId());// CivilId
 			callableStatement.registerOutParameter(11, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(12, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
-			
+
 			customerDetailModel = new CustomerDetailModel();
-			
+
 			String errorCode = callableStatement.getString(11);
 			String errorMessage = callableStatement.getString(12);
-			
+
 			logger.info(TAG + " updatePassword :: errorCode :" + errorCode);
 			logger.info(TAG + " updatePassword :: errorMessage :" + errorMessage);
-			
+
 			customerDetailModel.setErrorCode(errorCode);
 			customerDetailModel.setErrorMessage(errorMessage);
-			
+
 			if (errorCode == null)
 			{
 				customerDetailModel.setStatus(true);
@@ -555,7 +556,6 @@ public class CustomerRegistrationDao
 		}
 		return customerDetailModel;
 	}
-		
 
 	private static java.sql.Date getCurrentDate()
 	{

@@ -7,6 +7,11 @@ public class MessageKey
 
 	public static String KEY_CIVIL_ID_ALREADY_REGISTER = "CIDAR";
 	
+	public static String KEY_CIVIL_ID_NOT_REGISTER = "CIDNR";
+	
+	
+	
+	
 	public static String KEY_MOBILE_NO_INVALID = "MNINV";
 	
 	public static String KEY_MOBILE_NO_ALREADY_REGISTER = "MNAR";

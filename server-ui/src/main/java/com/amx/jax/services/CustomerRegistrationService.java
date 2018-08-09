@@ -122,22 +122,24 @@ public class CustomerRegistrationService
 	public AmxApiResponse<Validate, Object> isCivilIdExist(String civilid)
 	{
 		boolean civilIdExistCheck = customerRegistrationDao.isCivilIdExist(civilid);
-		
+
 		logger.info(TAG + " isCivilIdExist :: civilIdExistCheck :" + civilIdExistCheck);
-		
+
 		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
 
 		if (civilIdExistCheck)
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
 			resp.setMessage(Message.CIVILID_ALREDAY_REGISTER);
+			resp.setMessageKey(MessageKey.KEY_CIVIL_ID_ALREADY_REGISTER);
 		}
 		else
 		{
 			resp.setStatusKey(ApiConstants.FAILURE);
 			resp.setMessage(Message.CIVILID_ALREDAY_NOT_REGISTER);
+			resp.setMessageKey(MessageKey.KEY_CIVIL_ID_NOT_REGISTER);
 		}
-		resp.setMessageKey(MessageKey.KEY_CIVIL_ID_ALREADY_REGISTER);
+		
 		return resp;
 
 	}
@@ -206,13 +208,13 @@ public class CustomerRegistrationService
 		resp.setData(validate);
 		return resp;
 	}
-	
+
 	public AmxApiResponse<Validate, Object> isEmailIdExist(String emailId)
 	{
 		boolean emailIdExistCheck = customerRegistrationDao.isEmailIdExist(emailId);
-		
+
 		logger.info(TAG + " isCivilIdExist :: civilIdExistCheck :" + emailIdExistCheck);
-		
+
 		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
 
 		if (emailIdExistCheck)
@@ -230,8 +232,7 @@ public class CustomerRegistrationService
 
 	}
 
-
-	public CustomerDetailModel userDetails(String civilId)
+	public CustomerDetailModel getUserDetails(String civilId)
 	{
 		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(civilId);
 
@@ -315,14 +316,14 @@ public class CustomerRegistrationService
 			{
 				return validateEmailID;
 			}
-			
+
 			AmxApiResponse<Validate, Object> emailIdExists = isEmailIdExist(requestOtpModel.getEmailId());
 			if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				emailIdExists.setStatusKey(ApiConstants.FAILURE);
 				return emailIdExists;
 			}
-			
+
 		}
 		catch (Exception e)
 		{
@@ -515,7 +516,7 @@ public class CustomerRegistrationService
 			return civilIdExistCheck;
 		}
 
-		CustomerDetailModel customerDetailModel = userDetails(changePasswordOtpRequest.getCivilId());
+		CustomerDetailModel customerDetailModel = getUserDetails(changePasswordOtpRequest.getCivilId());
 
 		if (null == customerDetailModel || customerDetailModel.getErrorCode() != null)
 		{
