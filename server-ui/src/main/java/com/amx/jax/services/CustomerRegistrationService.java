@@ -39,7 +39,7 @@ import com.insurance.generateotp.ResponseOtpModel;
 @Service
 public class CustomerRegistrationService
 {
-	String TAG = "com.amx.jax.userregistration.service :: CustomerRegistrationService :: ";
+	String TAG = "com.amx.jax.services :: CustomerRegistrationService :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(CustomerRegistrationService.class);
 
@@ -108,13 +108,15 @@ public class CustomerRegistrationService
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
 			resp.setMessage(Message.CIVILID_VALID);
+			resp.setMessageKey(MessageKey.KEY_CIVIL_ID_VALID);
 		}
 		else
 		{
 			resp.setStatusKey(ApiConstants.FAILURE);
 			resp.setMessage(Message.CIVILID_INVALID);
+			resp.setMessageKey(MessageKey.KEY_CIVIL_ID_INVALID);
 		}
-		resp.setMessageKey(MessageKey.KEY_CIVIL_ID_INVALID);
+
 		return resp;
 
 	}
@@ -137,9 +139,9 @@ public class CustomerRegistrationService
 		{
 			resp.setStatusKey(ApiConstants.FAILURE);
 			resp.setMessage(Message.CIVILID_ALREDAY_NOT_REGISTER);
-			resp.setMessageKey(MessageKey.KEY_CIVIL_ID_NOT_REGISTERED);//Commit
+			resp.setMessageKey(MessageKey.KEY_CIVIL_ID_NOT_REGISTERED);// Commit
 		}
-		
+
 		return resp;
 
 	}
@@ -175,13 +177,15 @@ public class CustomerRegistrationService
 		{
 			validMobileNumber.setStatusKey(ApiConstants.SUCCESS);
 			validMobileNumber.setMessage(Message.MOBILE_NO_ALREDAY_REGISTER);
+			validMobileNumber.setMessageKey(MessageKey.KEY_MOBILE_NO_ALREADY_REGISTER);
 		}
 		else
 		{
 			validMobileNumber.setStatusKey(ApiConstants.FAILURE);
 			validMobileNumber.setMessage(Message.MOBILE_NO_NOT_REGISTER);
+			validMobileNumber.setMessageKey(MessageKey.KEY_MOBILE_NO_NOT_REGISTER);
 		}
-		validMobileNumber.setMessageKey(MessageKey.KEY_MOBILE_NO_ALREADY_REGISTER);
+
 		return validMobileNumber;
 	}
 
@@ -196,6 +200,7 @@ public class CustomerRegistrationService
 			validate.setValid(true);
 			resp.setStatusKey(ApiConstants.SUCCESS);
 			resp.setMessage(Message.EMAIL_VALID);
+			resp.setMessageKey(MessageKey.KEY_EMAID_VALID);
 
 		}
 		else
@@ -203,8 +208,9 @@ public class CustomerRegistrationService
 			validate.setValid(false);
 			resp.setStatusKey(ApiConstants.FAILURE);
 			resp.setMessage(Message.EMAIL_INVALID);
+			resp.setMessageKey(MessageKey.KEY_EMAID_INVALID);
 		}
-		resp.setMessageKey(MessageKey.KEY_EMAID_INVALID);
+
 		resp.setData(validate);
 		return resp;
 	}
@@ -221,13 +227,15 @@ public class CustomerRegistrationService
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
 			resp.setMessage(Message.EMAIL_ALREDAY_REGISTER);
+			resp.setMessageKey(MessageKey.KEY_EMAID_ALREADY_REGISTER);
 		}
 		else
 		{
 			resp.setStatusKey(ApiConstants.FAILURE);
 			resp.setMessage(Message.EMAIL_ALREDAY_NOT_REGISTER);
+			resp.setMessageKey(MessageKey.KEY_EMAID_NOT_REGISTER);
 		}
-		resp.setMessageKey(MessageKey.KEY_EMAID_ALREADY_REGISTER);
+
 		return resp;
 
 	}
@@ -391,21 +399,41 @@ public class CustomerRegistrationService
 		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
 		Validate validate = new Validate();
 
-		if (regSession.getMotp().equals(mOtp) && regSession.getEotp().equals(eOtp))
+		if (regSession.getMotp().equals(mOtp))
 		{
 			validate.setValid(true);
 			resp.setStatusKey(ApiConstants.SUCCESS);
 			resp.setMessage(Message.REG_VALID_OTP);
+			resp.setData(validate);
+			resp.setMessageKey(MessageKey.KEY_REG_VALIDATE_OTP);
 		}
 		else
 		{
 			validate.setValid(false);
 			resp.setStatusKey(ApiConstants.FAILURE);
 			resp.setMessage(Message.REG_INVALID_OTP);
+			resp.setData(validate);
+			resp.setMessageKey(MessageKey.KEY_INVALID_MOBILE_OTP);
+			return resp;
 		}
-		resp.setData(validate);
-		resp.setMessageKey(MessageKey.KEY_REG_VALIDATE_OTP);
 
+		if (regSession.getEotp().equals(eOtp))
+		{
+			validate.setValid(true);
+			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setMessage(Message.REG_VALID_OTP);
+			resp.setData(validate);
+			resp.setMessageKey(MessageKey.KEY_REG_VALIDATE_OTP);
+		}
+		else
+		{
+			validate.setValid(false);
+			resp.setStatusKey(ApiConstants.FAILURE);
+			resp.setMessage(Message.REG_INVALID_OTP);
+			resp.setData(validate);
+			resp.setMessageKey(MessageKey.KEY_INVALID_EMAIL_OTP);
+			return resp;
+		}
 		return resp;
 	}
 
@@ -476,6 +504,8 @@ public class CustomerRegistrationService
 		if (customerLoginModel.getStatus())
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
+			
+			
 
 		}
 		else

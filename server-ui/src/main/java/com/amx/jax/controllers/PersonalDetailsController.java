@@ -11,10 +11,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.amx.jax.api.AmxApiResponse;
+import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.models.CustomerDetailModel;
+import com.amx.jax.models.CustomerDetailRequest;
+import com.amx.jax.models.CustomerDetailResponse;
+import com.amx.jax.models.CustomerProfileDetailRequest;
 import com.amx.jax.models.Validate;
 import com.amx.jax.services.CustomerRegistrationService;
 import com.amx.jax.services.PersonalDetailsService;
+import com.insurance.email.model.Email;
+import com.insurance.generateotp.ResponseOtpModel;
 
 @RestController
 public class PersonalDetailsController
@@ -26,40 +32,38 @@ public class PersonalDetailsController
 	@Autowired
 	public PersonalDetailsService personalDetailsService;
 
-	@Autowired
-	private CustomerRegistrationService customerRegistrationService;
-	
-	
 	@RequestMapping(value = "/api/personal/userdetails", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<CustomerDetailModel, Object> getUserDetails(String civilId)
+	public AmxApiResponse<CustomerDetailResponse, Object> getUserDetails(CustomerDetailRequest customerDetailRequest)
 	{
-		CustomerDetailModel customerDetailModel = customerRegistrationService.getUserDetails(civilId);
-		
-		return null;
+		return personalDetailsService.getUserDetails(customerDetailRequest);
 	}
-	
-	
-	
+
+	@RequestMapping(value = "/api/personal/profiledetails", method = RequestMethod.POST, produces = "application/json")
+	public AmxApiResponse<CustomerDetailResponse, Object> getUserProfileDetails(CustomerProfileDetailRequest customerProfileDetailRequest)
+	{
+		return personalDetailsService.getUserProfileDetails(customerProfileDetailRequest);
+	}
+
 	@RequestMapping(value = "/business", method = RequestMethod.GET, produces = "application/json")
-	public ArrayList getBusiness()
+	public AmxApiResponse<?, Object> getBusiness()
 	{
 		return personalDetailsService.getBusiness();
 	}
 
 	@RequestMapping(value = "/nationality", method = RequestMethod.GET, produces = "application/json")
-	public ArrayList getNationality()
+	public AmxApiResponse<?, Object> getNationality()
 	{
 		return personalDetailsService.getNationality();
 	}
 
 	@RequestMapping(value = "/governorates", method = RequestMethod.GET, produces = "application/json")
-	public ArrayList getGovernorates()
+	public AmxApiResponse<?, Object> getGovernorates()
 	{
 		return personalDetailsService.getGovernorates();
 	}
 
 	@RequestMapping(value = "/area", method = RequestMethod.GET, produces = "application/json")
-	public ArrayList getArea(@RequestParam("gov") String gov)
+	public AmxApiResponse<?, Object> getArea(@RequestParam("gov") String gov)
 	{
 		return personalDetailsService.getArea(gov);
 	}

@@ -418,7 +418,7 @@ public class CustomerRegistrationDao
 			customerDetailModel.setDeviceType(callableStatement.getString(14));
 			customerDetailModel.setCivilId(callableStatement.getString(15));
 			customerDetailModel.setDbStatus(callableStatement.getString(16));
-			customerDetailModel.setUserSequenceNumber(callableStatement.getInt(17));
+			customerDetailModel.setCustSequenceNumber(callableStatement.getInt(17));
 			customerDetailModel.setErrorCode(callableStatement.getString(18));
 			customerDetailModel.setErrorMessage(callableStatement.getString(19));
 

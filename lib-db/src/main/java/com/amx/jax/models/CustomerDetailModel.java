@@ -15,6 +15,8 @@ public class CustomerDetailModel
 	private String civilid;
 
 	private int userSequenceNumber;
+	
+	private int custSequenceNumber;
 
 	private int countryId;//
 
@@ -254,6 +256,16 @@ public class CustomerDetailModel
 	public void setOtp(String otp)
 	{
 		this.otp = otp;
+	}
+	
+	public int getCustSequenceNumber()
+	{
+		return custSequenceNumber;
+	}
+
+	public void setCustSequenceNumber(int custSequenceNumber)
+	{
+		this.custSequenceNumber = custSequenceNumber;
 	}
 
 	@Override
