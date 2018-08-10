@@ -1,6 +1,8 @@
 
 package com.amx.jax;
 
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +19,7 @@ import com.amx.jax.rest.RestService;
 import com.amx.jax.service.HttpService;
 import com.amx.jax.services.CustomerRegistrationService;
 import com.amx.jax.session.RegSession;
+import com.amx.utils.ArgUtil;
 import com.amx.utils.JsonUtil;
 import io.swagger.annotations.Api;
 
@@ -64,18 +67,26 @@ public class HomeController
 	 */
 	public String getVersion()
 	{
-		/*
-		 * long checkTimeNew = System.currentTimeMillis() / (1000 * 60 * 5); if
-		 * (checkTimeNew != checkTime) { try { Map<String, Object> map =
-		 * JsonUtil.toMap(restService.ajax(webConfig.getCdnURL() +
-		 * "/dist/build.json?_=" + checkTimeNew).get().asObject()); if
-		 * (map.containsKey("version")) { versionNew =
-		 * ArgUtil.parseAsString(map.get("version")); } checkTime =
-		 * checkTimeNew; } catch (Exception e) {
-		 * LOGGER.error("getVersion Exception", e); } } return versionNew;
-		 */
 
-		return "1.0.1";
+		long checkTimeNew = System.currentTimeMillis() / (1000 * 60 * 5);
+		if (checkTimeNew != checkTime)
+		{
+			try
+			{
+				Map<String, Object> map = JsonUtil.toMap(restService.ajax(webConfig.getCdnURL() + "/dist/build.json?_=" + checkTimeNew).get().asObject());
+				if (map.containsKey("version"))
+				{
+					versionNew = ArgUtil.parseAsString(map.get("version"));
+				}
+				checkTime = checkTimeNew;
+			}
+			catch (Exception e)
+			{
+				LOGGER.error("getVersion Exception", e);
+			}
+		}
+		return versionNew;
+		
 	}
 
 	/**
@@ -143,9 +154,8 @@ public class HomeController
 		if (httpService.getLanguage().toString().equalsIgnoreCase("EN"))
 		{
 			regSession.setLanguageId(0);
-			customerRegistrationService.getCompanySetUp(0,httpService.getDeviceId());
+			customerRegistrationService.getCompanySetUp(0, httpService.getDeviceId());
 		}
-		
 
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
 		model.addAttribute("cdnUrl", webConfig.getCdnURL());
