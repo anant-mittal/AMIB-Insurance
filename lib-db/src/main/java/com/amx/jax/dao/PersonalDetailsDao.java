@@ -126,8 +126,8 @@ public class PersonalDetailsDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setInt(1, 0);
-			callableStatement.setInt(2, 11);
+			callableStatement.setInt(1, 1);
+			callableStatement.setInt(2, 10);
 			callableStatement.setInt(3, 0);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
@@ -174,8 +174,8 @@ public class PersonalDetailsDao
 			callableStatement = connection.prepareCall(callProcedure);
 
 			callableStatement.setInt(1, 1);
-			callableStatement.setInt(2, 11);
-			callableStatement.setInt(3, 3);
+			callableStatement.setInt(2, 10);
+			callableStatement.setInt(3, 1);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -222,8 +222,8 @@ public class PersonalDetailsDao
 			callableStatement = connection.prepareCall(callProcedure);
 
 			callableStatement.setInt(1, 1);
-			callableStatement.setInt(2, 11);
-			callableStatement.setInt(3, 3);
+			callableStatement.setInt(2, 10);
+			callableStatement.setInt(3, 0);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -270,9 +270,9 @@ public class PersonalDetailsDao
 			callableStatement = connection.prepareCall(callProcedure);
 
 			callableStatement.setInt(1, 1);
-			callableStatement.setInt(2, 11);
+			callableStatement.setInt(2, 10);
 			callableStatement.setString(3, gov);
-			callableStatement.setInt(4, 3);
+			callableStatement.setInt(4, 0);
 			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);

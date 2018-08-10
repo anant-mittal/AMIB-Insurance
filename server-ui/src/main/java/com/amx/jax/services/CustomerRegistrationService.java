@@ -29,6 +29,7 @@ import com.amx.jax.models.CustomerRegistrationRequest;
 import com.amx.jax.models.CustomerRegistrationResponse;
 import com.amx.jax.models.Validate;
 import com.amx.jax.session.RegSession;
+import com.amx.jax.session.UserSession;
 import com.amx.utils.Random;
 import com.insurance.email.dao.EmailNotification;
 import com.insurance.email.model.Email;
@@ -54,6 +55,9 @@ public class CustomerRegistrationService
 
 	@Autowired
 	RegSession regSession;
+	
+	@Autowired
+	UserSession userSession;
 
 	@Autowired
 	private WebConfig webConfig;
@@ -90,7 +94,7 @@ public class CustomerRegistrationService
 		}
 		return resp;
 	}
-
+	
 	public static boolean validate(String emailStr)
 	{
 		Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
@@ -504,9 +508,6 @@ public class CustomerRegistrationService
 		if (customerLoginModel.getStatus())
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
-			
-			
-
 		}
 		else
 		{

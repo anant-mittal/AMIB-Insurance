@@ -68,7 +68,7 @@ public class HomeController
 	public String getVersion()
 	{
 
-		long checkTimeNew = System.currentTimeMillis() / (1000 * 60 * 5);
+		/*long checkTimeNew = System.currentTimeMillis() / (1000 * 60 * 5);
 		if (checkTimeNew != checkTime)
 		{
 			try
@@ -85,7 +85,11 @@ public class HomeController
 				LOGGER.error("getVersion Exception", e);
 			}
 		}
-		return versionNew;
+		return versionNew;*/
+		
+		return "1.0.1";
+		
+		
 		
 	}
 
