@@ -508,9 +508,8 @@ public class CustomerRegistrationService
 		{
 			return validateCivilID;
 		}
-		else if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+		else if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 		{
-			resp.setStatusKey(ApiConstants.FAILURE);
 			return civilIdExistCheck;
 		}
 		else
