@@ -16,6 +16,7 @@ import com.amx.jax.models.CustomerProfileDetailModel;
 import com.amx.jax.models.CustomerProfileDetailRequest;
 import com.amx.jax.models.CustomerProfileDetailResponse;
 import com.amx.jax.session.RegSession;
+import com.amx.jax.session.UserSession;
 
 @Service
 public class PersonalDetailsService
@@ -32,13 +33,16 @@ public class PersonalDetailsService
 
 	@Autowired
 	RegSession regSession;
+	
+	@Autowired
+	UserSession userSession;
 
-	public AmxApiResponse<CustomerDetailResponse, Object> getUserDetails(CustomerDetailRequest customerLoginRequest)
+	public AmxApiResponse<CustomerDetailResponse, Object> getUserDetails()
 	{
 		AmxApiResponse<CustomerDetailResponse, Object> resp = new AmxApiResponse<CustomerDetailResponse, Object>();
 		CustomerDetailResponse customerDetailResponse = new CustomerDetailResponse();
 
-		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(customerLoginRequest.getCivilId());
+		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(userSession.getCivilId());
 
 		customerDetailResponse.setMobile(customerDetailModel.getMobile());
 		customerDetailResponse.setEmail(customerDetailModel.getEmail());
@@ -69,18 +73,25 @@ public class PersonalDetailsService
 		return resp;
 	}
 
-	public AmxApiResponse<CustomerDetailResponse, Object> getUserProfileDetails(CustomerProfileDetailRequest customerProfileDetailRequest)
+	public AmxApiResponse<CustomerDetailResponse, Object> getUserProfileDetails()
 	{
 		AmxApiResponse<CustomerDetailResponse, Object> resp = new AmxApiResponse<CustomerDetailResponse, Object>();
 		CustomerProfileDetailResponse customerProfileDetailResponse = new CustomerProfileDetailResponse();
 		CustomerProfileDetailModel customerProfileDetailModel = new CustomerProfileDetailModel();
 
-		customerProfileDetailModel.setCivilId(customerProfileDetailRequest.getCivilId());
-		customerProfileDetailModel.setCustSequenceNumber(customerProfileDetailRequest.getCustSeqNumber());
-		customerProfileDetailModel.setCountryId(regSession.getCountryId());
-		customerProfileDetailModel.setCompCd(regSession.getCompCd());
-		customerProfileDetailModel.setLanguageId(regSession.getLanguageId());
-		customerProfileDetailModel.setUserType(regSession.getUserType());
+		customerProfileDetailModel.setCivilId(userSession.getCivilId());
+		customerProfileDetailModel.setCustSequenceNumber(userSession.getCustomerSequenceNumber());
+		customerProfileDetailModel.setCountryId(userSession.getCountryId());
+		customerProfileDetailModel.setCompCd(userSession.getCompCd());
+		customerProfileDetailModel.setLanguageId(userSession.getLanguageId());
+		customerProfileDetailModel.setUserType(userSession.getUserType());
+		
+		logger.info(TAG + " getCompanySetUp :: getCountryId   :" + userSession.getCountryId());
+		logger.info(TAG + " getCompanySetUp :: getCompCd      :" + userSession.getCompCd());
+		logger.info(TAG + " getCompanySetUp :: getUserType    :" + userSession.getUserType());
+		logger.info(TAG + " getCompanySetUp :: getDeviceId    :" + userSession.getDeviceId());
+		logger.info(TAG + " getCompanySetUp :: getDeviceType  :" + userSession.getDeviceType());
+		logger.info(TAG + " getCompanySetUp :: getCustSeqNo   :" + userSession.getCustomerSequenceNumber());
 
 		customerProfileDetailModel = personalDetailsDao.getUserProfileDetails(customerProfileDetailModel);
 
@@ -165,6 +176,27 @@ public class PersonalDetailsService
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
 			resp.setResults(personalDetailsDao.getArea(gov));
+
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
+		return resp;
+
+	}
+	
+	
+	public AmxApiResponse<?, Object> getGender()
+	{
+		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
+
+		try
+		{
+			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setResults(personalDetailsDao.getGender());
 
 		}
 		catch (Exception e)

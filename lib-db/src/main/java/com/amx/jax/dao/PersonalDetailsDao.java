@@ -44,11 +44,11 @@ public class PersonalDetailsDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setInt(1, customerProfileDetailModel.getCountryId());
-			callableStatement.setInt(2, customerProfileDetailModel.getCompCd());
+			//callableStatement.setInt(1, customerProfileDetailModel.getCountryId());
+			//callableStatement.setInt(2, customerProfileDetailModel.getCompCd());
 			callableStatement.setString(3, customerProfileDetailModel.getUserType());
 			callableStatement.setString(4, customerProfileDetailModel.getCivilId());
-			callableStatement.setInt(5, customerProfileDetailModel.getLanguageId());
+			//callableStatement.setInt(5, customerProfileDetailModel.getLanguageId());
 			callableStatement.setBigDecimal(6, customerProfileDetailModel.getCustSequenceNumber());
 
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
@@ -88,7 +88,7 @@ public class PersonalDetailsDao
 			customerProfileDetailModel.setAreaDesc(callableStatement.getString(19));
 			customerProfileDetailModel.setMobile(callableStatement.getString(20));
 			customerProfileDetailModel.setEmail(callableStatement.getString(21));
-			customerProfileDetailModel.setLanguageId(callableStatement.getInt(22));
+			//customerProfileDetailModel.setLanguageId(callableStatement.getInt(22));
 			customerProfileDetailModel.setErrorCode(callableStatement.getString(23));
 			customerProfileDetailModel.setErrorMessage(callableStatement.getString(24));
 
@@ -279,6 +279,54 @@ public class PersonalDetailsDao
 			callableStatement.executeUpdate();
 
 			ResultSet rs = (ResultSet) callableStatement.getObject(5);
+
+			while (rs.next())
+			{
+				Area area = new Area();
+				area.setAreaCode(rs.getString(1));
+				logger.info(TAG + " getArea :: Area code :" + rs.getString(1).toString());
+				area.setAreaDesc(rs.getString(2));
+				logger.info(TAG + " getArea :: Area disc :" + rs.getString(2).toString());
+				areaArray.add(area);
+			}
+
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+
+		return areaArray;
+	}
+
+	public ArrayList getGender()
+	{
+		getConnection();
+
+		CallableStatement callableStatement = null;
+		String callProcedure = "{call IRB_GET_GENDER(?,?,?,?,?,?,?)}";
+		ArrayList<Area> areaArray = new ArrayList<Area>();
+
+		logger.info(TAG + " getArea ::");
+
+		try
+		{
+			callableStatement = connection.prepareCall(callProcedure);
+
+			callableStatement.setInt(1, 1);
+			callableStatement.setInt(2, 10);
+			callableStatement.setInt(3, 0);
+			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
+			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
+			callableStatement.executeUpdate();
+
+			ResultSet rs = (ResultSet) callableStatement.getObject(4);
 
 			while (rs.next())
 			{

@@ -6,15 +6,15 @@ import java.sql.Date;
 
 public class CustomerProfileDetailModel
 {
-	private int countryId;
+	private BigDecimal countryId;
 	
-	private int compCd;
+	private BigDecimal compCd;
 
 	private String userType;
 
 	private String civilId;
 
-	private int languageId;
+	private BigDecimal languageId;
 
 	private BigDecimal custSequenceNumber;
 
@@ -54,22 +54,22 @@ public class CustomerProfileDetailModel
 
 	private String nativeArabicName;
 
-	public int getCountryId()
+	public BigDecimal getCountryId()
 	{
 		return countryId;
 	}
 
-	public void setCountryId(int countryId)
+	public void setCountryId(BigDecimal countryId)
 	{
 		this.countryId = countryId;
 	}
 
-	public int getCompCd()
+	public BigDecimal getCompCd()
 	{
 		return compCd;
 	}
 
-	public void setCompCd(int compCd)
+	public void setCompCd(BigDecimal compCd)
 	{
 		this.compCd = compCd;
 	}
@@ -94,12 +94,12 @@ public class CustomerProfileDetailModel
 		this.civilId = civilId;
 	}
 
-	public int getLanguageId()
+	public BigDecimal getLanguageId()
 	{
 		return languageId;
 	}
 
-	public void setLanguageId(int languageId)
+	public void setLanguageId(BigDecimal languageId)
 	{
 		this.languageId = languageId;
 	}

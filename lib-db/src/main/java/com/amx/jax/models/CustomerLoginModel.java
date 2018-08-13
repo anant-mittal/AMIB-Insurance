@@ -1,5 +1,6 @@
 package com.amx.jax.models;
 
+
 public class CustomerLoginModel
 {
 	public int CountryId;

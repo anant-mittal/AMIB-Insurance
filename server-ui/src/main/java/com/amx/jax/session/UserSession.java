@@ -2,6 +2,7 @@
 package com.amx.jax.session;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -30,9 +31,9 @@ public class UserSession implements Serializable
 
 	private String changePasswordOtp;
 
-	private int countryId;
+	private BigDecimal countryId;
 
-	private int compCd;
+	private BigDecimal compCd;
 
 	private String userType;
 
@@ -40,7 +41,14 @@ public class UserSession implements Serializable
 	
 	private String deviceId;
 	
-	private int languageId;
+	private BigDecimal languageId;
+	
+	private BigDecimal customerSequenceNumber;
+	
+	public static long getSerialversionuid()
+	{
+		return serialVersionUID;
+	}
 
 	public String getChangePasswordOtp()
 	{
@@ -122,22 +130,22 @@ public class UserSession implements Serializable
 		this.emailId = emailId;
 	}
 
-	public int getCountryId()
+	public BigDecimal getCountryId()
 	{
 		return countryId;
 	}
 
-	public void setCountryId(int countryId)
+	public void setCountryId(BigDecimal countryId)
 	{
 		this.countryId = countryId;
 	}
 
-	public int getCompCd()
+	public BigDecimal getCompCd()
 	{
 		return compCd;
 	}
 
-	public void setCompCd(int compCd)
+	public void setCompCd(BigDecimal compCd)
 	{
 		this.compCd = compCd;
 	}
@@ -172,14 +180,24 @@ public class UserSession implements Serializable
 		this.deviceId = deviceId;
 	}
 
-	public int getLanguageId()
+	public BigDecimal getLanguageId()
 	{
 		return languageId;
 	}
 
-	public void setLanguageId(int languageId)
+	public void setLanguageId(BigDecimal languageId)
 	{
 		this.languageId = languageId;
 	}
 
+	public BigDecimal getCustomerSequenceNumber()
+	{
+		return customerSequenceNumber;
+	}
+
+	public void setCustomerSequenceNumber(BigDecimal customerSequenceNumber)
+	{
+		this.customerSequenceNumber = customerSequenceNumber;
+	}
+	
 }

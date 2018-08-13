@@ -17,4 +17,5 @@ public class ApiConstants
 	public static String BAD_REQUEST = "400";
 
 	public static String DUPLICATE = "409";
+	
 }

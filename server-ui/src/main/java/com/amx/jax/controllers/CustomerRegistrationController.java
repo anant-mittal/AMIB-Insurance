@@ -82,7 +82,7 @@ public class CustomerRegistrationController
 	{
 		return customerRegistrationService.addNewCustomer(customerRegistrationRequest);
 	}
-
+	
 	@RequestMapping(value = "/pub/login/validate-userlogin", method = RequestMethod.POST)
 	public AmxApiResponse<CustomerLoginResponse, Object> validateUserLogin(@RequestBody CustomerLoginRequest customerLoginRequest)
 	{
@@ -100,5 +100,7 @@ public class CustomerRegistrationController
 	{
 		return customerRegistrationService.updatePassword(changePasswordRequest);//
 	}
+	
+	
 
 }

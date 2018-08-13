@@ -16,6 +16,7 @@ import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.models.CompanySetUp;
 import com.amx.jax.models.CustomerDetailModel;
 import com.amx.jax.models.CustomerLoginModel;
+import com.amx.jax.models.CustomerRegistrationFailed;
 import com.amx.jax.models.CustomerRegistrationModel;
 import com.amx.jax.models.Validate;
 import com.amx.jax.api.AmxApiResponse;
@@ -557,6 +558,89 @@ public class CustomerRegistrationDao
 		return customerDetailModel;
 	}
 
+	
+	
+	
+	/*public CustomerDetailModel setFailedUserRegistration(String type)
+	{
+		getConnection();
+		CallableStatement callableStatement = null;
+		String callProcedure = "{call IRB_RESET_PWD(?,?,?,?,?,?,?,?,?,?,?,?)}";
+		CustomerRegistrationFailed customerRegistrationFailed = new CustomerRegistrationFailed();
+
+		try
+		{
+			callableStatement = connection.prepareCall(callProcedure);
+			
+			
+			P_CNTRYCD     IN  NUMBER,
+            P_COMPCD      IN  NUMBER,
+            P_USRTYP      IN  VARCHAR2,
+            P_USERID      IN  VARCHAR2,
+            P_EXCPTYP     IN  VARCHAR2,
+            P_EXCPDESC    IN  VARCHAR2,
+            P_MOBILE      IN  VARCHAR2,
+            P_EMAIL       IN  VARCHAR2,
+            P_USER_SEQNO  IN  NUMBER,
+            P_CUST_SEQNO  IN  NUMBER,
+            P_APPL_SEQNO  IN  NUMBER,
+            P_QUOT_SEQNO  IN  NUMBER,
+            P_QUOT_VERNO  IN  NUMBER,
+            P_PAY_SEQNO   IN  NUMBER,
+            P_DEVICETYP   IN  VARCHAR2,
+            P_DEVICE_ADDR IN  VARCHAR2,
+            P_USER_BY     IN  VARCHAR2,
+			
+			callableStatement.setInt(1, customerDetailModel.getCountryId());
+			callableStatement.setInt(2, customerDetailModel.getCompCd());
+			callableStatement.setString(3, customerDetailModel.getUserType());
+			callableStatement.setString(4, customerDetailModel.getCivilId());
+			callableStatement.setString(5, customerDetailModel.getPassword());
+			callableStatement.setBigDecimal(6, null);
+			callableStatement.setDate(7, getCurrentDate());
+			callableStatement.setString(8, customerDetailModel.getDeviceId());
+			callableStatement.setString(9, customerDetailModel.getDeviceType());
+			callableStatement.setString(10, customerDetailModel.getCivilId());
+			callableStatement.registerOutParameter(11, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(12, java.sql.Types.VARCHAR);
+			callableStatement.executeUpdate();
+
+			customerDetailModel = new CustomerDetailModel();
+
+			String errorCode = callableStatement.getString(11);
+			String errorMessage = callableStatement.getString(12);
+
+			logger.info(TAG + " updatePassword :: errorCode :" + errorCode);
+			logger.info(TAG + " updatePassword :: errorMessage :" + errorMessage);
+
+			customerDetailModel.setErrorCode(errorCode);
+			customerDetailModel.setErrorMessage(errorMessage);
+
+			if (errorCode == null)
+			{
+				customerDetailModel.setStatus(true);
+			}
+			else
+			{
+				customerDetailModel.setStatus(false);
+			}
+
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		return customerDetailModel;
+	}*/
+
+	
+	
+	
+	
 	private static java.sql.Date getCurrentDate()
 	{
 		java.util.Date todayNew = null;

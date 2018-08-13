@@ -33,39 +33,44 @@ public class PersonalDetailsController
 	public PersonalDetailsService personalDetailsService;
 
 	@RequestMapping(value = "/api/personal/userdetails", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<CustomerDetailResponse, Object> getUserDetails(CustomerDetailRequest customerDetailRequest)
+	public AmxApiResponse<CustomerDetailResponse, Object> getUserDetails()
 	{
-		return personalDetailsService.getUserDetails(customerDetailRequest);
+		return personalDetailsService.getUserDetails();
 	}
 
 	@RequestMapping(value = "/api/personal/profiledetails", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<CustomerDetailResponse, Object> getUserProfileDetails(CustomerProfileDetailRequest customerProfileDetailRequest)
+	public AmxApiResponse<CustomerDetailResponse, Object> getUserProfileDetails()
 	{
-		return personalDetailsService.getUserProfileDetails(customerProfileDetailRequest);
+		return personalDetailsService.getUserProfileDetails();
 	}
 
-	@RequestMapping(value = "/business", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/api/personal/business", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getBusiness()
 	{
 		return personalDetailsService.getBusiness();
 	}
 
-	@RequestMapping(value = "/nationality", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/api/personal/nationality", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getNationality()
 	{
 		return personalDetailsService.getNationality();
 	}
 
-	@RequestMapping(value = "/governorates", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/api/personal/governorates", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getGovernorates()
 	{
 		return personalDetailsService.getGovernorates();
 	}
 
-	@RequestMapping(value = "/area", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/api/personal/area", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getArea(@RequestParam("gov") String gov)
 	{
 		return personalDetailsService.getArea(gov);
 	}
 
+	@RequestMapping(value = "/api/personal/gender", method = RequestMethod.GET, produces = "application/json")
+	public AmxApiResponse<?, Object> getGender()
+	{
+		return personalDetailsService.getGender();
+	}
 }

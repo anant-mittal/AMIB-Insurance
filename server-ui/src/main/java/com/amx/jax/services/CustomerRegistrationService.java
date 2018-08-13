@@ -1,6 +1,7 @@
 
 package com.amx.jax.services;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.amx.jax.WebConfig;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
+import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.constants.Message;
 import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.CustomerRegistrationDao;
@@ -55,7 +57,7 @@ public class CustomerRegistrationService
 
 	@Autowired
 	RegSession regSession;
-	
+
 	@Autowired
 	UserSession userSession;
 
@@ -94,7 +96,7 @@ public class CustomerRegistrationService
 		}
 		return resp;
 	}
-	
+
 	public static boolean validate(String emailStr)
 	{
 		Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
@@ -294,44 +296,67 @@ public class CustomerRegistrationService
 	{
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
 		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
+		boolean allowedCheck = false;
 
 		try
 		{
 			AmxApiResponse<Validate, Object> validateCivilID = isValidCivilId(requestOtpModel.getCivilId());
+			AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(requestOtpModel.getCivilId());
+			AmxApiResponse<Validate, Object> isValidMobileNumber = isValidMobileNumber(requestOtpModel.getMobileNumber());
+			AmxApiResponse<Validate, Object> mobileNumberExists = isMobileNumberExist(requestOtpModel.getMobileNumber());
+			AmxApiResponse<Validate, Object> validateEmailID = isValidEmailId(requestOtpModel.getEmailId());
+			AmxApiResponse<Validate, Object> emailIdExists = isEmailIdExist(requestOtpModel.getEmailId());
+
 			if (validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 			{
 				return validateCivilID;
 			}
 
-			AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(requestOtpModel.getCivilId());
+			if (isValidMobileNumber.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			{
+				return isValidMobileNumber;
+			}
+
+			if (validateEmailID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			{
+				return validateEmailID;
+			}
+
 			if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				civilIdExistCheck.setStatusKey(ApiConstants.FAILURE);
 				return civilIdExistCheck;
 			}
 
-			AmxApiResponse<Validate, Object> isValidMobileNumber = isValidMobileNumber(requestOtpModel.getMobileNumber());
-			if (isValidMobileNumber.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS) && emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
-				return isValidMobileNumber;
+				if (!allowedCheck)
+				{
+					sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_ALL);
+					allowedCheck = true;
+				}
 			}
 
-			AmxApiResponse<Validate, Object> mobileNumberExists = isMobileNumberExist(requestOtpModel.getMobileNumber());
 			if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
+				if (!allowedCheck)
+				{
+					sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE);
+					allowedCheck = true;
+				}
+
 				mobileNumberExists.setStatusKey(ApiConstants.FAILURE);
 				return mobileNumberExists;
 			}
 
-			AmxApiResponse<Validate, Object> validateEmailID = isValidEmailId(requestOtpModel.getEmailId());
-			if (validateEmailID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-			{
-				return validateEmailID;
-			}
-
-			AmxApiResponse<Validate, Object> emailIdExists = isEmailIdExist(requestOtpModel.getEmailId());
 			if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
+				if (!allowedCheck)
+				{
+					sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL);
+					allowedCheck = true;
+				}
+
 				emailIdExists.setStatusKey(ApiConstants.FAILURE);
 				return emailIdExists;
 			}
@@ -403,41 +428,21 @@ public class CustomerRegistrationService
 		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
 		Validate validate = new Validate();
 
-		if (regSession.getMotp().equals(mOtp))
+		if (regSession.getMotp().equals(mOtp) && regSession.getEotp().equals(eOtp))
 		{
 			validate.setValid(true);
 			resp.setStatusKey(ApiConstants.SUCCESS);
 			resp.setMessage(Message.REG_VALID_OTP);
-			resp.setData(validate);
-			resp.setMessageKey(MessageKey.KEY_REG_VALIDATE_OTP);
 		}
 		else
 		{
 			validate.setValid(false);
 			resp.setStatusKey(ApiConstants.FAILURE);
 			resp.setMessage(Message.REG_INVALID_OTP);
-			resp.setData(validate);
-			resp.setMessageKey(MessageKey.KEY_INVALID_MOBILE_OTP);
-			return resp;
 		}
+		resp.setData(validate);
+		resp.setMessageKey(MessageKey.KEY_REG_VALIDATE_OTP);
 
-		if (regSession.getEotp().equals(eOtp))
-		{
-			validate.setValid(true);
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			resp.setMessage(Message.REG_VALID_OTP);
-			resp.setData(validate);
-			resp.setMessageKey(MessageKey.KEY_REG_VALIDATE_OTP);
-		}
-		else
-		{
-			validate.setValid(false);
-			resp.setStatusKey(ApiConstants.FAILURE);
-			resp.setMessage(Message.REG_INVALID_OTP);
-			resp.setData(validate);
-			resp.setMessageKey(MessageKey.KEY_INVALID_EMAIL_OTP);
-			return resp;
-		}
 		return resp;
 	}
 
@@ -508,6 +513,14 @@ public class CustomerRegistrationService
 		if (customerLoginModel.getStatus())
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
+			
+			userSession.setCivilId(customerLoginRequest.getCivilId());
+			userSession.setCustomerSequenceNumber(new BigDecimal(customerLoginModel.getUserSeqNum()));
+			userSession.setCountryId(new BigDecimal(regSession.getCountryId()));
+			userSession.setCompCd(new BigDecimal(regSession.getCompCd()));
+			userSession.setUserType(regSession.getUserType());
+			userSession.setLanguageId(new BigDecimal(regSession.getLanguageId()));
+			
 		}
 		else
 		{
@@ -659,4 +672,23 @@ public class CustomerRegistrationService
 
 		return resp;
 	}
+
+	public void sendFailedRegistration(String type)
+	{
+		if (type.equalsIgnoreCase(DetailsConstants.REG_INCOMPLETE_TYPE_ALL))
+		{
+			// customerRegistrationDao.setFailedUserRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_ALL);
+		}
+
+		if (type.equalsIgnoreCase(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL))
+		{
+
+		}
+
+		if (type.equalsIgnoreCase(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE))
+		{
+
+		}
+	}
+
 }
