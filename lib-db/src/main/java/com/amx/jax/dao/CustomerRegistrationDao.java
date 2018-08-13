@@ -456,16 +456,19 @@ public class CustomerRegistrationDao
 			callableStatement.setString(3, customerLoginModel.getUserType());
 			callableStatement.setString(4, customerLoginModel.getCivilId());
 			callableStatement.setString(5, customerLoginModel.getPassword());
-			callableStatement.registerOutParameter(6, java.sql.Types.INTEGER);
-			callableStatement.registerOutParameter(7, java.sql.Types.INTEGER);
-			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
-			callableStatement.registerOutParameter(9, java.sql.Types.VARCHAR);
+			callableStatement.setString(6, customerLoginModel.getDeviceId());
+			callableStatement.setString(7, customerLoginModel.getDeviceType());
+			
+			callableStatement.registerOutParameter(8, java.sql.Types.INTEGER);
+			callableStatement.registerOutParameter(9, java.sql.Types.INTEGER);
+			callableStatement.registerOutParameter(10, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(11, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
 
-			int userSequenceNumber = callableStatement.getInt(6);
-			int amibRef = callableStatement.getInt(7);
-			String errorCode = callableStatement.getString(8);
-			String errorMessage = callableStatement.getString(9);
+			int userSequenceNumber = callableStatement.getInt(8);
+			int amibRef = callableStatement.getInt(9);
+			String errorCode = callableStatement.getString(10);
+			String errorMessage = callableStatement.getString(11);
 
 			logger.info(TAG + " validateUserLogin :: errorCode :" + errorCode);
 			logger.info(TAG + " validateUserLogin :: errorMessage :" + errorMessage);

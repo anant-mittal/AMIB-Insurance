@@ -1,5 +1,9 @@
-package com.amx.jax.models;
 
+
+
+
+
+package com.amx.jax.models;
 
 public class CustomerLoginModel
 {
@@ -20,7 +24,11 @@ public class CustomerLoginModel
 	public String errorCode;//
 
 	public String errorMessage;
-	
+
+	public String deviceId;
+
+	public String deviceType;
+
 	public boolean status;
 
 	public int getCountryId()
@@ -112,7 +120,7 @@ public class CustomerLoginModel
 	{
 		this.errorMessage = errorMessage;
 	}
-	
+
 	public boolean getStatus()
 	{
 		return status;
@@ -123,6 +131,26 @@ public class CustomerLoginModel
 		this.status = status;
 	}
 	
+	public String getDeviceId()
+	{
+		return deviceId;
+	}
+
+	public void setDeviceId(String deviceId)
+	{
+		this.deviceId = deviceId;
+	}
+
+	public String getDeviceType()
+	{
+		return deviceType;
+	}
+
+	public void setDeviceType(String deviceType)
+	{
+		this.deviceType = deviceType;
+	}
+
 	@Override
 	public String toString()
 	{
