@@ -18,6 +18,7 @@ import com.amx.jax.models.CustomerProfileDetailModel;
 import com.amx.jax.models.CustomerProfileDetailRequest;
 import com.amx.jax.models.Governorates;
 import com.amx.jax.models.Nationality;
+import com.amx.jax.session.UserSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import oracle.jdbc.OracleTypes;
@@ -32,9 +33,12 @@ public class PersonalDetailsDao
 	@Autowired
 	JdbcTemplate jdbcTemplate;
 
+	@Autowired
+	UserSession userSession;
+
 	Connection connection;
 
-	public CustomerProfileDetailModel getUserProfileDetails(CustomerProfileDetailModel customerProfileDetailModel)
+	public CustomerProfileDetailModel getProfileDetails(CustomerProfileDetailModel customerProfileDetailModel)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -44,11 +48,11 @@ public class PersonalDetailsDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			//callableStatement.setInt(1, customerProfileDetailModel.getCountryId());
-			//callableStatement.setInt(2, customerProfileDetailModel.getCompCd());
+			callableStatement.setBigDecimal(1, customerProfileDetailModel.getCountryId());
+			callableStatement.setBigDecimal(2, customerProfileDetailModel.getCompCd());
 			callableStatement.setString(3, customerProfileDetailModel.getUserType());
 			callableStatement.setString(4, customerProfileDetailModel.getCivilId());
-			//callableStatement.setInt(5, customerProfileDetailModel.getLanguageId());
+			callableStatement.setBigDecimal(5, customerProfileDetailModel.getLanguageId());
 			callableStatement.setBigDecimal(6, customerProfileDetailModel.getCustSequenceNumber());
 
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
@@ -88,7 +92,7 @@ public class PersonalDetailsDao
 			customerProfileDetailModel.setAreaDesc(callableStatement.getString(19));
 			customerProfileDetailModel.setMobile(callableStatement.getString(20));
 			customerProfileDetailModel.setEmail(callableStatement.getString(21));
-			//customerProfileDetailModel.setLanguageId(callableStatement.getInt(22));
+			customerProfileDetailModel.setLanguageId(callableStatement.getBigDecimal(22));
 			customerProfileDetailModel.setErrorCode(callableStatement.getString(23));
 			customerProfileDetailModel.setErrorMessage(callableStatement.getString(24));
 
@@ -126,9 +130,9 @@ public class PersonalDetailsDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setInt(1, 1);
-			callableStatement.setInt(2, 10);
-			callableStatement.setInt(3, 0);
+			callableStatement.setBigDecimal(1, userSession.getCountryId());
+			callableStatement.setBigDecimal(2, userSession.getCompCd());
+			callableStatement.setBigDecimal(3, userSession.getLanguageId());
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -173,9 +177,9 @@ public class PersonalDetailsDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setInt(1, 1);
-			callableStatement.setInt(2, 10);
-			callableStatement.setInt(3, 1);
+			callableStatement.setBigDecimal(1, userSession.getCountryId());
+			callableStatement.setBigDecimal(2, userSession.getCompCd());
+			callableStatement.setBigDecimal(3, userSession.getLanguageId());
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -221,9 +225,9 @@ public class PersonalDetailsDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setInt(1, 1);
-			callableStatement.setInt(2, 10);
-			callableStatement.setInt(3, 0);
+			callableStatement.setBigDecimal(1, userSession.getCountryId());
+			callableStatement.setBigDecimal(2, userSession.getCompCd());
+			callableStatement.setBigDecimal(3, userSession.getLanguageId());
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -269,10 +273,10 @@ public class PersonalDetailsDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setInt(1, 1);
-			callableStatement.setInt(2, 10);
+			callableStatement.setBigDecimal(1, userSession.getCountryId());
+			callableStatement.setBigDecimal(2, userSession.getCompCd());
 			callableStatement.setString(3, gov);
-			callableStatement.setInt(4, 0);
+			callableStatement.setBigDecimal(4, userSession.getLanguageId());
 			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
@@ -309,7 +313,7 @@ public class PersonalDetailsDao
 		getConnection();
 
 		CallableStatement callableStatement = null;
-		String callProcedure = "{call IRB_GET_GENDER(?,?,?,?,?,?,?)}";
+		String callProcedure = "{call IRB_GET_GENDER(?,?,?,?,?,?)}";
 		ArrayList<Area> areaArray = new ArrayList<Area>();
 
 		logger.info(TAG + " getArea ::");
@@ -318,9 +322,9 @@ public class PersonalDetailsDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setInt(1, 1);
-			callableStatement.setInt(2, 10);
-			callableStatement.setInt(3, 0);
+			callableStatement.setBigDecimal(1, userSession.getCountryId());
+			callableStatement.setBigDecimal(2, userSession.getCompCd());
+			callableStatement.setBigDecimal(3, userSession.getLanguageId());
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);

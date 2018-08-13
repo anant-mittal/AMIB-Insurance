@@ -12,13 +12,11 @@ public class CustomerDetailModel
 
 	private String createdDeviceId;
 
-	private String civilid;
-
 	private int userSequenceNumber;
 	
 	private int custSequenceNumber;
 
-	private int countryId;//
+	private int countryId;
 
 	private int compCd;
 
@@ -86,16 +84,6 @@ public class CustomerDetailModel
 	public void setCreatedDeviceId(String createdDeviceId)
 	{
 		this.createdDeviceId = createdDeviceId;
-	}
-
-	public String getCivilid()
-	{
-		return civilid;
-	}
-
-	public void setCivilid(String civilid)
-	{
-		this.civilid = civilid;
 	}
 
 	public int getUserSequenceNumber()
@@ -267,13 +255,4 @@ public class CustomerDetailModel
 	{
 		this.custSequenceNumber = custSequenceNumber;
 	}
-
-	@Override
-	public String toString()
-	{
-		return "CustomerDetailModel [userType=" + userType + ", civilId=" + civilId + ", password=" + password + ", createdDeviceId=" + createdDeviceId + ", civilid=" + civilid + ", userSequenceNumber=" + userSequenceNumber + ", countryId=" + countryId + ", compCd=" + compCd + ", mobile=" + mobile
-				+ ", email=" + email + ", languageId=" + languageId + ", status=" + status + ", errorMessage=" + errorMessage + ", errorCode=" + errorCode + ", deviceType=" + deviceType + ", mobileVerify=" + mobileVerify + ", mailVerify=" + mailVerify + ", lastLogin=" + lastLogin + ", deviceId="
-				+ deviceId + ", dbStatus=" + dbStatus + "]";
-	}
-
 }

@@ -497,47 +497,60 @@ public class CustomerRegistrationService
 
 	}
 
-	public AmxApiResponse<CustomerLoginResponse, Object> validateUserLogin(CustomerLoginRequest customerLoginRequest)
+	public AmxApiResponse<?, Object> validateUserLogin(CustomerLoginRequest customerLoginRequest)
 	{
 		AmxApiResponse<CustomerLoginResponse, Object> resp = new AmxApiResponse<CustomerLoginResponse, Object>();
 
-		CustomerLoginModel customerLoginModel = new CustomerLoginModel();
-		customerLoginModel.setCountryId(regSession.getCountryId());
-		customerLoginModel.setCompCd(regSession.getCompCd());
-		customerLoginModel.setUserType(regSession.getUserType());
-		customerLoginModel.setCivilId(customerLoginRequest.getCivilId());
-		customerLoginModel.setPassword(customerLoginRequest.getPassword());
-
-		customerLoginModel = customerRegistrationDao.validateUserLogin(customerLoginModel);
-
-		if (customerLoginModel.getStatus())
+		AmxApiResponse<Validate, Object> validateCivilID = isValidCivilId(customerLoginRequest.getCivilId());
+		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(customerLoginRequest.getCivilId());
+		
+		if (validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			
-			userSession.setCivilId(customerLoginRequest.getCivilId());
-			userSession.setCustomerSequenceNumber(new BigDecimal(customerLoginModel.getUserSeqNum()));
-			userSession.setCountryId(new BigDecimal(regSession.getCountryId()));
-			userSession.setCompCd(new BigDecimal(regSession.getCompCd()));
-			userSession.setUserType(regSession.getUserType());
-			userSession.setLanguageId(new BigDecimal(regSession.getLanguageId()));
-			
+			return validateCivilID;
+		}
+		else if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+		{
+			resp.setStatusKey(ApiConstants.FAILURE);
+			return civilIdExistCheck;
 		}
 		else
 		{
-			resp.setStatusKey(ApiConstants.FAILURE);
+			CustomerLoginModel customerLoginModel = new CustomerLoginModel();
+			customerLoginModel.setCountryId(regSession.getCountryId());
+			customerLoginModel.setCompCd(regSession.getCompCd());
+			customerLoginModel.setUserType(regSession.getUserType());
+			customerLoginModel.setCivilId(customerLoginRequest.getCivilId());
+			customerLoginModel.setPassword(customerLoginRequest.getPassword());
+
+			customerLoginModel = customerRegistrationDao.validateUserLogin(customerLoginModel);
+
+			if (customerLoginModel.getStatus())
+			{
+				userSession.setCivilId(customerLoginRequest.getCivilId());
+				userSession.setCustomerSequenceNumber(new BigDecimal(customerLoginModel.getUserSeqNum()));
+				userSession.setCountryId(new BigDecimal(regSession.getCountryId()));
+				userSession.setCompCd(new BigDecimal(regSession.getCompCd()));
+				userSession.setUserType(regSession.getUserType());
+				userSession.setLanguageId(new BigDecimal(regSession.getLanguageId()));
+				userSession.setDeviceType(regSession.getDeviceType());
+				resp.setStatusKey(ApiConstants.SUCCESS);
+			}
+			else
+			{
+				resp.setStatusKey(ApiConstants.FAILURE);
+			}
+
+			resp.setMessageKey(customerLoginModel.getErrorCode());
+			resp.setMessage(customerLoginModel.getErrorCode());
+
+			CustomerLoginResponse customerLoginResponse = new CustomerLoginResponse();
+			customerLoginResponse.setAmibRef(customerLoginModel.getAmibRef());
+			customerLoginResponse.setUserSeqNum(customerLoginModel.getUserSeqNum());
+
+			resp.setData(customerLoginResponse);
+
+			logger.info(TAG + " validateUserLogin :: customerLoginModel :" + customerLoginModel);
 		}
-
-		resp.setMessageKey(customerLoginModel.getErrorCode());
-		resp.setMessage(customerLoginModel.getErrorCode());
-
-		CustomerLoginResponse customerLoginResponse = new CustomerLoginResponse();
-		customerLoginResponse.setAmibRef(customerLoginModel.getAmibRef());
-		customerLoginResponse.setUserSeqNum(customerLoginModel.getUserSeqNum());
-
-		resp.setData(customerLoginResponse);
-
-		logger.info(TAG + " validateUserLogin :: customerLoginModel :" + customerLoginModel);
-
 		return resp;
 	}
 

@@ -52,7 +52,7 @@ public class PersonalDetailsService
 		customerDetailResponse.setLastLogin(customerDetailModel.getLastLogin());
 		customerDetailResponse.setDeviceId(customerDetailModel.getDeviceId());
 		customerDetailResponse.setDeviceType(customerDetailModel.getDeviceType());
-		customerDetailResponse.setCivilId(customerDetailModel.getCivilId());
+		customerDetailResponse.setCivilId(userSession.getCivilId());
 		customerDetailResponse.setDbStatus(customerDetailModel.getDbStatus());
 		customerDetailResponse.setCustSeqNumber(customerDetailModel.getCustSequenceNumber());
 
@@ -73,7 +73,7 @@ public class PersonalDetailsService
 		return resp;
 	}
 
-	public AmxApiResponse<CustomerDetailResponse, Object> getUserProfileDetails()
+	public AmxApiResponse<CustomerDetailResponse, Object> getProfileDetails()
 	{
 		AmxApiResponse<CustomerDetailResponse, Object> resp = new AmxApiResponse<CustomerDetailResponse, Object>();
 		CustomerProfileDetailResponse customerProfileDetailResponse = new CustomerProfileDetailResponse();
@@ -86,6 +86,7 @@ public class PersonalDetailsService
 		customerProfileDetailModel.setLanguageId(userSession.getLanguageId());
 		customerProfileDetailModel.setUserType(userSession.getUserType());
 		
+		logger.info(TAG + " getCompanySetUp :: getCountryId   :" + userSession.getCivilId());
 		logger.info(TAG + " getCompanySetUp :: getCountryId   :" + userSession.getCountryId());
 		logger.info(TAG + " getCompanySetUp :: getCompCd      :" + userSession.getCompCd());
 		logger.info(TAG + " getCompanySetUp :: getUserType    :" + userSession.getUserType());
@@ -93,7 +94,7 @@ public class PersonalDetailsService
 		logger.info(TAG + " getCompanySetUp :: getDeviceType  :" + userSession.getDeviceType());
 		logger.info(TAG + " getCompanySetUp :: getCustSeqNo   :" + userSession.getCustomerSequenceNumber());
 
-		customerProfileDetailModel = personalDetailsDao.getUserProfileDetails(customerProfileDetailModel);
+		customerProfileDetailModel = personalDetailsDao.getProfileDetails(customerProfileDetailModel);
 
 		if (customerProfileDetailModel.getStatus())
 		{

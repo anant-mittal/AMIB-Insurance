@@ -39,9 +39,9 @@ public class PersonalDetailsController
 	}
 
 	@RequestMapping(value = "/api/personal/profiledetails", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<CustomerDetailResponse, Object> getUserProfileDetails()
+	public AmxApiResponse<CustomerDetailResponse, Object> getProfileDetails()
 	{
-		return personalDetailsService.getUserProfileDetails();
+		return personalDetailsService.getProfileDetails();
 	}
 
 	@RequestMapping(value = "/api/personal/business", method = RequestMethod.GET, produces = "application/json")

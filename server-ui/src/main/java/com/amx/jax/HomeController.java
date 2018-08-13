@@ -151,7 +151,6 @@ public class HomeController
 	public String defaultPage(Model model)
 	{
 		System.out.println("HomeController defaultPage  ");
-
 		model.addAttribute("lang", httpService.getLanguage());
 
 		System.out.println("HomeController defaultPage httpService.getLanguage() " + httpService.getLanguage());
