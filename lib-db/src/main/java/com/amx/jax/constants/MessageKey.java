@@ -32,4 +32,5 @@ public class MessageKey
 	
 	public static String KEY_INVALID_EMAIL_OTP = "INVEOTP";
 	
+	public static String KEY_MOBILE_OR_EMAIL_ALREADY_EXISTS = "MOREAE";
 }

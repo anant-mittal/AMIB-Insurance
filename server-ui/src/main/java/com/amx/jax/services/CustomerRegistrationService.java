@@ -331,18 +331,21 @@ public class CustomerRegistrationService
 			if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS) && emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_MOBE_MAIL,requestOtpModel,mobileNumberExists.getMessage());
+				mobileNumberExists.setMessageKey(MessageKey.KEY_MOBILE_OR_EMAIL_ALREADY_EXISTS);
 				mobileNumberExists.setStatusKey(ApiConstants.FAILURE);
 				return mobileNumberExists;
 			}
 			else if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE,requestOtpModel,mobileNumberExists.getMessage());
+				mobileNumberExists.setMessageKey(MessageKey.KEY_MOBILE_OR_EMAIL_ALREADY_EXISTS);
 				mobileNumberExists.setStatusKey(ApiConstants.FAILURE);
 				return mobileNumberExists;
 			}
 			else if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL,requestOtpModel,emailIdExists.getMessage());
+				emailIdExists.setMessageKey(MessageKey.KEY_MOBILE_OR_EMAIL_ALREADY_EXISTS);
 				emailIdExists.setStatusKey(ApiConstants.FAILURE);
 				return emailIdExists;
 			}
