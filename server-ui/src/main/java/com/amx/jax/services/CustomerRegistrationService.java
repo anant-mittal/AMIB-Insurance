@@ -505,6 +505,8 @@ public class CustomerRegistrationService
 			customerLoginModel.setUserType(regSession.getUserType());
 			customerLoginModel.setCivilId(customerLoginRequest.getCivilId());
 			customerLoginModel.setPassword(customerLoginRequest.getPassword());
+			customerLoginModel.setDeviceId(regSession.getDeviceId());
+			customerLoginModel.setDeviceType(regSession.getDeviceType());
 
 			customerLoginModel = customerRegistrationDao.validateUserLogin(customerLoginModel);
 
