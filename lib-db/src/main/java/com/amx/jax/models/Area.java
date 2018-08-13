@@ -23,7 +23,7 @@ public class Area
 
 	public void setAreaDesc(String areaDesc)
 	{
-		this.areaDesc = areaDesc;
+		this.areaDesc = areaDesc;//
 	}
 	
 }
