@@ -16,12 +16,9 @@ import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.models.CompanySetUp;
 import com.amx.jax.models.CustomerDetailModel;
 import com.amx.jax.models.CustomerLoginModel;
-import com.amx.jax.models.CustomerRegistrationFailed;
 import com.amx.jax.models.CustomerRegistrationModel;
+import com.amx.jax.models.FailureException;
 import com.amx.jax.models.Validate;
-import com.amx.jax.api.AmxApiResponse;
-import com.amx.jax.api.BoolRespModel;
-import com.amx.jax.constants.ApiConstants;
 import oracle.jdbc.OracleTypes;
 
 @Repository
@@ -558,73 +555,56 @@ public class CustomerRegistrationDao
 		return customerDetailModel;
 	}
 
-	
-	
-	
-	/*public CustomerDetailModel setFailedUserRegistration(String type)
+	public FailureException setFailedException(String type, FailureException failureException)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
-		String callProcedure = "{call IRB_RESET_PWD(?,?,?,?,?,?,?,?,?,?,?,?)}";
-		CustomerRegistrationFailed customerRegistrationFailed = new CustomerRegistrationFailed();
+		String callProcedure = "{call IRB_CREATE_EXCEPTION(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
 
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			
-			
-			P_CNTRYCD     IN  NUMBER,
-            P_COMPCD      IN  NUMBER,
-            P_USRTYP      IN  VARCHAR2,
-            P_USERID      IN  VARCHAR2,
-            P_EXCPTYP     IN  VARCHAR2,
-            P_EXCPDESC    IN  VARCHAR2,
-            P_MOBILE      IN  VARCHAR2,
-            P_EMAIL       IN  VARCHAR2,
-            P_USER_SEQNO  IN  NUMBER,
-            P_CUST_SEQNO  IN  NUMBER,
-            P_APPL_SEQNO  IN  NUMBER,
-            P_QUOT_SEQNO  IN  NUMBER,
-            P_QUOT_VERNO  IN  NUMBER,
-            P_PAY_SEQNO   IN  NUMBER,
-            P_DEVICETYP   IN  VARCHAR2,
-            P_DEVICE_ADDR IN  VARCHAR2,
-            P_USER_BY     IN  VARCHAR2,
-			
-			callableStatement.setInt(1, customerDetailModel.getCountryId());
-			callableStatement.setInt(2, customerDetailModel.getCompCd());
-			callableStatement.setString(3, customerDetailModel.getUserType());
-			callableStatement.setString(4, customerDetailModel.getCivilId());
-			callableStatement.setString(5, customerDetailModel.getPassword());
-			callableStatement.setBigDecimal(6, null);
-			callableStatement.setDate(7, getCurrentDate());
-			callableStatement.setString(8, customerDetailModel.getDeviceId());
-			callableStatement.setString(9, customerDetailModel.getDeviceType());
-			callableStatement.setString(10, customerDetailModel.getCivilId());
-			callableStatement.registerOutParameter(11, java.sql.Types.VARCHAR);
-			callableStatement.registerOutParameter(12, java.sql.Types.VARCHAR);
+
+			callableStatement.setBigDecimal(1, failureException.getCountryId());
+			callableStatement.setBigDecimal(2, failureException.getCompCd());
+			callableStatement.setString(3, failureException.getUserType());
+			callableStatement.setString(4, failureException.getCivilId());
+			callableStatement.setString(5, failureException.getExceptionType());
+			callableStatement.setString(6, failureException.getExceptionMsg());
+			callableStatement.setString(7, failureException.getMobileNumber());
+			callableStatement.setString(8, failureException.getEmailId());
+			callableStatement.setBigDecimal(9, null);
+			callableStatement.setBigDecimal(10, null);
+			callableStatement.setBigDecimal(11, null);
+			callableStatement.setBigDecimal(12, null);
+			callableStatement.setBigDecimal(13, null);
+			callableStatement.setBigDecimal(14, null);
+			callableStatement.setString(15, failureException.getDeviceType());
+			callableStatement.setString(16, failureException.getDeviceId());
+			callableStatement.setString(17, failureException.getCivilId());
+			callableStatement.registerOutParameter(18, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(19, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
 
-			customerDetailModel = new CustomerDetailModel();
+			failureException = new FailureException();
 
-			String errorCode = callableStatement.getString(11);
-			String errorMessage = callableStatement.getString(12);
+			String errorCode = callableStatement.getString(18);
+			String errorMessage = callableStatement.getString(19);
 
-			logger.info(TAG + " updatePassword :: errorCode :" + errorCode);
-			logger.info(TAG + " updatePassword :: errorMessage :" + errorMessage);
+			logger.info(TAG + " setFailedException :: errorCode :" + errorCode);
+			logger.info(TAG + " setFailedException :: errorMessage :" + errorMessage);
 
-			customerDetailModel.setErrorCode(errorCode);
-			customerDetailModel.setErrorMessage(errorMessage);
+			failureException.setErrorCode(errorCode);
+			failureException.setErrorMessage(errorMessage);
 
 			if (errorCode == null)
 			{
-				customerDetailModel.setStatus(true);
+				failureException.setStatus(true);
 			}
 			else
 			{
-				customerDetailModel.setStatus(false);
+				failureException.setStatus(false);
 			}
-
 		}
 		catch (Exception e)
 		{
@@ -634,13 +614,9 @@ public class CustomerRegistrationDao
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return customerDetailModel;
-	}*/
+		return failureException;
+	}
 
-	
-	
-	
-	
 	private static java.sql.Date getCurrentDate()
 	{
 		java.util.Date todayNew = null;

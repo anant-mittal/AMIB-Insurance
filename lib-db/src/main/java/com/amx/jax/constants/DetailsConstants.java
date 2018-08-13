@@ -12,7 +12,7 @@ public class DetailsConstants
 	
 	public static String CONFIGURED_EMAILID = "almulla.insurance.1427@gmail.com";
 	
-	public static String REG_INCOMPLETE_TYPE_ALL = "ALL";
+	public static String REG_INCOMPLETE_TYPE_MOBE_MAIL = "MOBEMAIL";
 	
 	public static String REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL = "DPEMAIL";
 	

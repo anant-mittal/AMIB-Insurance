@@ -29,6 +29,7 @@ import com.amx.jax.models.CustomerLoginResponse;
 import com.amx.jax.models.CustomerRegistrationModel;
 import com.amx.jax.models.CustomerRegistrationRequest;
 import com.amx.jax.models.CustomerRegistrationResponse;
+import com.amx.jax.models.FailureException;
 import com.amx.jax.models.Validate;
 import com.amx.jax.session.RegSession;
 import com.amx.jax.session.UserSession;
@@ -296,8 +297,7 @@ public class CustomerRegistrationService
 	{
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
 		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
-		boolean allowedCheck = false;
-
+		
 		try
 		{
 			AmxApiResponse<Validate, Object> validateCivilID = isValidCivilId(requestOtpModel.getCivilId());
@@ -330,33 +330,19 @@ public class CustomerRegistrationService
 
 			if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS) && emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
-				if (!allowedCheck)
-				{
-					sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_ALL);
-					allowedCheck = true;
-				}
-			}
-
-			if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
-			{
-				if (!allowedCheck)
-				{
-					sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE);
-					allowedCheck = true;
-				}
-
+				sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_MOBE_MAIL,requestOtpModel,mobileNumberExists.getMessage());
 				mobileNumberExists.setStatusKey(ApiConstants.FAILURE);
 				return mobileNumberExists;
 			}
-
-			if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+			else if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
-				if (!allowedCheck)
-				{
-					sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL);
-					allowedCheck = true;
-				}
-
+				sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE,requestOtpModel,mobileNumberExists.getMessage());
+				mobileNumberExists.setStatusKey(ApiConstants.FAILURE);
+				return mobileNumberExists;
+			}
+			else if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+			{
+				sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL,requestOtpModel,emailIdExists.getMessage());
 				emailIdExists.setStatusKey(ApiConstants.FAILURE);
 				return emailIdExists;
 			}
@@ -500,7 +486,6 @@ public class CustomerRegistrationService
 	public AmxApiResponse<?, Object> validateUserLogin(CustomerLoginRequest customerLoginRequest)
 	{
 		AmxApiResponse<CustomerLoginResponse, Object> resp = new AmxApiResponse<CustomerLoginResponse, Object>();
-
 		AmxApiResponse<Validate, Object> validateCivilID = isValidCivilId(customerLoginRequest.getCivilId());
 		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(customerLoginRequest.getCivilId());
 		
@@ -540,7 +525,7 @@ public class CustomerRegistrationService
 			}
 
 			resp.setMessageKey(customerLoginModel.getErrorCode());
-			resp.setMessage(customerLoginModel.getErrorCode());
+			resp.setMessage(customerLoginModel.getErrorMessage());
 
 			CustomerLoginResponse customerLoginResponse = new CustomerLoginResponse();
 			customerLoginResponse.setAmibRef(customerLoginModel.getAmibRef());
@@ -685,22 +670,80 @@ public class CustomerRegistrationService
 		return resp;
 	}
 
-	public void sendFailedRegistration(String type)
+	public void sendFailedRegistration(String type , RequestOtpModel requestOtpModel , String exceptionMessage)
 	{
-		if (type.equalsIgnoreCase(DetailsConstants.REG_INCOMPLETE_TYPE_ALL))
+		String emailIdFrom = webConfig.getConfigEmail();
+		String emailITo = requestOtpModel.getEmailId();
+		String Subject = "User Registration Failure";
+		String mailData = "";
+		StringBuffer sb = new StringBuffer();
+
+		if (type.equalsIgnoreCase(DetailsConstants.REG_INCOMPLETE_TYPE_MOBE_MAIL))
 		{
-			// customerRegistrationDao.setFailedUserRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_ALL);
+			sb.append("\n");
+			sb.append("\n USER REGISTRTATION FAILED INFO :");
+			sb.append("\n");
+			sb.append("\n CIVIL ID   ::  "+requestOtpModel.getCivilId());
+			sb.append("\n");
+			sb.append("\n EMAIL ID  ::  "+requestOtpModel.getEmailId());
+			sb.append("\n");
+			sb.append("\n MOBILE    ::  "+requestOtpModel.getMobileNumber());
+			sb.append("\n");
+			sb.append("\n ISSUE       ::  Duplicate Email Id and Mobile Number");
+			sb.append("\n");
+			sb.append("\n");
+			mailData = sb.toString();
 		}
-
-		if (type.equalsIgnoreCase(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL))
+		else if (type.equalsIgnoreCase(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL))
 		{
-
+			sb.append("\n");
+			sb.append("\n USER REGISTRTATION FAILED INFO :");
+			sb.append("\n");
+			sb.append("\n CIVIL ID    ::  "+requestOtpModel.getCivilId());
+			sb.append("\n");
+			sb.append("\n EMAIL ID  ::  "+requestOtpModel.getEmailId());
+			sb.append("\n");
+			sb.append("\n MOBILE    ::  "+requestOtpModel.getMobileNumber());
+			sb.append("\n");
+			sb.append("\n ISSUE       ::  Duplicate Email Id");
+			sb.append("\n");
+			sb.append("\n");
+			mailData = sb.toString();
 		}
-
-		if (type.equalsIgnoreCase(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE))
+		else if (type.equalsIgnoreCase(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE))
 		{
-
+			sb.append("\n");
+			sb.append("\n USER REGISTRTATION FAILED INFO :");
+			sb.append("\n");
+			sb.append("\n CIVIL ID   ::  "+requestOtpModel.getCivilId());
+			sb.append("\n");
+			sb.append("\n EMAIL ID  ::  "+requestOtpModel.getEmailId());
+			sb.append("\n");
+			sb.append("\n MOBILE    ::  "+requestOtpModel.getMobileNumber());
+			sb.append("\n");
+			sb.append("\n ISSUE       ::  Duplicate Mobile Number");
+			sb.append("\n");
+			sb.append("\n");
+			mailData = sb.toString();
 		}
+		
+		FailureException failureException = new FailureException();
+		failureException.setCivilId(requestOtpModel.getCivilId());
+		failureException.setMobileNumber(requestOtpModel.getMobileNumber());
+		failureException.setEmailId(requestOtpModel.getEmailId());
+		failureException.setCountryId(new BigDecimal(regSession.getCountryId()));
+		failureException.setCompCd(new BigDecimal(regSession.getCompCd()));
+		failureException.setDeviceId(regSession.getDeviceId());
+		failureException.setDeviceType(regSession.getDeviceType());
+		failureException.setLanguageId(new BigDecimal(regSession.getLanguageId()));
+		failureException.setUserType(regSession.getUserType());
+		failureException.setExceptionType("REGISTER");
+		failureException.setExceptionMsg(exceptionMessage);
+		
+		emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
+
+		customerRegistrationDao.setFailedException(type , failureException);
+		
 	}
 
 }
