@@ -84,7 +84,7 @@ public class CustomerRegistrationController
 	}
 	
 	@RequestMapping(value = "/pub/login/validate-userlogin", method = RequestMethod.POST)
-	public AmxApiResponse<CustomerLoginResponse, Object> validateUserLogin(@RequestBody CustomerLoginRequest customerLoginRequest)
+	public AmxApiResponse<?, Object> validateUserLogin(@RequestBody CustomerLoginRequest customerLoginRequest)
 	{
 		return customerRegistrationService.validateUserLogin(customerLoginRequest);
 	}
