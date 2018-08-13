@@ -45,6 +45,12 @@ public class CustomerRegistrationController
 		return customerRegistrationService.getCompanySetUp(languageId, "");
 	}
 
+	@RequestMapping(value = "/pub/reg/civilid-valid", method = RequestMethod.POST, produces = "application/json")
+	public AmxApiResponse<Validate, Object> isValidCivilId(@RequestParam("civilId") String civilid)
+	{
+		return customerRegistrationService.isValidCivilId(civilid);
+	}
+	
 	@RequestMapping(value = "/pub/reg/civilid-exists", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<Validate, Object> isCivilIdExistCheck(@RequestParam("civilId") String civilid)
 	{
