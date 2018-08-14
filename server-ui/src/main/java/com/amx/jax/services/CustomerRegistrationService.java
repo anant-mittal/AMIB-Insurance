@@ -1,8 +1,3 @@
-
-
-
-
-
 package com.amx.jax.services;
 
 import java.math.BigDecimal;
@@ -197,6 +192,10 @@ public class CustomerRegistrationService
 			validMobileNumber.setStatusKey(ApiConstants.FAILURE);
 			validMobileNumber.setMessage(Message.MOBILE_NO_NOT_REGISTER);
 			validMobileNumber.setMessageKey(MessageKey.KEY_MOBILE_NO_NOT_REGISTER);
+			
+			Validate validate = new Validate();
+			validate.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
+			validate.setContactUsEmail(regSession.getContactUsEmail());
 		}
 
 		return validMobileNumber;
@@ -247,17 +246,19 @@ public class CustomerRegistrationService
 			resp.setStatusKey(ApiConstants.FAILURE);
 			resp.setMessage(Message.EMAIL_ALREDAY_NOT_REGISTER);
 			resp.setMessageKey(MessageKey.KEY_EMAID_NOT_REGISTER);
+			
+			Validate validate = new Validate();
+			validate.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
+			validate.setContactUsEmail(regSession.getContactUsEmail());
+			
 		}
 		return resp;
 	}
 
 	public AmxApiResponse<Validate, Object> isOtpEnabled(String civilId)
 	{
-		boolean isOtpEnable = customerRegistrationDao.isOtpEnabled(civilId);
-
-		logger.info(TAG + " isOtpEnable :: isOtpEnable :" + isOtpEnable);
-
 		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
+		boolean isOtpEnable = customerRegistrationDao.isOtpEnabled(civilId);
 
 		if (isOtpEnable)
 		{
@@ -270,6 +271,12 @@ public class CustomerRegistrationService
 			resp.setStatusKey(ApiConstants.FAILURE);
 			resp.setMessage(Message.CUST_OTP_NOT_ENABLED);
 			resp.setMessageKey(MessageKey.KEY_CUST_OTP_NOT_ENABLED);
+
+			Validate validate = new Validate();
+			validate.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
+			validate.setContactUsEmail(regSession.getContactUsEmail());
+			resp.setData(validate);
+
 		}
 		return resp;
 	}
