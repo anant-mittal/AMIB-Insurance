@@ -18,6 +18,7 @@ import com.amx.jax.models.CustomerDetailModel;
 import com.amx.jax.models.CustomerLoginModel;
 import com.amx.jax.models.CustomerRegistrationModel;
 import com.amx.jax.models.FailureException;
+import com.amx.jax.models.MetaData;
 import com.amx.jax.models.Validate;
 import oracle.jdbc.OracleTypes;
 
@@ -30,6 +31,9 @@ public class CustomerRegistrationDao
 
 	@Autowired
 	JdbcTemplate jdbcTemplate;
+	
+	@Autowired
+	MetaData metaData;
 
 	Connection connection;
 
@@ -147,9 +151,9 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callFunction);
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
-			callableStatement.setBigDecimal(2, DetailsConstants.CNTRYCD);
-			callableStatement.setBigDecimal(3, DetailsConstants.COMPCD);
-			callableStatement.setString(4, DetailsConstants.USER_TYPE);
+			callableStatement.setBigDecimal(2, metaData.getCountryId());
+			callableStatement.setBigDecimal(3, metaData.getCompCd());
+			callableStatement.setString(4, metaData.getUserType());
 			callableStatement.setString(5, civilid);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
@@ -187,8 +191,8 @@ public class CustomerRegistrationDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, DetailsConstants.CNTRYCD);
-			callableStatement.setBigDecimal(2, DetailsConstants.COMPCD);
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			callableStatement.setString(3, mobileNumber);
 			callableStatement.registerOutParameter(4, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
@@ -236,9 +240,9 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callFunction);
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
-			callableStatement.setBigDecimal(2, DetailsConstants.CNTRYCD);
-			callableStatement.setBigDecimal(3, DetailsConstants.COMPCD);
-			callableStatement.setString(4, DetailsConstants.USER_TYPE);
+			callableStatement.setBigDecimal(2, metaData.getCountryId());
+			callableStatement.setBigDecimal(3, metaData.getCompCd());
+			callableStatement.setString(4, metaData.getUserType());
 			callableStatement.setString(5, mobilenumber);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
@@ -277,9 +281,9 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callFunction);
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
-			callableStatement.setBigDecimal(2, DetailsConstants.CNTRYCD);
-			callableStatement.setBigDecimal(3, DetailsConstants.COMPCD);
-			callableStatement.setString(4, DetailsConstants.USER_TYPE);
+			callableStatement.setBigDecimal(2, metaData.getCountryId());
+			callableStatement.setBigDecimal(3, metaData.getCompCd());
+			callableStatement.setString(4, metaData.getUserType());
 			callableStatement.setString(5, email);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
@@ -318,9 +322,9 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callFunction);
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
-			callableStatement.setBigDecimal(2, DetailsConstants.CNTRYCD);
-			callableStatement.setBigDecimal(3, DetailsConstants.COMPCD);
-			callableStatement.setString(4, DetailsConstants.USER_TYPE);
+			callableStatement.setBigDecimal(2, metaData.getCountryId());
+			callableStatement.setBigDecimal(3, metaData.getCompCd());
+			callableStatement.setString(4, metaData.getUserType());
 			callableStatement.setString(5, civilId);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
@@ -359,9 +363,9 @@ public class CustomerRegistrationDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, DetailsConstants.CNTRYCD);
-			callableStatement.setBigDecimal(2, DetailsConstants.COMPCD);
-			callableStatement.setString(3, DetailsConstants.USER_TYPE);
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setString(3, metaData.getUserType());
 			callableStatement.setString(4, civilId);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -480,9 +484,9 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setBigDecimal(1, DetailsConstants.CNTRYCD);
-			callableStatement.setBigDecimal(2, DetailsConstants.COMPCD);
-			callableStatement.setString(3, DetailsConstants.USER_TYPE);
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setString(3, metaData.getUserType());
 			callableStatement.setString(4, civilId);
 			callableStatement.setInt(5, 0);
 			callableStatement.setBigDecimal(6, null);

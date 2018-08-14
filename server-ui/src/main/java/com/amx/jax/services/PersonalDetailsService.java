@@ -15,8 +15,8 @@ import com.amx.jax.models.CustomerDetailResponse;
 import com.amx.jax.models.CustomerProfileDetailModel;
 import com.amx.jax.models.CustomerProfileDetailRequest;
 import com.amx.jax.models.CustomerProfileDetailResponse;
+import com.amx.jax.models.MetaData;
 import com.amx.jax.session.RegSession;
-import com.amx.jax.session.UserSession;
 
 @Service
 public class PersonalDetailsService
@@ -35,7 +35,7 @@ public class PersonalDetailsService
 	RegSession regSession;
 	
 	@Autowired
-	UserSession userSession;
+	MetaData userSession;
 
 	public AmxApiResponse<CustomerDetailResponse, Object> getUserDetails()
 	{

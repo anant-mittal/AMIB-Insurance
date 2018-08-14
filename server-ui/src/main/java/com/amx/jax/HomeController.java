@@ -1,4 +1,8 @@
 
+
+
+
+
 package com.amx.jax;
 
 import java.util.Map;
@@ -34,7 +38,7 @@ public class HomeController
 	String TAG = "com.amx.jax.services :: HomeController :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(HomeController.class);
-	
+
 	/** The web app config. */
 	@Autowired
 	private WebConfig webConfig;
@@ -69,29 +73,19 @@ public class HomeController
 	public String getVersion()
 	{
 
-		/*long checkTimeNew = System.currentTimeMillis() / (1000 * 60 * 5);
-		if (checkTimeNew != checkTime)
-		{
-			try
-			{
-				Map<String, Object> map = JsonUtil.toMap(restService.ajax(webConfig.getCdnURL() + "/dist/build.json?_=" + checkTimeNew).get().asObject());
-				if (map.containsKey("version"))
-				{
-					versionNew = ArgUtil.parseAsString(map.get("version"));
-				}
-				checkTime = checkTimeNew;
-			}
-			catch (Exception e)
-			{
-				LOGGER.error("getVersion Exception", e);
-			}
-		}
-		return versionNew;*/
-		
+		/*
+		 * long checkTimeNew = System.currentTimeMillis() / (1000 * 60 * 5); if
+		 * (checkTimeNew != checkTime) { try { Map<String, Object> map =
+		 * JsonUtil.toMap(restService.ajax(webConfig.getCdnURL() +
+		 * "/dist/build.json?_=" + checkTimeNew).get().asObject()); if
+		 * (map.containsKey("version")) { versionNew =
+		 * ArgUtil.parseAsString(map.get("version")); } checkTime =
+		 * checkTimeNew; } catch (Exception e) {
+		 * LOGGER.error("getVersion Exception", e); } } return versionNew;
+		 */
+
 		return "1.0.1";
-		
-		
-		
+
 	}
 
 	/**
@@ -151,49 +145,17 @@ public class HomeController
 	@RequestMapping(value = { "/register/**", "/app/**", "/home/**", "/" }, method = { RequestMethod.GET })
 	public String defaultPage(Model model)
 	{
-		logger.info("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
-		logger.info("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
-		logger.info("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
-		logger.info("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
-		logger.info("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
-		logger.info("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
-		logger.info("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
-		logger.info("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
-		
-		
-		System.out.println("HomeController defaultPage  ");
 		model.addAttribute("lang", httpService.getLanguage());
-
-		System.out.println("HomeController defaultPage httpService.getLanguage() " + httpService.getLanguage());
-		if (httpService.getLanguage().toString().equalsIgnoreCase("EN"))
-		{
-			regSession.setLanguageId(0);
-			customerRegistrationService.getCompanySetUp(0, httpService.getDeviceId());
-			logger.info("=============================================================================");
-			logger.info(" ");
-			logger.info("=============================================================================");
-			logger.info(" ");
-			logger.info("=============================================================================");
-			logger.info(" ");
-			logger.info("=============================================================================");
-			logger.info(" ");
-			logger.info("=============================================================================");
-			logger.info(" ");
-			logger.info("=============================================================================");
-		}
-
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
 		model.addAttribute("cdnUrl", webConfig.getCdnURL());
 		model.addAttribute("cdnVerion", getVersion());
 		
-		logger.info("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
-		logger.info("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
-		logger.info("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
-		logger.info("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
-		logger.info("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
-		logger.info("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
-		logger.info("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
-		
+		if (httpService.getLanguage().toString().equalsIgnoreCase("EN"))
+		{
+			regSession.setLanguageId(0);
+			customerRegistrationService.getCompanySetUp(0, httpService.getDeviceId());
+		}
+
 		
 		return "app";
 	}

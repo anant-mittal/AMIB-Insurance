@@ -1,5 +1,9 @@
 
-package com.amx.jax.session;
+
+
+
+
+package com.amx.jax.models;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -10,8 +14,20 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class UserSession implements Serializable
+public class MetaData implements Serializable
 {
+
+	private MetaData metaData;
+
+	public MetaData getMetaData()
+	{
+		return metaData;
+	}
+
+	public void setMetaData(MetaData metaData)
+	{
+		this.metaData = metaData;
+	}
 
 	private static final long serialVersionUID = 4265567700694960490L;
 
@@ -38,17 +54,17 @@ public class UserSession implements Serializable
 	private String userType;
 
 	private String deviceType;
-	
+
 	private String deviceId;
-	
+
 	private BigDecimal languageId;
-	
+
 	private BigDecimal customerSequenceNumber;
-	
+
 	private String contactUsEmail;
-	
+
 	private String contactUsHelpLineNumber;
-	
+
 	public String getContactUsEmail()
 	{
 		return contactUsEmail;
@@ -68,7 +84,7 @@ public class UserSession implements Serializable
 	{
 		this.contactUsHelpLineNumber = contactUsHelpLineNumber;
 	}
-	
+
 	public static long getSerialversionuid()
 	{
 		return serialVersionUID;
@@ -173,7 +189,7 @@ public class UserSession implements Serializable
 	{
 		this.compCd = compCd;
 	}
-	
+
 	public String getUserType()
 	{
 		return userType;
@@ -223,5 +239,5 @@ public class UserSession implements Serializable
 	{
 		this.customerSequenceNumber = customerSequenceNumber;
 	}
-	
+
 }

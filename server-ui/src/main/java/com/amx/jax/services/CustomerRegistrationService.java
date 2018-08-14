@@ -22,11 +22,9 @@ import com.amx.jax.constants.Message;
 import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.models.ChangePasswordOtpRequest;
-import com.amx.jax.models.ChangePasswordOtpResponse;
 import com.amx.jax.models.ChangePasswordRequest;
 import com.amx.jax.models.ChangePasswordResponse;
 import com.amx.jax.models.CompanySetUp;
-import com.amx.jax.models.CompanySetupRequest;
 import com.amx.jax.models.CustomerDetailModel;
 import com.amx.jax.models.CustomerLoginModel;
 import com.amx.jax.models.CustomerLoginRequest;
@@ -35,9 +33,9 @@ import com.amx.jax.models.CustomerRegistrationModel;
 import com.amx.jax.models.CustomerRegistrationRequest;
 import com.amx.jax.models.CustomerRegistrationResponse;
 import com.amx.jax.models.FailureException;
+import com.amx.jax.models.MetaData;
 import com.amx.jax.models.Validate;
 import com.amx.jax.session.RegSession;
-import com.amx.jax.session.UserSession;
 import com.amx.utils.Random;
 import com.insurance.email.dao.EmailNotification;
 import com.insurance.email.model.Email;
@@ -65,7 +63,7 @@ public class CustomerRegistrationService
 	RegSession regSession;
 
 	@Autowired
-	UserSession userSession;
+	MetaData metaData;
 
 	@Autowired
 	private WebConfig webConfig;
@@ -85,15 +83,6 @@ public class CustomerRegistrationService
 			regSession.setUserType("D");
 			regSession.setDeviceId(deviceId);
 			regSession.setDeviceType("ONLINE");
-
-			DetailsConstants.CNTRYCD = new BigDecimal(regSession.getCountryId());
-			DetailsConstants.COMPCD = new BigDecimal(regSession.getCompCd());
-			DetailsConstants.USER_TYPE = regSession.getUserType();
-			DetailsConstants.CONTACT_US_EMAIL_ID = regSession.getContactUsEmail();
-			DetailsConstants.CONTACT_US_HELPLINE_NO = regSession.getContactUsHelpLineNumber();
-			DetailsConstants.DEVICE_ID = regSession.getDeviceId();
-			DetailsConstants.DEVICE_TYPE = regSession.getDeviceType();
-			DetailsConstants.LANGUAGE_ID = new BigDecimal(languageId);
 
 			logger.info(TAG + " getCompanySetUp :: getCountryId                :" + regSession.getCountryId());
 			logger.info(TAG + " getCompanySetUp :: getCompCd                   :" + regSession.getCompCd());
@@ -123,6 +112,7 @@ public class CustomerRegistrationService
 
 	public AmxApiResponse<Validate, Object> isValidCivilId(String civilid)
 	{
+
 		boolean isValidCivilId = customerRegistrationDao.isValidCivilId(civilid);
 
 		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
@@ -364,7 +354,7 @@ public class CustomerRegistrationService
 			AmxApiResponse<Validate, Object> mobileNumberExists = isMobileNumberExist(requestOtpModel.getMobileNumber());
 			AmxApiResponse<Validate, Object> validateEmailID = isValidEmailId(requestOtpModel.getEmailId());
 			AmxApiResponse<Validate, Object> emailIdExists = isEmailIdExist(requestOtpModel.getEmailId());
-			AmxApiResponse<Validate, Object> isOtpEnabled = setOtpCount(requestOtpModel.getCivilId());
+			AmxApiResponse<Validate, Object> isOtpEnabled = isOtpEnabled(requestOtpModel.getCivilId());
 
 			if (validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 			{
@@ -425,7 +415,7 @@ public class CustomerRegistrationService
 
 		try
 		{
-			AmxApiResponse<Validate, Object> setOtpCount = isOtpEnabled(requestOtpModel.getCivilId());
+			AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(requestOtpModel.getCivilId());
 
 			regSession.setCivilId(requestOtpModel.getCivilId());
 			regSession.setEmailId(requestOtpModel.getEmailId());
@@ -588,15 +578,15 @@ public class CustomerRegistrationService
 
 			if (customerLoginModel.getStatus())
 			{
-				userSession.setCivilId(customerLoginRequest.getCivilId());
-				userSession.setCustomerSequenceNumber(new BigDecimal(customerLoginModel.getUserSeqNum()));
-				userSession.setCountryId(new BigDecimal(regSession.getCountryId()));
-				userSession.setCompCd(new BigDecimal(regSession.getCompCd()));
-				userSession.setUserType(regSession.getUserType());
-				userSession.setLanguageId(new BigDecimal(regSession.getLanguageId()));
-				userSession.setDeviceType(regSession.getDeviceType());
-				userSession.setContactUsEmail(regSession.getContactUsEmail());
-				userSession.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
+				metaData.setCivilId(customerLoginRequest.getCivilId());
+				metaData.setCustomerSequenceNumber(new BigDecimal(customerLoginModel.getUserSeqNum()));
+				metaData.setCountryId(new BigDecimal(regSession.getCountryId()));
+				metaData.setCompCd(new BigDecimal(regSession.getCompCd()));
+				metaData.setUserType(regSession.getUserType());
+				metaData.setLanguageId(new BigDecimal(regSession.getLanguageId()));
+				metaData.setDeviceType(regSession.getDeviceType());
+				metaData.setContactUsEmail(regSession.getContactUsEmail());
+				metaData.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
 
 				resp.setStatusKey(ApiConstants.SUCCESS);
 			}
@@ -627,7 +617,7 @@ public class CustomerRegistrationService
 	public AmxApiResponse<?, Object> changePasswordOtpInitiate(ChangePasswordOtpRequest changePasswordOtpRequest)
 	{
 		logger.info(TAG + " changePasswordOtpInitiate :: getCivilId :" + changePasswordOtpRequest.getCivilId());
-		
+
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
 		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 		regSession.setCivilId(changePasswordOtpRequest.getCivilId());
