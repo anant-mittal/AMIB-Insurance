@@ -86,6 +86,17 @@ public class CustomerRegistrationService
 			logger.info(TAG + " getCompanySetUp :: getDeviceType               :" + regSession.getDeviceType());
 			logger.info(TAG + " getCompanySetUp :: setContactUsEmail           :" + regSession.getContactUsEmail());
 			logger.info(TAG + " getCompanySetUp :: setContactUsHelpLineNumber  :" + regSession.getContactUsHelpLineNumber());
+			
+			metaData.setCountryId(new BigDecimal(regSession.getCountryId()));
+			metaData.setCompCd(new BigDecimal(regSession.getCompCd()));
+			metaData.setUserType(regSession.getUserType());
+			metaData.setLanguageId(new BigDecimal(regSession.getLanguageId()));
+			metaData.setDeviceType(regSession.getDeviceType());
+			metaData.setContactUsEmail(regSession.getContactUsEmail());
+			metaData.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
+			
+			
+			
 
 			resp.setData(null);
 			resp.setStatus(ApiConstants.SUCCESS);
