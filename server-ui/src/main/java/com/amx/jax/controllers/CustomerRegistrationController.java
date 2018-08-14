@@ -1,4 +1,8 @@
 
+
+
+
+
 package com.amx.jax.controllers;
 
 import java.util.ArrayList;
@@ -50,19 +54,31 @@ public class CustomerRegistrationController
 	{
 		return customerRegistrationService.isValidCivilId(civilid);
 	}
-	
+
 	@RequestMapping(value = "/pub/reg/civilid-exists", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<Validate, Object> isCivilIdExistCheck(@RequestParam("civilId") String civilid)
 	{
 		return customerRegistrationService.isCivilIdExistCheck(civilid);
 	}
 
+	@RequestMapping(value = "/pub/reg/mobile-valid", method = RequestMethod.POST, produces = "application/json")
+	public AmxApiResponse<Validate, Object> isValidMobileNumber(@RequestParam("mobile") String mobile)
+	{
+		return customerRegistrationService.isValidMobileNumber(mobile);
+	}
+	
 	@RequestMapping(value = "/pub/reg/mobile-exists", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<Validate, Object> isMobileNumberExistCheck(@RequestParam("mobile") String mobile)
 	{
 		return customerRegistrationService.isMobileNumberExistCheck(mobile);
 	}
 
+	@RequestMapping(value = "/pub/reg/email-valid", method = RequestMethod.POST, produces = "application/json")
+	public AmxApiResponse<Validate, Object> isValidEmailId(@RequestParam("emailId") String emailId)
+	{
+		return customerRegistrationService.isValidEmailId(emailId);
+	}
+	
 	@RequestMapping(value = "/pub/reg/email-exists", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<Validate, Object> isEmailIdExistCheck(@RequestParam("emailId") String emailId)
 	{
@@ -88,7 +104,7 @@ public class CustomerRegistrationController
 	{
 		return customerRegistrationService.addNewCustomer(customerRegistrationRequest);
 	}
-	
+
 	@RequestMapping(value = "/pub/login/validate-userlogin", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> validateUserLogin(@RequestBody CustomerLoginRequest customerLoginRequest)
 	{
@@ -104,9 +120,7 @@ public class CustomerRegistrationController
 	@RequestMapping(value = "/pub/login/changepass", method = RequestMethod.POST)
 	public AmxApiResponse<ChangePasswordResponse, Object> updatePassword(@RequestBody ChangePasswordRequest changePasswordRequest)
 	{
-		return customerRegistrationService.updatePassword(changePasswordRequest);//
+		return customerRegistrationService.updatePassword(changePasswordRequest);
 	}
-	
-	
 
 }

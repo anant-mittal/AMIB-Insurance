@@ -445,7 +445,7 @@ public class CustomerRegistrationDao
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
-		String callProcedure = "{call IRB_CHECK_LOGIN(?,?,?,?,?,?,?,?,?)}";
+		String callProcedure = "{call IRB_CHECK_LOGIN(?,?,?,?,?,?,?,?,?,?,?)}";
 
 		try
 		{
@@ -458,7 +458,6 @@ public class CustomerRegistrationDao
 			callableStatement.setString(5, customerLoginModel.getPassword());
 			callableStatement.setString(6, customerLoginModel.getDeviceId());
 			callableStatement.setString(7, customerLoginModel.getDeviceType());
-			
 			callableStatement.registerOutParameter(8, java.sql.Types.INTEGER);
 			callableStatement.registerOutParameter(9, java.sql.Types.INTEGER);
 			callableStatement.registerOutParameter(10, java.sql.Types.VARCHAR);
