@@ -311,7 +311,7 @@ public class CustomerRegistrationDao
 	
 	public boolean isOtpEnabled(String civilId)
 	{
-		logger.info(TAG + " isOtpEnabled :: civilId :" + civilId);
+		
 
 		getConnection();
 
@@ -320,7 +320,9 @@ public class CustomerRegistrationDao
 
 		try
 		{
-			
+			logger.info(TAG + " isOtpEnabled :: metaData.getCountryId() :" + metaData.getCountryId());
+			logger.info(TAG + " isOtpEnabled :: metaData.getCompCd() :" + metaData.getCompCd());
+			logger.info(TAG + " isOtpEnabled :: metaData.getUserType() :" + metaData.getUserType());
 			
 			callableStatement = connection.prepareCall(callFunction);
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
