@@ -320,6 +320,8 @@ public class CustomerRegistrationDao
 
 		try
 		{
+			
+			
 			callableStatement = connection.prepareCall(callFunction);
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
 			callableStatement.setBigDecimal(2, metaData.getCountryId());
