@@ -17,8 +17,8 @@ import com.amx.jax.models.CustomerDetailModel;
 import com.amx.jax.models.CustomerProfileDetailModel;
 import com.amx.jax.models.CustomerProfileDetailRequest;
 import com.amx.jax.models.Governorates;
+import com.amx.jax.models.MetaData;
 import com.amx.jax.models.Nationality;
-import com.amx.jax.session.UserSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import oracle.jdbc.OracleTypes;
@@ -32,9 +32,9 @@ public class PersonalDetailsDao
 
 	@Autowired
 	JdbcTemplate jdbcTemplate;
-
+	
 	@Autowired
-	UserSession userSession;
+	MetaData metaData;
 
 	Connection connection;
 
@@ -130,9 +130,9 @@ public class PersonalDetailsDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setBigDecimal(1, userSession.getCountryId());
-			callableStatement.setBigDecimal(2, userSession.getCompCd());
-			callableStatement.setBigDecimal(3, userSession.getLanguageId());
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(3, metaData.getLanguageId());
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -177,9 +177,9 @@ public class PersonalDetailsDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setBigDecimal(1, userSession.getCountryId());
-			callableStatement.setBigDecimal(2, userSession.getCompCd());
-			callableStatement.setBigDecimal(3, userSession.getLanguageId());
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(3, metaData.getLanguageId());
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -225,9 +225,9 @@ public class PersonalDetailsDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setBigDecimal(1, userSession.getCountryId());
-			callableStatement.setBigDecimal(2, userSession.getCompCd());
-			callableStatement.setBigDecimal(3, userSession.getLanguageId());
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(3, metaData.getLanguageId());
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -273,10 +273,10 @@ public class PersonalDetailsDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setBigDecimal(1, userSession.getCountryId());
-			callableStatement.setBigDecimal(2, userSession.getCompCd());
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			callableStatement.setString(3, gov);
-			callableStatement.setBigDecimal(4, userSession.getLanguageId());
+			callableStatement.setBigDecimal(4, metaData.getLanguageId());
 			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
@@ -322,9 +322,9 @@ public class PersonalDetailsDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setBigDecimal(1, userSession.getCountryId());
-			callableStatement.setBigDecimal(2, userSession.getCompCd());
-			callableStatement.setBigDecimal(3, userSession.getLanguageId());
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(3, metaData.getLanguageId());
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
