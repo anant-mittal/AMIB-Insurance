@@ -5,6 +5,10 @@ public class CustomerLoginResponse
 	public int userSeqNum;
 
 	public int amibRef;
+	
+	private String contactUsEmail;
+
+	private String contactUsHelpLineNumber;
 
 	public int getUserSeqNum()
 	{
@@ -25,5 +29,31 @@ public class CustomerLoginResponse
 	{
 		this.amibRef = amibRef;
 	}
+	
+	public String getContactUsEmail()
+	{
+		return contactUsEmail;
+	}
 
+	public void setContactUsEmail(String contactUsEmail)
+	{
+		this.contactUsEmail = contactUsEmail;
+	}
+
+	public String getContactUsHelpLineNumber()
+	{
+		return contactUsHelpLineNumber;
+	}
+
+	public void setContactUsHelpLineNumber(String contactUsHelpLineNumber)
+	{
+		this.contactUsHelpLineNumber = contactUsHelpLineNumber;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "CustomerLoginResponse [userSeqNum=" + userSeqNum + ", amibRef=" + amibRef + ", contactUsEmail=" + contactUsEmail + ", contactUsHelpLineNumber=" + contactUsHelpLineNumber + "]";
+	}
+	
 }

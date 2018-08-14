@@ -7,38 +7,74 @@ public class CompanySetUp
 
 	int compCd;
 
-	String companyName = "";
+	String companyName;
 
-	String cbox = "";
+	String cbox;
 
-	String cpo = "";
+	String cpo;
 
-	String teli = "";//
+	String teli;//
 
-	String teli2 = "";
+	String teli2;
 
-	String fax = "";
+	String fax;
 
-	String email = "";
+	String email;
 
-	String regNumber = "";
+	String regNumber;
 
 	int mainAct;
 
 	int mainActCenter;
 
-	String heading = "";
+	String heading;
 
 	int decplc;
 
-	String currency = "";
+	String currency;
 
 	int langId;
 
-	String appName = "";
+	String appName;
 
-	String smsSenderId = "";
+	String smsSenderId;
+	
+	String helpLineNumber;
+	
+	String webSite;
+	
+	String emailSenderId;
 
+	public String getHelpLineNumber()
+	{
+		return helpLineNumber;
+	}
+
+	public void setHelpLineNumber(String helpLineNumber)
+	{
+		this.helpLineNumber = helpLineNumber;
+	}
+
+	public String getWebSite()
+	{
+		return webSite;
+	}
+
+	public void setWebSite(String webSite)
+	{
+		this.webSite = webSite;
+	}
+
+	public String getEmailSenderId()
+	{
+		return emailSenderId;
+	}
+
+	public void setEmailSenderId(String emailSenderId)
+	{
+		this.emailSenderId = emailSenderId;
+	}
+	
 	public int getCntryCd()
 	{
 		return cntryCd;

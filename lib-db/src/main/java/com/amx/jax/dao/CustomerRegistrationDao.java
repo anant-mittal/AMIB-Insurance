@@ -77,7 +77,10 @@ public class CustomerRegistrationDao
 				companySetUp.setLangId(rs.getInt(16));
 				companySetUp.setAppName(rs.getString(17));
 				companySetUp.setSmsSenderId(rs.getString(18));
-
+				companySetUp.setHelpLineNumber(rs.getString(19));
+				companySetUp.setWebSite(rs.getString(20));
+				companySetUp.setEmailSenderId(rs.getString(21));
+				
 				logger.info(TAG + " getCompanySetUp :: companySetUp :" + companySetUp.toString());
 
 				companySetUpArray.add(companySetUp);
@@ -144,9 +147,9 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callFunction);
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
-			callableStatement.setInt(2, 1);
-			callableStatement.setInt(3, 10);
-			callableStatement.setString(4, "D");
+			callableStatement.setBigDecimal(2, DetailsConstants.CNTRYCD);
+			callableStatement.setBigDecimal(3, DetailsConstants.COMPCD);
+			callableStatement.setString(4, DetailsConstants.USER_TYPE);
 			callableStatement.setString(5, civilid);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
@@ -184,8 +187,8 @@ public class CustomerRegistrationDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setString(1, DetailsConstants.CNTRYCD);
-			callableStatement.setString(2, DetailsConstants.COMPCD);
+			callableStatement.setBigDecimal(1, DetailsConstants.CNTRYCD);
+			callableStatement.setBigDecimal(2, DetailsConstants.COMPCD);
 			callableStatement.setString(3, mobileNumber);
 			callableStatement.registerOutParameter(4, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
@@ -233,9 +236,9 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callFunction);
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
-			callableStatement.setInt(2, 1);
-			callableStatement.setInt(3, 10);
-			callableStatement.setString(4, "D");
+			callableStatement.setBigDecimal(2, DetailsConstants.CNTRYCD);
+			callableStatement.setBigDecimal(3, DetailsConstants.COMPCD);
+			callableStatement.setString(4, DetailsConstants.USER_TYPE);
 			callableStatement.setString(5, mobilenumber);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
@@ -274,9 +277,9 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callFunction);
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
-			callableStatement.setInt(2, 1);
-			callableStatement.setInt(3, 10);
-			callableStatement.setString(4, "D");
+			callableStatement.setBigDecimal(2, DetailsConstants.CNTRYCD);
+			callableStatement.setBigDecimal(3, DetailsConstants.COMPCD);
+			callableStatement.setString(4, DetailsConstants.USER_TYPE);
 			callableStatement.setString(5, email);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
@@ -301,6 +304,101 @@ public class CustomerRegistrationDao
 		}
 		return false;
 	}
+	
+	public boolean isOtpEnabled(String civilId)
+	{
+		logger.info(TAG + " isOtpEnabled :: civilId :" + civilId);
+
+		getConnection();
+
+		CallableStatement callableStatement = null;
+		String callFunction = "{ ? = call IRB_IF_OTP_ENABLED(?,?,?,?)}";
+
+		try
+		{
+			callableStatement = connection.prepareCall(callFunction);
+			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
+			callableStatement.setBigDecimal(2, DetailsConstants.CNTRYCD);
+			callableStatement.setBigDecimal(3, DetailsConstants.COMPCD);
+			callableStatement.setString(4, DetailsConstants.USER_TYPE);
+			callableStatement.setString(5, civilId);
+			callableStatement.executeUpdate();
+			String result = callableStatement.getString(1);
+			logger.info(TAG + " isOtpEnabled :: result :" + result);
+
+			if (result.equalsIgnoreCase("Y"))
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		return false;
+	}
+	
+	
+	public Validate setOtpCount(String civilId)
+	{
+		logger.info(TAG + " setOtpCount :: civilid :" + civilId);
+
+		getConnection();
+		CallableStatement callableStatement = null;
+		String callProcedure = "{call IRB_UPDATE_OTP_ATTEMPT(?,?,?,?,?,?)}";
+		Validate validate = new Validate();
+		
+		try
+		{
+			callableStatement = connection.prepareCall(callProcedure);
+			callableStatement.setBigDecimal(1, DetailsConstants.CNTRYCD);
+			callableStatement.setBigDecimal(2, DetailsConstants.COMPCD);
+			callableStatement.setString(3, DetailsConstants.USER_TYPE);
+			callableStatement.setString(4, civilId);
+			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
+			callableStatement.executeUpdate();
+			String errorCode = callableStatement.getString(5);
+			String errorMessage = callableStatement.getString(6);
+
+			logger.info(TAG + " isValidMobileNumber :: errorCode :" + errorCode);
+			logger.info(TAG + " isValidMobileNumber :: errorMessage :" + errorMessage);
+
+			if (null == errorCode)
+			{
+				validate.setValid(true);
+				validate.setErrorCode(errorCode);
+				validate.setErrorMessage(errorMessage);
+				return validate;
+			}
+			else
+			{
+				validate.setValid(false);
+				validate.setErrorCode(errorCode);
+				validate.setErrorMessage(errorMessage);
+				return validate;
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		return validate;
+	}
+	
 
 	public CustomerRegistrationModel addNewCustomer(CustomerRegistrationModel customerRegistrationModel)
 	{
@@ -382,9 +480,9 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setInt(1, 1);
-			callableStatement.setInt(2, 10);
-			callableStatement.setString(3, "D");
+			callableStatement.setBigDecimal(1, DetailsConstants.CNTRYCD);
+			callableStatement.setBigDecimal(2, DetailsConstants.COMPCD);
+			callableStatement.setString(3, DetailsConstants.USER_TYPE);
 			callableStatement.setString(4, civilId);
 			callableStatement.setInt(5, 0);
 			callableStatement.setBigDecimal(6, null);

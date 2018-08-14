@@ -21,7 +21,6 @@ import com.amx.jax.models.ChangePasswordOtpRequest;
 import com.amx.jax.models.ChangePasswordRequest;
 import com.amx.jax.models.ChangePasswordResponse;
 import com.amx.jax.models.CustomerLoginRequest;
-import com.amx.jax.models.CustomerLoginResponse;
 import com.amx.jax.models.CustomerRegistrationRequest;
 import com.amx.jax.models.CustomerRegistrationResponse;
 import com.amx.jax.models.Validate;
@@ -66,7 +65,7 @@ public class CustomerRegistrationController
 	{
 		return customerRegistrationService.isValidMobileNumber(mobile);
 	}
-	
+
 	@RequestMapping(value = "/pub/reg/mobile-exists", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<Validate, Object> isMobileNumberExistCheck(@RequestParam("mobile") String mobile)
 	{
@@ -78,7 +77,7 @@ public class CustomerRegistrationController
 	{
 		return customerRegistrationService.isValidEmailId(emailId);
 	}
-	
+
 	@RequestMapping(value = "/pub/reg/email-exists", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<Validate, Object> isEmailIdExistCheck(@RequestParam("emailId") String emailId)
 	{

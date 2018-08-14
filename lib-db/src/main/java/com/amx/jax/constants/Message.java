@@ -1,4 +1,8 @@
 
+
+
+
+
 package com.amx.jax.constants;
 
 public class Message
@@ -26,8 +30,11 @@ public class Message
 	public static String REG_VALID_OTP = "Valid Otp";
 
 	public static String REG_INVALID_OTP = "Invalid Otp";
-	
+
 	public static String CP_EMAIL_NOT_SENT = "Email Not Sent to the respective user";
-	
+
+	public static String CUST_OTP_ENABLED = "Customer OTP Functionality Enabled";
+
+	public static String CUST_OTP_NOT_ENABLED = "Customer has crossed his per day OTP limit";
 
 }

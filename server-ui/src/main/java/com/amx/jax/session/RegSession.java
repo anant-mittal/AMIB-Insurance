@@ -1,4 +1,8 @@
 
+
+
+
+
 package com.amx.jax.session;
 
 import java.io.Serializable;
@@ -37,11 +41,40 @@ public class RegSession implements Serializable
 	private String userType;
 
 	private String deviceType;
-	
+
 	private String deviceId;
-	
+
 	private int languageId;
 
+	private String contactUsEmail;
+
+	private String contactUsHelpLineNumber;
+
+	public String getContactUsEmail()
+	{
+		return contactUsEmail;
+	}
+
+	public void setContactUsEmail(String contactUsEmail)
+	{
+		this.contactUsEmail = contactUsEmail;
+	}
+
+	public String getContactUsHelpLineNumber()
+	{
+		return contactUsHelpLineNumber;
+	}
+
+	public void setContactUsHelpLineNumber(String contactUsHelpLineNumber)
+	{
+		this.contactUsHelpLineNumber = contactUsHelpLineNumber;
+	}
+
+	public static long getSerialversionuid()
+	{
+		return serialVersionUID;
+	}
+	
 	public String getChangePasswordOtp()
 	{
 		return changePasswordOtp;
@@ -141,7 +174,7 @@ public class RegSession implements Serializable
 	{
 		this.compCd = compCd;
 	}
-	
+
 	public String getUserType()
 	{
 		return userType;
