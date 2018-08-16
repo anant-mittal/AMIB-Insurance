@@ -1,4 +1,8 @@
 
+
+
+
+
 package com.amx.jax.dao;
 
 import java.sql.CallableStatement;
@@ -31,7 +35,7 @@ public class CustomerRegistrationDao
 
 	@Autowired
 	JdbcTemplate jdbcTemplate;
-	
+
 	@Autowired
 	MetaData metaData;
 
@@ -84,7 +88,7 @@ public class CustomerRegistrationDao
 				companySetUp.setHelpLineNumber(rs.getString(19));
 				companySetUp.setWebSite(rs.getString(20));
 				companySetUp.setEmailSenderId(rs.getString(21));
-				
+
 				logger.info(TAG + " getCompanySetUp :: companySetUp :" + companySetUp.toString());
 
 				companySetUpArray.add(companySetUp);
@@ -308,10 +312,9 @@ public class CustomerRegistrationDao
 		}
 		return false;
 	}
-	
+
 	public boolean isOtpEnabled(String civilId)
 	{
-		
 
 		getConnection();
 
@@ -323,7 +326,7 @@ public class CustomerRegistrationDao
 			logger.info(TAG + " isOtpEnabled :: metaData.getCountryId() :" + metaData.getCountryId());
 			logger.info(TAG + " isOtpEnabled :: metaData.getCompCd() :" + metaData.getCompCd());
 			logger.info(TAG + " isOtpEnabled :: metaData.getUserType() :" + metaData.getUserType());
-			
+
 			callableStatement = connection.prepareCall(callFunction);
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
 			callableStatement.setBigDecimal(2, metaData.getCountryId());
@@ -353,8 +356,7 @@ public class CustomerRegistrationDao
 		}
 		return false;
 	}
-	
-	
+
 	public Validate setOtpCount(String civilId)
 	{
 		logger.info(TAG + " setOtpCount :: civilid :" + civilId);
@@ -363,7 +365,7 @@ public class CustomerRegistrationDao
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_UPDATE_OTP_ATTEMPT(?,?,?,?,?,?)}";
 		Validate validate = new Validate();
-		
+
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -406,7 +408,6 @@ public class CustomerRegistrationDao
 		}
 		return validate;
 	}
-	
 
 	public CustomerRegistrationModel addNewCustomer(CustomerRegistrationModel customerRegistrationModel)
 	{
@@ -622,11 +623,9 @@ public class CustomerRegistrationDao
 			callableStatement.setString(5, customerDetailModel.getPassword());
 			callableStatement.setBigDecimal(6, null);
 			callableStatement.setDate(7, getCurrentDate());
-			callableStatement.setString(8, customerDetailModel.getDeviceId());// Device
-																				// ID
-			callableStatement.setString(9, customerDetailModel.getDeviceType());// Device
-																				// Type
-			callableStatement.setString(10, customerDetailModel.getCivilId());// CivilId
+			callableStatement.setString(8, customerDetailModel.getDeviceId());
+			callableStatement.setString(9, customerDetailModel.getDeviceType());
+			callableStatement.setString(10, customerDetailModel.getCivilId());
 			callableStatement.registerOutParameter(11, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(12, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();

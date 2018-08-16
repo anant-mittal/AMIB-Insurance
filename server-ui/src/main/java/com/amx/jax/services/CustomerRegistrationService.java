@@ -1,7 +1,13 @@
+
+
+
+
+
 package com.amx.jax.services;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
@@ -86,7 +92,7 @@ public class CustomerRegistrationService
 			logger.info(TAG + " getCompanySetUp :: getDeviceType               :" + regSession.getDeviceType());
 			logger.info(TAG + " getCompanySetUp :: setContactUsEmail           :" + regSession.getContactUsEmail());
 			logger.info(TAG + " getCompanySetUp :: setContactUsHelpLineNumber  :" + regSession.getContactUsHelpLineNumber());
-			
+
 			metaData.setCountryId(new BigDecimal(regSession.getCountryId()));
 			metaData.setCompCd(new BigDecimal(regSession.getCompCd()));
 			metaData.setUserType(regSession.getUserType());
@@ -94,7 +100,7 @@ public class CustomerRegistrationService
 			metaData.setDeviceType(regSession.getDeviceType());
 			metaData.setContactUsEmail(regSession.getContactUsEmail());
 			metaData.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
-		
+
 			resp.setData(null);
 			resp.setStatus(ApiConstants.SUCCESS);
 		}
@@ -200,7 +206,7 @@ public class CustomerRegistrationService
 			validMobileNumber.setStatusKey(ApiConstants.FAILURE);
 			validMobileNumber.setMessage(Message.MOBILE_NO_NOT_REGISTER);
 			validMobileNumber.setMessageKey(MessageKey.KEY_MOBILE_NO_NOT_REGISTER);
-			
+
 			Validate validate = new Validate();
 			validate.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
 			validate.setContactUsEmail(regSession.getContactUsEmail());
@@ -254,11 +260,11 @@ public class CustomerRegistrationService
 			resp.setStatusKey(ApiConstants.FAILURE);
 			resp.setMessage(Message.EMAIL_ALREDAY_NOT_REGISTER);
 			resp.setMessageKey(MessageKey.KEY_EMAID_NOT_REGISTER);
-			
+
 			Validate validate = new Validate();
 			validate.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
 			validate.setContactUsEmail(regSession.getContactUsEmail());
-			
+
 		}
 		return resp;
 	}
@@ -266,9 +272,9 @@ public class CustomerRegistrationService
 	public AmxApiResponse<Validate, Object> isOtpEnabled(String civilId)
 	{
 		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
-		
+
 		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(civilId);
-		
+
 		if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			boolean isOtpEnable = customerRegistrationDao.isOtpEnabled(civilId);
@@ -297,22 +303,20 @@ public class CustomerRegistrationService
 			resp.setMessage(Message.CUST_OTP_ENABLED);
 			resp.setMessageKey(MessageKey.KEY_CUST_OTP_ENABLED);
 		}
-		
-		
-		
+
 		return resp;
 	}
 
 	public AmxApiResponse<Validate, Object> setOtpCount(String civilId)
 	{
 		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(civilId);
-		
+
 		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
-		
+
 		if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			Validate setOtpCount = customerRegistrationDao.setOtpCount(civilId);
-			
+
 			if (setOtpCount.isValid())
 			{
 				resp.setStatusKey(ApiConstants.SUCCESS);
@@ -322,6 +326,9 @@ public class CustomerRegistrationService
 				resp.setStatusKey(ApiConstants.FAILURE);
 				resp.setMessage(setOtpCount.getErrorMessage());
 				resp.setMessageKey(setOtpCount.getErrorCode());
+				
+				logger.info(TAG + " setOtpCount :: setOtpCount.getErrorMessage() :" + setOtpCount.getErrorMessage());
+				logger.info(TAG + " setOtpCount :: setOtpCount.getErrorCode() :" + setOtpCount.getErrorCode());
 			}
 		}
 		else
@@ -631,9 +638,32 @@ public class CustomerRegistrationService
 				resp.setStatusKey(ApiConstants.FAILURE);
 			}
 
-			resp.setMessageKey(customerLoginModel.getErrorCode());
-			resp.setMessage(customerLoginModel.getErrorMessage());
-
+			String countData = "";
+			
+			
+			if(null != customerLoginModel.getErrorMessage() && customerLoginModel.getErrorCode().toString().equalsIgnoreCase("RGN8"))
+			{
+				int count = Integer.parseInt(customerLoginModel.getErrorMessage());
+				int userInvalidCountRemaining = 3 - count;
+				if(userInvalidCountRemaining == 0)
+				{
+					countData = " No ";
+				}
+				else
+				{
+					countData = ""+userInvalidCountRemaining;
+				}
+				resp.setMessageKey(customerLoginModel.getErrorCode());
+				resp.setMessage(countData);
+				
+			}
+			else
+			{
+				resp.setMessageKey(customerLoginModel.getErrorCode());
+				resp.setMessage(customerLoginModel.getErrorCode());
+				
+			}
+			
 			if (null != customerLoginModel.getErrorCode() && customerLoginModel.getErrorCode().equalsIgnoreCase(ErrorKey.CUSTOMER_ACCOUNT_LOCK))
 			{
 				customerLoginResponse.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());

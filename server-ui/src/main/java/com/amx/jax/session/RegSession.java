@@ -6,6 +6,8 @@
 package com.amx.jax.session;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -49,6 +51,21 @@ public class RegSession implements Serializable
 	private String contactUsEmail;
 
 	private String contactUsHelpLineNumber;
+	
+
+	/***************************TEMP*************************/
+	private HashMap<String , Integer> otpAttepts;
+	
+	public Map<String, Integer> getOtpAttepts()
+	{
+		return otpAttepts;
+	}
+
+	public void setOtpAttepts(HashMap<String, Integer> otpAttepts)
+	{
+		this.otpAttepts = otpAttepts;
+	}
+	/****************************************************/
 
 	public String getContactUsEmail()
 	{
