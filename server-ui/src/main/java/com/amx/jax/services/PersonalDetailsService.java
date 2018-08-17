@@ -79,22 +79,7 @@ public class PersonalDetailsService
 		CustomerProfileDetailResponse customerProfileDetailResponse = new CustomerProfileDetailResponse();
 		CustomerProfileDetailModel customerProfileDetailModel = new CustomerProfileDetailModel();
 
-		customerProfileDetailModel.setCivilId(userSession.getCivilId());
-		customerProfileDetailModel.setCustSequenceNumber(userSession.getCustomerSequenceNumber());
-		customerProfileDetailModel.setCountryId(userSession.getCountryId());
-		customerProfileDetailModel.setCompCd(userSession.getCompCd());
-		customerProfileDetailModel.setLanguageId(userSession.getLanguageId());
-		customerProfileDetailModel.setUserType(userSession.getUserType());
-		
-		logger.info(TAG + " getCompanySetUp :: getCountryId   :" + userSession.getCivilId());
-		logger.info(TAG + " getCompanySetUp :: getCountryId   :" + userSession.getCountryId());
-		logger.info(TAG + " getCompanySetUp :: getCompCd      :" + userSession.getCompCd());
-		logger.info(TAG + " getCompanySetUp :: getUserType    :" + userSession.getUserType());
-		logger.info(TAG + " getCompanySetUp :: getDeviceId    :" + userSession.getDeviceId());
-		logger.info(TAG + " getCompanySetUp :: getDeviceType  :" + userSession.getDeviceType());
-		logger.info(TAG + " getCompanySetUp :: getCustSeqNo   :" + userSession.getCustomerSequenceNumber());
-
-		customerProfileDetailModel = personalDetailsDao.getProfileDetails(customerProfileDetailModel);
+		customerProfileDetailModel = personalDetailsDao.getProfileDetails();
 
 		if (customerProfileDetailModel.getStatus())
 		{

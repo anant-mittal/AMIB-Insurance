@@ -19,16 +19,6 @@ public class MetaData implements Serializable
 
 	private MetaData metaData;
 
-	public MetaData getMetaData()
-	{
-		return metaData;
-	}
-
-	public void setMetaData(MetaData metaData)
-	{
-		this.metaData = metaData;
-	}
-
 	private static final long serialVersionUID = 4265567700694960490L;
 
 	private String motpPrefix;
@@ -60,6 +50,8 @@ public class MetaData implements Serializable
 	private BigDecimal languageId;
 
 	private BigDecimal customerSequenceNumber;
+	
+	private BigDecimal userSequenceNumber;
 
 	private String contactUsEmail;
 
@@ -238,6 +230,26 @@ public class MetaData implements Serializable
 	public void setCustomerSequenceNumber(BigDecimal customerSequenceNumber)
 	{
 		this.customerSequenceNumber = customerSequenceNumber;
+	}
+
+	public MetaData getMetaData()
+	{
+		return metaData;
+	}
+
+	public void setMetaData(MetaData metaData)
+	{
+		this.metaData = metaData;
+	}
+	
+	public BigDecimal getUserSequenceNumber()
+	{
+		return userSequenceNumber;
+	}
+
+	public void setUserSequenceNumber(BigDecimal userSequenceNumber)
+	{
+		this.userSequenceNumber = userSequenceNumber;
 	}
 
 }

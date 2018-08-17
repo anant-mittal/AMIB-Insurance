@@ -6,6 +6,7 @@
 package com.amx.jax.session;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,25 +48,13 @@ public class RegSession implements Serializable
 	private String deviceId;
 
 	private int languageId;
+	
+	private BigDecimal userSequenceNumber;
 
 	private String contactUsEmail;
 
 	private String contactUsHelpLineNumber;
 	
-
-	/***************************TEMP*************************/
-	private HashMap<String , Integer> otpAttepts;
-	
-	public Map<String, Integer> getOtpAttepts()
-	{
-		return otpAttepts;
-	}
-
-	public void setOtpAttepts(HashMap<String, Integer> otpAttepts)
-	{
-		this.otpAttepts = otpAttepts;
-	}
-	/****************************************************/
 
 	public String getContactUsEmail()
 	{
@@ -231,5 +220,16 @@ public class RegSession implements Serializable
 	{
 		this.languageId = languageId;
 	}
+	
+	public BigDecimal getUserSequenceNumber()
+	{
+		return userSequenceNumber;
+	}
+
+	public void setUserSequenceNumber(BigDecimal userSequenceNumber)
+	{
+		this.userSequenceNumber = userSequenceNumber;
+	}
+
 
 }

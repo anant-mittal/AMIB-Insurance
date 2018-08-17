@@ -5,7 +5,6 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,22 +38,31 @@ public class PersonalDetailsDao
 
 	Connection connection;
 
-	public CustomerProfileDetailModel getProfileDetails(CustomerProfileDetailModel customerProfileDetailModel)
+	public CustomerProfileDetailModel getProfileDetails()
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_PROFILE_DTLS(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+		CustomerProfileDetailModel customerProfileDetailModel = null;
 
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setBigDecimal(1, customerProfileDetailModel.getCountryId());
-			callableStatement.setBigDecimal(2, customerProfileDetailModel.getCompCd());
-			callableStatement.setString(3, customerProfileDetailModel.getUserType());
-			callableStatement.setString(4, customerProfileDetailModel.getCivilId());
-			callableStatement.setBigDecimal(5, customerProfileDetailModel.getLanguageId());
-			callableStatement.setBigDecimal(6, customerProfileDetailModel.getCustSequenceNumber());
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setString(3, metaData.getUserType());
+			callableStatement.setString(4, metaData.getCivilId());
+			callableStatement.setBigDecimal(5, metaData.getLanguageId());
+			callableStatement.setBigDecimal(6, metaData.getUserSequenceNumber());
+			
+			logger.info(TAG + " getProfileDetails :: getCivilId   	:" + metaData.getCivilId());
+			logger.info(TAG + " getProfileDetails :: getCountryId   :" + metaData.getCountryId());
+			logger.info(TAG + " getProfileDetails :: getCompCd      :" + metaData.getCompCd());
+			logger.info(TAG + " getProfileDetails :: getUserType    :" + metaData.getUserType());
+			logger.info(TAG + " getProfileDetails :: getDeviceId    :" + metaData.getDeviceId());
+			logger.info(TAG + " getProfileDetails :: getDeviceType  :" + metaData.getDeviceType());
+			logger.info(TAG + " getProfileDetails :: getCustSeqNo   :" + metaData.getCustomerSequenceNumber());
 
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
@@ -123,8 +131,7 @@ public class PersonalDetailsDao
 
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_BUSINESS(?,?,?,?,?,?)}";
-		ArrayList<HashMap<String,String>> businessArray = new ArrayList<HashMap<String,String>>();
-		HashMap<String,String> businessMap = new HashMap<String,String>();
+		ArrayList<Business> businessArray = new ArrayList<Business>();
 
 		logger.info(TAG + " getBusiness ::");
 
@@ -144,9 +151,13 @@ public class PersonalDetailsDao
 
 			while (rs.next())
 			{
-				businessMap.put(rs.getString(1), rs.getString(2));
+				Business business = new Business();
+				business.setBusinessCode(rs.getString(1));
+				logger.info(TAG + " getBusiness :: Business code :" + rs.getString(1).toString());
+				business.setBusinessDesc(rs.getString(2));
+				logger.info(TAG + " getBusiness :: Business Arabic  disc :" + rs.getString(2).toString());
+				businessArray.add(business);
 			}
-			businessArray.add(businessMap);
 		}
 		catch (Exception e)
 		{
@@ -167,8 +178,7 @@ public class PersonalDetailsDao
 
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_NATIONALITIES(?,?,?,?,?,?)}";
-		ArrayList<HashMap<String,String>> nationalityArray = new ArrayList<HashMap<String,String>>();
-		HashMap<String,String> nationalityMap = new HashMap<String,String>();
+		ArrayList<Nationality> nationalityArray = new ArrayList<Nationality>();
 
 		logger.info(TAG + " getNationality ::");
 
@@ -188,9 +198,14 @@ public class PersonalDetailsDao
 
 			while (rs.next())
 			{
-				nationalityMap.put(rs.getString(1), rs.getString(2));
+				Nationality nationality = new Nationality();
+				nationality.setNationalityCode(rs.getString(1));
+				logger.info(TAG + " getNationality :: Nationality code :" + rs.getString(1));
+				nationality.setNationalityDesc(rs.getString(2));
+				logger.info(TAG + " getNationality :: Nationality disc :" + rs.getString(2));
+				nationalityArray.add(nationality);
 			}
-			nationalityArray.add(nationalityMap);
+
 		}
 		catch (Exception e)
 		{
@@ -212,8 +227,7 @@ public class PersonalDetailsDao
 
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_GOVERNORATES(?,?,?,?,?,?)}";
-		ArrayList<HashMap<String,String>> governoratesArray = new ArrayList<HashMap<String,String>>();
-		HashMap<String,String> governoratesMap = new HashMap<String,String>();
+		ArrayList<Governorates> governoratesArray = new ArrayList<Governorates>();
 
 		logger.info(TAG + " getGovernorates ::");
 
@@ -233,9 +247,13 @@ public class PersonalDetailsDao
 
 			while (rs.next())
 			{
-				governoratesMap.put(rs.getString(1), rs.getString(2));
+				Governorates governorates = new Governorates();
+				governorates.setGovCode(rs.getString(1));
+				logger.info(TAG + " getNationality :: gov code :" + rs.getString(1));
+				governorates.setGovDesc(rs.getString(2));
+				logger.info(TAG + " getNationality :: gov disc :" + rs.getString(2));
+				governoratesArray.add(governorates);
 			}
-			governoratesArray.add(governoratesMap);
 
 		}
 		catch (Exception e)
@@ -257,8 +275,7 @@ public class PersonalDetailsDao
 
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_AREA(?,?,?,?,?,?,?)}";
-		ArrayList<HashMap<String,String>> areaArray = new ArrayList<HashMap<String,String>>();
-		HashMap<String,String> areaMap = new HashMap<String,String>();
+		ArrayList<Area> areaArray = new ArrayList<Area>();
 
 		logger.info(TAG + " getArea ::");
 
@@ -279,9 +296,14 @@ public class PersonalDetailsDao
 
 			while (rs.next())
 			{
-				areaMap.put(rs.getString(1), rs.getString(2));
+				Area area = new Area();
+				area.setAreaCode(rs.getString(1));
+				logger.info(TAG + " getArea :: Area code :" + rs.getString(1).toString());
+				area.setAreaDesc(rs.getString(2));
+				logger.info(TAG + " getArea :: Area disc :" + rs.getString(2).toString());
+				areaArray.add(area);
 			}
-			areaArray.add(areaMap);
+
 		}
 		catch (Exception e)
 		{
@@ -302,9 +324,8 @@ public class PersonalDetailsDao
 
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_GENDER(?,?,?,?,?,?)}";
-		ArrayList<HashMap<String,String>> genderArray = new ArrayList<HashMap<String,String>>();
-		HashMap<String,String> genderMap = new HashMap<String,String>();
-		
+		ArrayList<Area> areaArray = new ArrayList<Area>();
+
 		logger.info(TAG + " getArea ::");
 
 		try
@@ -320,13 +341,16 @@ public class PersonalDetailsDao
 			callableStatement.executeUpdate();
 
 			ResultSet rs = (ResultSet) callableStatement.getObject(4);
-			
+
 			while (rs.next())
 			{
-				genderMap.put(rs.getString(1), rs.getString(2));
+				Area area = new Area();
+				area.setAreaCode(rs.getString(1));
+				logger.info(TAG + " getArea :: Area code :" + rs.getString(1).toString());
+				area.setAreaDesc(rs.getString(2));
+				logger.info(TAG + " getArea :: Area disc :" + rs.getString(2).toString());
+				areaArray.add(area);
 			}
-			
-			genderArray.add(genderMap);
 
 		}
 		catch (Exception e)
@@ -339,7 +363,7 @@ public class PersonalDetailsDao
 			CloseConnection(callableStatement, connection);
 		}
 
-		return genderArray;
+		return areaArray;
 	}
 
 	private Connection getConnection()

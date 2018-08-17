@@ -82,7 +82,7 @@ public class CustomerRegistrationService
 			regSession.setContactUsEmail(getCompanySetUp.get(0).getEmail());
 			regSession.setContactUsHelpLineNumber(getCompanySetUp.get(0).getHelpLineNumber());
 			regSession.setUserType("D");
-			regSession.setDeviceId(deviceId);
+			regSession.setDeviceId("12345678");
 			regSession.setDeviceType("ONLINE");
 
 			logger.info(TAG + " getCompanySetUp :: getCountryId                :" + regSession.getCountryId());
@@ -98,6 +98,7 @@ public class CustomerRegistrationService
 			metaData.setUserType(regSession.getUserType());
 			metaData.setLanguageId(new BigDecimal(regSession.getLanguageId()));
 			metaData.setDeviceType(regSession.getDeviceType());
+			metaData.setDeviceId(regSession.getDeviceId());
 			metaData.setContactUsEmail(regSession.getContactUsEmail());
 			metaData.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
 
@@ -326,7 +327,7 @@ public class CustomerRegistrationService
 				resp.setStatusKey(ApiConstants.FAILURE);
 				resp.setMessage(setOtpCount.getErrorMessage());
 				resp.setMessageKey(setOtpCount.getErrorCode());
-				
+
 				logger.info(TAG + " setOtpCount :: setOtpCount.getErrorMessage() :" + setOtpCount.getErrorMessage());
 				logger.info(TAG + " setOtpCount :: setOtpCount.getErrorCode() :" + setOtpCount.getErrorCode());
 			}
@@ -622,7 +623,7 @@ public class CustomerRegistrationService
 			if (customerLoginModel.getStatus())
 			{
 				metaData.setCivilId(customerLoginRequest.getCivilId());
-				metaData.setCustomerSequenceNumber(new BigDecimal(customerLoginModel.getUserSeqNum()));
+				metaData.setUserSequenceNumber(new BigDecimal(customerLoginModel.getUserSeqNum()));
 				metaData.setCountryId(new BigDecimal(regSession.getCountryId()));
 				metaData.setCompCd(new BigDecimal(regSession.getCompCd()));
 				metaData.setUserType(regSession.getUserType());
@@ -638,43 +639,38 @@ public class CustomerRegistrationService
 				resp.setStatusKey(ApiConstants.FAILURE);
 			}
 
-			String countData = "";
 			
-			
-			if(null != customerLoginModel.getErrorMessage() && customerLoginModel.getErrorCode().toString().equalsIgnoreCase("RGN8"))
+
+			if (null != customerLoginModel.getErrorMessage() && customerLoginModel.getErrorCode().toString().equalsIgnoreCase(ErrorKey.INVALID_USER_LOGIN))
 			{
+				String countData = "";
 				int count = Integer.parseInt(customerLoginModel.getErrorMessage());
 				int userInvalidCountRemaining = 3 - count;
-				if(userInvalidCountRemaining == 0)
+				if (userInvalidCountRemaining == 0)
 				{
 					countData = " No ";
 				}
 				else
 				{
-					countData = ""+userInvalidCountRemaining;
+					countData = "" + userInvalidCountRemaining;
 				}
 				resp.setMessageKey(customerLoginModel.getErrorCode());
 				resp.setMessage(countData);
-				
+			}
+			else if (null != customerLoginModel.getErrorCode() && customerLoginModel.getErrorCode().equalsIgnoreCase(ErrorKey.CUSTOMER_ACCOUNT_LOCK))
+			{
+				customerLoginResponse.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
+				customerLoginResponse.setContactUsEmail(regSession.getContactUsEmail());
 			}
 			else
 			{
 				resp.setMessageKey(customerLoginModel.getErrorCode());
 				resp.setMessage(customerLoginModel.getErrorCode());
-				
-			}
-			
-			if (null != customerLoginModel.getErrorCode() && customerLoginModel.getErrorCode().equalsIgnoreCase(ErrorKey.CUSTOMER_ACCOUNT_LOCK))
-			{
-				customerLoginResponse.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
-				customerLoginResponse.setContactUsEmail(regSession.getContactUsEmail());
 			}
 
 			customerLoginResponse.setAmibRef(customerLoginModel.getAmibRef());
 			customerLoginResponse.setUserSeqNum(customerLoginModel.getUserSeqNum());
-
 			resp.setData(customerLoginResponse);
-
 			logger.info(TAG + " validateUserLogin :: customerLoginResponse :" + customerLoginResponse.toString());
 		}
 		return resp;

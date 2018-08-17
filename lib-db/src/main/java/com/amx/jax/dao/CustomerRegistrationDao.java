@@ -623,9 +623,11 @@ public class CustomerRegistrationDao
 			callableStatement.setString(5, customerDetailModel.getPassword());
 			callableStatement.setBigDecimal(6, null);
 			callableStatement.setDate(7, getCurrentDate());
-			callableStatement.setString(8, customerDetailModel.getDeviceId());
-			callableStatement.setString(9, customerDetailModel.getDeviceType());
-			callableStatement.setString(10, customerDetailModel.getCivilId());
+			callableStatement.setString(8, customerDetailModel.getDeviceId());// Device
+																				// ID
+			callableStatement.setString(9, customerDetailModel.getDeviceType());// Device
+																				// Type
+			callableStatement.setString(10, customerDetailModel.getCivilId());// CivilId
 			callableStatement.registerOutParameter(11, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(12, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
