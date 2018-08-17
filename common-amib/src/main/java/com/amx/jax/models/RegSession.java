@@ -3,6 +3,7 @@ package com.amx.jax.models;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,6 +51,18 @@ public class RegSession implements Serializable
 	private String contactUsEmail;
 
 	private String contactUsHelpLineNumber;
+	
+	private ArrayList<OtpCountSession> userSessionOtpCount;
+
+	public ArrayList<OtpCountSession> getUserSessionOtpCount()
+	{
+		return userSessionOtpCount;
+	}
+
+	public void setUserSessionOtpCount(ArrayList<OtpCountSession> userSessionOtpCount)
+	{
+		this.userSessionOtpCount = userSessionOtpCount;
+	}
 
 	public String getContactUsEmail()
 	{

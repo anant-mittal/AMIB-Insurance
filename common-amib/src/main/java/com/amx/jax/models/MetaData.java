@@ -247,5 +247,4 @@ public class MetaData implements Serializable
 	{
 		this.userSequenceNumber = userSequenceNumber;
 	}
-
 }

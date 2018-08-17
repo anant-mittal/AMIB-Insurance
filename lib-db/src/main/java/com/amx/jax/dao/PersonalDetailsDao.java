@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.amx.jax.models.Area;
 import com.amx.jax.models.Business;
 import com.amx.jax.models.CustomerProfileDetailModel;
+import com.amx.jax.models.Gender;
 import com.amx.jax.models.Governorates;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.Nationality;
@@ -375,7 +376,7 @@ public class PersonalDetailsDao
 
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_GENDER(?,?,?,?,?,?)}";
-		ArrayList<Area> areaArray = new ArrayList<Area>();
+		ArrayList<Gender> genderArray = new ArrayList<Gender>();
 
 		logger.info(TAG + " getArea ::");
 
@@ -395,12 +396,12 @@ public class PersonalDetailsDao
 
 			while (rs.next())
 			{
-				Area area = new Area();
-				area.setAreaCode(rs.getString(1));
-				logger.info(TAG + " getArea :: Area code :" + rs.getString(1).toString());
-				area.setAreaDesc(rs.getString(2));
-				logger.info(TAG + " getArea :: Area disc :" + rs.getString(2).toString());
-				areaArray.add(area);
+				Gender gender = new Gender();
+				gender.setGenderCode(rs.getString(1));
+				logger.info(TAG + " getGender :: Gender code :" + rs.getString(1).toString());
+				gender.setGenderDesc(rs.getString(2));
+				logger.info(TAG + " getGender :: Gender disc :" + rs.getString(2).toString());
+				genderArray.add(gender);
 			}
 
 		}
@@ -414,7 +415,7 @@ public class PersonalDetailsDao
 			CloseConnection(callableStatement, connection);
 		}
 
-		return areaArray;
+		return genderArray;
 	}
 
 	private Connection getConnection()

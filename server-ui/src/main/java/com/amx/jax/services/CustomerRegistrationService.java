@@ -3,6 +3,8 @@ package com.amx.jax.services;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
@@ -31,6 +33,7 @@ import com.amx.jax.models.CustomerRegistrationRequest;
 import com.amx.jax.models.CustomerRegistrationResponse;
 import com.amx.jax.models.FailureException;
 import com.amx.jax.models.MetaData;
+import com.amx.jax.models.OtpCountSession;
 import com.amx.jax.models.RegSession;
 import com.amx.jax.models.Validate;
 import com.amx.utils.Random;
@@ -476,6 +479,11 @@ public class CustomerRegistrationService
 		{
 			AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(requestOtpModel.getCivilId());
 
+			if (null != otpSessionHandling(requestOtpModel))
+			{
+				otpSessionHandling(requestOtpModel);
+			}
+
 			regSession.setCivilId(requestOtpModel.getCivilId());
 			regSession.setEmailId(requestOtpModel.getEmailId());
 			regSession.setMobileNumber(requestOtpModel.getMobileNumber());
@@ -909,6 +917,86 @@ public class CustomerRegistrationService
 
 		customerRegistrationDao.setFailedException(type, failureException);
 
+	}
+
+	private AmxApiResponse<?, Object> otpSessionHandling(RequestOtpModel requestOtpModel)
+	{
+		boolean sessionOtpFlag = false;
+		ArrayList<OtpCountSession> otpCountSession = regSession.getUserSessionOtpCount();
+		ArrayList<OtpCountSession> arrayOtpList = new ArrayList<OtpCountSession>();
+
+		if (otpCountSession.isEmpty())
+		{
+			OtpCountSession otpCount1 = new OtpCountSession();
+			otpCount1.setCivilId(requestOtpModel.getCivilId());
+			otpCount1.setCount(1);
+			otpCount1.setDate(new Date());
+			arrayOtpList.add(otpCount1);
+
+			regSession.setUserSessionOtpCount(arrayOtpList);
+		}
+		else
+		{
+			for (int i = 0; i < otpCountSession.size(); i++)
+			{
+				if (otpCountSession.get(i).getCivilId().equalsIgnoreCase(requestOtpModel.getCivilId()))
+				{
+					int otpCount = otpCountSession.get(i).getCount();
+					Date otpDate = otpCountSession.get(i).getDate();
+					Date todaysDate = new Date();
+
+					if (!otpDate.toString().equalsIgnoreCase(todaysDate.toString()))
+					{
+						OtpCountSession otpCount2 = new OtpCountSession();
+						otpCount2.setCivilId(otpCountSession.get(i).getCivilId());
+						otpCount2.setCount(1);
+						otpCount2.setDate(new Date());
+						arrayOtpList.add(otpCount2);
+					}
+					else if (otpDate.toString().equalsIgnoreCase(todaysDate.toString()) && otpCount < 3)
+					{
+						otpCount++;
+						OtpCountSession otpCount3 = new OtpCountSession();
+						otpCount3.setCivilId(otpCountSession.get(i).getCivilId());
+						otpCount3.setCount(otpCount);
+						otpCount3.setDate(otpDate);
+						arrayOtpList.add(otpCount3);
+					}
+					else if (otpDate.toString().equalsIgnoreCase(todaysDate.toString()) && otpCount > 3)
+					{
+						sessionOtpFlag = true;
+					}
+				}
+				else
+				{
+					OtpCountSession otpCount = new OtpCountSession();
+					otpCount.setCivilId(otpCountSession.get(i).getCivilId());
+					otpCount.setCount(otpCountSession.get(i).getCount());
+					otpCount.setDate(otpCountSession.get(i).getDate());
+					arrayOtpList.add(otpCount);
+				}
+			}
+
+			regSession.setUserSessionOtpCount(arrayOtpList);
+		}
+
+		if (sessionOtpFlag)
+		{
+			AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
+
+			resp.setStatusKey(ApiConstants.FAILURE);
+			resp.setMessage(Message.CUST_OTP_NOT_ENABLED);
+			resp.setMessageKey(MessageKey.KEY_CUST_OTP_NOT_ENABLED);
+
+			Validate validate = new Validate();
+			validate.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
+			validate.setContactUsEmail(regSession.getContactUsEmail());
+			resp.setData(validate);
+
+			return resp;
+		}
+
+		return null;
 	}
 
 }
