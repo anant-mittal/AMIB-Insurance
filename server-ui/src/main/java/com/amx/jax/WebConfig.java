@@ -1,8 +1,4 @@
 
-
-
-
-
 package com.amx.jax;
 
 import java.lang.reflect.Field;
@@ -44,7 +40,7 @@ public class WebConfig
 	public static final String AMX_APP_URL = "${amx.app.url}";
 
 	public static final String APP_COMP = "${app.company.code}";
-	
+
 	public static final String CONFIG_EMAIL = "${spring.mail.username}";
 
 	@Value(APP_NAME)
@@ -56,7 +52,7 @@ public class WebConfig
 
 	@Value(APP_COMP)
 	private String appComp;
-	
+
 	@Value(CONFIG_EMAIL)
 	private String configEmail;
 
@@ -64,7 +60,7 @@ public class WebConfig
 	{
 		return configEmail;
 	}
-	
+
 	public String getAppCompCode()
 	{
 		return appComp;

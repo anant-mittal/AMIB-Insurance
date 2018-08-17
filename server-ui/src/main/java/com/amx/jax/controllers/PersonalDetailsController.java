@@ -4,13 +4,18 @@ package com.amx.jax.controllers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.models.CustomerDetailResponse;
+import com.amx.jax.models.CustomerProfileDetailResponse;
+import com.amx.jax.models.CustomerProfileUpdateRequest;
+import com.amx.jax.models.CustomerProfileUpdateResponse;
 import com.amx.jax.services.PersonalDetailsService;
+import com.insurance.generateotp.RequestOtpModel;
 
 @RestController
 public class PersonalDetailsController
@@ -22,16 +27,16 @@ public class PersonalDetailsController
 	@Autowired
 	public PersonalDetailsService personalDetailsService;
 
-	@RequestMapping(value = "/api/personal/userdetails", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<CustomerDetailResponse, Object> getUserDetails()
-	{
-		return personalDetailsService.getUserDetails();
-	}
-
 	@RequestMapping(value = "/api/personal/profiledetails", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<CustomerDetailResponse, Object> getProfileDetails()
+	public AmxApiResponse<CustomerProfileDetailResponse, Object> getProfileDetails()
 	{
 		return personalDetailsService.getProfileDetails();
+	}
+
+	@RequestMapping(value = "/api/personal/updatep-profiledetails", method = RequestMethod.POST, produces = "application/json")
+	public AmxApiResponse<CustomerProfileUpdateResponse, Object> updateProfileDetails(@RequestBody CustomerProfileUpdateRequest customerProfileUpdateRequest)
+	{
+		return personalDetailsService.updateProfileDetails(customerProfileUpdateRequest);
 	}
 
 	@RequestMapping(value = "/api/personal/business", method = RequestMethod.GET, produces = "application/json")

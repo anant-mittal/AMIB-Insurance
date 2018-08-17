@@ -1,8 +1,4 @@
 
-
-
-
-
 package com.insurance.generateotp;
 
 import java.security.MessageDigest;

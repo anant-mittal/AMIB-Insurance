@@ -1,35 +1,37 @@
 package com.amx.jax.models;
 
+import java.math.BigDecimal;
+
 public class CustomerLoginResponse
 {
-	public int userSeqNum;
+	public BigDecimal userSeqNum;
 
-	public int amibRef;
-	
+	public BigDecimal amibRef;
+
 	private String contactUsEmail;
 
 	private String contactUsHelpLineNumber;
 
-	public int getUserSeqNum()
+	public BigDecimal getUserSeqNum()
 	{
 		return userSeqNum;
 	}
 
-	public void setUserSeqNum(int userSeqNum)
+	public void setUserSeqNum(BigDecimal userSeqNum)
 	{
 		this.userSeqNum = userSeqNum;
 	}
 
-	public int getAmibRef()//
+	public BigDecimal getAmibRef()//
 	{
 		return amibRef;
 	}
 
-	public void setAmibRef(int amibRef)
+	public void setAmibRef(BigDecimal amibRef)
 	{
 		this.amibRef = amibRef;
 	}
-	
+
 	public String getContactUsEmail()
 	{
 		return contactUsEmail;
@@ -55,5 +57,5 @@ public class CustomerLoginResponse
 	{
 		return "CustomerLoginResponse [userSeqNum=" + userSeqNum + ", amibRef=" + amibRef + ", contactUsEmail=" + contactUsEmail + ", contactUsHelpLineNumber=" + contactUsHelpLineNumber + "]";
 	}
-	
+
 }

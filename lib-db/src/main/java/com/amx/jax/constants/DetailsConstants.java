@@ -1,8 +1,4 @@
 
-
-
-
-
 package com.amx.jax.constants;
 
 import java.math.BigDecimal;

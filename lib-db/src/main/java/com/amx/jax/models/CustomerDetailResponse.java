@@ -1,17 +1,18 @@
 
 package com.amx.jax.models;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 
 public class CustomerDetailResponse
 {
 	private String civilId;
-	
+
 	private String mobile;
 
 	private String email;
 
-	private int languageId;
+	private BigDecimal languageId;
 
 	private String mobileVerify;
 
@@ -25,8 +26,8 @@ public class CustomerDetailResponse
 
 	private String dbStatus;
 
-	private int custSeqNumber;
-	
+	private BigDecimal custSeqNumber;
+
 	public String getCivilId()
 	{
 		return civilId;
@@ -57,12 +58,12 @@ public class CustomerDetailResponse
 		this.email = email;
 	}
 
-	public int getLanguageId()
+	public BigDecimal getLanguageId()
 	{
 		return languageId;
 	}
 
-	public void setLanguageId(int languageId)
+	public void setLanguageId(BigDecimal languageId)
 	{
 		this.languageId = languageId;
 	}
@@ -127,12 +128,12 @@ public class CustomerDetailResponse
 		this.dbStatus = dbStatus;
 	}
 
-	public int getCustSeqNumber()
+	public BigDecimal getCustSeqNumber()
 	{
 		return custSeqNumber;
 	}
 
-	public void setCustSeqNumber(int custSeqNumber)
+	public void setCustSeqNumber(BigDecimal custSeqNumber)
 	{
 		this.custSeqNumber = custSeqNumber;
 	}

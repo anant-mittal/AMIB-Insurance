@@ -11,13 +11,13 @@ public class EmailOtpModel
 	private String mobileNumber;
 
 	private String motpPrefix;
-	
+
 	private String motp;
-	
+
 	private String eotpPrefix;
 
 	private String eotp;
-	
+
 	public String getCivilId()
 	{
 		return civilId;
@@ -47,7 +47,7 @@ public class EmailOtpModel
 	{
 		this.mobileNumber = mobileNumber;
 	}
-	
+
 	public String getMotpPrefix()
 	{
 		return motpPrefix;
@@ -67,7 +67,7 @@ public class EmailOtpModel
 	{
 		this.eotpPrefix = eotpPrefix;
 	}
-	
+
 	public String getMotp()
 	{
 		return motp;

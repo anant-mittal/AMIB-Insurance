@@ -11,9 +11,11 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @ComponentScan("com")
 @EnableAsync(proxyTargetClass = true)
 @EnableCaching
-public class WebApplication {
+public class WebApplication
+{
 
-	public static void main(String[] args) {
+	public static void main(String[] args)
+	{
 		SpringApplication.run(WebApplication.class, args);
 	}
 

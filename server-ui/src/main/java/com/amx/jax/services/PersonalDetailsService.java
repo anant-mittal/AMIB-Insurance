@@ -1,6 +1,9 @@
 
 package com.amx.jax.services;
 
+import java.math.BigDecimal;
+import java.sql.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +18,10 @@ import com.amx.jax.models.CustomerDetailResponse;
 import com.amx.jax.models.CustomerProfileDetailModel;
 import com.amx.jax.models.CustomerProfileDetailRequest;
 import com.amx.jax.models.CustomerProfileDetailResponse;
+import com.amx.jax.models.CustomerProfileUpdateRequest;
+import com.amx.jax.models.CustomerProfileUpdateResponse;
 import com.amx.jax.models.MetaData;
-import com.amx.jax.session.RegSession;
+import com.amx.jax.models.RegSession;
 
 @Service
 public class PersonalDetailsService
@@ -33,53 +38,36 @@ public class PersonalDetailsService
 
 	@Autowired
 	RegSession regSession;
-	
+
 	@Autowired
 	MetaData userSession;
 
-	public AmxApiResponse<CustomerDetailResponse, Object> getUserDetails()
+	public AmxApiResponse<CustomerProfileDetailResponse, Object> getProfileDetails()
 	{
-		AmxApiResponse<CustomerDetailResponse, Object> resp = new AmxApiResponse<CustomerDetailResponse, Object>();
-		CustomerDetailResponse customerDetailResponse = new CustomerDetailResponse();
-
-		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(userSession.getCivilId());
-
-		customerDetailResponse.setMobile(customerDetailModel.getMobile());
-		customerDetailResponse.setEmail(customerDetailModel.getEmail());
-		customerDetailResponse.setLanguageId(customerDetailModel.getLanguageId());
-		customerDetailResponse.setMailVerify(customerDetailModel.getMobileVerify());
-		customerDetailResponse.setMailVerify(customerDetailModel.getMailVerify());
-		customerDetailResponse.setLastLogin(customerDetailModel.getLastLogin());
-		customerDetailResponse.setDeviceId(customerDetailModel.getDeviceId());
-		customerDetailResponse.setDeviceType(customerDetailModel.getDeviceType());
-		customerDetailResponse.setCivilId(userSession.getCivilId());
-		customerDetailResponse.setDbStatus(customerDetailModel.getDbStatus());
-		customerDetailResponse.setCustSeqNumber(customerDetailModel.getCustSequenceNumber());
-
-		if (customerDetailModel.getStatus())
-		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
-		}
-		else
-		{
-			resp.setStatusKey(ApiConstants.FAILURE);
-		}
-		resp.setMessageKey(customerDetailModel.getErrorCode());
-		resp.setMessage(customerDetailModel.getErrorCode());
-		resp.setData(customerDetailResponse);
-
-		logger.info(TAG + " getUserDetails :: customerDetailResponse :" + customerDetailResponse);
-
-		return resp;
-	}
-
-	public AmxApiResponse<CustomerDetailResponse, Object> getProfileDetails()
-	{
-		AmxApiResponse<CustomerDetailResponse, Object> resp = new AmxApiResponse<CustomerDetailResponse, Object>();
+		AmxApiResponse<CustomerProfileDetailResponse, Object> resp = new AmxApiResponse<CustomerProfileDetailResponse, Object>();
 		CustomerProfileDetailResponse customerProfileDetailResponse = new CustomerProfileDetailResponse();
 		CustomerProfileDetailModel customerProfileDetailModel = new CustomerProfileDetailModel();
 
 		customerProfileDetailModel = personalDetailsDao.getProfileDetails();
+
+		customerProfileDetailResponse.setAreaCode(customerProfileDetailModel.getAreaCode());
+		customerProfileDetailResponse.setAreaDesc(customerProfileDetailModel.getAreaDesc());
+		customerProfileDetailResponse.setBusinessCode(customerProfileDetailModel.getBusinessCode());
+		customerProfileDetailResponse.setBusinessDesc(customerProfileDetailModel.getBusinessDesc());
+		customerProfileDetailResponse.setEmail(customerProfileDetailModel.getEmail());
+		customerProfileDetailResponse.setEnglishName(customerProfileDetailModel.getEnglishName());
+		customerProfileDetailResponse.setGenderCode(customerProfileDetailModel.getGenderCode());
+		customerProfileDetailResponse.setGenderDesc(customerProfileDetailModel.getGenderDesc());
+		customerProfileDetailResponse.setGovCode(customerProfileDetailModel.getGovCode());
+		customerProfileDetailResponse.setGovDesc(customerProfileDetailModel.getGovDesc());
+		customerProfileDetailResponse.setIdExpiryDate(customerProfileDetailModel.getIdExpiryDate());
+		customerProfileDetailResponse.setLanguageId(customerProfileDetailModel.getLanguageId());
+		customerProfileDetailResponse.setMobile(customerProfileDetailModel.getMobile());
+		customerProfileDetailResponse.setNatyCode(customerProfileDetailModel.getNatyCode());
+		customerProfileDetailResponse.setNatyDesc(customerProfileDetailModel.getNatyDesc());
+		customerProfileDetailResponse.setNativeArabicName(customerProfileDetailModel.getNativeArabicName());
+
+		logger.info(TAG + " getProfileDetails :: customerProfileDetailResponse :" + customerProfileDetailResponse);
 
 		if (customerProfileDetailModel.getStatus())
 		{
@@ -89,8 +77,51 @@ public class PersonalDetailsService
 		{
 			resp.setStatusKey(ApiConstants.FAILURE);
 		}
+
+		resp.setData(customerProfileDetailResponse);
 		resp.setMessageKey(customerProfileDetailModel.getErrorCode());
 		resp.setMessage(customerProfileDetailModel.getErrorCode());
+
+		return resp;
+	}
+
+	public AmxApiResponse<CustomerProfileUpdateResponse, Object> updateProfileDetails(CustomerProfileUpdateRequest customerProfileUpdateRequest)
+	{
+		AmxApiResponse<CustomerProfileUpdateResponse, Object> resp = new AmxApiResponse<CustomerProfileUpdateResponse, Object>();
+		CustomerProfileDetailModel customerProfileDetailModel = new CustomerProfileDetailModel();
+		CustomerProfileUpdateResponse customerProfileUpdateResponse = new CustomerProfileUpdateResponse();
+
+		customerProfileDetailModel.setCustSequenceNumber(customerProfileUpdateRequest.getCustomerSequenceNumber());
+		customerProfileDetailModel.setEnglishName(customerProfileUpdateRequest.getEnglishName());
+		customerProfileDetailModel.setNativeArabicName(customerProfileUpdateRequest.getNativeArabicName());
+		customerProfileDetailModel.setGenderCode(customerProfileUpdateRequest.getGenderCode());
+		customerProfileDetailModel.setIdExpiryDate(customerProfileUpdateRequest.getIdExpiryDate());
+		customerProfileDetailModel.setBusinessCode(customerProfileUpdateRequest.getBusinessCode());
+		customerProfileDetailModel.setNatyCode(customerProfileUpdateRequest.getNatyCode());
+		customerProfileDetailModel.setGovCode(customerProfileUpdateRequest.getGovCode());
+		customerProfileDetailModel.setAreaCode(customerProfileUpdateRequest.getAreaCode());
+		customerProfileDetailModel.setMobile(customerProfileUpdateRequest.getMobile());
+		customerProfileDetailModel.setEmail(customerProfileUpdateRequest.getEmail());
+
+		customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel);
+
+		customerProfileUpdateResponse.setStatus(customerProfileDetailModel.getStatus());
+		customerProfileUpdateResponse.setErrorCode(customerProfileDetailModel.getErrorCode());
+		customerProfileUpdateResponse.setErrorMessage(customerProfileDetailModel.getErrorMessage());
+
+		logger.info(TAG + " updateProfileDetails :: customerProfileDetailModel :" + customerProfileDetailModel);
+
+		if (customerProfileUpdateResponse.getStatus())
+		{
+			resp.setStatusKey(ApiConstants.SUCCESS);
+		}
+		else
+		{
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
+
+		resp.setMessageKey(customerProfileUpdateResponse.getErrorCode());
+		resp.setMessage(customerProfileUpdateResponse.getErrorCode());
 
 		return resp;
 	}
@@ -173,8 +204,7 @@ public class PersonalDetailsService
 		return resp;
 
 	}
-	
-	
+
 	public AmxApiResponse<?, Object> getGender()
 	{
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();

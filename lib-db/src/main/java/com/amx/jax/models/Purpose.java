@@ -5,7 +5,7 @@ public class Purpose
 	public String purposeCode = "";
 
 	public String purposeDesc = "";
-	
+
 	public String getPurposeCode()
 	{
 		return purposeCode;
@@ -25,5 +25,5 @@ public class Purpose
 	{
 		this.purposeDesc = purposeDesc;
 	}
-	
+
 }

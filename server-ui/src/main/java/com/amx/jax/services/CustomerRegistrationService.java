@@ -1,13 +1,8 @@
 
-
-
-
-
 package com.amx.jax.services;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
@@ -27,6 +22,7 @@ import com.amx.jax.models.ChangePasswordRequest;
 import com.amx.jax.models.ChangePasswordResponse;
 import com.amx.jax.models.CompanySetUp;
 import com.amx.jax.models.CustomerDetailModel;
+import com.amx.jax.models.CustomerDetailResponse;
 import com.amx.jax.models.CustomerLoginModel;
 import com.amx.jax.models.CustomerLoginRequest;
 import com.amx.jax.models.CustomerLoginResponse;
@@ -35,8 +31,8 @@ import com.amx.jax.models.CustomerRegistrationRequest;
 import com.amx.jax.models.CustomerRegistrationResponse;
 import com.amx.jax.models.FailureException;
 import com.amx.jax.models.MetaData;
+import com.amx.jax.models.RegSession;
 import com.amx.jax.models.Validate;
-import com.amx.jax.session.RegSession;
 import com.amx.utils.Random;
 import com.insurance.email.dao.EmailNotification;
 import com.insurance.email.model.Email;
@@ -69,7 +65,7 @@ public class CustomerRegistrationService
 	@Autowired
 	private WebConfig webConfig;
 
-	public AmxApiResponse<Validate, Object> getCompanySetUp(int languageId, String deviceId)
+	public AmxApiResponse<Validate, Object> getCompanySetUp(BigDecimal languageId, String deviceId)
 	{
 		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
 
@@ -93,10 +89,10 @@ public class CustomerRegistrationService
 			logger.info(TAG + " getCompanySetUp :: setContactUsEmail           :" + regSession.getContactUsEmail());
 			logger.info(TAG + " getCompanySetUp :: setContactUsHelpLineNumber  :" + regSession.getContactUsHelpLineNumber());
 
-			metaData.setCountryId(new BigDecimal(regSession.getCountryId()));
-			metaData.setCompCd(new BigDecimal(regSession.getCompCd()));
+			metaData.setCountryId(regSession.getCountryId());
+			metaData.setCompCd(regSession.getCompCd());
 			metaData.setUserType(regSession.getUserType());
-			metaData.setLanguageId(new BigDecimal(regSession.getLanguageId()));
+			metaData.setLanguageId(regSession.getLanguageId());
 			metaData.setDeviceType(regSession.getDeviceType());
 			metaData.setDeviceId(regSession.getDeviceId());
 			metaData.setContactUsEmail(regSession.getContactUsEmail());
@@ -339,17 +335,36 @@ public class CustomerRegistrationService
 		return resp;
 	}
 
-	public CustomerDetailModel getUserDetails(String civilId)
+	public AmxApiResponse<CustomerDetailResponse, Object> getUserDetails()
 	{
-		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(civilId);
+		AmxApiResponse<CustomerDetailResponse, Object> resp = new AmxApiResponse<CustomerDetailResponse, Object>();
+		CustomerDetailResponse customerDetailResponse = new CustomerDetailResponse();
 
-		logger.info(TAG + " userDetails :: customerDetailModel :" + customerDetailModel.toString());
+		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(metaData.getCivilId());
+		customerDetailResponse.setCivilId(customerDetailModel.getCivilId());
+		customerDetailResponse.setCustSeqNumber(customerDetailModel.getCustSequenceNumber());
+		customerDetailResponse.setDeviceId(customerDetailModel.getDeviceId());
+		customerDetailResponse.setDeviceType(customerDetailModel.getDeviceType());
+		customerDetailResponse.setEmail(customerDetailModel.getEmail());
+		customerDetailResponse.setLanguageId(customerDetailModel.getLanguageId());
+		customerDetailResponse.setLastLogin(customerDetailModel.getLastLogin());
+		customerDetailResponse.setMailVerify(customerDetailModel.getMailVerify());
+		customerDetailResponse.setMobile(customerDetailModel.getMobile());
+		customerDetailResponse.setMobileVerify(customerDetailModel.getMobileVerify());
+
+		metaData.setCustomerSequenceNumber(customerDetailModel.getCustSequenceNumber());
+
+		resp.setData(customerDetailResponse);
 
 		if (customerDetailModel.getStatus())
 		{
-			return customerDetailModel;
+			resp.setStatusKey(ApiConstants.SUCCESS);
 		}
-		return null;
+		else
+		{
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
+		return resp;
 	}
 
 	public AmxApiResponse<Validate, Object> isCivilIdExistCheck(String civilid)
@@ -546,12 +561,12 @@ public class CustomerRegistrationService
 		CustomerRegistrationResponse customerRegistrationResponse = new CustomerRegistrationResponse();
 		CustomerRegistrationModel customerRegistrationModel = new CustomerRegistrationModel();
 
-		customerRegistrationModel.setCountryId(1);
-		customerRegistrationModel.setCompCd(10);
-		customerRegistrationModel.setUserType(userRegistartionRequest.getUserType());
+		customerRegistrationModel.setCountryId(regSession.getCountryId());
+		customerRegistrationModel.setCompCd(regSession.getCompCd());
+		customerRegistrationModel.setUserType(regSession.getUserType());
 		customerRegistrationModel.setMobile(regSession.getMobileNumber());
 		customerRegistrationModel.setEmail(regSession.getEmailId());
-		customerRegistrationModel.setLanguageId(0);
+		customerRegistrationModel.setLanguageId(regSession.getLanguageId());
 		customerRegistrationModel.setCivilId(userRegistartionRequest.getCivilId());
 		customerRegistrationModel.setPassword(userRegistartionRequest.getPassword());
 		customerRegistrationModel.setCreatedDeviceId(userRegistartionRequest.getCreatedDeviceId());
@@ -622,15 +637,8 @@ public class CustomerRegistrationService
 
 			if (customerLoginModel.getStatus())
 			{
-				metaData.setCivilId(customerLoginRequest.getCivilId());
-				metaData.setUserSequenceNumber(new BigDecimal(customerLoginModel.getUserSeqNum()));
-				metaData.setCountryId(new BigDecimal(regSession.getCountryId()));
-				metaData.setCompCd(new BigDecimal(regSession.getCompCd()));
-				metaData.setUserType(regSession.getUserType());
-				metaData.setLanguageId(new BigDecimal(regSession.getLanguageId()));
-				metaData.setDeviceType(regSession.getDeviceType());
-				metaData.setContactUsEmail(regSession.getContactUsEmail());
-				metaData.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
+				onSuccessLogin(customerLoginRequest, customerLoginModel);
+				getUserDetails();
 
 				resp.setStatusKey(ApiConstants.SUCCESS);
 			}
@@ -638,8 +646,6 @@ public class CustomerRegistrationService
 			{
 				resp.setStatusKey(ApiConstants.FAILURE);
 			}
-
-			
 
 			if (null != customerLoginModel.getErrorMessage() && customerLoginModel.getErrorCode().toString().equalsIgnoreCase(ErrorKey.INVALID_USER_LOGIN))
 			{
@@ -676,6 +682,20 @@ public class CustomerRegistrationService
 		return resp;
 	}
 
+	public void onSuccessLogin(CustomerLoginRequest customerLoginRequest, CustomerLoginModel customerLoginModel)
+	{
+		metaData.setCivilId(customerLoginRequest.getCivilId());
+		metaData.setUserSequenceNumber(customerLoginModel.getUserSeqNum());
+		metaData.setCountryId(regSession.getCountryId());
+		metaData.setCompCd(regSession.getCompCd());
+		metaData.setUserType(regSession.getUserType());
+		metaData.setLanguageId(regSession.getLanguageId());
+		metaData.setDeviceType(regSession.getDeviceType());
+		metaData.setContactUsEmail(regSession.getContactUsEmail());
+		metaData.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
+
+	}
+
 	public AmxApiResponse<?, Object> changePasswordOtpInitiate(ChangePasswordOtpRequest changePasswordOtpRequest)
 	{
 		logger.info(TAG + " changePasswordOtpInitiate :: getCivilId :" + changePasswordOtpRequest.getCivilId());
@@ -704,7 +724,7 @@ public class CustomerRegistrationService
 			return isOtpEnabled;
 		}
 
-		CustomerDetailModel customerDetailModel = getUserDetails(changePasswordOtpRequest.getCivilId());
+		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(changePasswordOtpRequest.getCivilId());
 
 		if (null == customerDetailModel || customerDetailModel.getErrorCode() != null)
 		{
@@ -876,11 +896,11 @@ public class CustomerRegistrationService
 		failureException.setCivilId(requestOtpModel.getCivilId());
 		failureException.setMobileNumber(requestOtpModel.getMobileNumber());
 		failureException.setEmailId(requestOtpModel.getEmailId());
-		failureException.setCountryId(new BigDecimal(regSession.getCountryId()));
-		failureException.setCompCd(new BigDecimal(regSession.getCompCd()));
+		failureException.setCountryId(regSession.getCountryId());
+		failureException.setCompCd(regSession.getCompCd());
 		failureException.setDeviceId(regSession.getDeviceId());
 		failureException.setDeviceType(regSession.getDeviceType());
-		failureException.setLanguageId(new BigDecimal(regSession.getLanguageId()));
+		failureException.setLanguageId(regSession.getLanguageId());
 		failureException.setUserType(regSession.getUserType());
 		failureException.setExceptionType("REGISTER");
 		failureException.setExceptionMsg(exceptionMessage);

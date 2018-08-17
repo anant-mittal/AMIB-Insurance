@@ -3,7 +3,7 @@ package com.amx.jax.models;
 public class FailureResponseInfo
 {
 	private String contactUsEmail;
-	
+
 	private String contactUsHelpLineNumber;
 
 	public String getContactUsEmail()

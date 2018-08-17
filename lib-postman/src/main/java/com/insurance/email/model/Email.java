@@ -1,8 +1,4 @@
 
-
-
-
-
 package com.insurance.email.model;
 
 public class Email

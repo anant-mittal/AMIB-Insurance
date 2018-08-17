@@ -5,7 +5,7 @@ public class Area
 	public String areaCode = "";
 
 	public String areaDesc = "";
-	
+
 	public String getAreaCode()
 	{
 		return areaCode;
@@ -25,5 +25,5 @@ public class Area
 	{
 		this.areaDesc = areaDesc;//
 	}
-	
+
 }

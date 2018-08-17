@@ -1,8 +1,4 @@
 
-
-
-
-
 package com.amx.jax.services;
 
 import java.util.ArrayList;
@@ -104,5 +100,5 @@ public class VehicleDetailsService
 		}
 		return null;
 	}
-	
+
 }

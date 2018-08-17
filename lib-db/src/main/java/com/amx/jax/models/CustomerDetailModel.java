@@ -1,5 +1,6 @@
 package com.amx.jax.models;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 
 public class CustomerDetailModel
@@ -12,19 +13,19 @@ public class CustomerDetailModel
 
 	private String createdDeviceId;
 
-	private int userSequenceNumber;
-	
-	private int custSequenceNumber;
+	private BigDecimal userSequenceNumber;
 
-	private int countryId;
+	private BigDecimal custSequenceNumber;
 
-	private int compCd;
+	private BigDecimal countryId;
+
+	private BigDecimal compCd;
 
 	private String mobile;
 
 	private String email;
 
-	private int languageId;
+	private BigDecimal languageId;
 
 	private boolean status;
 
@@ -86,32 +87,32 @@ public class CustomerDetailModel
 		this.createdDeviceId = createdDeviceId;
 	}
 
-	public int getUserSequenceNumber()
+	public BigDecimal getUserSequenceNumber()
 	{
 		return userSequenceNumber;
 	}
 
-	public void setUserSequenceNumber(int userSequenceNumber)
+	public void setUserSequenceNumber(BigDecimal userSequenceNumber)
 	{
 		this.userSequenceNumber = userSequenceNumber;
 	}
 
-	public int getCountryId()
+	public BigDecimal getCountryId()
 	{
 		return countryId;
 	}
 
-	public void setCountryId(int countryId)
+	public void setCountryId(BigDecimal countryId)
 	{
 		this.countryId = countryId;
 	}
 
-	public int getCompCd()
+	public BigDecimal getCompCd()
 	{
 		return compCd;
 	}
 
-	public void setCompCd(int compCd)
+	public void setCompCd(BigDecimal compCd)
 	{
 		this.compCd = compCd;
 	}
@@ -136,12 +137,12 @@ public class CustomerDetailModel
 		this.email = email;
 	}
 
-	public int getLanguageId()
+	public BigDecimal getLanguageId()
 	{
 		return languageId;
 	}
 
-	public void setLanguageId(int languageId)
+	public void setLanguageId(BigDecimal languageId)
 	{
 		this.languageId = languageId;
 	}
@@ -245,13 +246,13 @@ public class CustomerDetailModel
 	{
 		this.otp = otp;
 	}
-	
-	public int getCustSequenceNumber()
+
+	public BigDecimal getCustSequenceNumber()
 	{
 		return custSequenceNumber;
 	}
 
-	public void setCustSequenceNumber(int custSequenceNumber)
+	public void setCustSequenceNumber(BigDecimal custSequenceNumber)
 	{
 		this.custSequenceNumber = custSequenceNumber;
 	}

@@ -5,7 +5,7 @@ public class Shape
 	public String shapeCode = "";
 
 	public String shapeDesc = "";
-	
+
 	public String getShapeCode()
 	{
 		return shapeCode;

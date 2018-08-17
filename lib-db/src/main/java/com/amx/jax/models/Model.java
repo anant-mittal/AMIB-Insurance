@@ -5,7 +5,7 @@ public class Model
 	public String modelCode = "";
 
 	public String modelDesc = "";
-	
+
 	public String getModelCode()
 	{
 		return modelCode;
@@ -24,5 +24,5 @@ public class Model
 	public void setModelDesc(String modelDesc)
 	{
 		this.modelDesc = modelDesc;
-	}	
+	}
 }

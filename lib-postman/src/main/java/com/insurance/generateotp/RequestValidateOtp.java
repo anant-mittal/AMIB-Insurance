@@ -3,17 +3,17 @@ package com.insurance.generateotp;
 public class RequestValidateOtp
 {
 	public String civilId;
-	
+
 	public String motp;
 
 	public String motpPrefix;
-	
+
 	public String eotp;
 
 	public String eotpPrefix;
-	
+
 	public String countId;
-	
+
 	public String getCivilId()
 	{
 		return civilId;
@@ -73,5 +73,5 @@ public class RequestValidateOtp
 	{
 		this.countId = countId;
 	}
-	
+
 }

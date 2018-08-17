@@ -1,5 +1,7 @@
 package com.amx.jax.models;
 
+import java.math.BigDecimal;
+
 public class CustomerRegistrationModel
 {
 	private String userType;
@@ -12,26 +14,26 @@ public class CustomerRegistrationModel
 
 	private String civilid;
 
-	private int userSequenceNumber;
+	private BigDecimal userSequenceNumber;
 
-	private int countryId;
+	private BigDecimal countryId;
 
-	private int compCd;//
+	private BigDecimal compCd;//
 
 	private String mobile;
 
 	private String email;
 
-	private int languageId;
-	
+	private BigDecimal languageId;
+
 	private boolean status;
-	
+
 	private String errorMessage;
-	
+
 	private String errorCode;
-	
+
 	private String deviceType;
-	
+
 	public String getUserType()
 	{
 		return userType;
@@ -82,36 +84,36 @@ public class CustomerRegistrationModel
 		this.civilid = civilid;
 	}
 
-	public int getUserSequenceNumber()
+	public BigDecimal getUserSequenceNumber()
 	{
 		return userSequenceNumber;
 	}
 
-	public void setUserSequenceNumber(int userSequenceNumber)
+	public void setUserSequenceNumber(BigDecimal userSequenceNumber)
 	{
 		this.userSequenceNumber = userSequenceNumber;
 	}
 
-	public int getCountryId()
+	public BigDecimal getCountryId()
 	{
 		return countryId;
 	}
 
-	public void setCountryId(int countryId)
+	public void setCountryId(BigDecimal countryId)
 	{
 		this.countryId = countryId;
 	}
 
-	public int getCompCd()
+	public BigDecimal getCompCd()
 	{
 		return compCd;
 	}
 
-	public void setCompCd(int compCd)
+	public void setCompCd(BigDecimal compCd)
 	{
 		this.compCd = compCd;
 	}
-	
+
 	public String getMobile()
 	{
 		return mobile;
@@ -132,16 +134,16 @@ public class CustomerRegistrationModel
 		this.email = email;
 	}
 
-	public int getLanguageId()
+	public BigDecimal getLanguageId()
 	{
 		return languageId;
 	}
 
-	public void setLanguageId(int languageId)
+	public void setLanguageId(BigDecimal languageId)
 	{
 		this.languageId = languageId;
 	}
-	
+
 	public boolean getStatus()
 	{
 		return status;
@@ -171,7 +173,7 @@ public class CustomerRegistrationModel
 	{
 		this.errorCode = errorCode;
 	}
-	
+
 	public String getDeviceType()
 	{
 		return deviceType;

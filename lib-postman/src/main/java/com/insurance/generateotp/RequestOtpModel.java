@@ -3,7 +3,7 @@ package com.insurance.generateotp;
 public class RequestOtpModel
 {
 	private String civilId;
-	
+
 	private String emailId;
 
 	private String mobileNumber;
@@ -37,7 +37,7 @@ public class RequestOtpModel
 	{
 		this.mobileNumber = mobileNumber;
 	}
-	
+
 	@Override
 	public String toString()
 	{

@@ -3,13 +3,13 @@ package com.amx.jax.models;
 public class CompanySetupRequest
 {
 	private int languageId;
-	
+
 	private String userType;
 
 	private String deviceType;
-	
+
 	private String deviceId;
-	
+
 	public int getLanguageId()
 	{
 		return languageId;

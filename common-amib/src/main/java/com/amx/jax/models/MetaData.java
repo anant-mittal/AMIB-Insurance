@@ -1,8 +1,4 @@
 
-
-
-
-
 package com.amx.jax.models;
 
 import java.io.Serializable;
@@ -50,7 +46,7 @@ public class MetaData implements Serializable
 	private BigDecimal languageId;
 
 	private BigDecimal customerSequenceNumber;
-	
+
 	private BigDecimal userSequenceNumber;
 
 	private String contactUsEmail;
@@ -241,7 +237,7 @@ public class MetaData implements Serializable
 	{
 		this.metaData = metaData;
 	}
-	
+
 	public BigDecimal getUserSequenceNumber()
 	{
 		return userSequenceNumber;

@@ -5,7 +5,7 @@ public class Nationality
 	public String nationalityCode = "";
 
 	public String nationalityDesc = "";
-	
+
 	public String getNationalityCode()
 	{
 		return nationalityCode;

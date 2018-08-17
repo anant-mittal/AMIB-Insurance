@@ -1,8 +1,4 @@
 
-
-
-
-
 package com.amx.jax.dao;
 
 import java.sql.CallableStatement;
@@ -286,13 +282,13 @@ public class VehicleDetailsDao
 	public ArrayList getColour()
 	{
 		logger.info(TAG + " getColour :: ");
-		
+
 		getConnection();
 
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_COLORS(?,?,?,?,?,?)}";
 		ArrayList<Colour> colourArray = new ArrayList<Colour>();
-		
+
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);

@@ -1,9 +1,5 @@
 
-
-
-
-
-package com.amx.jax.session;
+package com.amx.jax.models;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -37,9 +33,9 @@ public class RegSession implements Serializable
 
 	private String changePasswordOtp;
 
-	private int countryId;
+	private BigDecimal countryId;
 
-	private int compCd;
+	private BigDecimal compCd;
 
 	private String userType;
 
@@ -47,14 +43,13 @@ public class RegSession implements Serializable
 
 	private String deviceId;
 
-	private int languageId;
-	
+	private BigDecimal languageId;
+
 	private BigDecimal userSequenceNumber;
 
 	private String contactUsEmail;
 
 	private String contactUsHelpLineNumber;
-	
 
 	public String getContactUsEmail()
 	{
@@ -80,7 +75,7 @@ public class RegSession implements Serializable
 	{
 		return serialVersionUID;
 	}
-	
+
 	public String getChangePasswordOtp()
 	{
 		return changePasswordOtp;
@@ -161,22 +156,22 @@ public class RegSession implements Serializable
 		this.emailId = emailId;
 	}
 
-	public int getCountryId()
+	public BigDecimal getCountryId()
 	{
 		return countryId;
 	}
 
-	public void setCountryId(int countryId)
+	public void setCountryId(BigDecimal countryId)
 	{
 		this.countryId = countryId;
 	}
 
-	public int getCompCd()
+	public BigDecimal getCompCd()
 	{
 		return compCd;
 	}
 
-	public void setCompCd(int compCd)
+	public void setCompCd(BigDecimal compCd)
 	{
 		this.compCd = compCd;
 	}
@@ -211,16 +206,16 @@ public class RegSession implements Serializable
 		this.deviceId = deviceId;
 	}
 
-	public int getLanguageId()
+	public BigDecimal getLanguageId()
 	{
 		return languageId;
 	}
 
-	public void setLanguageId(int languageId)
+	public void setLanguageId(BigDecimal languageId)
 	{
 		this.languageId = languageId;
 	}
-	
+
 	public BigDecimal getUserSequenceNumber()
 	{
 		return userSequenceNumber;
@@ -230,6 +225,5 @@ public class RegSession implements Serializable
 	{
 		this.userSequenceNumber = userSequenceNumber;
 	}
-
 
 }

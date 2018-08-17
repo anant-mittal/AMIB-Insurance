@@ -1,8 +1,4 @@
 
-
-
-
-
 package com.insurance.generateotp;
 
 public class ResponseOtpModel
@@ -13,7 +9,7 @@ public class ResponseOtpModel
 	private String civilId;
 
 	private String motpPrefix;
-	
+
 	private String eotpPrefix;
 
 	public String getCivilId()
@@ -25,7 +21,7 @@ public class ResponseOtpModel
 	{
 		this.civilId = civilId;
 	}
-	
+
 	public String getMotpPrefix()
 	{
 		return motpPrefix;

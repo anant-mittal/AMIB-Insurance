@@ -1,11 +1,10 @@
 package com.amx.jax.models;
 
-
 public class ChangePasswordRequest
 {
-	
+
 	String newPassword;
-	
+
 	public String getNewPassword()
 	{
 		return newPassword;
@@ -15,5 +14,5 @@ public class ChangePasswordRequest
 	{
 		this.newPassword = newPassword;
 	}
-	
+
 }

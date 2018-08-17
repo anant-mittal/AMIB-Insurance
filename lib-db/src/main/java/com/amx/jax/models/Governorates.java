@@ -5,7 +5,7 @@ public class Governorates
 	public String govCode = "";
 
 	public String govDesc = "";
-	
+
 	public String getGovCode()
 	{
 		return govCode;

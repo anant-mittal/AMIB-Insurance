@@ -1,8 +1,4 @@
 
-
-
-
-
 package com.amx.jax.controllers;
 
 import java.util.ArrayList;
@@ -27,44 +23,44 @@ public class VehicleDetailsController
 	@Autowired
 	public VehicleDetailsService vehicleDetailsService;
 
-	@RequestMapping(value = "/make", method = RequestMethod.GET , produces = "application/json")
+	@RequestMapping(value = "/make", method = RequestMethod.GET, produces = "application/json")
 	public ArrayList getMake()
 	{
 		return vehicleDetailsService.getMake();
 
 	}
 
-	@RequestMapping(value = "/model", method = RequestMethod.GET , produces = "application/json")
+	@RequestMapping(value = "/model", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<Model, Object> getModel(@RequestParam("make") String make)
 	{
 		logger.info(TAG + " getModel :: make :" + make);
 		return vehicleDetailsService.getModel(make);
 	}
 
-	@RequestMapping(value = "/fueltype", method = RequestMethod.GET , produces = "application/json")
+	@RequestMapping(value = "/fueltype", method = RequestMethod.GET, produces = "application/json")
 	public ArrayList getFuleType()
 	{
 		return vehicleDetailsService.getFuleType();
 	}
 
-	@RequestMapping(value = "/purpose", method = RequestMethod.GET , produces = "application/json")
+	@RequestMapping(value = "/purpose", method = RequestMethod.GET, produces = "application/json")
 	public ArrayList getPurpose()
 	{
 		return vehicleDetailsService.getPurpose();
 
 	}
 
-	@RequestMapping(value = "/shape", method = RequestMethod.GET , produces = "application/json")
+	@RequestMapping(value = "/shape", method = RequestMethod.GET, produces = "application/json")
 	public ArrayList getShape()
 	{
 		return vehicleDetailsService.getShape();
 	}
 
-	@RequestMapping(value = "/colour", method = RequestMethod.GET , produces = "application/json")
+	@RequestMapping(value = "/colour", method = RequestMethod.GET, produces = "application/json")
 	public ArrayList getColour()
 	{
 		logger.info(TAG + " getColour :: ");
 		return vehicleDetailsService.getColour();
 	}
-		
+
 }

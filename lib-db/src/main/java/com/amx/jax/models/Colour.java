@@ -1,12 +1,11 @@
 package com.amx.jax.models;
 
-
 public class Colour
 {
 	public String colourCode = "";
 
 	public String colourDesc = "";
-	
+
 	public String getColourCode()
 	{
 		return colourCode;
@@ -26,5 +25,5 @@ public class Colour
 	{
 		this.colourDesc = colourDesc;
 	}//
-	
+
 }

@@ -5,17 +5,13 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
 import com.amx.jax.models.Area;
 import com.amx.jax.models.Business;
-import com.amx.jax.models.CustomerDetailModel;
 import com.amx.jax.models.CustomerProfileDetailModel;
-import com.amx.jax.models.CustomerProfileDetailRequest;
 import com.amx.jax.models.Governorates;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.Nationality;
@@ -32,7 +28,7 @@ public class PersonalDetailsDao
 
 	@Autowired
 	JdbcTemplate jdbcTemplate;
-	
+
 	@Autowired
 	MetaData metaData;
 
@@ -54,15 +50,14 @@ public class PersonalDetailsDao
 			callableStatement.setString(3, metaData.getUserType());
 			callableStatement.setString(4, metaData.getCivilId());
 			callableStatement.setBigDecimal(5, metaData.getLanguageId());
-			callableStatement.setBigDecimal(6, metaData.getUserSequenceNumber());
-			
-			logger.info(TAG + " getProfileDetails :: getCivilId   	:" + metaData.getCivilId());
-			logger.info(TAG + " getProfileDetails :: getCountryId   :" + metaData.getCountryId());
-			logger.info(TAG + " getProfileDetails :: getCompCd      :" + metaData.getCompCd());
-			logger.info(TAG + " getProfileDetails :: getUserType    :" + metaData.getUserType());
-			logger.info(TAG + " getProfileDetails :: getDeviceId    :" + metaData.getDeviceId());
-			logger.info(TAG + " getProfileDetails :: getDeviceType  :" + metaData.getDeviceType());
-			logger.info(TAG + " getProfileDetails :: getCustSeqNo   :" + metaData.getCustomerSequenceNumber());
+			callableStatement.setBigDecimal(6, metaData.getCustomerSequenceNumber());
+
+			logger.info(TAG + " getProfileDetails :: getCountryId               :" + metaData.getCountryId());
+			logger.info(TAG + " getProfileDetails :: getCompCd                  :" + metaData.getCompCd());
+			logger.info(TAG + " getProfileDetails :: getUserType                :" + metaData.getUserType());
+			logger.info(TAG + " getProfileDetails :: getCivilId   	            :" + metaData.getCivilId());
+			logger.info(TAG + " getProfileDetails :: getLanguageId              :" + metaData.getLanguageId());
+			logger.info(TAG + " getProfileDetails :: getCustomerSequenceNumber  :" + metaData.getCustomerSequenceNumber());
 
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
@@ -102,6 +97,63 @@ public class PersonalDetailsDao
 			customerProfileDetailModel.setMobile(callableStatement.getString(20));
 			customerProfileDetailModel.setEmail(callableStatement.getString(21));
 			customerProfileDetailModel.setLanguageId(callableStatement.getBigDecimal(22));
+			customerProfileDetailModel.setErrorCode(callableStatement.getString(23));
+			customerProfileDetailModel.setErrorMessage(callableStatement.getString(24));
+
+			if (callableStatement.getString(23) == null)
+			{
+				customerProfileDetailModel.setStatus(true);
+			}
+			else
+			{
+				customerProfileDetailModel.setStatus(false);
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		return customerProfileDetailModel;
+	}
+
+	public CustomerProfileDetailModel updateProfileDetails(CustomerProfileDetailModel customerProfileDetailModel)
+	{
+		getConnection();
+		CallableStatement callableStatement = null;
+		String callProcedure = "{call IRB_GET_PROFILE_DTLS(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+
+		try
+		{
+			callableStatement = connection.prepareCall(callProcedure);
+
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setString(3, metaData.getUserType());
+			callableStatement.setString(4, metaData.getCivilId());
+			callableStatement.setBigDecimal(5, customerProfileDetailModel.getCustSequenceNumber());
+			callableStatement.setString(6, customerProfileDetailModel.getEnglishName());
+			callableStatement.setString(7, customerProfileDetailModel.getNativeArabicName());
+			callableStatement.setString(8, customerProfileDetailModel.getGenderCode());
+			callableStatement.setDate(9, customerProfileDetailModel.getIdExpiryDate());
+			callableStatement.setString(10, customerProfileDetailModel.getBusinessCode());
+			callableStatement.setString(11, customerProfileDetailModel.getNatyCode());
+			callableStatement.setString(12, customerProfileDetailModel.getGovCode());
+			callableStatement.setString(13, customerProfileDetailModel.getAreaCode());
+			callableStatement.setString(14, customerProfileDetailModel.getMobile());
+			callableStatement.setString(15, customerProfileDetailModel.getEmail());
+			callableStatement.setBigDecimal(16, metaData.getLanguageId());
+			callableStatement.setString(17, metaData.getDeviceId());
+			callableStatement.setString(18, metaData.getDeviceType());
+			callableStatement.setString(19, metaData.getCivilId());
+			callableStatement.registerOutParameter(20, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(21, java.sql.Types.VARCHAR);
+			callableStatement.executeUpdate();
+
+			customerProfileDetailModel = new CustomerProfileDetailModel();
 			customerProfileDetailModel.setErrorCode(callableStatement.getString(23));
 			customerProfileDetailModel.setErrorMessage(callableStatement.getString(24));
 
@@ -216,7 +268,6 @@ public class PersonalDetailsDao
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		
 
 		return nationalityArray;
 	}

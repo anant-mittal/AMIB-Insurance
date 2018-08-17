@@ -7,7 +7,7 @@ import java.sql.Date;
 public class CustomerProfileDetailModel
 {
 	private BigDecimal countryId;
-	
+
 	private BigDecimal compCd;
 
 	private String userType;
@@ -292,5 +292,13 @@ public class CustomerProfileDetailModel
 	public void setNativeArabicName(String nativeArabicName)
 	{
 		this.nativeArabicName = nativeArabicName;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "CustomerProfileDetailModel [countryId=" + countryId + ", compCd=" + compCd + ", userType=" + userType + ", civilId=" + civilId + ", languageId=" + languageId + ", custSequenceNumber=" + custSequenceNumber + ", status=" + status + ", errorMessage=" + errorMessage + ", errorCode="
+				+ errorCode + ", mobile=" + mobile + ", email=" + email + ", areaCode=" + areaCode + ", areaDesc=" + areaDesc + ", govCode=" + govCode + ", govDesc=" + govDesc + ", natyCode=" + natyCode + ", natyDesc=" + natyDesc + ", genderCode=" + genderCode + ", genderDesc=" + genderDesc
+				+ ", businessCode=" + businessCode + ", businessDesc=" + businessDesc + ", idExpiryDate=" + idExpiryDate + ", englishName=" + englishName + ", nativeArabicName=" + nativeArabicName + "]";
 	}
 }

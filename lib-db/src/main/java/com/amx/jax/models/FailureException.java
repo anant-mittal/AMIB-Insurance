@@ -6,15 +6,15 @@ import java.math.BigDecimal;
 public class FailureException
 {
 	private String civilId;
-	
+
 	private String emailId;
 
 	private String mobileNumber;
-	
+
 	private String motpPrefix;
-	
+
 	private String eotpPrefix;
-	
+
 	private BigDecimal countryId;
 
 	private BigDecimal compCd;
@@ -22,21 +22,21 @@ public class FailureException
 	private String userType;
 
 	private String deviceType;
-	
+
 	private String deviceId;
-	
+
 	private BigDecimal languageId;
 
 	private String errorCode;
 
 	private String errorMessage;
-	
+
 	public boolean status;
-	
+
 	public String exceptionType;
-	
+
 	public String exceptionMsg;
-	
+
 	public String getExceptionMsg()
 	{
 		return exceptionMsg;
@@ -197,5 +197,4 @@ public class FailureException
 		this.status = status;
 	}
 
-	
 }

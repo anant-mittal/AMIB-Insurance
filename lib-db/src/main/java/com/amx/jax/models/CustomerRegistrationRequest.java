@@ -9,7 +9,7 @@ public class CustomerRegistrationRequest
 	private String password;
 
 	private String createdDeviceId;
-	
+
 	private String deviceType;
 
 	public String getUserType()
@@ -51,7 +51,7 @@ public class CustomerRegistrationRequest
 	{
 		this.createdDeviceId = createdDeviceId;
 	}
-	
+
 	public String getDeviceType()
 	{
 		return deviceType;

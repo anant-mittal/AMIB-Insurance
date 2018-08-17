@@ -1,11 +1,13 @@
 
 package com.amx.jax.models;
 
+import java.math.BigDecimal;
+
 public class CompanySetUp
 {
-	int cntryCd;
+	BigDecimal cntryCd;
 
-	int compCd;
+	BigDecimal compCd;
 
 	String companyName;
 
@@ -23,26 +25,26 @@ public class CompanySetUp
 
 	String regNumber;
 
-	int mainAct;
+	BigDecimal mainAct;
 
-	int mainActCenter;
+	BigDecimal mainActCenter;
 
 	String heading;
 
-	int decplc;
+	BigDecimal decplc;
 
 	String currency;
 
-	int langId;
+	BigDecimal langId;
 
 	String appName;
 
 	String smsSenderId;
-	
+
 	String helpLineNumber;
-	
+
 	String webSite;
-	
+
 	String emailSenderId;
 
 	public String getHelpLineNumber()
@@ -74,23 +76,23 @@ public class CompanySetUp
 	{
 		this.emailSenderId = emailSenderId;
 	}
-	
-	public int getCntryCd()
+
+	public BigDecimal getCntryCd()
 	{
 		return cntryCd;
 	}
 
-	public void setCntryCd(int cntryCd)
+	public void setCntryCd(BigDecimal cntryCd)
 	{
 		this.cntryCd = cntryCd;
 	}
 
-	public int getCompCd()
+	public BigDecimal getCompCd()
 	{
 		return compCd;
 	}
 
-	public void setCompCd(int compCd)
+	public void setCompCd(BigDecimal compCd)
 	{
 		this.compCd = compCd;
 	}
@@ -175,22 +177,22 @@ public class CompanySetUp
 		this.regNumber = regNumber;
 	}
 
-	public int getMainAct()
+	public BigDecimal getMainAct()
 	{
 		return mainAct;
 	}
 
-	public void setMainAct(int mainAct)
+	public void setMainAct(BigDecimal mainAct)
 	{
 		this.mainAct = mainAct;
 	}
 
-	public int getMainActCenter()
+	public BigDecimal getMainActCenter()
 	{
 		return mainActCenter;
 	}
 
-	public void setMainActCenter(int mainActCenter)
+	public void setMainActCenter(BigDecimal mainActCenter)
 	{
 		this.mainActCenter = mainActCenter;
 	}
@@ -205,12 +207,12 @@ public class CompanySetUp
 		this.heading = heading;
 	}
 
-	public int getDecplc()
+	public BigDecimal getDecplc()
 	{
 		return decplc;
 	}
 
-	public void setDecplc(int decplc)
+	public void setDecplc(BigDecimal decplc)
 	{
 		this.decplc = decplc;
 	}
@@ -225,12 +227,12 @@ public class CompanySetUp
 		this.currency = currency;
 	}
 
-	public int getLangId()
+	public BigDecimal getLangId()
 	{
 		return langId;
 	}
 
-	public void setLangId(int langId)
+	public void setLangId(BigDecimal langId)
 	{
 		this.langId = langId;
 	}

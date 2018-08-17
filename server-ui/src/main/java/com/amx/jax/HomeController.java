@@ -1,10 +1,7 @@
 
-
-
-
-
 package com.amx.jax;
 
+import java.math.BigDecimal;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,10 +16,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.amx.jax.AppConfig;
 import com.amx.jax.WebConfig;
 import com.amx.jax.api.AmxApiResponse;
+import com.amx.jax.models.RegSession;
 import com.amx.jax.rest.RestService;
 import com.amx.jax.service.HttpService;
 import com.amx.jax.services.CustomerRegistrationService;
-import com.amx.jax.session.RegSession;
 import com.amx.utils.ArgUtil;
 import com.amx.utils.JsonUtil;
 import io.swagger.annotations.Api;
@@ -149,14 +146,13 @@ public class HomeController
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
 		model.addAttribute("cdnUrl", webConfig.getCdnURL());
 		model.addAttribute("cdnVerion", getVersion());
-		
+
 		if (httpService.getLanguage().toString().equalsIgnoreCase("EN"))
 		{
-			regSession.setLanguageId(0);
-			customerRegistrationService.getCompanySetUp(0, httpService.getDeviceId());
+			regSession.setLanguageId(new BigDecimal(0));
+			customerRegistrationService.getCompanySetUp(new BigDecimal(0), httpService.getDeviceId());
 		}
 
-		
 		return "app";
 	}
 

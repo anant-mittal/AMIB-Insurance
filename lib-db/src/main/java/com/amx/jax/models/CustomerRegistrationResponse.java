@@ -1,11 +1,13 @@
 package com.amx.jax.models;
 
+import java.math.BigDecimal;
+
 public class CustomerRegistrationResponse
 {
 	public String civilid;
 
-	public int userSequenceNumber;
-	
+	public BigDecimal userSequenceNumber;
+
 	public String getCivilid()
 	{
 		return civilid;
@@ -16,12 +18,12 @@ public class CustomerRegistrationResponse
 		this.civilid = civilid;
 	}
 
-	public int getUserSequenceNumber()//
+	public BigDecimal getUserSequenceNumber()//
 	{
 		return userSequenceNumber;
 	}
 
-	public void setUserSequenceNumber(int userSequenceNumber)
+	public void setUserSequenceNumber(BigDecimal userSequenceNumber)
 	{
 		this.userSequenceNumber = userSequenceNumber;
 	}

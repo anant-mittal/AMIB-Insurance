@@ -1,10 +1,7 @@
 
-
-
-
-
 package com.amx.jax.controllers;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 import org.slf4j.Logger;
@@ -20,12 +17,13 @@ import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.models.ChangePasswordOtpRequest;
 import com.amx.jax.models.ChangePasswordRequest;
 import com.amx.jax.models.ChangePasswordResponse;
+import com.amx.jax.models.CustomerDetailResponse;
 import com.amx.jax.models.CustomerLoginRequest;
 import com.amx.jax.models.CustomerRegistrationRequest;
 import com.amx.jax.models.CustomerRegistrationResponse;
+import com.amx.jax.models.RegSession;
 import com.amx.jax.models.Validate;
 import com.amx.jax.services.CustomerRegistrationService;
-import com.amx.jax.session.RegSession;
 import com.amx.utils.ArgUtil;
 import com.insurance.generateotp.RequestOtpModel;
 
@@ -43,7 +41,7 @@ public class CustomerRegistrationController
 	RegSession regSession;
 
 	@RequestMapping(value = "/pub/reg/companysetup", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<Validate, Object> getCompanySetUp(int languageId)
+	public AmxApiResponse<Validate, Object> getCompanySetUp(BigDecimal languageId)
 	{
 		return customerRegistrationService.getCompanySetUp(languageId, "");
 	}
@@ -120,6 +118,12 @@ public class CustomerRegistrationController
 	public AmxApiResponse<ChangePasswordResponse, Object> updatePassword(@RequestBody ChangePasswordRequest changePasswordRequest)
 	{
 		return customerRegistrationService.updatePassword(changePasswordRequest);
+	}
+
+	@RequestMapping(value = "/pub/reg/userdetails", method = RequestMethod.POST, produces = "application/json")
+	public AmxApiResponse<CustomerDetailResponse, Object> getUserDetails()
+	{
+		return customerRegistrationService.getUserDetails();
 	}
 
 }

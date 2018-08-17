@@ -1,8 +1,4 @@
 
-
-
-
-
 package com.insurance.generateotp;
 
 public class Random

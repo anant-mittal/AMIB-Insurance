@@ -5,7 +5,7 @@ public class FuelType
 	public String fuelCode = "";
 
 	public String fuelDesc = "";
-	
+
 	public String getFuelCode()
 	{
 		return fuelCode;
@@ -25,5 +25,5 @@ public class FuelType
 	{
 		this.fuelDesc = fuelDesc;
 	}
-	
+
 }

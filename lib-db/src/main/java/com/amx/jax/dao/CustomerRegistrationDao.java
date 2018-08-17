@@ -1,10 +1,7 @@
 
-
-
-
-
 package com.amx.jax.dao;
 
+import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -23,6 +20,7 @@ import com.amx.jax.models.CustomerLoginModel;
 import com.amx.jax.models.CustomerRegistrationModel;
 import com.amx.jax.models.FailureException;
 import com.amx.jax.models.MetaData;
+import com.amx.jax.models.RegSession;
 import com.amx.jax.models.Validate;
 import oracle.jdbc.OracleTypes;
 
@@ -39,9 +37,12 @@ public class CustomerRegistrationDao
 	@Autowired
 	MetaData metaData;
 
+	@Autowired
+	RegSession regSession;
+
 	Connection connection;
 
-	public ArrayList<CompanySetUp> getCompanySetUp(int langId)
+	public ArrayList<CompanySetUp> getCompanySetUp(BigDecimal langId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -55,7 +56,7 @@ public class CustomerRegistrationDao
 			callableStatement = connection.prepareCall(callProcedure);
 
 			callableStatement.setString(1, "AMIB");
-			callableStatement.setInt(2, langId);
+			callableStatement.setBigDecimal(2, langId);
 			callableStatement.registerOutParameter(3, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(4, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
@@ -67,8 +68,8 @@ public class CustomerRegistrationDao
 			{
 				CompanySetUp companySetUp = new CompanySetUp();
 
-				companySetUp.setCntryCd(rs.getInt(1));
-				companySetUp.setCompCd(rs.getInt(2));
+				companySetUp.setCntryCd(rs.getBigDecimal(1));
+				companySetUp.setCompCd(rs.getBigDecimal(2));
 				companySetUp.setCompanyName(rs.getString(3));
 				companySetUp.setCbox(rs.getString(4));
 				companySetUp.setCpo(rs.getString(5));
@@ -77,12 +78,12 @@ public class CustomerRegistrationDao
 				companySetUp.setFax(rs.getString(8));
 				companySetUp.setEmail(rs.getString(9));
 				companySetUp.setRegNumber(rs.getString(10));
-				companySetUp.setMainAct(rs.getInt(11));
-				companySetUp.setMainActCenter(rs.getInt(12));
+				companySetUp.setMainAct(rs.getBigDecimal(11));
+				companySetUp.setMainActCenter(rs.getBigDecimal(12));
 				companySetUp.setHeading(rs.getString(13));
-				companySetUp.setDecplc(rs.getInt(14));
+				companySetUp.setDecplc(rs.getBigDecimal(14));
 				companySetUp.setCurrency(rs.getString(15));
-				companySetUp.setLangId(rs.getInt(16));
+				companySetUp.setLangId(rs.getBigDecimal(16));
 				companySetUp.setAppName(rs.getString(17));
 				companySetUp.setSmsSenderId(rs.getString(18));
 				companySetUp.setHelpLineNumber(rs.getString(19));
@@ -415,8 +416,8 @@ public class CustomerRegistrationDao
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_REGISTER_USER(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
 
-		int countyId = customerRegistrationModel.getCountryId();
-		int compCd = customerRegistrationModel.getCompCd();
+		BigDecimal countyId = customerRegistrationModel.getCountryId();
+		BigDecimal compCd = customerRegistrationModel.getCompCd();
 		String userType = customerRegistrationModel.getUserType();
 		String userCivilId = customerRegistrationModel.getCivilId();
 		String userPassword = customerRegistrationModel.getPassword();
@@ -430,8 +431,8 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setInt(1, countyId);
-			callableStatement.setInt(2, compCd);
+			callableStatement.setBigDecimal(1, countyId);
+			callableStatement.setBigDecimal(2, compCd);
 			callableStatement.setString(3, userType);
 			callableStatement.setString(4, userCivilId);
 			callableStatement.setString(5, userPassword);
@@ -439,7 +440,7 @@ public class CustomerRegistrationDao
 			callableStatement.setString(7, "");
 			callableStatement.setString(8, emailId);
 			callableStatement.setString(9, "");
-			callableStatement.setInt(10, 0);
+			callableStatement.setBigDecimal(10, regSession.getLanguageId());
 			callableStatement.setString(11, deviceType);
 			callableStatement.setDate(12, getCurrentDate());
 			callableStatement.setString(13, createdDeviceId);
@@ -449,7 +450,7 @@ public class CustomerRegistrationDao
 			callableStatement.registerOutParameter(17, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
 
-			int userSequenceNumber = callableStatement.getInt(15);
+			BigDecimal userSequenceNumber = callableStatement.getBigDecimal(15);
 			String errorCode = callableStatement.getString(16);
 			String errorMessage = callableStatement.getString(17);
 			customerRegistrationModel = new CustomerRegistrationModel();
@@ -493,8 +494,8 @@ public class CustomerRegistrationDao
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			callableStatement.setString(3, metaData.getUserType());
 			callableStatement.setString(4, civilId);
-			callableStatement.setInt(5, 0);
-			callableStatement.setBigDecimal(6, null);
+			callableStatement.setBigDecimal(5, metaData.getLanguageId());
+			callableStatement.setBigDecimal(6, metaData.getUserSequenceNumber());
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(9, java.sql.Types.INTEGER);
@@ -514,8 +515,8 @@ public class CustomerRegistrationDao
 
 			customerDetailModel.setMobile(callableStatement.getString(7));
 			customerDetailModel.setEmail(callableStatement.getString(8));
-			logger.info(TAG + " getUserDetails :: callableStatement.getString(8) :" + callableStatement.getString(8));
-			customerDetailModel.setLanguageId(callableStatement.getInt(9));
+
+			customerDetailModel.setLanguageId(callableStatement.getBigDecimal(9));
 			customerDetailModel.setMobileVerify(callableStatement.getString(10));
 			customerDetailModel.setMailVerify(callableStatement.getString(11));
 			customerDetailModel.setLastLogin(callableStatement.getDate(12));
@@ -523,7 +524,8 @@ public class CustomerRegistrationDao
 			customerDetailModel.setDeviceType(callableStatement.getString(14));
 			customerDetailModel.setCivilId(callableStatement.getString(15));
 			customerDetailModel.setDbStatus(callableStatement.getString(16));
-			customerDetailModel.setCustSequenceNumber(callableStatement.getInt(17));
+			customerDetailModel.setCustSequenceNumber(callableStatement.getBigDecimal(17));
+			logger.info(TAG + " getUserDetails :: callableStatement.getString(17) :" + callableStatement.getString(17));
 			customerDetailModel.setErrorCode(callableStatement.getString(18));
 			customerDetailModel.setErrorMessage(callableStatement.getString(19));
 
@@ -558,8 +560,8 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setInt(1, customerLoginModel.getCountryId());
-			callableStatement.setInt(2, customerLoginModel.getCompCd());
+			callableStatement.setBigDecimal(1, customerLoginModel.getCountryId());
+			callableStatement.setBigDecimal(2, customerLoginModel.getCompCd());
 			callableStatement.setString(3, customerLoginModel.getUserType());
 			callableStatement.setString(4, customerLoginModel.getCivilId());
 			callableStatement.setString(5, customerLoginModel.getPassword());
@@ -571,8 +573,8 @@ public class CustomerRegistrationDao
 			callableStatement.registerOutParameter(11, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
 
-			int userSequenceNumber = callableStatement.getInt(8);
-			int amibRef = callableStatement.getInt(9);
+			BigDecimal userSequenceNumber = callableStatement.getBigDecimal(8);
+			BigDecimal amibRef = callableStatement.getBigDecimal(9);
 			String errorCode = callableStatement.getString(10);
 			String errorMessage = callableStatement.getString(11);
 
@@ -616,8 +618,8 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setInt(1, customerDetailModel.getCountryId());
-			callableStatement.setInt(2, customerDetailModel.getCompCd());
+			callableStatement.setBigDecimal(1, customerDetailModel.getCountryId());
+			callableStatement.setBigDecimal(2, customerDetailModel.getCompCd());
 			callableStatement.setString(3, customerDetailModel.getUserType());
 			callableStatement.setString(4, customerDetailModel.getCivilId());
 			callableStatement.setString(5, customerDetailModel.getPassword());

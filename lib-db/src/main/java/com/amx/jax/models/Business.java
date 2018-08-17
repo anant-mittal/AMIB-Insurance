@@ -5,7 +5,7 @@ public class Business
 	public String businessCode = "";
 
 	public String businessDesc = "";
-	
+
 	public String getBusinessCode()
 	{
 		return businessCode;
@@ -25,5 +25,5 @@ public class Business
 	{
 		this.businessDesc = businessDesc;
 	}
-	
+
 }

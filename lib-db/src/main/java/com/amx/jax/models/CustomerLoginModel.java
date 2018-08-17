@@ -1,15 +1,13 @@
 
-
-
-
-
 package com.amx.jax.models;
+
+import java.math.BigDecimal;
 
 public class CustomerLoginModel
 {
-	public int CountryId;
+	public BigDecimal CountryId;
 
-	public int CompCd;
+	public BigDecimal CompCd;
 
 	public String UserType;
 
@@ -17,9 +15,9 @@ public class CustomerLoginModel
 
 	public String Password;
 
-	public int userSeqNum;
+	public BigDecimal userSeqNum;
 
-	public int amibRef;
+	public BigDecimal amibRef;
 
 	public String errorCode;//
 
@@ -31,22 +29,22 @@ public class CustomerLoginModel
 
 	public boolean status;
 
-	public int getCountryId()
+	public BigDecimal getCountryId()
 	{
 		return CountryId;
 	}
 
-	public void setCountryId(int countryId)
+	public void setCountryId(BigDecimal countryId)
 	{
 		CountryId = countryId;
 	}
 
-	public int getCompCd()
+	public BigDecimal getCompCd()
 	{
 		return CompCd;
 	}
 
-	public void setCompCd(int compCd)
+	public void setCompCd(BigDecimal compCd)
 	{
 		CompCd = compCd;
 	}
@@ -81,22 +79,22 @@ public class CustomerLoginModel
 		Password = password;
 	}
 
-	public int getUserSeqNum()
+	public BigDecimal getUserSeqNum()
 	{
 		return userSeqNum;
 	}
 
-	public void setUserSeqNum(int userSeqNum)
+	public void setUserSeqNum(BigDecimal userSeqNum)
 	{
 		this.userSeqNum = userSeqNum;
 	}
 
-	public int getAmibRef()
+	public BigDecimal getAmibRef()
 	{
 		return amibRef;
 	}
 
-	public void setAmibRef(int amibRef)
+	public void setAmibRef(BigDecimal amibRef)
 	{
 		this.amibRef = amibRef;
 	}
@@ -130,7 +128,7 @@ public class CustomerLoginModel
 	{
 		this.status = status;
 	}
-	
+
 	public String getDeviceId()
 	{
 		return deviceId;
