@@ -33,7 +33,7 @@ public class PersonalDetailsController
 		return personalDetailsService.getProfileDetails();
 	}
 
-	@RequestMapping(value = "/api/personal/updatep-profiledetails", method = RequestMethod.POST, produces = "application/json")
+	@RequestMapping(value = "/api/personal/update-profiledetails", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<CustomerProfileUpdateResponse, Object> updateProfileDetails(@RequestBody CustomerProfileUpdateRequest customerProfileUpdateRequest)
 	{
 		return personalDetailsService.updateProfileDetails(customerProfileUpdateRequest);
