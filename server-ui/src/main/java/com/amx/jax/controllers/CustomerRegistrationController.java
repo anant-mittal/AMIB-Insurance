@@ -80,7 +80,7 @@ public class CustomerRegistrationController
 		return customerRegistrationService.isEmailIdExistCheck(emailId);
 	}
 
-	@RequestMapping(value = "/pub/reg/userdetails", method = RequestMethod.POST)
+	@RequestMapping(value = "/pub/reg/reg-otp", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> registrationOtpInitiate(@RequestBody RequestOtpModel requestOtpModel)
 	{
 		return customerRegistrationService.registrationOtpInitiate(requestOtpModel);
