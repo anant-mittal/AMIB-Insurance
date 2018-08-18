@@ -52,8 +52,20 @@ public class RegSession implements Serializable
 
 	private String contactUsHelpLineNumber;
 	
+	private int otpCount;
+	
 	private ArrayList<OtpCountSession> userSessionOtpCount;
 
+	public int getOtpCount()
+	{
+		return otpCount;
+	}
+
+	public void setOtpCount(int otpCount)
+	{
+		this.otpCount = otpCount;
+	}
+	
 	public ArrayList<OtpCountSession> getUserSessionOtpCount()
 	{
 		return userSessionOtpCount;

@@ -560,13 +560,13 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setBigDecimal(1, customerLoginModel.getCountryId());
-			callableStatement.setBigDecimal(2, customerLoginModel.getCompCd());
-			callableStatement.setString(3, customerLoginModel.getUserType());
+			callableStatement.setBigDecimal(1, regSession.getCountryId());
+			callableStatement.setBigDecimal(2, regSession.getCompCd());
+			callableStatement.setString(3, regSession.getUserType());
 			callableStatement.setString(4, customerLoginModel.getCivilId());
 			callableStatement.setString(5, customerLoginModel.getPassword());
-			callableStatement.setString(6, customerLoginModel.getDeviceId());
-			callableStatement.setString(7, customerLoginModel.getDeviceType());
+			callableStatement.setString(6, regSession.getDeviceId());
+			callableStatement.setString(7, regSession.getDeviceType());
 			callableStatement.registerOutParameter(8, java.sql.Types.INTEGER);
 			callableStatement.registerOutParameter(9, java.sql.Types.INTEGER);
 			callableStatement.registerOutParameter(10, java.sql.Types.VARCHAR);
@@ -618,18 +618,16 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setBigDecimal(1, customerDetailModel.getCountryId());
-			callableStatement.setBigDecimal(2, customerDetailModel.getCompCd());
-			callableStatement.setString(3, customerDetailModel.getUserType());
-			callableStatement.setString(4, customerDetailModel.getCivilId());
+			callableStatement.setBigDecimal(1, regSession.getCountryId());
+			callableStatement.setBigDecimal(2, regSession.getCompCd());
+			callableStatement.setString(3, regSession.getUserType());
+			callableStatement.setString(4, regSession.getCivilId());
 			callableStatement.setString(5, customerDetailModel.getPassword());
 			callableStatement.setBigDecimal(6, null);
 			callableStatement.setDate(7, getCurrentDate());
-			callableStatement.setString(8, customerDetailModel.getDeviceId());// Device
-																				// ID
-			callableStatement.setString(9, customerDetailModel.getDeviceType());// Device
-																				// Type
-			callableStatement.setString(10, customerDetailModel.getCivilId());// CivilId
+			callableStatement.setString(8, regSession.getDeviceId());
+			callableStatement.setString(9, regSession.getDeviceType());
+			callableStatement.setString(10, regSession.getCivilId());
 			callableStatement.registerOutParameter(11, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(12, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
@@ -665,7 +663,7 @@ public class CustomerRegistrationDao
 		}
 		return customerDetailModel;
 	}
-
+	
 	public FailureException setFailedException(String type, FailureException failureException)
 	{
 		getConnection();

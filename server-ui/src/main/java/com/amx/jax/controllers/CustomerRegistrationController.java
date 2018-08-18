@@ -2,8 +2,6 @@
 package com.amx.jax.controllers;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,14 +81,17 @@ public class CustomerRegistrationController
 	}
 
 	@RequestMapping(value = "/pub/reg/userdetails", method = RequestMethod.POST)
-	public AmxApiResponse<?, Object> sendOtp(@RequestBody RequestOtpModel requestOtpModel)
+	public AmxApiResponse<?, Object> registrationOtpInitiate(@RequestBody RequestOtpModel requestOtpModel)
 	{
-		return customerRegistrationService.sendOtp(requestOtpModel);
+		return customerRegistrationService.registrationOtpInitiate(requestOtpModel);
 	}
 
 	@RequestMapping(value = "/pub/reg/verifyuserdetails", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<Validate, Object> validateOtp(@RequestHeader(value = "mOtp", required = false) String mOtpHeader, @RequestHeader(value = "eOtp", required = false) String eOtpHeader, @RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp)
 	{
+		// This Validate Method is used for both
+		// Registration OTP and Chnage Password OTP
+
 		mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
 		eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
 		return customerRegistrationService.validateOtp(mOtp, eOtp);
@@ -124,6 +125,32 @@ public class CustomerRegistrationController
 	public AmxApiResponse<CustomerDetailResponse, Object> getUserDetails()
 	{
 		return customerRegistrationService.getUserDetails();
+	}
+
+	@RequestMapping(value = "/pub/reg/otp-emailid", method = RequestMethod.POST, produces = "application/json")
+	public AmxApiResponse<?, Object> emailOtpInitiate(String email)
+	{
+		return customerRegistrationService.emailOtpInitiate(email);
+	}
+
+	@RequestMapping(value = "/pub/reg/validate-emailotp", method = RequestMethod.POST, produces = "application/json")
+	public AmxApiResponse<Validate, Object> validateEmailOtp(@RequestHeader(value = "eOtp", required = false) String eOtpHeader, @RequestParam(required = false) String eOtp)
+	{
+		eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
+		return customerRegistrationService.validateEmailOtp(eOtp);
+	}
+
+	@RequestMapping(value = "/pub/reg/otp-mobile", method = RequestMethod.POST, produces = "application/json")
+	public AmxApiResponse<?, Object> mobileOtpInitiate(String mobile)
+	{
+		return customerRegistrationService.mobileOtpInitiate(mobile);
+	}
+
+	@RequestMapping(value = "/pub/reg/validate-mobileotp", method = RequestMethod.POST, produces = "application/json")
+	public AmxApiResponse<Validate, Object> validateMobileOtp(@RequestHeader(value = "mOtp", required = false) String mOtpHeader, @RequestParam(required = false) String mOtp)
+	{
+		mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
+		return customerRegistrationService.validateMobileOtp(mOtp);
 	}
 
 }

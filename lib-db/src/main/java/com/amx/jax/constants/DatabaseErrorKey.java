@@ -1,8 +1,8 @@
 package com.amx.jax.constants;
 
-public class ErrorKey
+public class DatabaseErrorKey
 {
-	public static String CUSTOMER_ACCOUNT_LOCK = "RGN13";
+	public static String USER_ACCOUNT_LOCK = "RGN13";
 
 	public static String INVALID_USER_LOGIN = "RGN8";
 }
