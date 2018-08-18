@@ -366,7 +366,7 @@ public class CustomerRegistrationService
 		CustomerDetailResponse customerDetailResponse = new CustomerDetailResponse();
 
 		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(metaData.getCivilId());
-		customerDetailResponse.setCivilId(customerDetailModel.getCivilId());
+		customerDetailResponse.setCivilId(metaData.getCivilId());
 		customerDetailResponse.setCustSeqNumber(customerDetailModel.getCustSequenceNumber());
 		customerDetailResponse.setDeviceId(customerDetailModel.getDeviceId());
 		customerDetailResponse.setDeviceType(customerDetailModel.getDeviceType());
