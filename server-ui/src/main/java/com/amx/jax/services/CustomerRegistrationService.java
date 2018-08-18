@@ -500,6 +500,10 @@ public class CustomerRegistrationService
 		try
 		{
 
+			regSession.setCivilId(requestOtpModel.getCivilId());
+			regSession.setEmailId(requestOtpModel.getEmailId());
+			regSession.setMobileNumber(requestOtpModel.getMobileNumber());
+			
 			AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(requestOtpModel.getCivilId());
 
 			responseOtpModel = sendEmailOtpTemp(responseOtpModel, requestOtpModel.getEmailId());
