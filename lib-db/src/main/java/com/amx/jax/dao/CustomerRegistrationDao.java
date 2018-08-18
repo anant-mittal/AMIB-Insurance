@@ -156,9 +156,14 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callFunction);
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
-			callableStatement.setBigDecimal(2, metaData.getCountryId());
-			callableStatement.setBigDecimal(3, metaData.getCompCd());
-			callableStatement.setString(4, metaData.getUserType());
+			
+			logger.info(TAG + " isCivilIdExist :: regSession.getCountryId()  :" + regSession.getCountryId());
+			logger.info(TAG + " isCivilIdExist :: regSession.getCompCd()     :" + regSession.getCompCd());
+			logger.info(TAG + " isCivilIdExist :: regSession.getUserType()   :" + regSession.getUserType());
+			
+			callableStatement.setBigDecimal(2, regSession.getCountryId());
+			callableStatement.setBigDecimal(3, regSession.getCompCd());
+			callableStatement.setString(4, regSession.getUserType());
 			callableStatement.setString(5, civilid);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
@@ -515,7 +520,6 @@ public class CustomerRegistrationDao
 
 			customerDetailModel.setMobile(callableStatement.getString(7));
 			customerDetailModel.setEmail(callableStatement.getString(8));
-
 			customerDetailModel.setLanguageId(callableStatement.getBigDecimal(9));
 			customerDetailModel.setMobileVerify(callableStatement.getString(10));
 			customerDetailModel.setMailVerify(callableStatement.getString(11));
@@ -525,7 +529,6 @@ public class CustomerRegistrationDao
 			customerDetailModel.setCivilId(callableStatement.getString(15));
 			customerDetailModel.setDbStatus(callableStatement.getString(16));
 			customerDetailModel.setCustSequenceNumber(callableStatement.getBigDecimal(17));
-			logger.info(TAG + " getUserDetails :: callableStatement.getString(17) :" + callableStatement.getString(17));
 			customerDetailModel.setErrorCode(callableStatement.getString(18));
 			customerDetailModel.setErrorMessage(callableStatement.getString(19));
 
@@ -567,6 +570,17 @@ public class CustomerRegistrationDao
 			callableStatement.setString(5, customerLoginModel.getPassword());
 			callableStatement.setString(6, regSession.getDeviceId());
 			callableStatement.setString(7, regSession.getDeviceType());
+			
+			logger.info(TAG + " validateUserLogin :: regSession.getCountryId()  :" + regSession.getCountryId());
+			logger.info(TAG + " validateUserLogin :: regSession.getCompCd()     :" + regSession.getCompCd());
+			logger.info(TAG + " validateUserLogin :: regSession.getUserType()   :" + regSession.getUserType());
+			logger.info(TAG + " validateUserLogin :: regSession.getDeviceId()   :" + regSession.getDeviceId());
+			logger.info(TAG + " validateUserLogin :: regSession.getDeviceType() :" + regSession.getDeviceType());
+			logger.info(TAG + " validateUserLogin :: regSession.getDeviceId()   :" + regSession.getDeviceId());
+			logger.info(TAG + " validateUserLogin :: getCivilId                 :" + customerLoginModel.getCivilId());
+			logger.info(TAG + " validateUserLogin :: getPassword                :" + customerLoginModel.getPassword());
+			
+			
 			callableStatement.registerOutParameter(8, java.sql.Types.INTEGER);
 			callableStatement.registerOutParameter(9, java.sql.Types.INTEGER);
 			callableStatement.registerOutParameter(10, java.sql.Types.VARCHAR);
