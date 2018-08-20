@@ -75,5 +75,11 @@ public class VehicleDetailsController
 	{
 		return vehicleDetailsService.getMaxVehicleAgeAllowed();
 	}
-
+	
+	@RequestMapping(value = "/api/vehicledetails/policy-duartion", method = RequestMethod.GET, produces = "application/json")
+	public AmxApiResponse<?, Object> getPolicyDuration()
+	{
+		return vehicleDetailsService.getPolicyDuration();
+	}
+	
 }

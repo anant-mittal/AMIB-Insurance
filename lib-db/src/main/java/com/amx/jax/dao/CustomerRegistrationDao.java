@@ -495,7 +495,7 @@ public class CustomerRegistrationDao
 			customerDetailModel.setLastLogin(callableStatement.getDate(12));
 			customerDetailModel.setDeviceId(callableStatement.getString(13));
 			customerDetailModel.setDeviceType(callableStatement.getString(14));
-			customerDetailModel.setCivilId(callableStatement.getString(15));
+			customerDetailModel.setUserName(callableStatement.getString(15));
 			customerDetailModel.setDbStatus(callableStatement.getString(16));
 			customerDetailModel.setCustSequenceNumber(callableStatement.getBigDecimal(17));
 			customerDetailModel.setErrorCode(callableStatement.getString(18));

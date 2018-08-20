@@ -27,6 +27,18 @@ public class CustomerDetailResponse
 	private String dbStatus;
 
 	private BigDecimal custSeqNumber;
+	
+	private String userName;
+
+	public String getUserName()
+	{
+		return userName;
+	}
+
+	public void setUserName(String userName)
+	{
+		this.userName = userName;
+	}
 
 	public String getCivilId()
 	{

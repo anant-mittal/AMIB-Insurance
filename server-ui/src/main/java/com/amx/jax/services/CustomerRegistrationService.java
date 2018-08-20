@@ -372,6 +372,7 @@ public class CustomerRegistrationService
 		customerDetailResponse.setMailVerify(customerDetailModel.getMailVerify());
 		customerDetailResponse.setMobile(customerDetailModel.getMobile());
 		customerDetailResponse.setMobileVerify(customerDetailModel.getMobileVerify());
+		customerDetailResponse.setUserName(customerDetailModel.getUserName());
 
 		metaData.setCustomerSequenceNumber(customerDetailModel.getCustSequenceNumber());
 

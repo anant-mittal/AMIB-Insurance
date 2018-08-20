@@ -172,5 +172,23 @@ public class VehicleDetailsService
 		}
 		return resp;
 	}
+	
+	public AmxApiResponse<?, Object> getPolicyDuration()
+	{
+		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
+		
+		try
+		{
+			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setResults(vehicleDetailsDao.getPolicyDuration());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
+		return resp;
+	}
 
 }

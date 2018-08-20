@@ -6,6 +6,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Calendar;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -386,7 +388,7 @@ public class VehicleDetailsDao
 		ArrayList<CodeDesc> maxVehicleAgeArray = new ArrayList<CodeDesc>();
 
 		String query = "SELECT A.MAX_ALLOWED_VEHICLE_AGE FROM IRB_V_ONLMAX_VEHAGE A";
-
+		
 		try
 		{
 			statement = connection.createStatement();
@@ -397,8 +399,56 @@ public class VehicleDetailsDao
 				ageAllowed = rs.getInt("MAX_ALLOWED_VEHICLE_AGE");
 				logger.info(TAG + " getMaxVehicleAgeAllowed :: ageAllowed :" + ageAllowed);
 			}
+			
+			Calendar now = Calendar.getInstance();
+			int year = now.get(Calendar.YEAR);
+			int allowedAgeIsTillNextYear = year + 1;
+			
+			for(int i = allowedAgeIsTillNextYear ; i > (allowedAgeIsTillNextYear-ageAllowed) ; i--)
+			{
+				logger.info(TAG + " getMaxVehicleAgeAllowed :: allowedAgeIsTillNextYear :" + allowedAgeIsTillNextYear);
+				CodeDesc codeDesc = new CodeDesc();
+				codeDesc.setCode("" + i);
+				codeDesc.setDesc("" + i);
+				maxVehicleAgeArray.add(codeDesc);
+			}
+			
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 
-			for (int i = 1 ; i <= ageAllowed; i++)
+		finally
+		{
+			CloseConnection(statement, connection);
+		}
+
+		return maxVehicleAgeArray;
+	}
+	
+	public ArrayList getPolicyDuration()
+	{
+
+		getConnection();
+		Statement statement = null;
+		int maxAllowedYear = 0;
+		ArrayList<CodeDesc> maxVehicleAgeArray = new ArrayList<CodeDesc>();
+
+		String query = "SELECT MAX_ALLOWED_YEAR FROM IRB_V_ONLMAX_POLPERIOD";
+		
+		try
+		{
+			statement = connection.createStatement();
+			ResultSet rs = statement.executeQuery(query);
+
+			while (rs.next())
+			{
+				maxAllowedYear = rs.getInt("MAX_ALLOWED_YEAR");
+				logger.info(TAG + " getMaxVehicleAgeAllowed :: maxAllowedYear :" + maxAllowedYear);
+			}
+
+			for (int i = 1 ; i <= maxAllowedYear; i++)
 			{
 				CodeDesc codeDesc = new CodeDesc();
 				codeDesc.setCode("" + i);
@@ -419,6 +469,8 @@ public class VehicleDetailsDao
 
 		return maxVehicleAgeArray;
 	}
+	
+	
 
 	private Connection getConnection()
 	{

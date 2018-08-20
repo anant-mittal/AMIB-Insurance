@@ -89,8 +89,26 @@ public class PersonalDetailsService
 	{
 		AmxApiResponse<CustomerProfileUpdateResponse, Object> resp = new AmxApiResponse<CustomerProfileUpdateResponse, Object>();
 		CustomerProfileDetailModel customerProfileDetailModel = new CustomerProfileDetailModel();
+		CustomerProfileDetailModel customerProfileDetailModelCheck = new CustomerProfileDetailModel();
 		CustomerProfileUpdateResponse customerProfileUpdateResponse = new CustomerProfileUpdateResponse();
-
+		
+		/*customerProfileDetailModelCheck = personalDetailsDao.getProfileDetails();
+		
+		if(!customerProfileDetailModelCheck.getMobile().equals(customerProfileUpdateRequest.getMobile()) && !customerProfileDetailModelCheck.getEmail().equals(customerProfileUpdateRequest.getEmail()))
+		{
+			
+		}
+		else if(!customerProfileDetailModelCheck.getMobile().equals(customerProfileUpdateRequest.getMobile()))
+		{
+			
+		}
+		else if(!customerProfileDetailModelCheck.getEmail().equals(customerProfileUpdateRequest.getEmail()))
+		{
+			
+		}*/
+			
+		
+		
 		customerProfileDetailModel.setCustSequenceNumber(customerProfileUpdateRequest.getCustomerSequenceNumber());
 		customerProfileDetailModel.setEnglishName(customerProfileUpdateRequest.getEnglishName());
 		customerProfileDetailModel.setNativeArabicName(customerProfileUpdateRequest.getNativeArabicName());
