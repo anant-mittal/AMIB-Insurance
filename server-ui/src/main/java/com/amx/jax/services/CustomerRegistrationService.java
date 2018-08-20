@@ -550,9 +550,10 @@ public class CustomerRegistrationService
 			validate.setValid(false);
 			resp.setStatusKey(ApiConstants.FAILURE);
 			resp.setMessage(Message.REG_INVALID_OTP);
+			resp.setMessageKey(MessageKey.KEY_REG_VALIDATE_OTP);
 		}
 		resp.setData(validate);
-		resp.setMessageKey(MessageKey.KEY_REG_VALIDATE_OTP);
+		
 
 		return resp;
 	}
