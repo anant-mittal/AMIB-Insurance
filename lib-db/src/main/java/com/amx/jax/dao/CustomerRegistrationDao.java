@@ -49,8 +49,6 @@ public class CustomerRegistrationDao
 		String callProcedure = "{call IRB_GET_COMPANY_SETUP(?,?,?,?,?)}";
 		ArrayList<CompanySetUp> companySetUpArray = new ArrayList<CompanySetUp>();
 
-		logger.info(TAG + " getCompanySetUp ::");
-
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -90,8 +88,6 @@ public class CustomerRegistrationDao
 				companySetUp.setWebSite(rs.getString(20));
 				companySetUp.setEmailSenderId(rs.getString(21));
 
-				logger.info(TAG + " getCompanySetUp :: companySetUp :" + companySetUp.toString());
-
 				companySetUpArray.add(companySetUp);
 			}
 		}
@@ -120,7 +116,6 @@ public class CustomerRegistrationDao
 			callableStatement.setString(2, civilid);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
-			logger.info(TAG + " isValidCivilId :: result :" + result);
 
 			if (null == result)
 			{
@@ -145,7 +140,6 @@ public class CustomerRegistrationDao
 
 	public boolean isCivilIdExist(String civilid)
 	{
-		logger.info(TAG + " isCivilIdExist :: civilid :" + civilid);
 
 		getConnection();
 
@@ -156,18 +150,12 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callFunction);
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
-			
-			logger.info(TAG + " isCivilIdExist :: regSession.getCountryId()  :" + regSession.getCountryId());
-			logger.info(TAG + " isCivilIdExist :: regSession.getCompCd()     :" + regSession.getCompCd());
-			logger.info(TAG + " isCivilIdExist :: regSession.getUserType()   :" + regSession.getUserType());
-			
 			callableStatement.setBigDecimal(2, regSession.getCountryId());
 			callableStatement.setBigDecimal(3, regSession.getCompCd());
 			callableStatement.setString(4, regSession.getUserType());
 			callableStatement.setString(5, civilid);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
-			logger.info(TAG + " isCivilIdExist :: result :" + result);
 
 			if (result.equalsIgnoreCase("Y"))
 			{
@@ -191,8 +179,6 @@ public class CustomerRegistrationDao
 
 	public Validate isValidMobileNumber(String mobileNumber)
 	{
-		logger.info(TAG + " isValidMobileNumber :: civilid :" + mobileNumber);
-
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_VALIDATE_MOBILE(?,?,?,?,?)}";
@@ -209,9 +195,6 @@ public class CustomerRegistrationDao
 			callableStatement.executeUpdate();
 			String errorCode = callableStatement.getString(4);
 			String errorMessage = callableStatement.getString(5);
-
-			logger.info(TAG + " isValidMobileNumber :: errorCode :" + errorCode);
-			logger.info(TAG + " isValidMobileNumber :: errorMessage :" + errorMessage);
 
 			if (null == errorCode)
 			{
@@ -240,7 +223,6 @@ public class CustomerRegistrationDao
 
 	public boolean isMobileNumberExist(String mobilenumber)
 	{
-		logger.info(TAG + " isMobileNumberExist :: mobilenumber :" + mobilenumber);
 
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -256,7 +238,6 @@ public class CustomerRegistrationDao
 			callableStatement.setString(5, mobilenumber);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
-			logger.info(TAG + " isMobileNumberExist :: result :" + result);
 
 			if (result.equalsIgnoreCase("Y"))
 			{
@@ -280,7 +261,6 @@ public class CustomerRegistrationDao
 
 	public boolean isEmailIdExist(String email)
 	{
-		logger.info(TAG + " isEmailIdExist :: email :" + email);
 
 		getConnection();
 
@@ -297,7 +277,6 @@ public class CustomerRegistrationDao
 			callableStatement.setString(5, email);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
-			logger.info(TAG + " isCivilIdExist :: result :" + result);
 
 			if (result.equalsIgnoreCase("Y"))
 			{
@@ -329,10 +308,6 @@ public class CustomerRegistrationDao
 
 		try
 		{
-			logger.info(TAG + " isOtpEnabled :: metaData.getCountryId() :" + metaData.getCountryId());
-			logger.info(TAG + " isOtpEnabled :: metaData.getCompCd() :" + metaData.getCompCd());
-			logger.info(TAG + " isOtpEnabled :: metaData.getUserType() :" + metaData.getUserType());
-
 			callableStatement = connection.prepareCall(callFunction);
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
 			callableStatement.setBigDecimal(2, metaData.getCountryId());
@@ -341,7 +316,6 @@ public class CustomerRegistrationDao
 			callableStatement.setString(5, civilId);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
-			logger.info(TAG + " isOtpEnabled :: result :" + result);
 
 			if (result.equalsIgnoreCase("Y"))
 			{
@@ -365,8 +339,6 @@ public class CustomerRegistrationDao
 
 	public Validate setOtpCount(String civilId)
 	{
-		logger.info(TAG + " setOtpCount :: civilid :" + civilId);
-
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_UPDATE_OTP_ATTEMPT(?,?,?,?,?,?)}";
@@ -384,9 +356,6 @@ public class CustomerRegistrationDao
 			callableStatement.executeUpdate();
 			String errorCode = callableStatement.getString(5);
 			String errorMessage = callableStatement.getString(6);
-
-			logger.info(TAG + " isValidMobileNumber :: errorCode :" + errorCode);
-			logger.info(TAG + " isValidMobileNumber :: errorMessage :" + errorMessage);
 
 			if (null == errorCode)
 			{
@@ -570,17 +539,6 @@ public class CustomerRegistrationDao
 			callableStatement.setString(5, customerLoginModel.getPassword());
 			callableStatement.setString(6, regSession.getDeviceId());
 			callableStatement.setString(7, regSession.getDeviceType());
-			
-			logger.info(TAG + " validateUserLogin :: regSession.getCountryId()  :" + regSession.getCountryId());
-			logger.info(TAG + " validateUserLogin :: regSession.getCompCd()     :" + regSession.getCompCd());
-			logger.info(TAG + " validateUserLogin :: regSession.getUserType()   :" + regSession.getUserType());
-			logger.info(TAG + " validateUserLogin :: regSession.getDeviceId()   :" + regSession.getDeviceId());
-			logger.info(TAG + " validateUserLogin :: regSession.getDeviceType() :" + regSession.getDeviceType());
-			logger.info(TAG + " validateUserLogin :: regSession.getDeviceId()   :" + regSession.getDeviceId());
-			logger.info(TAG + " validateUserLogin :: getCivilId                 :" + customerLoginModel.getCivilId());
-			logger.info(TAG + " validateUserLogin :: getPassword                :" + customerLoginModel.getPassword());
-			
-			
 			callableStatement.registerOutParameter(8, java.sql.Types.INTEGER);
 			callableStatement.registerOutParameter(9, java.sql.Types.INTEGER);
 			callableStatement.registerOutParameter(10, java.sql.Types.VARCHAR);
@@ -591,9 +549,6 @@ public class CustomerRegistrationDao
 			BigDecimal amibRef = callableStatement.getBigDecimal(9);
 			String errorCode = callableStatement.getString(10);
 			String errorMessage = callableStatement.getString(11);
-
-			logger.info(TAG + " validateUserLogin :: errorCode :" + errorCode);
-			logger.info(TAG + " validateUserLogin :: errorMessage :" + errorMessage);
 
 			customerLoginModel = new CustomerLoginModel();
 
@@ -651,9 +606,6 @@ public class CustomerRegistrationDao
 			String errorCode = callableStatement.getString(11);
 			String errorMessage = callableStatement.getString(12);
 
-			logger.info(TAG + " updatePassword :: errorCode :" + errorCode);
-			logger.info(TAG + " updatePassword :: errorMessage :" + errorMessage);
-
 			customerDetailModel.setErrorCode(errorCode);
 			customerDetailModel.setErrorMessage(errorMessage);
 
@@ -677,7 +629,7 @@ public class CustomerRegistrationDao
 		}
 		return customerDetailModel;
 	}
-	
+
 	public FailureException setFailedException(String type, FailureException failureException)
 	{
 		getConnection();
@@ -714,9 +666,6 @@ public class CustomerRegistrationDao
 			String errorCode = callableStatement.getString(18);
 			String errorMessage = callableStatement.getString(19);
 
-			logger.info(TAG + " setFailedException :: errorCode :" + errorCode);
-			logger.info(TAG + " setFailedException :: errorMessage :" + errorMessage);
-
 			failureException.setErrorCode(errorCode);
 			failureException.setErrorMessage(errorMessage);
 
@@ -749,7 +698,6 @@ public class CustomerRegistrationDao
 			java.util.Date today = new java.util.Date();
 			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SS");
 			String strDate = sdf.format(today.getTime());
-			logger.info(TAG + " getCurrentDate :: strDate :" + strDate);
 			todayNew = sdf.parse(strDate);
 		}
 		catch (Exception e)

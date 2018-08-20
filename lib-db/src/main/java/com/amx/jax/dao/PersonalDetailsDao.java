@@ -52,14 +52,6 @@ public class PersonalDetailsDao
 			callableStatement.setString(4, metaData.getCivilId());
 			callableStatement.setBigDecimal(5, metaData.getLanguageId());
 			callableStatement.setBigDecimal(6, metaData.getCustomerSequenceNumber());
-
-			logger.info(TAG + " getProfileDetails :: getCountryId               :" + metaData.getCountryId());
-			logger.info(TAG + " getProfileDetails :: getCompCd                  :" + metaData.getCompCd());
-			logger.info(TAG + " getProfileDetails :: getUserType                :" + metaData.getUserType());
-			logger.info(TAG + " getProfileDetails :: getCivilId   	            :" + metaData.getCivilId());
-			logger.info(TAG + " getProfileDetails :: getLanguageId              :" + metaData.getLanguageId());
-			logger.info(TAG + " getProfileDetails :: getCustomerSequenceNumber  :" + metaData.getCustomerSequenceNumber());
-
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(9, java.sql.Types.VARCHAR);
@@ -186,8 +178,6 @@ public class PersonalDetailsDao
 		String callProcedure = "{call IRB_GET_BUSINESS(?,?,?,?,?,?)}";
 		ArrayList<Business> businessArray = new ArrayList<Business>();
 
-		logger.info(TAG + " getBusiness ::");
-
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -206,9 +196,7 @@ public class PersonalDetailsDao
 			{
 				Business business = new Business();
 				business.setBusinessCode(rs.getString(1));
-				logger.info(TAG + " getBusiness :: Business code :" + rs.getString(1).toString());
 				business.setBusinessDesc(rs.getString(2));
-				logger.info(TAG + " getBusiness :: Business Arabic  disc :" + rs.getString(2).toString());
 				businessArray.add(business);
 			}
 		}
@@ -233,8 +221,6 @@ public class PersonalDetailsDao
 		String callProcedure = "{call IRB_GET_NATIONALITIES(?,?,?,?,?,?)}";
 		ArrayList<Nationality> nationalityArray = new ArrayList<Nationality>();
 
-		logger.info(TAG + " getNationality ::");
-
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -253,9 +239,7 @@ public class PersonalDetailsDao
 			{
 				Nationality nationality = new Nationality();
 				nationality.setNationalityCode(rs.getString(1));
-				logger.info(TAG + " getNationality :: Nationality code :" + rs.getString(1));
 				nationality.setNationalityDesc(rs.getString(2));
-				logger.info(TAG + " getNationality :: Nationality disc :" + rs.getString(2));
 				nationalityArray.add(nationality);
 			}
 
@@ -281,8 +265,6 @@ public class PersonalDetailsDao
 		String callProcedure = "{call IRB_GET_GOVERNORATES(?,?,?,?,?,?)}";
 		ArrayList<Governorates> governoratesArray = new ArrayList<Governorates>();
 
-		logger.info(TAG + " getGovernorates ::");
-
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -301,9 +283,7 @@ public class PersonalDetailsDao
 			{
 				Governorates governorates = new Governorates();
 				governorates.setGovCode(rs.getString(1));
-				logger.info(TAG + " getNationality :: gov code :" + rs.getString(1));
 				governorates.setGovDesc(rs.getString(2));
-				logger.info(TAG + " getNationality :: gov disc :" + rs.getString(2));
 				governoratesArray.add(governorates);
 			}
 
@@ -329,8 +309,6 @@ public class PersonalDetailsDao
 		String callProcedure = "{call IRB_GET_AREA(?,?,?,?,?,?,?)}";
 		ArrayList<Area> areaArray = new ArrayList<Area>();
 
-		logger.info(TAG + " getArea ::");
-
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -350,9 +328,7 @@ public class PersonalDetailsDao
 			{
 				Area area = new Area();
 				area.setAreaCode(rs.getString(1));
-				logger.info(TAG + " getArea :: Area code :" + rs.getString(1).toString());
 				area.setAreaDesc(rs.getString(2));
-				logger.info(TAG + " getArea :: Area disc :" + rs.getString(2).toString());
 				areaArray.add(area);
 			}
 
@@ -378,8 +354,6 @@ public class PersonalDetailsDao
 		String callProcedure = "{call IRB_GET_GENDER(?,?,?,?,?,?)}";
 		ArrayList<Gender> genderArray = new ArrayList<Gender>();
 
-		logger.info(TAG + " getArea ::");
-
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -398,9 +372,7 @@ public class PersonalDetailsDao
 			{
 				Gender gender = new Gender();
 				gender.setGenderCode(rs.getString(1));
-				logger.info(TAG + " getGender :: Gender code :" + rs.getString(1).toString());
 				gender.setGenderDesc(rs.getString(2));
-				logger.info(TAG + " getGender :: Gender disc :" + rs.getString(2).toString());
 				genderArray.add(gender);
 			}
 
