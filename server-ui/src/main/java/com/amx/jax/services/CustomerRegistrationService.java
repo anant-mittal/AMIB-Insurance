@@ -876,6 +876,11 @@ public class CustomerRegistrationService
 	{
 		logger.info(TAG + " changePasswordOtpInitiate :: getCivilId :" + changePasswordOtpRequest.getCivilId());
 
+		if (null == changePasswordOtpRequest.getCivilId() || changePasswordOtpRequest.getCivilId().toString().equals(""))
+		{
+			changePasswordOtpRequest.setCivilId(metaData.getCivilId());
+		}
+		
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
 		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 		regSession.setCivilId(changePasswordOtpRequest.getCivilId());
