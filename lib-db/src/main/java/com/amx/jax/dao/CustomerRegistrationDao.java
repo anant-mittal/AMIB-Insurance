@@ -492,6 +492,7 @@ public class CustomerRegistrationDao
 			customerDetailModel.setLanguageId(callableStatement.getBigDecimal(9));
 			customerDetailModel.setMobileVerify(callableStatement.getString(10));
 			customerDetailModel.setMailVerify(callableStatement.getString(11));
+			logger.info(TAG + " getUserDetails :: Last Login Date :" + callableStatement.getDate(12));
 			customerDetailModel.setLastLogin(callableStatement.getDate(12));
 			customerDetailModel.setDeviceId(callableStatement.getString(13));
 			customerDetailModel.setDeviceType(callableStatement.getString(14));

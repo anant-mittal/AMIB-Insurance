@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
+import com.amx.jax.constants.DetailsConstants;
+import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.dao.PersonalDetailsDao;
 import com.amx.jax.models.CustomerDetailModel;
@@ -21,7 +23,11 @@ import com.amx.jax.models.CustomerProfileDetailResponse;
 import com.amx.jax.models.CustomerProfileUpdateRequest;
 import com.amx.jax.models.CustomerProfileUpdateResponse;
 import com.amx.jax.models.MetaData;
+import com.amx.jax.models.PersonalDetailsOtpRequest;
 import com.amx.jax.models.RegSession;
+import com.amx.jax.models.Validate;
+import com.insurance.generateotp.RequestOtpModel;
+import com.insurance.generateotp.ResponseOtpModel;
 
 @Service
 public class PersonalDetailsService
@@ -35,13 +41,16 @@ public class PersonalDetailsService
 
 	@Autowired
 	CustomerRegistrationDao customerRegistrationDao;
+	
+	@Autowired
+	private CustomerRegistrationService customerRegistrationService;
 
 	@Autowired
 	RegSession regSession;
 
 	@Autowired
-	MetaData userSession;
-
+	MetaData metaData;
+	
 	public AmxApiResponse<CustomerProfileDetailResponse, Object> getProfileDetails()
 	{
 		AmxApiResponse<CustomerProfileDetailResponse, Object> resp = new AmxApiResponse<CustomerProfileDetailResponse, Object>();
@@ -242,4 +251,100 @@ public class PersonalDetailsService
 		return resp;
 
 	}
+	
+	public AmxApiResponse<?, Object> emailMobileOtpInitiate(PersonalDetailsOtpRequest personalDetailsOtpRequest)
+	{
+		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
+		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
+		RequestOtpModel requestOtpModel = new RequestOtpModel();
+		requestOtpModel.setCivilId(metaData.getCivilId());
+		requestOtpModel.setEmailId(personalDetailsOtpRequest.getEmailId());
+		requestOtpModel.setMobileNumber(personalDetailsOtpRequest.getMobileNumber());
+
+		try
+		{
+			AmxApiResponse<Validate, Object> isValidMobileNumber = customerRegistrationService.isValidMobileNumber(metaData.getCivilId());
+			AmxApiResponse<Validate, Object> mobileNumberExists = customerRegistrationService.isMobileNumberExist(metaData.getCivilId());
+			AmxApiResponse<Validate, Object> validateEmailID = customerRegistrationService.isValidEmailId(metaData.getCivilId());
+			AmxApiResponse<Validate, Object> emailIdExists = customerRegistrationService.isEmailIdExist(metaData.getCivilId());
+			AmxApiResponse<Validate, Object> isOtpEnabled = customerRegistrationService.isOtpEnabled(metaData.getCivilId());
+
+			if (isValidMobileNumber.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			{
+				return isValidMobileNumber;
+			}
+
+			if (validateEmailID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			{
+				return validateEmailID;
+			}
+
+			
+			if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS) && emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+			{
+				customerRegistrationService.sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_MOBE_MAIL, requestOtpModel, mobileNumberExists.getMessage());
+				mobileNumberExists.setMessageKey(MessageKey.KEY_MOBILE_OR_EMAIL_ALREADY_EXISTS);
+				mobileNumberExists.setStatusKey(ApiConstants.FAILURE);
+				return mobileNumberExists;
+			}
+			else if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+			{
+				customerRegistrationService.sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE, requestOtpModel, mobileNumberExists.getMessage());
+				mobileNumberExists.setMessageKey(MessageKey.KEY_MOBILE_OR_EMAIL_ALREADY_EXISTS);
+				mobileNumberExists.setStatusKey(ApiConstants.FAILURE);
+				return mobileNumberExists;
+			}
+			else if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+			{
+				customerRegistrationService.sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL, requestOtpModel, emailIdExists.getMessage());
+				emailIdExists.setMessageKey(MessageKey.KEY_MOBILE_OR_EMAIL_ALREADY_EXISTS);
+				emailIdExists.setStatusKey(ApiConstants.FAILURE);
+				return emailIdExists;
+			}
+
+			if (isOtpEnabled.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			{
+				return isOtpEnabled;
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setData(null);
+			resp.setException(e.toString());
+			resp.setStatus(ApiConstants.FAILURE);
+			return resp;
+		}
+
+		try
+		{
+
+			AmxApiResponse<Validate, Object> setOtpCount = customerRegistrationService.setOtpCount(metaData.getCivilId());
+
+			responseOtpModel = customerRegistrationService.sendEmailOtpTemp(responseOtpModel, requestOtpModel.getEmailId());
+
+			/*
+			 * Code Needed Here For Mobile Otp
+			 * 
+			 */
+
+			resp.setData(responseOtpModel);
+			resp.setStatus(ApiConstants.SUCCESS);
+
+			if (setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			{
+				return setOtpCount;
+			}
+
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setData(null);
+			resp.setException(e.toString());
+			resp.setStatus(ApiConstants.FAILURE);
+		}
+		return resp;
+	}
+	
 }

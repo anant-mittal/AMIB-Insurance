@@ -14,6 +14,7 @@ import com.amx.jax.models.CustomerDetailResponse;
 import com.amx.jax.models.CustomerProfileDetailResponse;
 import com.amx.jax.models.CustomerProfileUpdateRequest;
 import com.amx.jax.models.CustomerProfileUpdateResponse;
+import com.amx.jax.models.PersonalDetailsOtpRequest;
 import com.amx.jax.services.PersonalDetailsService;
 import com.insurance.generateotp.RequestOtpModel;
 
@@ -67,5 +68,11 @@ public class PersonalDetailsController
 	public AmxApiResponse<?, Object> getGender()
 	{
 		return personalDetailsService.getGender();
+	}
+	
+	@RequestMapping(value = "/api/personal/otp-initiate", method = RequestMethod.POST)
+	public AmxApiResponse<?, Object> emailMobileOtpInitiate(@RequestBody PersonalDetailsOtpRequest requestOtpModel)
+	{
+		return personalDetailsService.emailMobileOtpInitiate(requestOtpModel);
 	}
 }
