@@ -28,9 +28,9 @@ public class MessageKey
 
 	public static String KEY_CP_OTP_NOT_GENERATED = "CPOTPNG";
 
-	public static String KEY_VALIDATE_MOBILE_OTP = "INVMOTP";
+	public static String KEY_VALIDATE_MOBILE_OTP = "VMOTP";
 
-	public static String KEY_VALIDATE_EMAIL_OTP = "INVEOTP";
+	public static String KEY_VALIDATE_EMAIL_OTP = "VEOTP";
 
 	public static String KEY_MOBILE_OR_EMAIL_ALREADY_EXISTS = "MOREAE";
 

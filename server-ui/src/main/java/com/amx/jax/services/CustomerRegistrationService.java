@@ -34,7 +34,6 @@ import com.amx.jax.models.Validate;
 import com.amx.utils.Random;
 import com.insurance.email.dao.EmailNotification;
 import com.insurance.email.model.Email;
-import com.insurance.generateotp.CreateOtpToken;
 import com.insurance.generateotp.RequestOtpModel;
 import com.insurance.generateotp.ResponseOtpModel;
 import org.springframework.stereotype.Service;
@@ -52,9 +51,6 @@ public class CustomerRegistrationService
 
 	@Autowired
 	EmailNotification emailNotification;
-
-	@Autowired
-	CreateOtpToken createOtpToken;
 
 	@Autowired
 	RegSession regSession;
@@ -557,7 +553,7 @@ public class CustomerRegistrationService
 
 	public AmxApiResponse<?, Object> emailOtpInitiate(String emailId)
 	{
-		AmxApiResponse<String, Object> resp = new AmxApiResponse<String, Object>();
+		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
 
 		try
 		{
@@ -595,9 +591,13 @@ public class CustomerRegistrationService
 		{
 
 			AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(metaData.getCivilId());
+			ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 
 			String emailPrifix = sendEmailOtp(emailId);
-			resp.setData(emailPrifix);
+			responseOtpModel.setEotpPrefix(emailPrifix);
+			responseOtpModel.setCivilId(metaData.getCivilId());
+			
+			resp.setData(responseOtpModel);
 			resp.setStatus(ApiConstants.SUCCESS);
 
 			if (setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))

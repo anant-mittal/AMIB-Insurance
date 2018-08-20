@@ -63,4 +63,6 @@ public class VehicleDetailsController
 		return vehicleDetailsService.getColour();
 	}
 
+	
+	
 }
