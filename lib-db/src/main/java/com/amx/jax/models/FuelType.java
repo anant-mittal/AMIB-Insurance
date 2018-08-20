@@ -2,9 +2,9 @@ package com.amx.jax.models;
 
 public class FuelType
 {
-	public String fuelCode = "";
+	public String fuelCode;
 
-	public String fuelDesc = "";
+	public String fuelDesc;
 
 	public String getFuelCode()
 	{

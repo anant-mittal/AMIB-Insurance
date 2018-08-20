@@ -4,20 +4,23 @@ package com.amx.jax.dao;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
+
+import com.amx.jax.models.CodeDesc;
 import com.amx.jax.models.Colour;
 import com.amx.jax.models.FuelType;
 import com.amx.jax.models.Make;
+import com.amx.jax.models.MetaData;
 import com.amx.jax.models.Model;
 import com.amx.jax.models.Purpose;
 import com.amx.jax.models.Shape;
+import com.amx.jax.models.VehicleCondition;
 
 import oracle.jdbc.OracleTypes;
 
@@ -33,6 +36,9 @@ public class VehicleDetailsDao
 
 	Connection connection;
 
+	@Autowired
+	MetaData metaData;
+
 	public ArrayList getMake()
 	{
 		getConnection();
@@ -47,9 +53,9 @@ public class VehicleDetailsDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setInt(1, 1);
-			callableStatement.setInt(2, 11);
-			callableStatement.setInt(3, 3);
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(3, metaData.getLanguageId());
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -81,7 +87,7 @@ public class VehicleDetailsDao
 		return makeArray;
 	}
 
-	public List<Model> getModel(String make)
+	public ArrayList getModel(String make)
 	{
 		getConnection();
 
@@ -95,10 +101,10 @@ public class VehicleDetailsDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setInt(1, 1);
-			callableStatement.setInt(2, 11);
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			callableStatement.setString(3, make);
-			callableStatement.setInt(4, 3);
+			callableStatement.setBigDecimal(4, metaData.getLanguageId());
 			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
@@ -151,9 +157,9 @@ public class VehicleDetailsDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setInt(1, 1);
-			callableStatement.setInt(2, 11);
-			callableStatement.setInt(3, 3);
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(3, metaData.getLanguageId());
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -198,9 +204,9 @@ public class VehicleDetailsDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setInt(1, 1);
-			callableStatement.setInt(2, 11);
-			callableStatement.setInt(3, 3);
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(3, metaData.getLanguageId());
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -246,9 +252,9 @@ public class VehicleDetailsDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setInt(1, 1);
-			callableStatement.setInt(2, 11);
-			callableStatement.setInt(3, 3);
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(3, metaData.getLanguageId());
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -293,9 +299,9 @@ public class VehicleDetailsDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setInt(1, 1);
-			callableStatement.setInt(2, 11);
-			callableStatement.setInt(3, 3);
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(3, metaData.getLanguageId());
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -326,6 +332,94 @@ public class VehicleDetailsDao
 		return colourArray;
 	}
 
+	public ArrayList getVehicleCondition()
+	{
+		getConnection();
+
+		CallableStatement callableStatement = null;
+		String callProcedure = "{call IRB_GET_VEHCONDITION(?,?,?,?,?,?)}";
+		ArrayList<VehicleCondition> vehicleConditionArray = new ArrayList<VehicleCondition>();
+
+		logger.info(TAG + " getFuleType ::");
+
+		try
+		{
+			callableStatement = connection.prepareCall(callProcedure);
+
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(3, metaData.getLanguageId());
+			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
+			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
+			callableStatement.executeUpdate();
+
+			ResultSet rs = (ResultSet) callableStatement.getObject(4);
+
+			while (rs.next())
+			{
+				VehicleCondition vehicleCondition = new VehicleCondition();
+				vehicleCondition.setVehicleConditionCode(rs.getString(1));
+				vehicleCondition.setVehicleConditionDesc(rs.getString(2));
+				vehicleConditionArray.add(vehicleCondition);
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+
+		return vehicleConditionArray;
+	}
+
+	public ArrayList getMaxVehicleAgeAllowed()
+	{
+
+		getConnection();
+		Statement statement = null;
+		int ageAllowed = 0;
+		ArrayList<CodeDesc> maxVehicleAgeArray = new ArrayList<CodeDesc>();
+
+		String query = "SELECT A.MAX_ALLOWED_VEHICLE_AGE FROM IRB_V_ONLMAX_VEHAGE A";
+
+		try
+		{
+			statement = connection.createStatement();
+			ResultSet rs = statement.executeQuery(query);
+
+			while (rs.next())
+			{
+				ageAllowed = rs.getInt("MAX_ALLOWED_VEHICLE_AGE");
+				logger.info(TAG + " getMaxVehicleAgeAllowed :: ageAllowed :" + ageAllowed);
+			}
+
+			for (int i = 1 ; i <= ageAllowed; i++)
+			{
+				CodeDesc codeDesc = new CodeDesc();
+				codeDesc.setCode("" + i);
+				codeDesc.setDesc("" + i);
+				maxVehicleAgeArray.add(codeDesc);
+			}
+
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		finally
+		{
+			CloseConnection(statement, connection);
+		}
+
+		return maxVehicleAgeArray;
+	}
+
 	private Connection getConnection()
 	{
 		try
@@ -347,6 +441,26 @@ public class VehicleDetailsDao
 			if (callableStatement != null)
 			{
 				callableStatement.close();
+			}
+
+			if (connection != null)
+			{
+				connection.close();
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	private void CloseConnection(Statement statement, Connection connection)
+	{
+		try
+		{
+			if (statement != null)
+			{
+				statement.close();
 			}
 
 			if (connection != null)

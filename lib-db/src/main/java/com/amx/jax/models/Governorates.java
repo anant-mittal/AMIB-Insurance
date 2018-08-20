@@ -2,9 +2,9 @@ package com.amx.jax.models;
 
 public class Governorates
 {
-	public String govCode = "";
+	public String govCode;
 
-	public String govDesc = "";
+	public String govDesc;
 
 	public String getGovCode()
 	{

@@ -428,6 +428,11 @@ public class CustomerRegistrationService
 
 		try
 		{
+			if (null == requestOtpModel.getCivilId() || requestOtpModel.getCivilId().toString().equals(""))
+			{
+				requestOtpModel.setCivilId(metaData.getCivilId());
+			}
+
 			AmxApiResponse<Validate, Object> validateCivilID = isValidCivilId(requestOtpModel.getCivilId());
 			AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(requestOtpModel.getCivilId());
 			AmxApiResponse<Validate, Object> isValidMobileNumber = isValidMobileNumber(requestOtpModel.getMobileNumber());
@@ -499,7 +504,7 @@ public class CustomerRegistrationService
 			regSession.setCivilId(requestOtpModel.getCivilId());
 			regSession.setEmailId(requestOtpModel.getEmailId());
 			regSession.setMobileNumber(requestOtpModel.getMobileNumber());
-			
+
 			AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(requestOtpModel.getCivilId());
 
 			responseOtpModel = sendEmailOtpTemp(responseOtpModel, requestOtpModel.getEmailId());
@@ -557,8 +562,7 @@ public class CustomerRegistrationService
 
 		try
 		{
-			
-			
+
 			AmxApiResponse<Validate, Object> validateEmailID = isValidEmailId(emailId);
 			AmxApiResponse<Validate, Object> emailIdExists = isEmailIdExist(emailId);
 			AmxApiResponse<Validate, Object> isOtpEnabled = isOtpEnabled(metaData.getCivilId());
@@ -598,7 +602,7 @@ public class CustomerRegistrationService
 			String emailPrifix = sendEmailOtp(emailId);
 			responseOtpModel.setEotpPrefix(emailPrifix);
 			responseOtpModel.setCivilId(metaData.getCivilId());
-			
+
 			resp.setData(responseOtpModel);
 			resp.setStatus(ApiConstants.SUCCESS);
 

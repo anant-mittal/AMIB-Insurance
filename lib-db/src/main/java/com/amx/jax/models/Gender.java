@@ -2,9 +2,9 @@ package com.amx.jax.models;
 
 public class Gender
 {
-	public String genderCode = "";
+	public String genderCode;
 
-	public String genderDesc = "";
+	public String genderDesc;
 
 	public String getGenderCode()
 	{

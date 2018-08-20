@@ -2,9 +2,9 @@ package com.amx.jax.models;
 
 public class Colour
 {
-	public String colourCode = "";
+	public String colourCode;
 
-	public String colourDesc = "";
+	public String colourDesc;
 
 	public String getColourCode()
 	{

@@ -22,83 +22,155 @@ public class VehicleDetailsService
 	@Autowired
 	public VehicleDetailsDao vehicleDetailsDao;
 
-	public ArrayList getMake()
+	public AmxApiResponse<?, Object> getMake()
 	{
+		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
+
 		try
 		{
-			return vehicleDetailsDao.getMake();
+			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setResults(vehicleDetailsDao.getMake());
 
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
 		}
-		return null;
+		return resp;
+		
 	}
 
-	public AmxApiResponse<Model, Object> getModel(String make)
+	public AmxApiResponse<?, Object> getModel(String make)
 	{
-		AmxApiResponse<Model, Object> resp = new AmxApiResponse<Model, Object>();
-		resp.setResults(vehicleDetailsDao.getModel(make));
-		resp.setStatus(ApiConstants.SUCCESS);
+		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
+
+		try
+		{
+			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setResults(vehicleDetailsDao.getModel(make));
+
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
+		return resp;
+		
+	}
+
+	public AmxApiResponse<?, Object> getFuleType()
+	{
+		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
+
+		try
+		{
+			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setResults(vehicleDetailsDao.getFuleType());
+
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
 		return resp;
 	}
 
-	public ArrayList getFuleType()
+	public AmxApiResponse<?, Object> getPurpose()
 	{
+		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
+
 		try
 		{
-			return vehicleDetailsDao.getFuleType();
+			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setResults(vehicleDetailsDao.getPurpose());
 
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
 		}
-		return null;
+		return resp;
 	}
 
-	public ArrayList getPurpose()
+	public AmxApiResponse<?, Object> getShape()
 	{
+		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
+
 		try
 		{
-			return vehicleDetailsDao.getPurpose();
+			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setResults(vehicleDetailsDao.getShape());
 
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
 		}
-		return null;
+		return resp;
 	}
 
-	public ArrayList getShape()
+	public AmxApiResponse<?, Object> getColour()
 	{
+		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
+		
 		try
 		{
-			return vehicleDetailsDao.getShape();
-
+			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setResults(vehicleDetailsDao.getColour());
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
 		}
-		return null;
+		return resp;
 	}
-
-	public ArrayList getColour()
+	
+	public AmxApiResponse<?, Object> getVehicleCondition()
 	{
+		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
+		
 		try
 		{
-			logger.info(TAG + " getColour :: ");
-			return vehicleDetailsDao.getColour();
-
+			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setResults(vehicleDetailsDao.getVehicleCondition());
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
 		}
-		return null;
+		return resp;
+	}
+	
+	public AmxApiResponse<?, Object> getMaxVehicleAgeAllowed()
+	{
+		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
+		
+		try
+		{
+			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setResults(vehicleDetailsDao.getMaxVehicleAgeAllowed());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
+		return resp;
 	}
 
 }

@@ -2,9 +2,9 @@ package com.amx.jax.models;
 
 public class Model
 {
-	public String modelCode = "";
+	public String modelCode;
 
-	public String modelDesc = "";
+	public String modelDesc;
 
 	public String getModelCode()
 	{

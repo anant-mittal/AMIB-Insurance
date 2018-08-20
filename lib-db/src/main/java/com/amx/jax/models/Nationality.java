@@ -2,9 +2,9 @@ package com.amx.jax.models;
 
 public class Nationality
 {
-	public String nationalityCode = "";
+	public String nationalityCode;
 
-	public String nationalityDesc = "";
+	public String nationalityDesc;
 
 	public String getNationalityCode()
 	{

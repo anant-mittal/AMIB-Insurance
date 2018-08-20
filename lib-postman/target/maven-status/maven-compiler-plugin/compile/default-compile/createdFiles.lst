@@ -5,6 +5,5 @@ com\insurance\email\model\Email.class
 com\insurance\generateotp\RequestOtpModel.class
 com\insurance\email\dao\EmailNotification$1.class
 com\insurance\generateotp\CryptoUtil.class
-com\insurance\generateotp\CreateOtpToken.class
 com\insurance\generateotp\EmailOtpModel.class
 com\insurance\generateotp\ResponseOtpModel.class

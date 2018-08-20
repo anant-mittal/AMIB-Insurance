@@ -2,9 +2,9 @@ package com.amx.jax.models;
 
 public class Purpose
 {
-	public String purposeCode = "";
+	public String purposeCode;
 
-	public String purposeDesc = "";
+	public String purposeDesc;
 
 	public String getPurposeCode()
 	{

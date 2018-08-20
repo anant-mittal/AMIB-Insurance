@@ -2,9 +2,9 @@ package com.amx.jax.models;
 
 public class Business
 {
-	public String businessCode = "";
+	public String businessCode;
 
-	public String businessDesc = "";
+	public String businessDesc;
 
 	public String getBusinessCode()
 	{

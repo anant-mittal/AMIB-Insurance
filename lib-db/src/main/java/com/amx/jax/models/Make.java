@@ -2,9 +2,9 @@ package com.amx.jax.models;
 
 public class Make
 {
-	public String makeCode = "";
+	public String makeCode;
 
-	public String makeDesc = "";
+	public String makeDesc;
 
 	public String getMakeCode()
 	{

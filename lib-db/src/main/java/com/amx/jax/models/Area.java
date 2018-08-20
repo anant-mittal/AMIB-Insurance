@@ -2,9 +2,9 @@ package com.amx.jax.models;
 
 public class Area
 {
-	public String areaCode = "";
+	public String areaCode;
 
-	public String areaDesc = "";
+	public String areaDesc;
 
 	public String getAreaCode()
 	{
