@@ -557,6 +557,8 @@ public class CustomerRegistrationService
 
 		try
 		{
+			
+			
 			AmxApiResponse<Validate, Object> validateEmailID = isValidEmailId(emailId);
 			AmxApiResponse<Validate, Object> emailIdExists = isEmailIdExist(emailId);
 			AmxApiResponse<Validate, Object> isOtpEnabled = isOtpEnabled(metaData.getCivilId());

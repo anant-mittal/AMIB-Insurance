@@ -128,7 +128,7 @@ public class CustomerRegistrationController
 	}
 
 	@RequestMapping(value = "/pub/reg/otp-emailid", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> emailOtpInitiate(String email)
+	public AmxApiResponse<?, Object> emailOtpInitiate(@RequestParam("email") String email)
 	{
 		return customerRegistrationService.emailOtpInitiate(email);
 	}
@@ -141,7 +141,7 @@ public class CustomerRegistrationController
 	}
 
 	@RequestMapping(value = "/pub/reg/otp-mobile", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> mobileOtpInitiate(String mobile)
+	public AmxApiResponse<?, Object> mobileOtpInitiate(@RequestParam("mobile") String mobile)
 	{
 		return customerRegistrationService.mobileOtpInitiate(mobile);
 	}
