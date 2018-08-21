@@ -67,6 +67,9 @@ public class HomeController
 	 *
 	 * @return the version
 	 */
+	
+	
+	
 	public String getVersion()
 	{
 
@@ -139,9 +142,11 @@ public class HomeController
 	 *            the model
 	 * @return the string
 	 */
-	@RequestMapping(value = { "/register/**", "/app/**", "/home/**", "/" }, method = { RequestMethod.GET })
+	@RequestMapping(value = {"/","/register/**", "/app/**", "/home/**", "/" }, method = { RequestMethod.GET })
 	public String defaultPage(Model model)
 	{
+		System.out.println("Page Landed");
+		
 		model.addAttribute("lang", httpService.getLanguage());
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
 		model.addAttribute("cdnUrl", webConfig.getCdnURL());
