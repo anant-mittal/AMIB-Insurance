@@ -31,7 +31,7 @@ public class VehicleDetailsDao
 {
 	String TAG = "com.insurance.vehicledetails.dao.VehicleDetailsDao :: ";
 
-	private static final Logger logger = LoggerFactory.getLogger(VehicleDetailsDao.class);
+	//private static final Logger logger = LoggerFactory.getLogger(VehicleDetailsDao.class);
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -49,7 +49,7 @@ public class VehicleDetailsDao
 		String callProcedure = "{call IRB_GET_MAKES(?,?,?,?,?,?)}";
 		ArrayList<Make> makeArray = new ArrayList<Make>();
 
-		logger.info(TAG + " getMake ::");
+		//logger.info(TAG + " getMake ::");
 
 		try
 		{
@@ -69,9 +69,7 @@ public class VehicleDetailsDao
 			{
 				Make make = new Make();
 				make.setMakeCode(rs.getString(1));
-				logger.info(TAG + " getMake :: make code :" + rs.getString(1));
 				make.setMakeDesc(rs.getString(2));
-				logger.info(TAG + " getMake :: make disc :" + rs.getString(2));
 				makeArray.add(make);
 			}
 
@@ -97,7 +95,7 @@ public class VehicleDetailsDao
 		String callProcedure = "{call IRB_GET_SUBMAKE(?,?,?,?,?,?,?)}";
 		ArrayList<Model> modelArray = new ArrayList<Model>();
 
-		logger.info(TAG + " getModel :: make :" + make);
+		//logger.info(TAG + " getModel :: make :" + make);
 
 		try
 		{
@@ -112,25 +110,17 @@ public class VehicleDetailsDao
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
 
-			logger.info(TAG + " getModel :: make 1 :" + make);
+			//logger.info(TAG + " getModel :: make 1 :" + make);
 
 			ResultSet rs = (ResultSet) callableStatement.getObject(5);
-
-			logger.info(TAG + " getModel :: rs :" + rs);
 
 			while (rs.next())
 			{
 				Model model = new Model();
 				model.setModelCode(rs.getString(1));
-				logger.info(TAG + " getMake :: model code :" + rs.getString(1));
 				model.setModelDesc(rs.getString(2));
-				logger.info(TAG + " getMake :: model disc :" + rs.getString(2));
 				modelArray.add(model);
 			}
-
-			logger.info(TAG + " getModel :: modelArray is Not Empty()");
-			logger.info(TAG + " getModel :: End");
-
 		}
 		catch (Exception e)
 		{
@@ -153,7 +143,7 @@ public class VehicleDetailsDao
 		String callProcedure = "{call IRB_GET_FUELTYPE(?,?,?,?,?,?)}";
 		ArrayList<FuelType> fuelArray = new ArrayList<FuelType>();
 
-		logger.info(TAG + " getFuleType ::");
+		//logger.info(TAG + " getFuleType ::");
 
 		try
 		{
@@ -173,9 +163,7 @@ public class VehicleDetailsDao
 			{
 				FuelType fuelType = new FuelType();
 				fuelType.setFuelCode(rs.getString(1));
-				logger.info(TAG + " getFuleType :: fueltype code :" + rs.getString(1));
 				fuelType.setFuelDesc(rs.getString(2));
-				logger.info(TAG + " getFuleType :: fueltype disc :" + rs.getString(2));
 				fuelArray.add(fuelType);
 			}
 		}
@@ -200,7 +188,7 @@ public class VehicleDetailsDao
 		String callProcedure = "{call IRB_GET_PURPOSE(?,?,?,?,?,?)}";
 		ArrayList<Purpose> purposeArray = new ArrayList<Purpose>();
 
-		logger.info(TAG + " getPurpose ::");
+		//logger.info(TAG + " getPurpose ::");
 
 		try
 		{
@@ -220,9 +208,7 @@ public class VehicleDetailsDao
 			{
 				Purpose purpose = new Purpose();
 				purpose.setPurposeCode(rs.getString(1));
-				logger.info(TAG + " getPurpose :: purpose code :" + rs.getString(1));
 				purpose.setPurposeDesc(rs.getString(2));
-				logger.info(TAG + " getPurpose :: purpose disc :" + rs.getString(2));
 				purposeArray.add(purpose);
 			}
 
@@ -248,7 +234,7 @@ public class VehicleDetailsDao
 		String callProcedure = "{call IRB_GET_SHAPES(?,?,?,?,?,?)}";
 		ArrayList<Shape> shapeArray = new ArrayList<Shape>();
 
-		logger.info(TAG + " getShape ::");
+		//logger.info(TAG + " getShape ::");
 
 		try
 		{
@@ -268,9 +254,7 @@ public class VehicleDetailsDao
 			{
 				Shape shape = new Shape();
 				shape.setShapeCode(rs.getString(1));
-				logger.info(TAG + " getShape :: shape code :" + rs.getString(1));
 				shape.setShapeDesc(rs.getString(2));
-				logger.info(TAG + " getShape :: shape disc :" + rs.getString(2));
 				shapeArray.add(shape);
 			}
 		}
@@ -289,8 +273,6 @@ public class VehicleDetailsDao
 
 	public ArrayList getColour()
 	{
-		logger.info(TAG + " getColour :: ");
-
 		getConnection();
 
 		CallableStatement callableStatement = null;
@@ -315,9 +297,7 @@ public class VehicleDetailsDao
 			{
 				Colour colour = new Colour();
 				colour.setColourCode(rs.getString(1));
-				logger.info(TAG + " getColour :: colour code :" + rs.getString(1));
 				colour.setColourDesc(rs.getString(2));
-				logger.info(TAG + " getColour :: colour disc :" + rs.getString(2));
 				colourArray.add(colour);
 			}
 		}
@@ -341,8 +321,6 @@ public class VehicleDetailsDao
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_VEHCONDITION(?,?,?,?,?,?)}";
 		ArrayList<VehicleCondition> vehicleConditionArray = new ArrayList<VehicleCondition>();
-
-		logger.info(TAG + " getFuleType ::");
 
 		try
 		{
@@ -397,20 +375,20 @@ public class VehicleDetailsDao
 			while (rs.next())
 			{
 				ageAllowed = rs.getInt("MAX_ALLOWED_VEHICLE_AGE");
-				logger.info(TAG + " getMaxVehicleAgeAllowed :: ageAllowed :" + ageAllowed);
 			}
 			
 			Calendar now = Calendar.getInstance();
 			int year = now.get(Calendar.YEAR);
 			int allowedAgeIsTillNextYear = year + 1;
 			
-			for(int i = allowedAgeIsTillNextYear ; i > (allowedAgeIsTillNextYear-ageAllowed) ; i--)
+			for(int i = ageAllowed ; i > 0 ; i--)
 			{
-				logger.info(TAG + " getMaxVehicleAgeAllowed :: allowedAgeIsTillNextYear :" + allowedAgeIsTillNextYear);
 				CodeDesc codeDesc = new CodeDesc();
-				codeDesc.setCode("" + i);
-				codeDesc.setDesc("" + i);
+				codeDesc.setCode("" + (allowedAgeIsTillNextYear));
+				codeDesc.setDesc("" + (allowedAgeIsTillNextYear));
 				maxVehicleAgeArray.add(codeDesc);
+				
+				allowedAgeIsTillNextYear--;
 			}
 			
 		}
@@ -445,7 +423,7 @@ public class VehicleDetailsDao
 			while (rs.next())
 			{
 				maxAllowedYear = rs.getInt("MAX_ALLOWED_YEAR");
-				logger.info(TAG + " getMaxVehicleAgeAllowed :: maxAllowedYear :" + maxAllowedYear);
+				//logger.info(TAG + " getMaxVehicleAgeAllowed :: maxAllowedYear :" + maxAllowedYear);
 			}
 
 			for (int i = 1 ; i <= maxAllowedYear; i++)

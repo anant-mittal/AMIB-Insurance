@@ -89,9 +89,6 @@ public class CustomerRegistrationController
 	@RequestMapping(value = "/pub/reg/verifyuserdetails", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<Validate, Object> validateOtp(@RequestHeader(value = "mOtp", required = false) String mOtpHeader, @RequestHeader(value = "eOtp", required = false) String eOtpHeader, @RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp)
 	{
-		// This Validate Method is used for both
-		// Registration OTP and Chnage Password OTP
-
 		mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
 		eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
 		return customerRegistrationService.validateOtp(mOtp, eOtp);
