@@ -601,8 +601,8 @@ public class CustomerRegistrationService
 			AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(metaData.getCivilId());
 			ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 
-			String emailPrifix = sendEmailOtp(emailId);
-			responseOtpModel.setEotpPrefix(emailPrifix);
+			responseOtpModel = sendEmailOtp(emailId);
+			responseOtpModel.setEotpPrefix(responseOtpModel.getEotpPrefix());
 			responseOtpModel.setCivilId(metaData.getCivilId());
 
 			resp.setData(responseOtpModel);
