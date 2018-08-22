@@ -31,7 +31,8 @@ public class VehicleDetailsDao
 {
 	String TAG = "com.insurance.vehicledetails.dao.VehicleDetailsDao :: ";
 
-	//private static final Logger logger = LoggerFactory.getLogger(VehicleDetailsDao.class);
+	// private static final Logger logger =
+	// LoggerFactory.getLogger(VehicleDetailsDao.class);
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -41,6 +42,53 @@ public class VehicleDetailsDao
 	@Autowired
 	MetaData metaData;
 
+	public ArrayList getPendingRequestQuote()
+	{
+		getConnection();
+
+		CallableStatement callableStatement = null;
+		String callProcedure = "{call IRB_CHECK_INCOMPLETE_APPL(?,?,?,?,?,?,?,?,?)}";
+		ArrayList<Make> makeArray = new ArrayList<Make>();
+
+		try
+		{
+			callableStatement = connection.prepareCall(callProcedure);
+
+			
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setString(3, metaData.getUserType());
+			callableStatement.setBigDecimal(4, metaData.getCustomerSequenceNumber());
+			callableStatement.setBigDecimal(5, metaData.getLanguageId());
+			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
+			callableStatement.executeUpdate();
+
+			ResultSet rs = (ResultSet) callableStatement.getObject(4);
+
+			while (rs.next())
+			{
+				Make make = new Make();
+				make.setMakeCode(rs.getString(1));
+				make.setMakeDesc(rs.getString(2));
+				makeArray.add(make);
+			}
+
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+
+		return makeArray;
+	}
+
 	public ArrayList getMake()
 	{
 		getConnection();
@@ -49,7 +97,7 @@ public class VehicleDetailsDao
 		String callProcedure = "{call IRB_GET_MAKES(?,?,?,?,?,?)}";
 		ArrayList<Make> makeArray = new ArrayList<Make>();
 
-		//logger.info(TAG + " getMake ::");
+		// logger.info(TAG + " getMake ::");
 
 		try
 		{
@@ -95,7 +143,7 @@ public class VehicleDetailsDao
 		String callProcedure = "{call IRB_GET_SUBMAKE(?,?,?,?,?,?,?)}";
 		ArrayList<Model> modelArray = new ArrayList<Model>();
 
-		//logger.info(TAG + " getModel :: make :" + make);
+		// logger.info(TAG + " getModel :: make :" + make);
 
 		try
 		{
@@ -110,7 +158,7 @@ public class VehicleDetailsDao
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
 
-			//logger.info(TAG + " getModel :: make 1 :" + make);
+			// logger.info(TAG + " getModel :: make 1 :" + make);
 
 			ResultSet rs = (ResultSet) callableStatement.getObject(5);
 
@@ -143,7 +191,7 @@ public class VehicleDetailsDao
 		String callProcedure = "{call IRB_GET_FUELTYPE(?,?,?,?,?,?)}";
 		ArrayList<FuelType> fuelArray = new ArrayList<FuelType>();
 
-		//logger.info(TAG + " getFuleType ::");
+		// logger.info(TAG + " getFuleType ::");
 
 		try
 		{
@@ -188,7 +236,7 @@ public class VehicleDetailsDao
 		String callProcedure = "{call IRB_GET_PURPOSE(?,?,?,?,?,?)}";
 		ArrayList<Purpose> purposeArray = new ArrayList<Purpose>();
 
-		//logger.info(TAG + " getPurpose ::");
+		// logger.info(TAG + " getPurpose ::");
 
 		try
 		{
@@ -234,7 +282,7 @@ public class VehicleDetailsDao
 		String callProcedure = "{call IRB_GET_SHAPES(?,?,?,?,?,?)}";
 		ArrayList<Shape> shapeArray = new ArrayList<Shape>();
 
-		//logger.info(TAG + " getShape ::");
+		// logger.info(TAG + " getShape ::");
 
 		try
 		{
@@ -366,7 +414,7 @@ public class VehicleDetailsDao
 		ArrayList<CodeDesc> maxVehicleAgeArray = new ArrayList<CodeDesc>();
 
 		String query = "SELECT A.MAX_ALLOWED_VEHICLE_AGE FROM IRB_V_ONLMAX_VEHAGE A";
-		
+
 		try
 		{
 			statement = connection.createStatement();
@@ -376,21 +424,21 @@ public class VehicleDetailsDao
 			{
 				ageAllowed = rs.getInt("MAX_ALLOWED_VEHICLE_AGE");
 			}
-			
+
 			Calendar now = Calendar.getInstance();
 			int year = now.get(Calendar.YEAR);
 			int allowedAgeIsTillNextYear = year + 1;
-			
-			for(int i = ageAllowed ; i > 0 ; i--)
+
+			for (int i = ageAllowed; i > 0; i--)
 			{
 				CodeDesc codeDesc = new CodeDesc();
 				codeDesc.setCode("" + (allowedAgeIsTillNextYear));
 				codeDesc.setDesc("" + (allowedAgeIsTillNextYear));
 				maxVehicleAgeArray.add(codeDesc);
-				
+
 				allowedAgeIsTillNextYear--;
 			}
-			
+
 		}
 		catch (Exception e)
 		{
@@ -404,7 +452,7 @@ public class VehicleDetailsDao
 
 		return maxVehicleAgeArray;
 	}
-	
+
 	public ArrayList getPolicyDuration()
 	{
 
@@ -414,7 +462,7 @@ public class VehicleDetailsDao
 		ArrayList<CodeDesc> maxVehicleAgeArray = new ArrayList<CodeDesc>();
 
 		String query = "SELECT MAX_ALLOWED_YEAR FROM IRB_V_ONLMAX_POLPERIOD";
-		
+
 		try
 		{
 			statement = connection.createStatement();
@@ -423,10 +471,11 @@ public class VehicleDetailsDao
 			while (rs.next())
 			{
 				maxAllowedYear = rs.getInt("MAX_ALLOWED_YEAR");
-				//logger.info(TAG + " getMaxVehicleAgeAllowed :: maxAllowedYear :" + maxAllowedYear);
+				// logger.info(TAG + " getMaxVehicleAgeAllowed :: maxAllowedYear
+				// :" + maxAllowedYear);
 			}
 
-			for (int i = 1 ; i <= maxAllowedYear; i++)
+			for (int i = 1; i <= maxAllowedYear; i++)
 			{
 				CodeDesc codeDesc = new CodeDesc();
 				codeDesc.setCode("" + i);
@@ -447,8 +496,6 @@ public class VehicleDetailsDao
 
 		return maxVehicleAgeArray;
 	}
-	
-	
 
 	private Connection getConnection()
 	{

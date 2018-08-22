@@ -20,9 +20,17 @@ public class VehicleDetailsController
 
 	String TAG = "com.amx.jax.vehicledetails.controller.VehicleDetailsController :- ";
 
+	
 	@Autowired
 	public VehicleDetailsService vehicleDetailsService;
 
+	@RequestMapping(value = "/api/request-quote/pendingquote", method = RequestMethod.GET, produces = "application/json")
+	public AmxApiResponse<?, Object> getPendingRequestQuote()
+	{
+		return vehicleDetailsService.getPendingRequestQuote();
+
+	}
+	
 	@RequestMapping(value = "/api/vehicledetails/make", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getMake()
 	{

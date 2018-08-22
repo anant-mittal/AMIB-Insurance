@@ -49,9 +49,25 @@ public class MetaData implements Serializable
 
 	private BigDecimal userSequenceNumber;
 
+	private BigDecimal userAmibCustRef;
+
 	private String contactUsEmail;
 
 	private String contactUsHelpLineNumber;
+
+	private String mOtpMobileNumber;
+
+	private String eOtpEmailId;
+
+	public BigDecimal getUserAmibCustRef()
+	{
+		return userAmibCustRef;
+	}
+
+	public void setUserAmibCustRef(BigDecimal userAmibCustRef)
+	{
+		this.userAmibCustRef = userAmibCustRef;
+	}
 
 	public String getContactUsEmail()
 	{
@@ -246,5 +262,25 @@ public class MetaData implements Serializable
 	public void setUserSequenceNumber(BigDecimal userSequenceNumber)
 	{
 		this.userSequenceNumber = userSequenceNumber;
+	}
+	
+	public String getmOtpMobileNumber()
+	{
+		return mOtpMobileNumber;
+	}
+
+	public void setmOtpMobileNumber(String mOtpMobileNumber)
+	{
+		this.mOtpMobileNumber = mOtpMobileNumber;
+	}
+
+	public String geteOtpEmailId()
+	{
+		return eOtpEmailId;
+	}
+
+	public void seteOtpEmailId(String eOtpEmailId)
+	{
+		this.eOtpEmailId = eOtpEmailId;
 	}
 }

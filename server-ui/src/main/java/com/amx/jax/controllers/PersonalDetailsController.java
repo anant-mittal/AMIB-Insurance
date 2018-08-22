@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +17,7 @@ import com.amx.jax.models.CustomerProfileUpdateRequest;
 import com.amx.jax.models.CustomerProfileUpdateResponse;
 import com.amx.jax.models.PersonalDetailsOtpRequest;
 import com.amx.jax.services.PersonalDetailsService;
+import com.amx.utils.ArgUtil;
 import com.insurance.generateotp.RequestOtpModel;
 
 @RestController
@@ -35,9 +37,18 @@ public class PersonalDetailsController
 	}
 
 	@RequestMapping(value = "/api/personal/update-profiledetails", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<CustomerProfileUpdateResponse, Object> updateProfileDetails(@RequestBody CustomerProfileUpdateRequest customerProfileUpdateRequest)
+	public AmxApiResponse<?, Object> updateProfileDetails
+	(
+			@RequestHeader(value = "mOtp", required = false) String mOtpHeader, 
+			@RequestHeader(value = "eOtp", required = false) String eOtpHeader, 
+			@RequestParam(required = false) String mOtp,
+			@RequestParam(required = false) String eOtp, 
+			@RequestBody CustomerProfileUpdateRequest customerProfileUpdateRequest
+	)
 	{
-		return personalDetailsService.updateProfileDetails(customerProfileUpdateRequest);
+		mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
+		eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
+		return personalDetailsService.updateProfileDetails(mOtp,eOtp,customerProfileUpdateRequest);
 	}
 
 	@RequestMapping(value = "/api/personal/business", method = RequestMethod.GET, produces = "application/json")
@@ -69,7 +80,7 @@ public class PersonalDetailsController
 	{
 		return personalDetailsService.getGender();
 	}
-	
+
 	@RequestMapping(value = "/api/personal/otp-initiate", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> emailMobileOtpInitiate(@RequestBody PersonalDetailsOtpRequest requestOtpModel)
 	{

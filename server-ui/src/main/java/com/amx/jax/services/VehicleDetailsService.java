@@ -22,6 +22,26 @@ public class VehicleDetailsService
 	@Autowired
 	public VehicleDetailsDao vehicleDetailsDao;
 
+	public AmxApiResponse<?, Object> getPendingRequestQuote()
+	{
+		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
+
+		try
+		{
+			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setResults(vehicleDetailsDao.getPendingRequestQuote());
+
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
+		return resp;
+
+	}
+
 	public AmxApiResponse<?, Object> getMake()
 	{
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
@@ -39,7 +59,7 @@ public class VehicleDetailsService
 			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
-		
+
 	}
 
 	public AmxApiResponse<?, Object> getModel(String make)
@@ -59,7 +79,7 @@ public class VehicleDetailsService
 			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
-		
+
 	}
 
 	public AmxApiResponse<?, Object> getFuleType()
@@ -122,7 +142,7 @@ public class VehicleDetailsService
 	public AmxApiResponse<?, Object> getColour()
 	{
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
-		
+
 		try
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
@@ -136,11 +156,11 @@ public class VehicleDetailsService
 		}
 		return resp;
 	}
-	
+
 	public AmxApiResponse<?, Object> getVehicleCondition()
 	{
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
-		
+
 		try
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
@@ -154,11 +174,11 @@ public class VehicleDetailsService
 		}
 		return resp;
 	}
-	
+
 	public AmxApiResponse<?, Object> getMaxVehicleAgeAllowed()
 	{
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
-		
+
 		try
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
@@ -172,11 +192,11 @@ public class VehicleDetailsService
 		}
 		return resp;
 	}
-	
+
 	public AmxApiResponse<?, Object> getPolicyDuration()
 	{
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
-		
+
 		try
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);

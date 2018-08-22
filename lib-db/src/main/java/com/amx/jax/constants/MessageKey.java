@@ -37,5 +37,11 @@ public class MessageKey
 	public static String KEY_USER_OTP_ENABLED = "UOTPE";
 
 	public static String KEY_USER_OTP_NOT_ENABLED = "UOTPNE";
+	
+	public static String KEY_EMAIL_MOBILE_OTP_REQUIRED = "DOTP_REQUIRED";
+	
+	public static String KEY_EMAIL_OTP_REQUIRED = "EOTP_REQUIRED";
+	
+	public static String KEY_MOBILE_OTP_REQUIRED = "MOTP_REQUIRED";
 
 }

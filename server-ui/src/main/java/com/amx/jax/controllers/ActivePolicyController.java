@@ -2,6 +2,8 @@ package com.amx.jax.controllers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.amx.jax.models.ActivePolicyModel;
 import com.amx.jax.models.Validate;
 import com.amx.jax.services.ActivePolicyService;
 import com.amx.jax.api.AmxApiResponse;
@@ -21,7 +23,7 @@ public class ActivePolicyController
 	private ActivePolicyService activePolicyService;
 
 	@RequestMapping(value = "/api/mypolicy/get-activepolicy", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<Validate, Object> getUserActivePolicy()
+	public AmxApiResponse<ActivePolicyModel, Object> getUserActivePolicy()
 	{
 		return activePolicyService.getUserActivePolicy();
 	}

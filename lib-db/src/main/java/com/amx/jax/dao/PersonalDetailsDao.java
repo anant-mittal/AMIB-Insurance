@@ -79,18 +79,6 @@ public class PersonalDetailsDao
 			customerProfileDetailModel.setGenderCode(callableStatement.getString(9));
 			customerProfileDetailModel.setGenderDesc(callableStatement.getString(10));
 			customerProfileDetailModel.setIdExpiryDate(callableStatement.getDate(11));
-			
-			
-			System.out.println("DATE CHGECK ::: "+callableStatement.getDate(11));
-			
-			if(null != callableStatement.getDate(11))
-			{
-				System.out.println("DATE CHGECK 1 ::: "+callableStatement.getDate(11).toGMTString());
-				System.out.println("DATE CHGECK 2 ::: "+callableStatement.getDate(11).getTime());
-				System.out.println("DATE CHGECK 3 ::: "+callableStatement.getDate(11).toLocaleString());
-				System.out.println("DATE CHGECK 4 ::: "+callableStatement.getDate(11).toLocalDate());
-			}
-			
 			customerProfileDetailModel.setBusinessCode(callableStatement.getString(12));
 			customerProfileDetailModel.setBusinessDesc(callableStatement.getString(13));
 			customerProfileDetailModel.setNatyCode(callableStatement.getString(14));

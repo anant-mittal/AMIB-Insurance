@@ -6,8 +6,11 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,7 +108,6 @@ public class CustomerRegistrationDao
 	public boolean isValidCivilId(String civilid)
 	{
 		getConnection();
-
 		CallableStatement callableStatement = null;
 		String callFunction = "{ ? = call O_VALIDATE_CIVILID(?)}";
 
@@ -130,7 +132,6 @@ public class CustomerRegistrationDao
 		{
 			e.printStackTrace();
 		}
-
 		finally
 		{
 			CloseConnection(callableStatement, connection);
@@ -475,7 +476,7 @@ public class CustomerRegistrationDao
 			callableStatement.registerOutParameter(9, java.sql.Types.INTEGER);
 			callableStatement.registerOutParameter(10, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(11, java.sql.Types.VARCHAR);
-			callableStatement.registerOutParameter(12, java.sql.Types.DATE);
+			callableStatement.registerOutParameter(12, java.sql.Types.TIMESTAMP);
 			callableStatement.registerOutParameter(13, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(14, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(15, java.sql.Types.VARCHAR);
@@ -492,7 +493,7 @@ public class CustomerRegistrationDao
 			customerDetailModel.setLanguageId(callableStatement.getBigDecimal(9));
 			customerDetailModel.setMobileVerify(callableStatement.getString(10));
 			customerDetailModel.setMailVerify(callableStatement.getString(11));
-			logger.info(TAG + " getUserDetails :: Last Login Date :" + callableStatement.getDate(12));
+			logger.info(TAG + " getUserDetails :: Last Login Date :" + callableStatement.getTimestamp(12));
 			customerDetailModel.setLastLogin(callableStatement.getDate(12));
 			customerDetailModel.setDeviceId(callableStatement.getString(13));
 			customerDetailModel.setDeviceType(callableStatement.getString(14));
@@ -707,6 +708,7 @@ public class CustomerRegistrationDao
 		}
 		return new java.sql.Date(todayNew.getTime());
 	}
+	
 
 	private Connection getConnection()
 	{

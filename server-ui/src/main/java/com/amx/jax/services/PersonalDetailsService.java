@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.DetailsConstants;
+import com.amx.jax.constants.Message;
 import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.dao.PersonalDetailsDao;
@@ -41,7 +42,7 @@ public class PersonalDetailsService
 
 	@Autowired
 	CustomerRegistrationDao customerRegistrationDao;
-	
+
 	@Autowired
 	private CustomerRegistrationService customerRegistrationService;
 
@@ -50,7 +51,7 @@ public class PersonalDetailsService
 
 	@Autowired
 	MetaData metaData;
-	
+
 	public AmxApiResponse<CustomerProfileDetailResponse, Object> getProfileDetails()
 	{
 		AmxApiResponse<CustomerProfileDetailResponse, Object> resp = new AmxApiResponse<CustomerProfileDetailResponse, Object>();
@@ -94,30 +95,131 @@ public class PersonalDetailsService
 		return resp;
 	}
 
-	public AmxApiResponse<CustomerProfileUpdateResponse, Object> updateProfileDetails(CustomerProfileUpdateRequest customerProfileUpdateRequest)
+	public AmxApiResponse<?, Object> updateProfileDetails(String mOtp, String eOtp, CustomerProfileUpdateRequest customerProfileUpdateRequest)
 	{
-		AmxApiResponse<CustomerProfileUpdateResponse, Object> resp = new AmxApiResponse<CustomerProfileUpdateResponse, Object>();
+		AmxApiResponse<?, Object> resp = new AmxApiResponse<CustomerProfileUpdateResponse, Object>();
 		CustomerProfileDetailModel customerProfileDetailModel = new CustomerProfileDetailModel();
 		CustomerProfileDetailModel customerProfileDetailModelCheck = new CustomerProfileDetailModel();
 		CustomerProfileUpdateResponse customerProfileUpdateResponse = new CustomerProfileUpdateResponse();
+		Validate validate = new Validate();
+
+		customerProfileDetailModelCheck = personalDetailsDao.getProfileDetails();
+
+		logger.info(TAG + " updateProfileDetails :: getMobile 1 :" + customerProfileDetailModelCheck.getMobile());
+		logger.info(TAG + " updateProfileDetails :: getEmail  2 :" + customerProfileDetailModelCheck.getEmail());
+		logger.info(TAG + " updateProfileDetails :: getMobile 3 :" + customerProfileUpdateRequest.getMobile());
+		logger.info(TAG + " updateProfileDetails :: getEmail  4 :" + customerProfileUpdateRequest.getEmail());
+
+		/*
 		
-		/*customerProfileDetailModelCheck = personalDetailsDao.getProfileDetails();
-		
-		if(!customerProfileDetailModelCheck.getMobile().equals(customerProfileUpdateRequest.getMobile()) && !customerProfileDetailModelCheck.getEmail().equals(customerProfileUpdateRequest.getEmail()))
+		if (!customerProfileDetailModelCheck.getMobile().equals(customerProfileUpdateRequest.getMobile()) && !customerProfileDetailModelCheck.getEmail().equals(customerProfileUpdateRequest.getEmail()))
 		{
-			
+			logger.info(TAG + " updateProfileDetails :: Both Chnaged");
+			logger.info(TAG + " updateProfileDetails :: mOtp :" + mOtp);
+			logger.info(TAG + " updateProfileDetails :: eOtp :" + eOtp);
+
+			if (null != mOtp && !mOtp.equals("") && null != eOtp && !eOtp.equals(""))
+			{
+				if (!metaData.getmOtpMobileNumber().equals(customerProfileUpdateRequest.getMobile()) || !metaData.geteOtpEmailId().equals(customerProfileUpdateRequest.getEmail()))
+				{
+					ResponseOtpModel responseOtpModel = customerRegistrationService.sendEmailOtpTemp(customerProfileUpdateRequest.getEmail());
+					resp.setMeta(responseOtpModel);
+					resp.setStatusKey(ApiConstants.FAILURE);
+					resp.setMessageKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
+					return resp;
+				}
+
+				if (!metaData.getMotp().equals(mOtp) || !metaData.getEotp().equals(eOtp))
+				{
+					validate.setValid(false);
+					resp.setStatusKey(ApiConstants.FAILURE);
+					resp.setMessage(Message.REG_INVALID_OTP);
+					resp.setMessageKey(MessageKey.KEY_REG_VALIDATE_OTP);
+					return resp;
+				}
+			}
+			else
+			{
+				ResponseOtpModel responseOtpModel = customerRegistrationService.sendEmailOtpTemp(customerProfileUpdateRequest.getEmail());
+				resp.setMeta(responseOtpModel);
+				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setMessageKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
+				return resp;
+			}
 		}
-		else if(!customerProfileDetailModelCheck.getMobile().equals(customerProfileUpdateRequest.getMobile()))
+		else if (!customerProfileDetailModelCheck.getEmail().equals(customerProfileUpdateRequest.getEmail()))
 		{
-			
+			logger.info(TAG + " updateProfileDetails :: Email ");
+			logger.info(TAG + " updateProfileDetails :: eOtp :" + eOtp);
+
+			if (null != eOtp && !eOtp.equals(""))
+			{
+				if (!metaData.geteOtpEmailId().equals(customerProfileUpdateRequest.getEmail()))
+				{
+					ResponseOtpModel responseOtpModel = customerRegistrationService.sendEmailOtp(customerProfileUpdateRequest.getEmail());
+					resp.setMeta(responseOtpModel);
+					resp.setStatusKey(ApiConstants.FAILURE);
+					resp.setMessageKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
+					return resp;
+				}
+
+				if (!metaData.getEotp().equals(eOtp))
+				{
+					validate.setValid(false);
+					resp.setStatusKey(ApiConstants.FAILURE);
+					resp.setMessage(Message.REG_INVALID_OTP);
+					resp.setMessageKey(MessageKey.KEY_VALIDATE_EMAIL_OTP);
+					return resp;
+				}
+			}
+			else
+			{
+				ResponseOtpModel responseOtpModel = customerRegistrationService.sendEmailOtpTemp(customerProfileUpdateRequest.getEmail());
+				resp.setMeta(responseOtpModel);
+				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setMessageKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
+				return resp;
+			}
 		}
-		else if(!customerProfileDetailModelCheck.getEmail().equals(customerProfileUpdateRequest.getEmail()))
+		else if (!customerProfileDetailModelCheck.getMobile().equals(customerProfileUpdateRequest.getMobile()))
 		{
-			
-		}*/
-			
+			logger.info(TAG + " updateProfileDetails :: Mobile Chnaged");
+			logger.info(TAG + " updateProfileDetails :: mOtp :" + mOtp);
 		
+			if (null != mOtp && !mOtp.equals(""))
+			{
+				if (!metaData.getmOtpMobileNumber().equals(customerProfileUpdateRequest.getMobile()))
+				{
+					ResponseOtpModel responseOtpModel = customerRegistrationService.sendEmailOtpTemp(customerProfileUpdateRequest.getEmail());
+					resp.setMeta(responseOtpModel);
+					resp.setStatusKey(ApiConstants.FAILURE);
+					resp.setMessageKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
+					return resp;
+				}
+
+				if (!metaData.getMotp().equals(mOtp))
+				{
+					validate.setValid(false);
+					resp.setStatusKey(ApiConstants.FAILURE);
+					resp.setMessage(Message.REG_INVALID_OTP);
+					resp.setMessageKey(MessageKey.KEY_VALIDATE_MOBILE_OTP);
+					return resp;
+				}
+			}
+			else
+			{
+				ResponseOtpModel responseOtpModel = customerRegistrationService.sendEmailOtpTemp(customerProfileUpdateRequest.getEmail());
+				resp.setMeta(responseOtpModel);
+				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setMessageKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
+				return resp;
+			}
+		}
 		
+		*/
+
+		logger.info(TAG + " updateProfileDetails :: Down ");
+
 		customerProfileDetailModel.setCustSequenceNumber(customerProfileUpdateRequest.getCustomerSequenceNumber());
 		customerProfileDetailModel.setEnglishName(customerProfileUpdateRequest.getEnglishName());
 		customerProfileDetailModel.setNativeArabicName(customerProfileUpdateRequest.getNativeArabicName());
@@ -251,7 +353,7 @@ public class PersonalDetailsService
 		return resp;
 
 	}
-	
+
 	public AmxApiResponse<?, Object> emailMobileOtpInitiate(PersonalDetailsOtpRequest personalDetailsOtpRequest)
 	{
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
@@ -279,7 +381,6 @@ public class PersonalDetailsService
 				return validateEmailID;
 			}
 
-			
 			if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS) && emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				customerRegistrationService.sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_MOBE_MAIL, requestOtpModel, mobileNumberExists.getMessage());
@@ -321,7 +422,7 @@ public class PersonalDetailsService
 
 			AmxApiResponse<Validate, Object> setOtpCount = customerRegistrationService.setOtpCount(metaData.getCivilId());
 
-			responseOtpModel = customerRegistrationService.sendEmailOtpTemp(responseOtpModel, requestOtpModel.getEmailId());
+			responseOtpModel = customerRegistrationService.sendEmailOtpTemp(requestOtpModel.getEmailId());
 
 			/*
 			 * Code Needed Here For Mobile Otp

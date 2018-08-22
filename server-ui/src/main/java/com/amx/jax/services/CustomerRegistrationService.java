@@ -508,7 +508,7 @@ public class CustomerRegistrationService
 
 			AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(requestOtpModel.getCivilId());
 
-			responseOtpModel = sendEmailOtpTemp(responseOtpModel, requestOtpModel.getEmailId());
+			responseOtpModel = sendEmailOtpTemp(requestOtpModel.getEmailId());
 
 			/*
 			 * Code Needed Here For Mobile Otp
@@ -863,6 +863,7 @@ public class CustomerRegistrationService
 	{
 		metaData.setCivilId(customerLoginRequest.getCivilId());
 		metaData.setUserSequenceNumber(customerLoginModel.getUserSeqNum());
+		metaData.setUserAmibCustRef(customerLoginModel.getAmibRef());
 		metaData.setCountryId(regSession.getCountryId());
 		metaData.setCompCd(regSession.getCompCd());
 		metaData.setUserType(regSession.getUserType());
@@ -921,7 +922,7 @@ public class CustomerRegistrationService
 			{
 				AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(changePasswordOtpRequest.getCivilId());
 
-				responseOtpModel = sendEmailOtpTemp(responseOtpModel, customerDetailModel.getEmail());
+				responseOtpModel = sendEmailOtpTemp(customerDetailModel.getEmail());
 
 				/*
 				 * Code Needed Here For Mobile Otp
@@ -1056,8 +1057,10 @@ public class CustomerRegistrationService
 
 	}
 
-	public ResponseOtpModel sendEmailOtpTemp(ResponseOtpModel responseOtpModel, String emailId)
+	public ResponseOtpModel sendEmailOtpTemp(String emailId)
 	{
+		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
+		
 		String emailOtpPrefix = Random.randomAlpha(3);
 		String mobileOtpPrefix = Random.randomAlpha(3);
 
@@ -1066,14 +1069,19 @@ public class CustomerRegistrationService
 
 		String emailOtpToSend = emailOtpPrefix + "-" + emailOtp;
 		String mobileOtpToSend = mobileOtpPrefix + "-" + mobileOtp;
-
+		
 		responseOtpModel.setEotpPrefix(emailOtpPrefix);
 		responseOtpModel.setMotpPrefix(mobileOtpPrefix);
-
-		regSession.setMotpPrefix(responseOtpModel.getMotpPrefix());
-		regSession.setEotpPrefix(responseOtpModel.getEotpPrefix());
+		
+		regSession.setMotpPrefix(mobileOtpPrefix);
+		regSession.setEotpPrefix(emailOtpPrefix);
 		regSession.setEotp(emailOtp);
 		regSession.setMotp(mobileOtp);
+		
+		metaData.setMotpPrefix(mobileOtpPrefix);
+		metaData.setEotpPrefix(emailOtpPrefix);
+		metaData.setEotp(emailOtp);
+		metaData.setMotp(mobileOtp);
 
 		String emailIdFrom = webConfig.getConfigEmail();
 		String emailITo = emailId;
@@ -1085,12 +1093,16 @@ public class CustomerRegistrationService
 		return responseOtpModel;
 	}
 
-	public String sendEmailOtp(String emailId)
+	public ResponseOtpModel sendEmailOtp(String emailId)
 	{
+		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
+		
 		String emailOtpPrefix = Random.randomAlpha(3);
 		String emailOtp = Random.randomNumeric(6);
 		String emailOtpToSend = emailOtpPrefix + "-" + emailOtp;
 
+		responseOtpModel.setEotpPrefix(emailOtpPrefix);
+		
 		regSession.setEotpPrefix(emailOtpPrefix);
 		regSession.setEotp(emailOtp);
 
@@ -1101,11 +1113,13 @@ public class CustomerRegistrationService
 
 		emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
 
-		return emailOtpPrefix;
+		return responseOtpModel;
 	}
 
-	public String sendMobileOtp(ResponseOtpModel responseOtpModel, String mobileNumber)
+	public ResponseOtpModel sendMobileOtp(String mobileNumber)
 	{
+		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
+		
 		String mobileOtpPrefix = Random.randomAlpha(3);
 		String mobileOtp = Random.randomNumeric(6);
 		String mobileOtpToSend = mobileOtpPrefix + "-" + mobileOtp;
@@ -1124,7 +1138,7 @@ public class CustomerRegistrationService
 		 * 
 		 */
 
-		return mobileOtpPrefix;
+		return responseOtpModel;
 	}
 
 }
