@@ -110,7 +110,7 @@ public class PersonalDetailsService
 		logger.info(TAG + " updateProfileDetails :: getMobile 3 :" + customerProfileUpdateRequest.getMobile());
 		logger.info(TAG + " updateProfileDetails :: getEmail  4 :" + customerProfileUpdateRequest.getEmail());
 
-		if (!customerProfileDetailModelCheck.getMobile().equals(customerProfileUpdateRequest.getMobile()) && !customerProfileDetailModelCheck.getEmail().equals(customerProfileUpdateRequest.getEmail()))
+		/*if (!customerProfileDetailModelCheck.getMobile().equals(customerProfileUpdateRequest.getMobile()) && !customerProfileDetailModelCheck.getEmail().equals(customerProfileUpdateRequest.getEmail()))
 		{
 			logger.info(TAG + " updateProfileDetails :: Both Chnaged");
 			logger.info(TAG + " updateProfileDetails :: mOtp :" + mOtp);
@@ -278,7 +278,7 @@ public class PersonalDetailsService
 				resp.setMessageKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
 				return resp;
 			}
-		}
+		}*/
 
 		logger.info(TAG + " updateProfileDetails :: Down ");
 
