@@ -110,14 +110,43 @@ public class PersonalDetailsService
 		logger.info(TAG + " updateProfileDetails :: getMobile 3 :" + customerProfileUpdateRequest.getMobile());
 		logger.info(TAG + " updateProfileDetails :: getEmail  4 :" + customerProfileUpdateRequest.getEmail());
 
-		
-		
-		/* 
 		if (!customerProfileDetailModelCheck.getMobile().equals(customerProfileUpdateRequest.getMobile()) && !customerProfileDetailModelCheck.getEmail().equals(customerProfileUpdateRequest.getEmail()))
 		{
 			logger.info(TAG + " updateProfileDetails :: Both Chnaged");
 			logger.info(TAG + " updateProfileDetails :: mOtp :" + mOtp);
 			logger.info(TAG + " updateProfileDetails :: eOtp :" + eOtp);
+
+			AmxApiResponse<Validate, Object> isValidMobileNumber = customerRegistrationService.isValidMobileNumber(customerProfileUpdateRequest.getMobile());
+			AmxApiResponse<Validate, Object> mobileNumberExists = customerRegistrationService.isMobileNumberExist(customerProfileUpdateRequest.getMobile());
+			AmxApiResponse<Validate, Object> validateEmailID = customerRegistrationService.isValidEmailId(customerProfileUpdateRequest.getEmail());
+			AmxApiResponse<Validate, Object> emailIdExists = customerRegistrationService.isEmailIdExist(customerProfileUpdateRequest.getEmail());
+
+			if (isValidMobileNumber.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			{
+				return isValidMobileNumber;
+			}
+
+			if (validateEmailID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			{
+				return validateEmailID;
+			}
+
+			else if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+			{
+				// sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE,
+				// requestOtpModel, mobileNumberExists.getMessage());
+				mobileNumberExists.setMessageKey(MessageKey.KEY_MOBILE_NO_ALREADY_REGISTER);
+				mobileNumberExists.setStatusKey(ApiConstants.FAILURE);
+				return mobileNumberExists;
+			}
+			else if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+			{
+				// sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL,
+				// requestOtpModel, emailIdExists.getMessage());
+				emailIdExists.setMessageKey(MessageKey.KEY_EMAID_ALREADY_REGISTER);
+				emailIdExists.setStatusKey(ApiConstants.FAILURE);
+				return emailIdExists;
+			}
 
 			if (null != mOtp && !mOtp.equals("") && null != eOtp && !eOtp.equals(""))
 			{
@@ -153,6 +182,23 @@ public class PersonalDetailsService
 			logger.info(TAG + " updateProfileDetails :: Email ");
 			logger.info(TAG + " updateProfileDetails :: eOtp :" + eOtp);
 
+			AmxApiResponse<Validate, Object> validateEmailID = customerRegistrationService.isValidEmailId(customerProfileUpdateRequest.getEmail());
+			AmxApiResponse<Validate, Object> emailIdExists = customerRegistrationService.isEmailIdExist(customerProfileUpdateRequest.getEmail());
+
+			if (validateEmailID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			{
+				return validateEmailID;
+			}
+
+			if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+			{
+				// sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL,
+				// requestOtpModel, emailIdExists.getMessage());
+				emailIdExists.setMessageKey(MessageKey.KEY_EMAID_ALREADY_REGISTER);
+				emailIdExists.setStatusKey(ApiConstants.FAILURE);
+				return emailIdExists;
+			}
+
 			if (null != eOtp && !eOtp.equals(""))
 			{
 				if (!metaData.geteOtpEmailId().equals(customerProfileUpdateRequest.getEmail()))
@@ -186,7 +232,24 @@ public class PersonalDetailsService
 		{
 			logger.info(TAG + " updateProfileDetails :: Mobile Chnaged");
 			logger.info(TAG + " updateProfileDetails :: mOtp :" + mOtp);
-		
+
+			AmxApiResponse<Validate, Object> isValidMobileNumber = customerRegistrationService.isValidMobileNumber(customerProfileUpdateRequest.getMobile());
+			AmxApiResponse<Validate, Object> mobileNumberExists = customerRegistrationService.isMobileNumberExist(customerProfileUpdateRequest.getMobile());
+
+			if (isValidMobileNumber.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			{
+				return isValidMobileNumber;
+			}
+
+			if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+			{
+				// sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE,
+				// requestOtpModel, mobileNumberExists.getMessage());
+				mobileNumberExists.setMessageKey(MessageKey.KEY_MOBILE_NO_ALREADY_REGISTER);
+				mobileNumberExists.setStatusKey(ApiConstants.FAILURE);
+				return mobileNumberExists;
+			}
+
 			if (null != mOtp && !mOtp.equals(""))
 			{
 				if (!metaData.getmOtpMobileNumber().equals(customerProfileUpdateRequest.getMobile()))
@@ -215,9 +278,7 @@ public class PersonalDetailsService
 				resp.setMessageKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
 				return resp;
 			}
-		}*/
-		
-		
+		}
 
 		logger.info(TAG + " updateProfileDetails :: Down ");
 
@@ -447,5 +508,5 @@ public class PersonalDetailsService
 		}
 		return resp;
 	}
-	
+
 }

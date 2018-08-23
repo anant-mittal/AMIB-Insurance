@@ -477,14 +477,14 @@ public class CustomerRegistrationService
 			else if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE, requestOtpModel, mobileNumberExists.getMessage());
-				mobileNumberExists.setMessageKey(MessageKey.KEY_MOBILE_OR_EMAIL_ALREADY_EXISTS);
+				mobileNumberExists.setMessageKey(MessageKey.KEY_MOBILE_NO_ALREADY_REGISTER);
 				mobileNumberExists.setStatusKey(ApiConstants.FAILURE);
 				return mobileNumberExists;
 			}
 			else if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL, requestOtpModel, emailIdExists.getMessage());
-				emailIdExists.setMessageKey(MessageKey.KEY_MOBILE_OR_EMAIL_ALREADY_EXISTS);
+				emailIdExists.setMessageKey(MessageKey.KEY_EMAID_ALREADY_REGISTER);
 				emailIdExists.setStatusKey(ApiConstants.FAILURE);
 				return emailIdExists;
 			}
@@ -828,8 +828,13 @@ public class CustomerRegistrationService
 				resp.setStatusKey(ApiConstants.FAILURE);
 			}
 
+			logger.info(TAG + " validateUserLogin :: getErrorMessage :" + customerLoginModel.getErrorMessage());
+			logger.info(TAG + " validateUserLogin :: getErrorCode :" + customerLoginModel.getErrorCode());
+			
 			if (null != customerLoginModel.getErrorMessage() && customerLoginModel.getErrorCode().toString().equalsIgnoreCase(DatabaseErrorKey.INVALID_USER_LOGIN))
 			{
+				logger.info(TAG + " validateUserLogin :: Invalid Attempts :");
+				
 				String countData = "";
 				int count = Integer.parseInt(customerLoginModel.getErrorMessage());
 				int userInvalidCountRemaining = 3 - count;
@@ -846,6 +851,9 @@ public class CustomerRegistrationService
 			}
 			else if (null != customerLoginModel.getErrorCode() && customerLoginModel.getErrorCode().equalsIgnoreCase(DatabaseErrorKey.USER_ACCOUNT_LOCK))
 			{
+				logger.info(TAG + " validateUserLogin :: Lock Account :");
+				resp.setMessageKey(customerLoginModel.getErrorCode());
+				resp.setMessage(customerLoginModel.getErrorCode());
 				customerLoginResponse.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
 				customerLoginResponse.setContactUsEmail(regSession.getContactUsEmail());
 			}
