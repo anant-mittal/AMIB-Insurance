@@ -493,8 +493,17 @@ public class CustomerRegistrationDao
 			customerDetailModel.setLanguageId(callableStatement.getBigDecimal(9));
 			customerDetailModel.setMobileVerify(callableStatement.getString(10));
 			customerDetailModel.setMailVerify(callableStatement.getString(11));
-			logger.info(TAG + " getUserDetails :: Last Login Date :" + callableStatement.getTimestamp(12));
-			customerDetailModel.setLastLogin(callableStatement.getDate(12));
+			
+			String lastDate = "";
+			
+			if(null != callableStatement.getTimestamp(12))
+			{
+				logger.info(TAG + " getUserDetails :: Last Login Date :" + callableStatement.getTimestamp(12));
+				lastDate = formatDate(callableStatement.getTimestamp(12).toString());
+				logger.info(TAG + " getUserDetails :: lastDate :" + lastDate);
+			}
+			
+			customerDetailModel.setLastLogin(lastDate);
 			customerDetailModel.setDeviceId(callableStatement.getString(13));
 			customerDetailModel.setDeviceType(callableStatement.getString(14));
 			customerDetailModel.setUserName(callableStatement.getString(15));
@@ -742,5 +751,22 @@ public class CustomerRegistrationDao
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	public static String formatDate(String inDate)
+	{
+		String outDate = "";
+		SimpleDateFormat inSm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat outSm = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss aaa");
+		try
+		{
+			Date date = inSm.parse(inDate);
+			outDate = outSm.format(date);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return outDate;
 	}
 }

@@ -39,7 +39,7 @@ public class CustomerDetailModel
 
 	private String mailVerify;
 
-	private Date lastLogin;
+	private String lastLogin;
 
 	private String deviceId;
 
@@ -219,12 +219,12 @@ public class CustomerDetailModel
 		this.mailVerify = mailVerify;
 	}
 
-	public Date getLastLogin()
+	public String getLastLogin()
 	{
 		return lastLogin;
 	}
 
-	public void setLastLogin(Date lastLogin)
+	public void setLastLogin(String lastLogin)
 	{
 		this.lastLogin = lastLogin;
 	}
