@@ -6,8 +6,6 @@ import java.sql.Date;
 
 public class CustomerProfileUpdateRequest
 {
-	private BigDecimal customerSequenceNumber;
-
 	private String englishName;
 
 	private String nativeArabicName;
@@ -29,16 +27,6 @@ public class CustomerProfileUpdateRequest
 	private String email;
 
 	private BigDecimal languageId;
-
-	public BigDecimal getCustomerSequenceNumber()
-	{
-		return customerSequenceNumber;
-	}
-
-	public void setCustomerSequenceNumber(BigDecimal customerSequenceNumber)
-	{
-		this.customerSequenceNumber = customerSequenceNumber;
-	}
 
 	public String getEnglishName()
 	{
@@ -153,7 +141,7 @@ public class CustomerProfileUpdateRequest
 	@Override
 	public String toString()
 	{
-		return "CustomerProfileUpdateRequest [customerSequenceNumber=" + customerSequenceNumber + ", englishName=" + englishName + ", nativeArabicName=" + nativeArabicName + ", genderCode=" + genderCode + ", idExpiryDate=" + idExpiryDate + ", businessCode=" + businessCode + ", natyCode=" + natyCode
+		return "CustomerProfileUpdateRequest [englishName=" + englishName + ", nativeArabicName=" + nativeArabicName + ", genderCode=" + genderCode + ", idExpiryDate=" + idExpiryDate + ", businessCode=" + businessCode + ", natyCode=" + natyCode
 				+ ", govCode=" + govCode + ", areaCode=" + areaCode + ", mobile=" + mobile + ", email=" + email + ", languageId=" + languageId + "]";
 	}
 

@@ -220,7 +220,6 @@ public class PersonalDetailsService
 
 		logger.info(TAG + " updateProfileDetails :: Down ");
 
-		customerProfileDetailModel.setCustSequenceNumber(customerProfileUpdateRequest.getCustomerSequenceNumber());
 		customerProfileDetailModel.setEnglishName(customerProfileUpdateRequest.getEnglishName());
 		customerProfileDetailModel.setNativeArabicName(customerProfileUpdateRequest.getNativeArabicName());
 		customerProfileDetailModel.setGenderCode(customerProfileUpdateRequest.getGenderCode());

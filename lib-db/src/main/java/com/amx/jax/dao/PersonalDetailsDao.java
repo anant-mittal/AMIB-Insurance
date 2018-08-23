@@ -127,7 +127,7 @@ public class PersonalDetailsDao
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			callableStatement.setString(3, metaData.getUserType());
 			callableStatement.setString(4, metaData.getCivilId());
-			callableStatement.setBigDecimal(5, customerProfileDetailModel.getCustSequenceNumber());
+			callableStatement.setBigDecimal(5, metaData.getCustomerSequenceNumber());
 			callableStatement.setString(6, customerProfileDetailModel.getEnglishName());
 			callableStatement.setString(7, customerProfileDetailModel.getNativeArabicName());
 			callableStatement.setString(8, customerProfileDetailModel.getGenderCode());
