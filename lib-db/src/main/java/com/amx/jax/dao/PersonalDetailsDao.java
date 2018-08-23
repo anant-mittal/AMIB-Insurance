@@ -1,6 +1,7 @@
 
 package com.amx.jax.dao;
 
+import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -142,10 +143,18 @@ public class PersonalDetailsDao
 			callableStatement.setString(17, metaData.getDeviceId());
 			callableStatement.setString(18, metaData.getDeviceType());
 			callableStatement.setString(19, metaData.getCivilId());
+			
+			callableStatement.registerOutParameter(5, java.sql.Types.NUMERIC);
 			callableStatement.registerOutParameter(20, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(21, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
 
+			if(null != callableStatement.getBigDecimal(5))
+			{
+				logger.info(TAG + " updateProfileDetails :: customerSequenceNumber :" + callableStatement.getBigDecimal(5));
+				metaData.setCustomerSequenceNumber(callableStatement.getBigDecimal(5));
+			}
+			
 			customerProfileDetailModel = new CustomerProfileDetailModel();
 			customerProfileDetailModel.setErrorCode(callableStatement.getString(20));
 			customerProfileDetailModel.setErrorMessage(callableStatement.getString(21));
