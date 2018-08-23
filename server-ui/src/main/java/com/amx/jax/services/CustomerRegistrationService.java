@@ -264,7 +264,12 @@ public class CustomerRegistrationService
 
 	public AmxApiResponse<Validate, Object> isOtpEnabled(String civilId)
 	{
-		if (regSession.getOtpCount() < 1)
+		if(regSession.getCivilId() == null)
+		{
+			regSession.setCivilId(civilId);
+		}
+		
+		if (regSession.getOtpCount() < 1 || !regSession.getCivilId().equals(civilId))
 		{
 			regSession.setOtpCount(1);
 		}
