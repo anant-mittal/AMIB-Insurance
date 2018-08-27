@@ -294,8 +294,8 @@ public class PersonalDetailsService
 				{
 					validate.setValid(false);
 					resp.setStatusKey(ApiConstants.FAILURE);
-					resp.setStatusKey(MessageKey.KEY_MOBILE_OTP_REQUIRED_INVALID);
-					resp.setMessageKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
+					resp.setStatusKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
+					resp.setMessageKey(MessageKey.KEY_MOBILE_OTP_REQUIRED_INVALID);
 					return resp;
 				}
 			}
