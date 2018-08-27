@@ -123,31 +123,4 @@ public class CustomerRegistrationController
 	{
 		return customerRegistrationService.getUserDetails();
 	}
-
-	@RequestMapping(value = "/pub/reg/otp-emailid", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> emailOtpInitiate(@RequestParam("email") String email)
-	{
-		return customerRegistrationService.emailOtpInitiate(email);
-	}
-
-	@RequestMapping(value = "/pub/reg/validate-emailotp", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<Validate, Object> validateEmailOtp(@RequestHeader(value = "eOtp", required = false) String eOtpHeader, @RequestParam(required = false) String eOtp)
-	{
-		eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
-		return customerRegistrationService.validateEmailOtp(eOtp);
-	}
-
-	@RequestMapping(value = "/pub/reg/otp-mobile", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> mobileOtpInitiate(@RequestParam("mobile") String mobile)
-	{
-		return customerRegistrationService.mobileOtpInitiate(mobile);
-	}
-
-	@RequestMapping(value = "/pub/reg/validate-mobileotp", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<Validate, Object> validateMobileOtp(@RequestHeader(value = "mOtp", required = false) String mOtpHeader, @RequestParam(required = false) String mOtp)
-	{
-		mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
-		return customerRegistrationService.validateMobileOtp(mOtp);
-	}
-
 }

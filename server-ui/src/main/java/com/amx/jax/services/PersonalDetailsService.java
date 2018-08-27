@@ -107,46 +107,16 @@ public class PersonalDetailsService
 
 		customerProfileDetailModelCheck = personalDetailsDao.getProfileDetails();
 
-		/*if (null != customerProfileUpdateRequest.getIdExpiryDate())
-		{
-			String dateFromDb = customerProfileUpdateRequest.getIdExpiryDate().toString();
-
-			if (checkExpiryDate(dateFromDb))
-			{
-				logger.info(TAG + " updateProfileDetails :: Civil ID Expired :: dateFromDb :: "+dateFromDb);
-				resp.setStatusKey(ApiConstants.FAILURE);
-				resp.setMessageKey(MessageKey.KEY_CIVIL_ID_EXPIRED);
-				//return resp;
-			}
-
-			String selfTodaysDate = "2018-08-27";
-			if (checkExpiryDate(selfTodaysDate))
-			{
-				logger.info(TAG + " updateProfileDetails :: Civil ID Expired :: selfTodaysDate :: "+selfTodaysDate);
-				resp.setStatusKey(ApiConstants.FAILURE);
-				resp.setMessageKey(MessageKey.KEY_CIVIL_ID_EXPIRED);
-				//return resp;
-			}
-
-			String selfPastDate = "2018-08-26";
-			if (checkExpiryDate(selfPastDate))
-			{
-				logger.info(TAG + " updateProfileDetails :: Civil ID Expired :: selfPastDate :: "+selfPastDate);
-				resp.setStatusKey(ApiConstants.FAILURE);
-				resp.setMessageKey(MessageKey.KEY_CIVIL_ID_EXPIRED);
-				//return resp;
-			}
-			
-			
-			String selfFutureDate = "2018-08-28";
-			if (checkExpiryDate(selfFutureDate))
-			{
-				logger.info(TAG + " updateProfileDetails :: Civil ID Expired :: selfFutureDate :: "+selfFutureDate);
-				resp.setStatusKey(ApiConstants.FAILURE);
-				resp.setMessageKey(MessageKey.KEY_CIVIL_ID_EXPIRED);
-				//return resp;
-			}
-		}*/
+		/*
+		 * if (null != customerProfileUpdateRequest.getIdExpiryDate()) { String
+		 * dateFromDb =
+		 * customerProfileUpdateRequest.getIdExpiryDate().toString();
+		 * 
+		 * if (checkExpiryDate(dateFromDb)) { logger.info(TAG +
+		 * " updateProfileDetails :: Civil ID Expired :: dateFromDb :: " +
+		 * dateFromDb); resp.setStatusKey(ApiConstants.FAILURE);
+		 * resp.setMessageKey(MessageKey.KEY_CIVIL_ID_EXPIRED); return resp; } }
+		 */
 
 		logger.info(TAG + " updateProfileDetails :: getMobile 1 :" + customerProfileDetailModelCheck.getMobile());
 		logger.info(TAG + " updateProfileDetails :: getEmail  2 :" + customerProfileDetailModelCheck.getEmail());
@@ -202,6 +172,7 @@ public class PersonalDetailsService
 					ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 
 					responseOtpModel = customerRegistrationService.sendEmailOtpTemp(customerProfileUpdateRequest.getEmail());
+					
 					metaData.setmOtpMobileNumber(customerProfileUpdateRequest.getMobile());
 					metaData.seteOtpEmailId(customerProfileUpdateRequest.getEmail());
 
@@ -476,100 +447,6 @@ public class PersonalDetailsService
 		}
 		return resp;
 
-	}
-
-	public AmxApiResponse<?, Object> emailMobileOtpInitiate(PersonalDetailsOtpRequest personalDetailsOtpRequest)
-	{
-		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
-		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
-		RequestOtpModel requestOtpModel = new RequestOtpModel();
-		requestOtpModel.setCivilId(metaData.getCivilId());
-		requestOtpModel.setEmailId(personalDetailsOtpRequest.getEmailId());
-		requestOtpModel.setMobileNumber(personalDetailsOtpRequest.getMobileNumber());
-
-		try
-		{
-			AmxApiResponse<Validate, Object> isValidMobileNumber = customerRegistrationService.isValidMobileNumber(metaData.getCivilId());
-			AmxApiResponse<Validate, Object> mobileNumberExists = customerRegistrationService.isMobileNumberExist(metaData.getCivilId());
-			AmxApiResponse<Validate, Object> validateEmailID = customerRegistrationService.isValidEmailId(metaData.getCivilId());
-			AmxApiResponse<Validate, Object> emailIdExists = customerRegistrationService.isEmailIdExist(metaData.getCivilId());
-			AmxApiResponse<Validate, Object> isOtpEnabled = customerRegistrationService.isOtpEnabled(metaData.getCivilId());
-
-			if (isValidMobileNumber.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-			{
-				return isValidMobileNumber;
-			}
-
-			if (validateEmailID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-			{
-				return validateEmailID;
-			}
-
-			if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS) && emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
-			{
-				customerRegistrationService.sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_MOBE_MAIL, requestOtpModel, mobileNumberExists.getMessage());
-				mobileNumberExists.setMessageKey(MessageKey.KEY_MOBILE_OR_EMAIL_ALREADY_EXISTS);
-				mobileNumberExists.setStatusKey(ApiConstants.FAILURE);
-				return mobileNumberExists;
-			}
-			else if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
-			{
-				customerRegistrationService.sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE, requestOtpModel, mobileNumberExists.getMessage());
-				mobileNumberExists.setMessageKey(MessageKey.KEY_MOBILE_OR_EMAIL_ALREADY_EXISTS);
-				mobileNumberExists.setStatusKey(ApiConstants.FAILURE);
-				return mobileNumberExists;
-			}
-			else if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
-			{
-				customerRegistrationService.sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL, requestOtpModel, emailIdExists.getMessage());
-				emailIdExists.setMessageKey(MessageKey.KEY_MOBILE_OR_EMAIL_ALREADY_EXISTS);
-				emailIdExists.setStatusKey(ApiConstants.FAILURE);
-				return emailIdExists;
-			}
-
-			if (isOtpEnabled.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-			{
-				return isOtpEnabled;
-			}
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			resp.setData(null);
-			resp.setException(e.toString());
-			resp.setStatus(ApiConstants.FAILURE);
-			return resp;
-		}
-
-		try
-		{
-
-			AmxApiResponse<Validate, Object> setOtpCount = customerRegistrationService.setOtpCount(metaData.getCivilId());
-
-			responseOtpModel = customerRegistrationService.sendEmailOtpTemp(requestOtpModel.getEmailId());
-
-			/*
-			 * Code Needed Here For Mobile Otp
-			 * 
-			 */
-
-			resp.setData(responseOtpModel);
-			resp.setStatus(ApiConstants.SUCCESS);
-
-			if (setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-			{
-				return setOtpCount;
-			}
-
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			resp.setData(null);
-			resp.setException(e.toString());
-			resp.setStatus(ApiConstants.FAILURE);
-		}
-		return resp;
 	}
 
 	public boolean checkExpiryDate(String idExpiryDate)

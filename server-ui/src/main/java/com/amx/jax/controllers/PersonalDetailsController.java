@@ -37,18 +37,12 @@ public class PersonalDetailsController
 	}
 
 	@RequestMapping(value = "/api/personal/update-profiledetails", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> updateProfileDetails
-	(
-			@RequestHeader(value = "mOtp", required = false) String mOtpHeader, 
-			@RequestHeader(value = "eOtp", required = false) String eOtpHeader, 
-			@RequestParam(required = false) String mOtp,
-			@RequestParam(required = false) String eOtp, 
-			@RequestBody CustomerProfileUpdateRequest customerProfileUpdateRequest
-	)
+	public AmxApiResponse<?, Object> updateProfileDetails(@RequestHeader(value = "mOtp", required = false) String mOtpHeader, @RequestHeader(value = "eOtp", required = false) String eOtpHeader, @RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp,
+			@RequestBody CustomerProfileUpdateRequest customerProfileUpdateRequest)
 	{
 		mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
 		eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
-		return personalDetailsService.updateProfileDetails(mOtp,eOtp,customerProfileUpdateRequest);
+		return personalDetailsService.updateProfileDetails(mOtp, eOtp, customerProfileUpdateRequest);
 	}
 
 	@RequestMapping(value = "/api/personal/business", method = RequestMethod.GET, produces = "application/json")
@@ -79,11 +73,5 @@ public class PersonalDetailsController
 	public AmxApiResponse<?, Object> getGender()
 	{
 		return personalDetailsService.getGender();
-	}
-
-	@RequestMapping(value = "/api/personal/otp-initiate", method = RequestMethod.POST)
-	public AmxApiResponse<?, Object> emailMobileOtpInitiate(@RequestBody PersonalDetailsOtpRequest requestOtpModel)
-	{
-		return personalDetailsService.emailMobileOtpInitiate(requestOtpModel);
 	}
 }
