@@ -49,5 +49,7 @@ public class MessageKey
 	public static String KEY_MOBILE_OTP_REQUIRED = "MOTP_REQUIRED";
 	
 	public static String KEY_MOBILE_OTP_REQUIRED_INVALID = "MOTP_REQUIRED_INVALID";
+	
+	public static String KEY_CIVIL_ID_EXPIRED = "CIVIL_ID_EXPIRED";
 
 }

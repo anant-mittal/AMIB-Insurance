@@ -109,11 +109,42 @@ public class PersonalDetailsService
 
 		/*if (null != customerProfileUpdateRequest.getIdExpiryDate())
 		{
-			if(checkExpiryDate(customerProfileUpdateRequest.getIdExpiryDate().toString()))
+			String dateFromDb = customerProfileUpdateRequest.getIdExpiryDate().toString();
+
+			if (checkExpiryDate(dateFromDb))
 			{
-				resp.setStatusKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
-				resp.setMessageKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
-				return resp;
+				logger.info(TAG + " updateProfileDetails :: Civil ID Expired :: dateFromDb :: "+dateFromDb);
+				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setMessageKey(MessageKey.KEY_CIVIL_ID_EXPIRED);
+				//return resp;
+			}
+
+			String selfTodaysDate = "2018-08-27";
+			if (checkExpiryDate(selfTodaysDate))
+			{
+				logger.info(TAG + " updateProfileDetails :: Civil ID Expired :: selfTodaysDate :: "+selfTodaysDate);
+				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setMessageKey(MessageKey.KEY_CIVIL_ID_EXPIRED);
+				//return resp;
+			}
+
+			String selfPastDate = "2018-08-26";
+			if (checkExpiryDate(selfPastDate))
+			{
+				logger.info(TAG + " updateProfileDetails :: Civil ID Expired :: selfPastDate :: "+selfPastDate);
+				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setMessageKey(MessageKey.KEY_CIVIL_ID_EXPIRED);
+				//return resp;
+			}
+			
+			
+			String selfFutureDate = "2018-08-28";
+			if (checkExpiryDate(selfFutureDate))
+			{
+				logger.info(TAG + " updateProfileDetails :: Civil ID Expired :: selfFutureDate :: "+selfFutureDate);
+				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setMessageKey(MessageKey.KEY_CIVIL_ID_EXPIRED);
+				//return resp;
 			}
 		}*/
 
@@ -122,7 +153,8 @@ public class PersonalDetailsService
 		logger.info(TAG + " updateProfileDetails :: getMobile 3 :" + customerProfileUpdateRequest.getMobile());
 		logger.info(TAG + " updateProfileDetails :: getEmail  4 :" + customerProfileUpdateRequest.getEmail());
 
-		if (null != customerProfileDetailModelCheck.getMobile() && null != customerProfileDetailModelCheck.getEmail() && !customerProfileDetailModelCheck.getMobile().equals(customerProfileUpdateRequest.getMobile()) && !customerProfileDetailModelCheck.getEmail().equals(customerProfileUpdateRequest.getEmail()))
+		if (null != customerProfileDetailModelCheck.getMobile() && null != customerProfileDetailModelCheck.getEmail() && !customerProfileDetailModelCheck.getMobile().equals(customerProfileUpdateRequest.getMobile())
+				&& !customerProfileDetailModelCheck.getEmail().equals(customerProfileUpdateRequest.getEmail()))
 
 		{
 			logger.info(TAG + " updateProfileDetails :: Both Chnaged");
@@ -182,6 +214,7 @@ public class PersonalDetailsService
 				if (!metaData.getMotp().equals(mOtp) || !metaData.getEotp().equals(eOtp))
 				{
 					validate.setValid(false);
+					resp.setError(Message.REG_INVALID_OTP);
 					resp.setStatusKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
 					resp.setMessageKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED_INVALID);
 					return resp;
@@ -239,6 +272,7 @@ public class PersonalDetailsService
 				if (!metaData.getEotp().equals(eOtp))
 				{
 					validate.setValid(false);
+					resp.setError(Message.REG_INVALID_OTP);
 					resp.setStatusKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
 					resp.setMessageKey(MessageKey.KEY_EMAIL_OTP_REQUIRED_INVALID);
 					return resp;
@@ -293,7 +327,7 @@ public class PersonalDetailsService
 				if (!metaData.getMotp().equals(mOtp))
 				{
 					validate.setValid(false);
-					resp.setStatusKey(ApiConstants.FAILURE);
+					resp.setError(Message.REG_INVALID_OTP);
 					resp.setStatusKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
 					resp.setMessageKey(MessageKey.KEY_MOBILE_OTP_REQUIRED_INVALID);
 					return resp;
@@ -538,31 +572,30 @@ public class PersonalDetailsService
 		return resp;
 	}
 
-	
 	public boolean checkExpiryDate(String idExpiryDate)
 	{
 		try
 		{
 			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-			
+
 			java.util.Date todays = sdf.parse(formatDate(new java.util.Date().toString()));
 			java.util.Date idExpDateFormatted = sdf.parse(formatDate2(idExpiryDate));
-			
-			logger.info(TAG + " updateProfileDetails :: todays :" + todays);
-			logger.info(TAG + " updateProfileDetails :: idExpDateFormatted :" + idExpDateFormatted);
-			
+
+			logger.info(TAG + " checkExpiryDate :: todays :" + todays);
+			logger.info(TAG + " checkExpiryDate :: idExpDateFormatted :" + idExpDateFormatted);
+
 			if (idExpDateFormatted.before(todays))
 			{
 				return true;
 			}
 		}
-		catch (Exception e) 
+		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
 		return false;
 	}
-	
+
 	public String formatDate(String inDate)
 	{
 		String outDate = "";
@@ -579,7 +612,7 @@ public class PersonalDetailsService
 		}
 		return outDate;
 	}
-	
+
 	public String formatDate2(String inDate)
 	{
 		String outDate = "";
@@ -596,6 +629,5 @@ public class PersonalDetailsService
 		}
 		return outDate;
 	}
-	
 
 }
