@@ -753,7 +753,7 @@ public class CustomerRegistrationDao
 		}
 	}
 	
-	public static String formatDate(String inDate)
+	public String formatDate(String inDate)
 	{
 		String outDate = "";
 		SimpleDateFormat inSm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

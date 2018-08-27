@@ -3,6 +3,8 @@ package com.amx.jax.services;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,29 +107,22 @@ public class PersonalDetailsService
 
 		customerProfileDetailModelCheck = personalDetailsDao.getProfileDetails();
 
-		if (null != customerProfileUpdateRequest.getIdExpiryDate())
+		/*if (null != customerProfileUpdateRequest.getIdExpiryDate())
 		{
-			java.util.Date current = new java.util.Date();
-			java.util.Date idExpDate = customerProfileUpdateRequest.getIdExpiryDate();
-
-			logger.info(TAG + " updateProfileDetails :: idExpDate  :" + idExpDate);
-			logger.info(TAG + " updateProfileDetails :: (idExpDate.before(current))  :" + (idExpDate.before(current)));
-			if (idExpDate.before(current))
+			if(checkExpiryDate(customerProfileUpdateRequest.getIdExpiryDate().toString()))
 			{
-				logger.info(TAG + " updateProfileDetails :: The date is older than current day");
+				resp.setStatusKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
+				resp.setMessageKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
+				return resp;
 			}
-			else
-			{
-				logger.info(TAG + " updateProfileDetails :: The date is future day");
-			}
-		}
+		}*/
 
 		logger.info(TAG + " updateProfileDetails :: getMobile 1 :" + customerProfileDetailModelCheck.getMobile());
 		logger.info(TAG + " updateProfileDetails :: getEmail  2 :" + customerProfileDetailModelCheck.getEmail());
 		logger.info(TAG + " updateProfileDetails :: getMobile 3 :" + customerProfileUpdateRequest.getMobile());
 		logger.info(TAG + " updateProfileDetails :: getEmail  4 :" + customerProfileUpdateRequest.getEmail());
 
-		if (!customerProfileDetailModelCheck.getMobile().equals(customerProfileUpdateRequest.getMobile()) && !customerProfileDetailModelCheck.getEmail().equals(customerProfileUpdateRequest.getEmail()))
+		if (null != customerProfileDetailModelCheck.getMobile() && null != customerProfileDetailModelCheck.getEmail() && !customerProfileDetailModelCheck.getMobile().equals(customerProfileUpdateRequest.getMobile()) && !customerProfileDetailModelCheck.getEmail().equals(customerProfileUpdateRequest.getEmail()))
 
 		{
 			logger.info(TAG + " updateProfileDetails :: Both Chnaged");
@@ -207,7 +202,7 @@ public class PersonalDetailsService
 				return resp;
 			}
 		}
-		else if (!customerProfileDetailModelCheck.getEmail().equals(customerProfileUpdateRequest.getEmail()))
+		else if (null != customerProfileDetailModelCheck.getEmail() && !customerProfileDetailModelCheck.getEmail().equals(customerProfileUpdateRequest.getEmail()))
 		{
 			logger.info(TAG + " updateProfileDetails :: Email ");
 			logger.info(TAG + " updateProfileDetails :: eOtp :" + eOtp);
@@ -261,7 +256,7 @@ public class PersonalDetailsService
 				return resp;
 			}
 		}
-		else if (!customerProfileDetailModelCheck.getMobile().equals(customerProfileUpdateRequest.getMobile()))
+		else if (null != customerProfileDetailModelCheck.getMobile() && !customerProfileDetailModelCheck.getMobile().equals(customerProfileUpdateRequest.getMobile()))
 		{
 			logger.info(TAG + " updateProfileDetails :: Mobile Chnaged");
 			logger.info(TAG + " updateProfileDetails :: mOtp :" + mOtp);
@@ -299,7 +294,7 @@ public class PersonalDetailsService
 				{
 					validate.setValid(false);
 					resp.setStatusKey(ApiConstants.FAILURE);
-					resp.setMessage(MessageKey.KEY_MOBILE_OTP_REQUIRED_INVALID);
+					resp.setStatusKey(MessageKey.KEY_MOBILE_OTP_REQUIRED_INVALID);
 					resp.setMessageKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
 					return resp;
 				}
@@ -542,5 +537,65 @@ public class PersonalDetailsService
 		}
 		return resp;
 	}
+
+	
+	public boolean checkExpiryDate(String idExpiryDate)
+	{
+		try
+		{
+			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+			
+			java.util.Date todays = sdf.parse(formatDate(new java.util.Date().toString()));
+			java.util.Date idExpDateFormatted = sdf.parse(formatDate2(idExpiryDate));
+			
+			logger.info(TAG + " updateProfileDetails :: todays :" + todays);
+			logger.info(TAG + " updateProfileDetails :: idExpDateFormatted :" + idExpDateFormatted);
+			
+			if (idExpDateFormatted.before(todays))
+			{
+				return true;
+			}
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public String formatDate(String inDate)
+	{
+		String outDate = "";
+		SimpleDateFormat inSm = new SimpleDateFormat("E MMM dd HH:mm:ss Z yyyy");
+		SimpleDateFormat outSm = new SimpleDateFormat("dd-MM-yyyy");
+		try
+		{
+			java.util.Date date = inSm.parse(inDate);
+			outDate = outSm.format(date);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return outDate;
+	}
+	
+	public String formatDate2(String inDate)
+	{
+		String outDate = "";
+		SimpleDateFormat sdffromDb = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat outSm = new SimpleDateFormat("dd-MM-yyyy");
+		try
+		{
+			java.util.Date date = sdffromDb.parse(inDate);
+			outDate = outSm.format(date);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return outDate;
+	}
+	
 
 }
