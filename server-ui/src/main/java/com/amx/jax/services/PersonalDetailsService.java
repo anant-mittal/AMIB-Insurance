@@ -105,12 +105,30 @@ public class PersonalDetailsService
 
 		customerProfileDetailModelCheck = personalDetailsDao.getProfileDetails();
 
+		if (null != customerProfileUpdateRequest.getIdExpiryDate())
+		{
+			java.util.Date current = new java.util.Date();
+			java.util.Date idExpDate = customerProfileUpdateRequest.getIdExpiryDate();
+
+			logger.info(TAG + " updateProfileDetails :: idExpDate  :" + idExpDate);
+			logger.info(TAG + " updateProfileDetails :: (idExpDate.before(current))  :" + (idExpDate.before(current)));
+			if (idExpDate.before(current))
+			{
+				logger.info(TAG + " updateProfileDetails :: The date is older than current day");
+			}
+			else
+			{
+				logger.info(TAG + " updateProfileDetails :: The date is future day");
+			}
+		}
+
 		logger.info(TAG + " updateProfileDetails :: getMobile 1 :" + customerProfileDetailModelCheck.getMobile());
 		logger.info(TAG + " updateProfileDetails :: getEmail  2 :" + customerProfileDetailModelCheck.getEmail());
 		logger.info(TAG + " updateProfileDetails :: getMobile 3 :" + customerProfileUpdateRequest.getMobile());
 		logger.info(TAG + " updateProfileDetails :: getEmail  4 :" + customerProfileUpdateRequest.getEmail());
 
-		/*if (!customerProfileDetailModelCheck.getMobile().equals(customerProfileUpdateRequest.getMobile()) && !customerProfileDetailModelCheck.getEmail().equals(customerProfileUpdateRequest.getEmail()))
+		if (!customerProfileDetailModelCheck.getMobile().equals(customerProfileUpdateRequest.getMobile()) && !customerProfileDetailModelCheck.getEmail().equals(customerProfileUpdateRequest.getEmail()))
+
 		{
 			logger.info(TAG + " updateProfileDetails :: Both Chnaged");
 			logger.info(TAG + " updateProfileDetails :: mOtp :" + mOtp);
@@ -131,18 +149,15 @@ public class PersonalDetailsService
 				return validateEmailID;
 			}
 
-			else if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+			if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
-				// sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE,
-				// requestOtpModel, mobileNumberExists.getMessage());
 				mobileNumberExists.setMessageKey(MessageKey.KEY_MOBILE_NO_ALREADY_REGISTER);
 				mobileNumberExists.setStatusKey(ApiConstants.FAILURE);
 				return mobileNumberExists;
 			}
-			else if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+
+			if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
-				// sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL,
-				// requestOtpModel, emailIdExists.getMessage());
 				emailIdExists.setMessageKey(MessageKey.KEY_EMAID_ALREADY_REGISTER);
 				emailIdExists.setStatusKey(ApiConstants.FAILURE);
 				return emailIdExists;
@@ -150,11 +165,21 @@ public class PersonalDetailsService
 
 			if (null != mOtp && !mOtp.equals("") && null != eOtp && !eOtp.equals(""))
 			{
+				logger.info(TAG + " updateProfileDetails :: getmOtpMobileNumber  :" + metaData.getmOtpMobileNumber());
+				logger.info(TAG + " updateProfileDetails :: getMobile            :" + customerProfileUpdateRequest.getMobile());
+				logger.info(TAG + " updateProfileDetails :: geteOtpEmailId       :" + metaData.geteOtpEmailId());
+				logger.info(TAG + " updateProfileDetails :: getEmail             :" + customerProfileUpdateRequest.getEmail());
+
 				if (!metaData.getmOtpMobileNumber().equals(customerProfileUpdateRequest.getMobile()) || !metaData.geteOtpEmailId().equals(customerProfileUpdateRequest.getEmail()))
 				{
-					ResponseOtpModel responseOtpModel = customerRegistrationService.sendEmailOtpTemp(customerProfileUpdateRequest.getEmail());
+					ResponseOtpModel responseOtpModel = new ResponseOtpModel();
+
+					responseOtpModel = customerRegistrationService.sendEmailOtpTemp(customerProfileUpdateRequest.getEmail());
+					metaData.setmOtpMobileNumber(customerProfileUpdateRequest.getMobile());
+					metaData.seteOtpEmailId(customerProfileUpdateRequest.getEmail());
+
 					resp.setMeta(responseOtpModel);
-					resp.setStatusKey(ApiConstants.FAILURE);
+					resp.setStatusKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
 					resp.setMessageKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
 					return resp;
 				}
@@ -162,17 +187,22 @@ public class PersonalDetailsService
 				if (!metaData.getMotp().equals(mOtp) || !metaData.getEotp().equals(eOtp))
 				{
 					validate.setValid(false);
-					resp.setStatusKey(ApiConstants.FAILURE);
-					resp.setMessage(Message.REG_INVALID_OTP);
-					resp.setMessageKey(MessageKey.KEY_REG_VALIDATE_OTP);
+					resp.setStatusKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
+					resp.setMessageKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED_INVALID);
 					return resp;
 				}
 			}
 			else
 			{
-				ResponseOtpModel responseOtpModel = customerRegistrationService.sendEmailOtpTemp(customerProfileUpdateRequest.getEmail());
+				ResponseOtpModel responseOtpModel = new ResponseOtpModel();
+
+				responseOtpModel = customerRegistrationService.sendEmailOtpTemp(customerProfileUpdateRequest.getEmail());
+
+				metaData.setmOtpMobileNumber(customerProfileUpdateRequest.getMobile());
+				metaData.seteOtpEmailId(customerProfileUpdateRequest.getEmail());
+
 				resp.setMeta(responseOtpModel);
-				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setStatusKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
 				resp.setMessageKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
 				return resp;
 			}
@@ -192,8 +222,6 @@ public class PersonalDetailsService
 
 			if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
-				// sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL,
-				// requestOtpModel, emailIdExists.getMessage());
 				emailIdExists.setMessageKey(MessageKey.KEY_EMAID_ALREADY_REGISTER);
 				emailIdExists.setStatusKey(ApiConstants.FAILURE);
 				return emailIdExists;
@@ -203,9 +231,12 @@ public class PersonalDetailsService
 			{
 				if (!metaData.geteOtpEmailId().equals(customerProfileUpdateRequest.getEmail()))
 				{
-					ResponseOtpModel responseOtpModel = customerRegistrationService.sendEmailOtp(customerProfileUpdateRequest.getEmail());
+					ResponseOtpModel responseOtpModel = new ResponseOtpModel();
+
+					responseOtpModel = customerRegistrationService.sendEmailOtp(customerProfileUpdateRequest.getEmail());
+					metaData.seteOtpEmailId(customerProfileUpdateRequest.getEmail());
 					resp.setMeta(responseOtpModel);
-					resp.setStatusKey(ApiConstants.FAILURE);
+					resp.setStatusKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
 					resp.setMessageKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
 					return resp;
 				}
@@ -213,17 +244,19 @@ public class PersonalDetailsService
 				if (!metaData.getEotp().equals(eOtp))
 				{
 					validate.setValid(false);
-					resp.setStatusKey(ApiConstants.FAILURE);
-					resp.setMessage(Message.REG_INVALID_OTP);
-					resp.setMessageKey(MessageKey.KEY_VALIDATE_EMAIL_OTP);
+					resp.setStatusKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
+					resp.setMessageKey(MessageKey.KEY_EMAIL_OTP_REQUIRED_INVALID);
 					return resp;
 				}
 			}
 			else
 			{
-				ResponseOtpModel responseOtpModel = customerRegistrationService.sendEmailOtpTemp(customerProfileUpdateRequest.getEmail());
+				ResponseOtpModel responseOtpModel = new ResponseOtpModel();
+
+				responseOtpModel = customerRegistrationService.sendEmailOtp(customerProfileUpdateRequest.getEmail());
+				metaData.seteOtpEmailId(customerProfileUpdateRequest.getEmail());
 				resp.setMeta(responseOtpModel);
-				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setStatusKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
 				resp.setMessageKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
 				return resp;
 			}
@@ -243,8 +276,6 @@ public class PersonalDetailsService
 
 			if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
-				// sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE,
-				// requestOtpModel, mobileNumberExists.getMessage());
 				mobileNumberExists.setMessageKey(MessageKey.KEY_MOBILE_NO_ALREADY_REGISTER);
 				mobileNumberExists.setStatusKey(ApiConstants.FAILURE);
 				return mobileNumberExists;
@@ -254,9 +285,12 @@ public class PersonalDetailsService
 			{
 				if (!metaData.getmOtpMobileNumber().equals(customerProfileUpdateRequest.getMobile()))
 				{
-					ResponseOtpModel responseOtpModel = customerRegistrationService.sendEmailOtpTemp(customerProfileUpdateRequest.getEmail());
+					ResponseOtpModel responseOtpModel = new ResponseOtpModel();
+
+					responseOtpModel = customerRegistrationService.sendMobileOtp(customerProfileUpdateRequest.getMobile());
+					metaData.setmOtpMobileNumber(customerProfileUpdateRequest.getMobile());
 					resp.setMeta(responseOtpModel);
-					resp.setStatusKey(ApiConstants.FAILURE);
+					resp.setStatusKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
 					resp.setMessageKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
 					return resp;
 				}
@@ -265,22 +299,22 @@ public class PersonalDetailsService
 				{
 					validate.setValid(false);
 					resp.setStatusKey(ApiConstants.FAILURE);
-					resp.setMessage(Message.REG_INVALID_OTP);
-					resp.setMessageKey(MessageKey.KEY_VALIDATE_MOBILE_OTP);
+					resp.setMessage(MessageKey.KEY_MOBILE_OTP_REQUIRED_INVALID);
+					resp.setMessageKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
 					return resp;
 				}
 			}
 			else
 			{
-				ResponseOtpModel responseOtpModel = customerRegistrationService.sendEmailOtpTemp(customerProfileUpdateRequest.getEmail());
+				ResponseOtpModel responseOtpModel = new ResponseOtpModel();
+				responseOtpModel = customerRegistrationService.sendMobileOtp(customerProfileUpdateRequest.getMobile());
+				metaData.setmOtpMobileNumber(customerProfileUpdateRequest.getMobile());
 				resp.setMeta(responseOtpModel);
-				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setStatusKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
 				resp.setMessageKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
 				return resp;
 			}
-		}*/
-
-		logger.info(TAG + " updateProfileDetails :: Down ");
+		}
 
 		customerProfileDetailModel.setEnglishName(customerProfileUpdateRequest.getEnglishName());
 		customerProfileDetailModel.setNativeArabicName(customerProfileUpdateRequest.getNativeArabicName());

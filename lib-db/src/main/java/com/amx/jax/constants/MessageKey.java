@@ -40,8 +40,14 @@ public class MessageKey
 	
 	public static String KEY_EMAIL_MOBILE_OTP_REQUIRED = "DOTP_REQUIRED";
 	
+	public static String KEY_EMAIL_MOBILE_OTP_REQUIRED_INVALID = "DOTP_REQUIRED_INVALID";
+	
 	public static String KEY_EMAIL_OTP_REQUIRED = "EOTP_REQUIRED";
 	
+	public static String KEY_EMAIL_OTP_REQUIRED_INVALID = "EOTP_REQUIRED_INVALID";
+	
 	public static String KEY_MOBILE_OTP_REQUIRED = "MOTP_REQUIRED";
+	
+	public static String KEY_MOBILE_OTP_REQUIRED_INVALID = "MOTP_REQUIRED_INVALID";
 
 }

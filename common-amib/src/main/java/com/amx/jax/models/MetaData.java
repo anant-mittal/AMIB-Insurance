@@ -55,9 +55,9 @@ public class MetaData implements Serializable
 
 	private String contactUsHelpLineNumber;
 
-	private String mOtpMobileNumber;
+	private String mOtpMobileNumber = "";
 
-	private String eOtpEmailId;
+	private String eOtpEmailId = "";
 
 	public BigDecimal getUserAmibCustRef()
 	{
