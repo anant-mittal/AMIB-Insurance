@@ -594,8 +594,8 @@ public class CustomerRegistrationService
 
 			String emailIdFrom = webConfig.getConfigEmail();
 			String emailITo = regSession.getEmailId();
-			String Subject = "Almulla Insurance Registartion Confirmation";
-			String mailData = "Almulla Insurance Registartion Completed Successfuill.";
+			String Subject = "Al Mulla Insurance Registartion Confirmation";
+			String mailData = "Al Mulla Insurance Registration Completed Successfully.";
 
 			Email email = emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
 			if (email.getEmailSentStatus())
@@ -925,15 +925,15 @@ public class CustomerRegistrationService
 
 		String emailIdFrom = webConfig.getConfigEmail();
 		String emailITo = emailId;
-		String Subject = "Almulla Insurance Otp";
-		String mailData = "Your Email OTP Generated From Almulla Insurance is : " + emailOtpToSend + "          And Mobile Otp is :" + mobileOtpToSend + "";
+		String Subject = "OTP Verification";
+		String mailData = "Your Email OTP Generated From Al Mulla Insurance is : " + emailOtpToSend + "          And Mobile Otp is :" + mobileOtpToSend + "";
 
 		emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
 
 		return responseOtpModel;
 	}
 	
-	public ResponseOtpModel sendEmailOtp(String emailId)
+	/*public ResponseOtpModel sendEmailOtp(String emailId)
 	{
 		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 
@@ -958,7 +958,7 @@ public class CustomerRegistrationService
 		emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
 
 		return responseOtpModel;
-	}
+	}*/
 	
 	public String sendEmailOtp(String emailId,String data)
 	{
@@ -979,7 +979,7 @@ public class CustomerRegistrationService
 
 		String emailIdFrom = webConfig.getConfigEmail();
 		String emailITo = emailId;
-		String Subject = "Almulla Insurance Otp";
+		String Subject = "OTP Verification";
 		String mailData = "Your Email OTP Generated From Almulla Insurance is : " + emailOtpToSend;
 
 		emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
@@ -987,7 +987,7 @@ public class CustomerRegistrationService
 		return emailOtpPrefix;
 	}
 
-	public ResponseOtpModel sendMobileOtp(String mobileNumber)
+	/*public ResponseOtpModel sendMobileOtp(String mobileNumber)
 	{
 		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 
@@ -1008,15 +1008,15 @@ public class CustomerRegistrationService
 		
 		String mailData = "Your Mobile OTP Generated From Almulla Insurance is : " + mobileOtpToSend;
 
-		/*String emailIdFrom = webConfig.getConfigEmail();
+		String emailIdFrom = webConfig.getConfigEmail();
 		String emailITo = "dipali.pingale@mobicule.com";
 		String Subject = "Almulla Insurance Otp";
-		emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);*/
+		emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
 
 		smservice.sendMessage(mobileWithCode,mailData);
 
 		return responseOtpModel;
-	}
+	}*/
 	
 	
 	public String sendMobileOtp(String mobileNumber, String data)
@@ -1037,14 +1037,14 @@ public class CustomerRegistrationService
 
 		metaData.setMotpPrefix(mobileOtpPrefix);
 		metaData.setMotp(mobileOtp);
+		String mailData = "Your Email OTP Generated From Al Mulla Insurance is : " + mobileOtpToSend;
 
-		String emailIdFrom = webConfig.getConfigEmail();
+		/*String emailIdFrom = webConfig.getConfigEmail();
 		String emailITo = "dipali.pingale@mobicule.com";
 		String Subject = "Almulla Insurance Otp";
-		String mailData = "Your Email OTP Generated From Almulla Insurance is : " + mobileOtpToSend;
-		emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
+		emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);*/
 
-		// smservice.sendMessage(mobileWithCode,mailData);
+		smservice.sendMessage(mobileWithCode,mailData);
 
 		return mobileOtpPrefix;
 	}

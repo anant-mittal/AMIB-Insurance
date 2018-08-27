@@ -170,12 +170,12 @@ public class PersonalDetailsService
 				if (!metaData.getmOtpMobileNumber().equals(customerProfileUpdateRequest.getMobile()) || !metaData.geteOtpEmailId().equals(customerProfileUpdateRequest.getEmail()))
 				{
 					ResponseOtpModel responseOtpModel = new ResponseOtpModel();
-
-					responseOtpModel = customerRegistrationService.sendEmailOtpTemp(customerProfileUpdateRequest.getEmail());
-					
+					String eOtpPrefix = customerRegistrationService.sendEmailOtp(customerProfileUpdateRequest.getEmail(),"");
+					String mOtpPrefix = customerRegistrationService.sendMobileOtp(customerProfileUpdateRequest.getMobile(),"");
+					responseOtpModel.setEotpPrefix(eOtpPrefix);
+					responseOtpModel.setMotpPrefix(mOtpPrefix);
 					metaData.setmOtpMobileNumber(customerProfileUpdateRequest.getMobile());
 					metaData.seteOtpEmailId(customerProfileUpdateRequest.getEmail());
-
 					resp.setMeta(responseOtpModel);
 					resp.setStatusKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
 					resp.setMessageKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
@@ -195,11 +195,12 @@ public class PersonalDetailsService
 			{
 				ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 
-				responseOtpModel = customerRegistrationService.sendEmailOtpTemp(customerProfileUpdateRequest.getEmail());
-
+				String eOtpPrefix = customerRegistrationService.sendEmailOtp(customerProfileUpdateRequest.getEmail(),"");
+				String mOtpPrefix = customerRegistrationService.sendMobileOtp(customerProfileUpdateRequest.getMobile(),"");
+				responseOtpModel.setEotpPrefix(eOtpPrefix);
+				responseOtpModel.setMotpPrefix(mOtpPrefix);
 				metaData.setmOtpMobileNumber(customerProfileUpdateRequest.getMobile());
 				metaData.seteOtpEmailId(customerProfileUpdateRequest.getEmail());
-
 				resp.setMeta(responseOtpModel);
 				resp.setStatusKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
 				resp.setMessageKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
@@ -231,8 +232,9 @@ public class PersonalDetailsService
 				if (!metaData.geteOtpEmailId().equals(customerProfileUpdateRequest.getEmail()))
 				{
 					ResponseOtpModel responseOtpModel = new ResponseOtpModel();
-
-					responseOtpModel = customerRegistrationService.sendEmailOtp(customerProfileUpdateRequest.getEmail());
+					String eOtpPrefix = customerRegistrationService.sendEmailOtp(customerProfileUpdateRequest.getEmail(),"");
+					responseOtpModel.setEotpPrefix(eOtpPrefix);
+					responseOtpModel.setMotpPrefix(null);
 					metaData.seteOtpEmailId(customerProfileUpdateRequest.getEmail());
 					resp.setMeta(responseOtpModel);
 					resp.setStatusKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
@@ -252,8 +254,9 @@ public class PersonalDetailsService
 			else
 			{
 				ResponseOtpModel responseOtpModel = new ResponseOtpModel();
-
-				responseOtpModel = customerRegistrationService.sendEmailOtp(customerProfileUpdateRequest.getEmail());
+				String eOtpPrefix = customerRegistrationService.sendEmailOtp(customerProfileUpdateRequest.getEmail(),"");
+				responseOtpModel.setEotpPrefix(eOtpPrefix);
+				responseOtpModel.setMotpPrefix(null);
 				metaData.seteOtpEmailId(customerProfileUpdateRequest.getEmail());
 				resp.setMeta(responseOtpModel);
 				resp.setStatusKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
@@ -286,8 +289,9 @@ public class PersonalDetailsService
 				if (!metaData.getmOtpMobileNumber().equals(customerProfileUpdateRequest.getMobile()))
 				{
 					ResponseOtpModel responseOtpModel = new ResponseOtpModel();
-
-					responseOtpModel = customerRegistrationService.sendMobileOtp(customerProfileUpdateRequest.getMobile());
+					String mOtpPrefix = customerRegistrationService.sendMobileOtp(customerProfileUpdateRequest.getMobile(),"");
+					responseOtpModel.setMotpPrefix(mOtpPrefix);
+					responseOtpModel.setEotpPrefix(null);
 					metaData.setmOtpMobileNumber(customerProfileUpdateRequest.getMobile());
 					resp.setMeta(responseOtpModel);
 					resp.setStatusKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
@@ -307,7 +311,9 @@ public class PersonalDetailsService
 			else
 			{
 				ResponseOtpModel responseOtpModel = new ResponseOtpModel();
-				responseOtpModel = customerRegistrationService.sendMobileOtp(customerProfileUpdateRequest.getMobile());
+				String mOtpPrefix = customerRegistrationService.sendMobileOtp(customerProfileUpdateRequest.getMobile(),"");
+				responseOtpModel.setMotpPrefix(mOtpPrefix);
+				responseOtpModel.setEotpPrefix(null);
 				metaData.setmOtpMobileNumber(customerProfileUpdateRequest.getMobile());
 				resp.setMeta(responseOtpModel);
 				resp.setStatusKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
