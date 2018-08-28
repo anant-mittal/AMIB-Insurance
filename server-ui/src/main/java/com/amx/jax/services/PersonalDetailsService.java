@@ -188,7 +188,7 @@ public class PersonalDetailsService
 					resp.setMessageKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
 					return resp;*/
 					
-					otpService.initiateMobileEmailOtp(customerProfileUpdateRequest.getEmail(), customerProfileUpdateRequest.getMobile());
+					return otpService.initiateMobileEmailOtp(customerProfileUpdateRequest.getEmail(), customerProfileUpdateRequest.getMobile());
 					
 				}
 
@@ -215,7 +215,7 @@ public class PersonalDetailsService
 				resp.setMessageKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
 				return resp;*/
 				
-				otpService.initiateMobileEmailOtp(customerProfileUpdateRequest.getEmail(), customerProfileUpdateRequest.getMobile());
+				return otpService.initiateMobileEmailOtp(customerProfileUpdateRequest.getEmail(), customerProfileUpdateRequest.getMobile());
 			}
 		}
 		else if (null != customerProfileDetailModelCheck.getEmail() && !customerProfileDetailModelCheck.getEmail().equals(customerProfileUpdateRequest.getEmail()))
@@ -252,7 +252,7 @@ public class PersonalDetailsService
 					resp.setMessageKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
 					return resp;*/
 					
-					otpService.initiateEmailOtp(customerProfileUpdateRequest.getEmail());
+					return otpService.initiateEmailOtp(customerProfileUpdateRequest.getEmail());
 				}
 
 				if (!metaData.getEotp().equals(eOtp))
@@ -275,7 +275,7 @@ public class PersonalDetailsService
 				resp.setStatusKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
 				resp.setMessageKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
 				return resp;*/
-				otpService.initiateEmailOtp(customerProfileUpdateRequest.getEmail());
+				return otpService.initiateEmailOtp(customerProfileUpdateRequest.getEmail());
 			}
 		}
 		else if (null != customerProfileDetailModelCheck.getMobile() && !customerProfileDetailModelCheck.getMobile().equals(customerProfileUpdateRequest.getMobile()))
@@ -312,7 +312,7 @@ public class PersonalDetailsService
 					resp.setMessageKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
 					return resp;*/
 					
-					otpService.initiateMobileOtp(customerProfileUpdateRequest.getMobile());
+					return otpService.initiateMobileOtp(customerProfileUpdateRequest.getMobile());
 				}
 
 				if (!metaData.getMotp().equals(mOtp))
@@ -336,7 +336,7 @@ public class PersonalDetailsService
 				resp.setMessageKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
 				return resp;*/
 				
-				otpService.initiateMobileOtp(customerProfileUpdateRequest.getMobile());
+				return otpService.initiateMobileOtp(customerProfileUpdateRequest.getMobile());
 			}
 		}
 
