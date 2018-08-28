@@ -1044,12 +1044,12 @@ public class CustomerRegistrationService
 		metaData.setMotp(mobileOtp);
 		String mailData = "Your Email OTP Generated From Al Mulla Insurance is : " + mobileOtpToSend;
 
-		/*String emailIdFrom = webConfig.getConfigEmail();
+		String emailIdFrom = webConfig.getConfigEmail();
 		String emailITo = "Abhishek.tiwari@mobicule.com";
 		String Subject = "Almulla Insurance Otp";
-		emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);*/
+		emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
 
-		smservice.sendMessage(mobileWithCode, mailData);
+		//smservice.sendMessage(mobileWithCode, mailData);
 
 		return mobileOtpPrefix;
 	}
