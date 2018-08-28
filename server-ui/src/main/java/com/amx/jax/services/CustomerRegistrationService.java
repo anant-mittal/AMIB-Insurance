@@ -36,6 +36,7 @@ import com.insurance.model.Email;
 import com.insurance.model.RequestOtpModel;
 import com.insurance.model.ResponseOtpModel;
 import com.insurance.services.EmailService;
+import com.insurance.services.OtpService;
 import com.insurance.services.SMService;
 
 import org.springframework.stereotype.Service;
@@ -66,6 +67,10 @@ public class CustomerRegistrationService
 	@Autowired
 	private SMService smservice;
 
+	@Autowired
+	private OtpService otpService;
+	
+	
 	public AmxApiResponse<Validate, Object> getCompanySetUp(BigDecimal languageId, String deviceId)
 	{
 		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
@@ -521,11 +526,9 @@ public class CustomerRegistrationService
 			regSession.setMobileNumber(requestOtpModel.getMobileNumber());
 
 			AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(requestOtpModel.getCivilId());
-
-			//responseOtpModel = sendEmailOtpTemp(requestOtpModel.getEmailId());
-
-			String eOtpPrefix = sendEmailOtp(requestOtpModel.getEmailId(), "");
-			String mOtpPrefix = sendMobileOtp(requestOtpModel.getMobileNumber(), "");
+			
+			String eOtpPrefix = otpService.sendEmailOtp(requestOtpModel.getEmailId(), "");
+			String mOtpPrefix = otpService.sendMobileOtp(requestOtpModel.getMobileNumber(), "");
 			responseOtpModel.setEotpPrefix(eOtpPrefix);
 			responseOtpModel.setMotpPrefix(mOtpPrefix);
 
@@ -830,10 +833,8 @@ public class CustomerRegistrationService
 			{
 				AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(changePasswordOtpRequest.getCivilId());
 
-				//responseOtpModel = sendEmailOtpTemp(customerDetailModel.getEmail());
-
-				String eOtpPrefix = sendEmailOtp(customerDetailModel.getEmail(), "");
-				String mOtpPrefix = sendMobileOtp(customerDetailModel.getMobile(), "");
+				String eOtpPrefix = otpService.sendEmailOtp(customerDetailModel.getEmail(), "");
+				String mOtpPrefix = otpService.sendMobileOtp(customerDetailModel.getMobile(), "");
 				responseOtpModel.setEotpPrefix(eOtpPrefix);
 				responseOtpModel.setMotpPrefix(mOtpPrefix);
 				
@@ -1045,7 +1046,7 @@ public class CustomerRegistrationService
 		String mailData = "Your Mobile OTP Generated From Al Mulla Insurance is : " + mobileOtpToSend;
 
 		String emailIdFrom = webConfig.getConfigEmail();
-		String emailITo = "diplai.pingale@mobicule.com";
+		String emailITo = "abhishek.tiwari@mobicule.com";
 		String Subject = "Almulla Insurance Otp";
 		emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
 

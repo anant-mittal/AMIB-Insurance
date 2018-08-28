@@ -31,6 +31,7 @@ import com.amx.jax.models.RegSession;
 import com.amx.jax.models.Validate;
 import com.insurance.model.RequestOtpModel;
 import com.insurance.model.ResponseOtpModel;
+import com.insurance.services.OtpService;
 
 @Service
 public class PersonalDetailsService
@@ -53,6 +54,9 @@ public class PersonalDetailsService
 
 	@Autowired
 	MetaData metaData;
+	
+	@Autowired
+	private OtpService otpService;
 
 	public AmxApiResponse<CustomerProfileDetailResponse, Object> getProfileDetails()
 	{
@@ -72,9 +76,7 @@ public class PersonalDetailsService
 		customerProfileDetailResponse.setGenderDesc(customerProfileDetailModel.getGenderDesc());
 		customerProfileDetailResponse.setGovCode(customerProfileDetailModel.getGovCode());
 		customerProfileDetailResponse.setGovDesc(customerProfileDetailModel.getGovDesc());
-		
 		customerProfileDetailResponse.setIdExpiryDate(customerProfileDetailModel.getIdExpiryDate());
-		
 		customerProfileDetailResponse.setLanguageId(customerProfileDetailModel.getLanguageId());
 		customerProfileDetailResponse.setMobile(customerProfileDetailModel.getMobile());
 		customerProfileDetailResponse.setNatyCode(customerProfileDetailModel.getNatyCode());
@@ -174,7 +176,7 @@ public class PersonalDetailsService
 
 				if (!metaData.getmOtpMobileNumber().equals(customerProfileUpdateRequest.getMobile()) || !metaData.geteOtpEmailId().equals(customerProfileUpdateRequest.getEmail()))
 				{
-					ResponseOtpModel responseOtpModel = new ResponseOtpModel();
+					/*ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 					String eOtpPrefix = customerRegistrationService.sendEmailOtp(customerProfileUpdateRequest.getEmail(), "");
 					String mOtpPrefix = customerRegistrationService.sendMobileOtp(customerProfileUpdateRequest.getMobile(), "");
 					responseOtpModel.setEotpPrefix(eOtpPrefix);
@@ -184,22 +186,24 @@ public class PersonalDetailsService
 					resp.setMeta(responseOtpModel);
 					resp.setStatusKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
 					resp.setMessageKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
-					return resp;
+					return resp;*/
+					
+					otpService.initiateMobileEmailOtp(customerProfileUpdateRequest.getEmail(), customerProfileUpdateRequest.getMobile());
+					
 				}
 
 				if (!metaData.getMotp().equals(mOtp) || !metaData.getEotp().equals(eOtp))
 				{
 					validate.setValid(false);
 					resp.setError(Message.REG_INVALID_OTP);
-					resp.setStatusKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
+					resp.setStatusKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED_INVALID);
 					resp.setMessageKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED_INVALID);
 					return resp;
 				}
 			}
 			else
 			{
-				ResponseOtpModel responseOtpModel = new ResponseOtpModel();
-
+				/*ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 				String eOtpPrefix = customerRegistrationService.sendEmailOtp(customerProfileUpdateRequest.getEmail(), "");
 				String mOtpPrefix = customerRegistrationService.sendMobileOtp(customerProfileUpdateRequest.getMobile(), "");
 				responseOtpModel.setEotpPrefix(eOtpPrefix);
@@ -209,7 +213,9 @@ public class PersonalDetailsService
 				resp.setMeta(responseOtpModel);
 				resp.setStatusKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
 				resp.setMessageKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
-				return resp;
+				return resp;*/
+				
+				otpService.initiateMobileEmailOtp(customerProfileUpdateRequest.getEmail(), customerProfileUpdateRequest.getMobile());
 			}
 		}
 		else if (null != customerProfileDetailModelCheck.getEmail() && !customerProfileDetailModelCheck.getEmail().equals(customerProfileUpdateRequest.getEmail()))
@@ -236,7 +242,7 @@ public class PersonalDetailsService
 			{
 				if (!metaData.geteOtpEmailId().equals(customerProfileUpdateRequest.getEmail()))
 				{
-					ResponseOtpModel responseOtpModel = new ResponseOtpModel();
+					/*ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 					String eOtpPrefix = customerRegistrationService.sendEmailOtp(customerProfileUpdateRequest.getEmail(), "");
 					responseOtpModel.setEotpPrefix(eOtpPrefix);
 					responseOtpModel.setMotpPrefix(null);
@@ -244,21 +250,23 @@ public class PersonalDetailsService
 					resp.setMeta(responseOtpModel);
 					resp.setStatusKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
 					resp.setMessageKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
-					return resp;
+					return resp;*/
+					
+					otpService.initiateEmailOtp(customerProfileUpdateRequest.getEmail());
 				}
 
 				if (!metaData.getEotp().equals(eOtp))
 				{
 					validate.setValid(false);
 					resp.setError(Message.REG_INVALID_OTP);
-					resp.setStatusKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
+					resp.setStatusKey(MessageKey.KEY_EMAIL_OTP_REQUIRED_INVALID);
 					resp.setMessageKey(MessageKey.KEY_EMAIL_OTP_REQUIRED_INVALID);
 					return resp;
 				}
 			}
 			else
 			{
-				ResponseOtpModel responseOtpModel = new ResponseOtpModel();
+				/*ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 				String eOtpPrefix = customerRegistrationService.sendEmailOtp(customerProfileUpdateRequest.getEmail(), "");
 				responseOtpModel.setEotpPrefix(eOtpPrefix);
 				responseOtpModel.setMotpPrefix(null);
@@ -266,7 +274,8 @@ public class PersonalDetailsService
 				resp.setMeta(responseOtpModel);
 				resp.setStatusKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
 				resp.setMessageKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
-				return resp;
+				return resp;*/
+				otpService.initiateEmailOtp(customerProfileUpdateRequest.getEmail());
 			}
 		}
 		else if (null != customerProfileDetailModelCheck.getMobile() && !customerProfileDetailModelCheck.getMobile().equals(customerProfileUpdateRequest.getMobile()))
@@ -293,7 +302,7 @@ public class PersonalDetailsService
 			{
 				if (!metaData.getmOtpMobileNumber().equals(customerProfileUpdateRequest.getMobile()))
 				{
-					ResponseOtpModel responseOtpModel = new ResponseOtpModel();
+					/*ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 					String mOtpPrefix = customerRegistrationService.sendMobileOtp(customerProfileUpdateRequest.getMobile(), "");
 					responseOtpModel.setMotpPrefix(mOtpPrefix);
 					responseOtpModel.setEotpPrefix(null);
@@ -301,21 +310,23 @@ public class PersonalDetailsService
 					resp.setMeta(responseOtpModel);
 					resp.setStatusKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
 					resp.setMessageKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
-					return resp;
+					return resp;*/
+					
+					otpService.initiateMobileOtp(customerProfileUpdateRequest.getMobile());
 				}
 
 				if (!metaData.getMotp().equals(mOtp))
 				{
 					validate.setValid(false);
 					resp.setError(Message.REG_INVALID_OTP);
-					resp.setStatusKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
+					resp.setStatusKey(MessageKey.KEY_MOBILE_OTP_REQUIRED_INVALID);
 					resp.setMessageKey(MessageKey.KEY_MOBILE_OTP_REQUIRED_INVALID);
 					return resp;
 				}
 			}
 			else
 			{
-				ResponseOtpModel responseOtpModel = new ResponseOtpModel();
+				/*ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 				String mOtpPrefix = customerRegistrationService.sendMobileOtp(customerProfileUpdateRequest.getMobile(), "");
 				responseOtpModel.setMotpPrefix(mOtpPrefix);
 				responseOtpModel.setEotpPrefix(null);
@@ -323,7 +334,9 @@ public class PersonalDetailsService
 				resp.setMeta(responseOtpModel);
 				resp.setStatusKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
 				resp.setMessageKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
-				return resp;
+				return resp;*/
+				
+				otpService.initiateMobileOtp(customerProfileUpdateRequest.getMobile());
 			}
 		}
 
