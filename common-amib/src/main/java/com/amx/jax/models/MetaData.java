@@ -58,6 +58,18 @@ public class MetaData implements Serializable
 	private String mOtpMobileNumber = "";
 
 	private String eOtpEmailId = "";
+	
+	String emailFromConfigured;
+	
+	public String getEmailFromConfigured()
+	{
+		return emailFromConfigured;
+	}
+
+	public void setEmailFromConfigured(String emailFromConfigured)
+	{
+		this.emailFromConfigured = emailFromConfigured;
+	}
 
 	public BigDecimal getUserAmibCustRef()
 	{

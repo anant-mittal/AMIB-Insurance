@@ -1,5 +1,5 @@
 
-package com.insurance.email.model;
+package com.insurance.model;
 
 public class Email
 {

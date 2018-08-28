@@ -23,7 +23,7 @@ import com.amx.jax.models.RegSession;
 import com.amx.jax.models.Validate;
 import com.amx.jax.services.CustomerRegistrationService;
 import com.amx.utils.ArgUtil;
-import com.insurance.generateotp.RequestOtpModel;
+import com.insurance.model.RequestOtpModel;
 
 @RestController
 public class CustomerRegistrationController
@@ -84,6 +84,13 @@ public class CustomerRegistrationController
 	public AmxApiResponse<?, Object> registrationOtpInitiate(@RequestBody RequestOtpModel requestOtpModel)
 	{
 		return customerRegistrationService.registrationOtpInitiate(requestOtpModel);
+	}
+
+	@RequestMapping(value = "/pub/reg/reg-otp-validate", method = RequestMethod.POST)
+	public AmxApiResponse<?, Object> registrationOtpInitiate(@RequestHeader(value = "mOtp", required = false) String mOtpHeader, @RequestHeader(value = "eOtp", required = false) String eOtpHeader, @RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp,
+			@RequestBody RequestOtpModel requestOtpModel)
+	{
+		return customerRegistrationService.registrationOtp(mOtp, eOtp ,requestOtpModel);
 	}
 
 	@RequestMapping(value = "/pub/reg/verifyuserdetails", method = RequestMethod.POST, produces = "application/json")

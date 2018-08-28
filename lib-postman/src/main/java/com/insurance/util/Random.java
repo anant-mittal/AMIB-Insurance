@@ -1,5 +1,5 @@
 
-package com.insurance.generateotp;
+package com.insurance.util;
 
 public class Random
 {

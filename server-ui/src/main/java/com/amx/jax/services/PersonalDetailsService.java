@@ -29,8 +29,8 @@ import com.amx.jax.models.MetaData;
 import com.amx.jax.models.PersonalDetailsOtpRequest;
 import com.amx.jax.models.RegSession;
 import com.amx.jax.models.Validate;
-import com.insurance.generateotp.RequestOtpModel;
-import com.insurance.generateotp.ResponseOtpModel;
+import com.insurance.model.RequestOtpModel;
+import com.insurance.model.ResponseOtpModel;
 
 @Service
 public class PersonalDetailsService
@@ -72,7 +72,9 @@ public class PersonalDetailsService
 		customerProfileDetailResponse.setGenderDesc(customerProfileDetailModel.getGenderDesc());
 		customerProfileDetailResponse.setGovCode(customerProfileDetailModel.getGovCode());
 		customerProfileDetailResponse.setGovDesc(customerProfileDetailModel.getGovDesc());
+		
 		customerProfileDetailResponse.setIdExpiryDate(customerProfileDetailModel.getIdExpiryDate());
+		
 		customerProfileDetailResponse.setLanguageId(customerProfileDetailModel.getLanguageId());
 		customerProfileDetailResponse.setMobile(customerProfileDetailModel.getMobile());
 		customerProfileDetailResponse.setNatyCode(customerProfileDetailModel.getNatyCode());
@@ -107,16 +109,17 @@ public class PersonalDetailsService
 
 		customerProfileDetailModelCheck = personalDetailsDao.getProfileDetails();
 
-		/*
-		 * if (null != customerProfileUpdateRequest.getIdExpiryDate()) { String
-		 * dateFromDb =
-		 * customerProfileUpdateRequest.getIdExpiryDate().toString();
-		 * 
-		 * if (checkExpiryDate(dateFromDb)) { logger.info(TAG +
-		 * " updateProfileDetails :: Civil ID Expired :: dateFromDb :: " +
-		 * dateFromDb); resp.setStatusKey(ApiConstants.FAILURE);
-		 * resp.setMessageKey(MessageKey.KEY_CIVIL_ID_EXPIRED); return resp; } }
-		 */
+		if (null != customerProfileUpdateRequest.getIdExpiryDate())
+		{
+			String dateFromDb = customerProfileUpdateRequest.getIdExpiryDate().toString();
+			if (checkExpiryDate(dateFromDb))
+			{
+				logger.info(TAG + " updateProfileDetails :: Civil ID Expired :: dateFromDb :: " + dateFromDb);
+				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setMessageKey(MessageKey.KEY_CIVIL_ID_EXPIRED);
+				return resp;
+			}
+		}
 
 		logger.info(TAG + " updateProfileDetails :: getMobile 1 :" + customerProfileDetailModelCheck.getMobile());
 		logger.info(TAG + " updateProfileDetails :: getEmail  2 :" + customerProfileDetailModelCheck.getEmail());
@@ -160,6 +163,8 @@ public class PersonalDetailsService
 				return emailIdExists;
 			}
 
+			
+			
 			if (null != mOtp && !mOtp.equals("") && null != eOtp && !eOtp.equals(""))
 			{
 				logger.info(TAG + " updateProfileDetails :: getmOtpMobileNumber  :" + metaData.getmOtpMobileNumber());
@@ -170,8 +175,8 @@ public class PersonalDetailsService
 				if (!metaData.getmOtpMobileNumber().equals(customerProfileUpdateRequest.getMobile()) || !metaData.geteOtpEmailId().equals(customerProfileUpdateRequest.getEmail()))
 				{
 					ResponseOtpModel responseOtpModel = new ResponseOtpModel();
-					String eOtpPrefix = customerRegistrationService.sendEmailOtp(customerProfileUpdateRequest.getEmail(),"");
-					String mOtpPrefix = customerRegistrationService.sendMobileOtp(customerProfileUpdateRequest.getMobile(),"");
+					String eOtpPrefix = customerRegistrationService.sendEmailOtp(customerProfileUpdateRequest.getEmail(), "");
+					String mOtpPrefix = customerRegistrationService.sendMobileOtp(customerProfileUpdateRequest.getMobile(), "");
 					responseOtpModel.setEotpPrefix(eOtpPrefix);
 					responseOtpModel.setMotpPrefix(mOtpPrefix);
 					metaData.setmOtpMobileNumber(customerProfileUpdateRequest.getMobile());
@@ -195,8 +200,8 @@ public class PersonalDetailsService
 			{
 				ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 
-				String eOtpPrefix = customerRegistrationService.sendEmailOtp(customerProfileUpdateRequest.getEmail(),"");
-				String mOtpPrefix = customerRegistrationService.sendMobileOtp(customerProfileUpdateRequest.getMobile(),"");
+				String eOtpPrefix = customerRegistrationService.sendEmailOtp(customerProfileUpdateRequest.getEmail(), "");
+				String mOtpPrefix = customerRegistrationService.sendMobileOtp(customerProfileUpdateRequest.getMobile(), "");
 				responseOtpModel.setEotpPrefix(eOtpPrefix);
 				responseOtpModel.setMotpPrefix(mOtpPrefix);
 				metaData.setmOtpMobileNumber(customerProfileUpdateRequest.getMobile());
@@ -232,7 +237,7 @@ public class PersonalDetailsService
 				if (!metaData.geteOtpEmailId().equals(customerProfileUpdateRequest.getEmail()))
 				{
 					ResponseOtpModel responseOtpModel = new ResponseOtpModel();
-					String eOtpPrefix = customerRegistrationService.sendEmailOtp(customerProfileUpdateRequest.getEmail(),"");
+					String eOtpPrefix = customerRegistrationService.sendEmailOtp(customerProfileUpdateRequest.getEmail(), "");
 					responseOtpModel.setEotpPrefix(eOtpPrefix);
 					responseOtpModel.setMotpPrefix(null);
 					metaData.seteOtpEmailId(customerProfileUpdateRequest.getEmail());
@@ -254,7 +259,7 @@ public class PersonalDetailsService
 			else
 			{
 				ResponseOtpModel responseOtpModel = new ResponseOtpModel();
-				String eOtpPrefix = customerRegistrationService.sendEmailOtp(customerProfileUpdateRequest.getEmail(),"");
+				String eOtpPrefix = customerRegistrationService.sendEmailOtp(customerProfileUpdateRequest.getEmail(), "");
 				responseOtpModel.setEotpPrefix(eOtpPrefix);
 				responseOtpModel.setMotpPrefix(null);
 				metaData.seteOtpEmailId(customerProfileUpdateRequest.getEmail());
@@ -289,7 +294,7 @@ public class PersonalDetailsService
 				if (!metaData.getmOtpMobileNumber().equals(customerProfileUpdateRequest.getMobile()))
 				{
 					ResponseOtpModel responseOtpModel = new ResponseOtpModel();
-					String mOtpPrefix = customerRegistrationService.sendMobileOtp(customerProfileUpdateRequest.getMobile(),"");
+					String mOtpPrefix = customerRegistrationService.sendMobileOtp(customerProfileUpdateRequest.getMobile(), "");
 					responseOtpModel.setMotpPrefix(mOtpPrefix);
 					responseOtpModel.setEotpPrefix(null);
 					metaData.setmOtpMobileNumber(customerProfileUpdateRequest.getMobile());
@@ -311,7 +316,7 @@ public class PersonalDetailsService
 			else
 			{
 				ResponseOtpModel responseOtpModel = new ResponseOtpModel();
-				String mOtpPrefix = customerRegistrationService.sendMobileOtp(customerProfileUpdateRequest.getMobile(),"");
+				String mOtpPrefix = customerRegistrationService.sendMobileOtp(customerProfileUpdateRequest.getMobile(), "");
 				responseOtpModel.setMotpPrefix(mOtpPrefix);
 				responseOtpModel.setEotpPrefix(null);
 				metaData.setmOtpMobileNumber(customerProfileUpdateRequest.getMobile());
@@ -482,12 +487,12 @@ public class PersonalDetailsService
 	public String formatDate(String inDate)
 	{
 		String outDate = "";
-		SimpleDateFormat inSm = new SimpleDateFormat("E MMM dd HH:mm:ss Z yyyy");
-		SimpleDateFormat outSm = new SimpleDateFormat("dd-MM-yyyy");
+		SimpleDateFormat inputDateFormat = new SimpleDateFormat("E MMM dd HH:mm:ss Z yyyy");
+		SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		try
 		{
-			java.util.Date date = inSm.parse(inDate);
-			outDate = outSm.format(date);
+			java.util.Date date = inputDateFormat.parse(inDate);
+			outDate = outputDateFormat.format(date);
 		}
 		catch (Exception e)
 		{
@@ -499,12 +504,29 @@ public class PersonalDetailsService
 	public String formatDate2(String inDate)
 	{
 		String outDate = "";
-		SimpleDateFormat sdffromDb = new SimpleDateFormat("yyyy-MM-dd");
-		SimpleDateFormat outSm = new SimpleDateFormat("dd-MM-yyyy");
+		SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd-MM-yyyy");
 		try
 		{
-			java.util.Date date = sdffromDb.parse(inDate);
-			outDate = outSm.format(date);
+			java.util.Date date = inputDateFormat.parse(inDate);
+			outDate = outputDateFormat.format(date);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return outDate;
+	}
+	
+	public String DATE_DD_MMM_YYYY(String inDate)
+	{
+		String outDate = "";
+		SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+		try
+		{
+			java.util.Date date = inputDateFormat.parse(inDate);
+			outDate = outputDateFormat.format(date);
 		}
 		catch (Exception e)
 		{

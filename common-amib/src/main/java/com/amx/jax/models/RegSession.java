@@ -54,8 +54,20 @@ public class RegSession implements Serializable
 	
 	private int otpCount;
 	
+	private String emailFromConfigured;
+	
 	private ArrayList<OtpCountSession> userSessionOtpCount;
 
+	public String getEmailFromConfigured()
+	{
+		return emailFromConfigured;
+	}
+
+	public void setEmailFromConfigured(String emailFromConfigured)
+	{
+		this.emailFromConfigured = emailFromConfigured;
+	}
+	
 	public int getOtpCount()
 	{
 		return otpCount;

@@ -18,7 +18,7 @@ import com.amx.jax.models.CustomerProfileUpdateResponse;
 import com.amx.jax.models.PersonalDetailsOtpRequest;
 import com.amx.jax.services.PersonalDetailsService;
 import com.amx.utils.ArgUtil;
-import com.insurance.generateotp.RequestOtpModel;
+import com.insurance.model.RequestOtpModel;
 
 @RestController
 public class PersonalDetailsController

@@ -20,7 +20,6 @@ public class VehicleDetailsController
 
 	String TAG = "com.amx.jax.vehicledetails.controller.VehicleDetailsController :- ";
 
-	
 	@Autowired
 	public VehicleDetailsService vehicleDetailsService;
 
@@ -28,9 +27,8 @@ public class VehicleDetailsController
 	public AmxApiResponse<?, Object> getPendingRequestQuote()
 	{
 		return vehicleDetailsService.getPendingRequestQuote();
-
 	}
-	
+
 	@RequestMapping(value = "/api/vehicledetails/make", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getMake()
 	{
@@ -55,7 +53,6 @@ public class VehicleDetailsController
 	public AmxApiResponse<?, Object> getPurpose()
 	{
 		return vehicleDetailsService.getPurpose();
-
 	}
 
 	@RequestMapping(value = "/api/vehicledetails/shape", method = RequestMethod.GET, produces = "application/json")
@@ -70,24 +67,24 @@ public class VehicleDetailsController
 		logger.info(TAG + " getColour :: ");
 		return vehicleDetailsService.getColour();
 	}
-	
+
 	@RequestMapping(value = "/api/vehicledetails/vehicle-condition", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getVehicleCondition()
 	{
 		logger.info(TAG + " getVehicleCondition :: ");
 		return vehicleDetailsService.getVehicleCondition();
 	}
-	
+
 	@RequestMapping(value = "/api/vehicledetails/vehicle-agealowed", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getMaxVehicleAgeAllowed()
 	{
 		return vehicleDetailsService.getMaxVehicleAgeAllowed();
 	}
-	
+
 	@RequestMapping(value = "/api/vehicledetails/policy-duartion", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getPolicyDuration()
 	{
 		return vehicleDetailsService.getPolicyDuration();
 	}
-	
+
 }

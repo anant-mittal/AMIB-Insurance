@@ -1,4 +1,4 @@
-package com.insurance.mobileotp;
+package com.insurance.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

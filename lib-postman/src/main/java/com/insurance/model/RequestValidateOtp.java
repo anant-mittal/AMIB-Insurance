@@ -1,4 +1,4 @@
-package com.insurance.generateotp;
+package com.insurance.model;
 
 public class RequestValidateOtp
 {

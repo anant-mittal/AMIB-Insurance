@@ -1,5 +1,5 @@
 
-package com.insurance.email.dao;
+package com.insurance.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,16 +9,17 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Repository;
-import com.insurance.email.model.Email;
-import com.insurance.generateotp.RequestOtpModel;
-import com.insurance.generateotp.ResponseOtpModel;
+
+import com.insurance.model.Email;
+import com.insurance.model.RequestOtpModel;
+import com.insurance.model.ResponseOtpModel;
 
 @Repository
-public class EmailNotification
+public class EmailService
 {
 	String TAG = "com.insurance.email.dao :: EmailNotification :: ";
 
-	private static final Logger logger = LoggerFactory.getLogger(EmailNotification.class);
+	private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
 
 	@Autowired
 	JavaMailSender javaMailSender;
