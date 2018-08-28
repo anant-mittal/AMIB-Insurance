@@ -274,7 +274,7 @@ public class CustomerRegistrationService
 		return resp;
 	}
 
-	public AmxApiResponse<Validate, Object> isOtpEnabled(String civilId)
+	/*public AmxApiResponse<Validate, Object> isOtpEnabled(String civilId)
 	{
 		if (regSession.getCivilId() == null)
 		{
@@ -340,7 +340,48 @@ public class CustomerRegistrationService
 		}
 
 		return resp;
+	}*/
+	
+	
+	public AmxApiResponse<Validate, Object> isOtpEnabled(String civilId)
+	{
+		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
+
+		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(civilId);
+
+		if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+		{
+			boolean isOtpEnable = customerRegistrationDao.isOtpEnabled(civilId);
+
+			if (isOtpEnable)
+			{
+				resp.setStatusKey(ApiConstants.SUCCESS);
+				resp.setMessage(Message.CUST_OTP_ENABLED);
+				resp.setMessageKey(MessageKey.KEY_USER_OTP_ENABLED);
+			}
+			else
+			{
+				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setMessage(Message.CUST_OTP_NOT_ENABLED);
+				resp.setMessageKey(MessageKey.KEY_USER_OTP_NOT_ENABLED);
+
+				Validate validate = new Validate();
+				validate.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
+				validate.setContactUsEmail(regSession.getContactUsEmail());
+				resp.setData(validate);
+			}
+		}
+		else
+		{
+			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setMessage(Message.CUST_OTP_ENABLED);
+			resp.setMessageKey(MessageKey.KEY_USER_OTP_ENABLED);
+
+		}
+
+		return resp;
 	}
+	
 
 	public AmxApiResponse<Validate, Object> setOtpCount(String civilId)
 	{
