@@ -1,45 +1,24 @@
 package com.insurance.services;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.amx.jax.api.AmxApiResponse;
-import com.amx.jax.constants.ApiConstants;
-import com.amx.jax.constants.DetailsConstants;
-import com.amx.jax.constants.DatabaseErrorKey;
 import com.amx.jax.constants.Message;
 import com.amx.jax.constants.MessageKey;
-import com.amx.jax.dao.CustomerRegistrationDao;
-import com.amx.jax.models.ChangePasswordOtpRequest;
-import com.amx.jax.models.ChangePasswordRequest;
-import com.amx.jax.models.ChangePasswordResponse;
-import com.amx.jax.models.CompanySetUp;
-import com.amx.jax.models.CustomerDetailModel;
-import com.amx.jax.models.CustomerDetailResponse;
-import com.amx.jax.models.CustomerLoginModel;
-import com.amx.jax.models.CustomerLoginRequest;
-import com.amx.jax.models.CustomerLoginResponse;
-import com.amx.jax.models.CustomerRegistrationModel;
-import com.amx.jax.models.CustomerRegistrationRequest;
-import com.amx.jax.models.CustomerRegistrationResponse;
-import com.amx.jax.models.FailureException;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.RegSession;
-import com.amx.jax.models.Validate;
 import com.amx.utils.Random;
-import com.insurance.model.Email;
-import com.insurance.model.RequestOtpModel;
 import com.insurance.model.ResponseOtpModel;
-
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
 public class OtpService
 {
+	String TAG = "com.insurance.services :: OtpService :: ";
+	
+	private static final Logger logger = LoggerFactory.getLogger(OtpService.class);
+	
 	@Autowired
 	RegSession regSession;
 
@@ -89,7 +68,8 @@ public class OtpService
 		String mailData = "Your Mobile OTP Generated From Al Mulla Insurance is :- " + mobileOtpToSend;
 
 		String emailIdFrom = regSession.getEmailFromConfigured();
-		String emailITo = "abhishek.tiwari@mobicule.com";
+		//String emailITo = "abhishek.tiwari@mobicule.com";
+		String emailITo = "dipali.pingale@mobicule.com";
 		String Subject = "Almulla Insurance Otp";
 		emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
 
@@ -100,6 +80,11 @@ public class OtpService
 
 	public AmxApiResponse<?, Object> initiateMobileEmailOtp(String emailId, String mobileNumber)
 	{
+		metaData.setEotp("");
+		metaData.setMotp("");
+		metaData.setmOtpMobileNumber("");
+		metaData.seteOtpEmailId("");
+		
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
 		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 		String eOtpPrefix = sendEmailOtp(emailId, "");
@@ -119,11 +104,11 @@ public class OtpService
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
 		if (null != mOtp && !mOtp.equals("") && null != eOtp && !eOtp.equals(""))
 		{
-			if (!metaData.getmOtpMobileNumber().equals(emailId) || !metaData.geteOtpEmailId().equals(mobileNumber))
+			if (!metaData.geteOtpEmailId().equals(emailId) || !metaData.getmOtpMobileNumber().equals(mobileNumber))
 			{
 				return initiateMobileEmailOtp(emailId, mobileNumber);
 			}
-
+			
 			if (!metaData.getMotp().equals(mOtp) || !metaData.getEotp().equals(eOtp))
 			{
 				resp.setError(Message.REG_INVALID_OTP);
