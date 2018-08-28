@@ -109,7 +109,7 @@ public class PersonalDetailsService
 
 		customerProfileDetailModelCheck = personalDetailsDao.getProfileDetails();
 
-		if (null != customerProfileUpdateRequest.getIdExpiryDate())
+		/*if (null != customerProfileUpdateRequest.getIdExpiryDate())
 		{
 			String dateFromDb = customerProfileUpdateRequest.getIdExpiryDate().toString();
 			if (checkExpiryDate(dateFromDb))
@@ -119,7 +119,7 @@ public class PersonalDetailsService
 				resp.setMessageKey(MessageKey.KEY_CIVIL_ID_EXPIRED);
 				return resp;
 			}
-		}
+		}*/
 
 		logger.info(TAG + " updateProfileDetails :: getMobile 1 :" + customerProfileDetailModelCheck.getMobile());
 		logger.info(TAG + " updateProfileDetails :: getEmail  2 :" + customerProfileDetailModelCheck.getEmail());
