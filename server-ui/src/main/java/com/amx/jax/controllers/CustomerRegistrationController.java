@@ -80,26 +80,32 @@ public class CustomerRegistrationController
 		return customerRegistrationService.isEmailIdExistCheck(emailId);
 	}
 
-	@RequestMapping(value = "/pub/reg/reg-otp", method = RequestMethod.POST)
-	public AmxApiResponse<?, Object> registrationOtpInitiate(@RequestBody RequestOtpModel requestOtpModel)
-	{
-		return customerRegistrationService.registrationOtpInitiate(requestOtpModel);
-	}
+	/*
+	 * @RequestMapping(value = "/pub/reg/reg-otp", method = RequestMethod.POST)
+	 * public AmxApiResponse<?, Object> registrationOtpInitiate(@RequestBody
+	 * RequestOtpModel requestOtpModel) { return
+	 * customerRegistrationService.registrationOtpInitiate(requestOtpModel); }
+	 */
 
-	@RequestMapping(value = "/pub/reg/reg-otp-validate", method = RequestMethod.POST)
+	@RequestMapping(value = "/pub/reg/reg-otp", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> registrationOtpInitiate(@RequestHeader(value = "mOtp", required = false) String mOtpHeader, @RequestHeader(value = "eOtp", required = false) String eOtpHeader, @RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp,
 			@RequestBody RequestOtpModel requestOtpModel)
 	{
-		return customerRegistrationService.registrationOtp(mOtp, eOtp ,requestOtpModel);
+		return customerRegistrationService.registrationOtp(eOtp, mOtp, requestOtpModel);
 	}
 
-	@RequestMapping(value = "/pub/reg/verifyuserdetails", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<Validate, Object> validateOtp(@RequestHeader(value = "mOtp", required = false) String mOtpHeader, @RequestHeader(value = "eOtp", required = false) String eOtpHeader, @RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp)
-	{
-		mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
-		eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
-		return customerRegistrationService.validateOtp(mOtp, eOtp);
-	}
+	/*
+	 * @RequestMapping(value = "/pub/reg/verifyuserdetails", method =
+	 * RequestMethod.POST, produces = "application/json") public
+	 * AmxApiResponse<Validate, Object> validateOtp(@RequestHeader(value =
+	 * "mOtp", required = false) String mOtpHeader, @RequestHeader(value =
+	 * "eOtp", required = false) String eOtpHeader, @RequestParam(required =
+	 * false) String mOtp, @RequestParam(required = false) String eOtp) { mOtp =
+	 * ArgUtil.ifNotEmpty(mOtp, mOtpHeader); eOtp = ArgUtil.ifNotEmpty(eOtp,
+	 * eOtpHeader); return customerRegistrationService.validateOtp(mOtp, eOtp);
+	 * }
+	 */
+	
 
 	@RequestMapping(value = "/pub/reg/customer-registration", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<CustomerRegistrationResponse, Object> addNewCustomer(@RequestBody CustomerRegistrationRequest customerRegistrationRequest)
@@ -113,10 +119,20 @@ public class CustomerRegistrationController
 		return customerRegistrationService.validateUserLogin(customerLoginRequest);
 	}
 
+	/*
+	 * @RequestMapping(value = "/pub/login/changepass-otpinitiate", method =
+	 * RequestMethod.POST) public AmxApiResponse<?, Object>
+	 * changePasswordOtpInitiate(@RequestBody ChangePasswordOtpRequest
+	 * changePasswordRequest) { return
+	 * customerRegistrationService.changePasswordOtpInitiate(
+	 * changePasswordRequest); }
+	 */
+
 	@RequestMapping(value = "/pub/login/changepass-otpinitiate", method = RequestMethod.POST)
-	public AmxApiResponse<?, Object> changePasswordOtpInitiate(@RequestBody ChangePasswordOtpRequest changePasswordRequest)
+	public AmxApiResponse<?, Object> changePasswordOtpInitiate(@RequestHeader(value = "mOtp", required = false) String mOtpHeader, @RequestHeader(value = "eOtp", required = false) String eOtpHeader, @RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp,
+			@RequestBody ChangePasswordOtpRequest changePasswordRequest)
 	{
-		return customerRegistrationService.changePasswordOtpInitiate(changePasswordRequest);
+		return customerRegistrationService.changePasswordOtpInitiate(eOtp, mOtp, changePasswordRequest);
 	}
 
 	@RequestMapping(value = "/pub/login/changepass", method = RequestMethod.POST)

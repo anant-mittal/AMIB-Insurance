@@ -126,6 +126,11 @@ public class OtpService
 
 	public AmxApiResponse<?, Object> initiateEmailOtp(String emailId)
 	{
+		metaData.setEotp("");
+		metaData.setMotp("");
+		metaData.setmOtpMobileNumber("");
+		metaData.seteOtpEmailId("");
+		
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
 		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 		String eOtpPrefix = sendEmailOtp(emailId, "");
@@ -165,6 +170,11 @@ public class OtpService
 
 	public AmxApiResponse<?, Object> initiateMobileOtp(String mobileNumber)
 	{
+		metaData.setEotp("");
+		metaData.setMotp("");
+		metaData.setmOtpMobileNumber("");
+		metaData.seteOtpEmailId("");
+		
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
 		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 		String mOtpPrefix = sendMobileOtp(mobileNumber, "");
