@@ -494,7 +494,7 @@ public class CustomerRegistrationDao
 			customerDetailModel.setMobileVerify(callableStatement.getString(10));
 			customerDetailModel.setMailVerify(callableStatement.getString(11));
 			
-			String lastDate = "";
+			String lastDate = null;
 			
 			if(null != callableStatement.getTimestamp(12))
 			{

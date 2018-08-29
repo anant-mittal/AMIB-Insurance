@@ -76,7 +76,9 @@ public class PersonalDetailsService
 		customerProfileDetailResponse.setGenderDesc(customerProfileDetailModel.getGenderDesc());
 		customerProfileDetailResponse.setGovCode(customerProfileDetailModel.getGovCode());
 		customerProfileDetailResponse.setGovDesc(customerProfileDetailModel.getGovDesc());
+		
 		customerProfileDetailResponse.setIdExpiryDate(customerProfileDetailModel.getIdExpiryDate());
+		
 		customerProfileDetailResponse.setLanguageId(customerProfileDetailModel.getLanguageId());
 		customerProfileDetailResponse.setMobile(customerProfileDetailModel.getMobile());
 		customerProfileDetailResponse.setNatyCode(customerProfileDetailModel.getNatyCode());

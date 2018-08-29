@@ -91,6 +91,8 @@ public class CustomerRegistrationController
 	public AmxApiResponse<?, Object> registrationOtpInitiate(@RequestHeader(value = "mOtp", required = false) String mOtpHeader, @RequestHeader(value = "eOtp", required = false) String eOtpHeader, @RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp,
 			@RequestBody RequestOtpModel requestOtpModel)
 	{
+		mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
+		eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
 		return customerRegistrationService.registrationOtp(eOtp, mOtp, requestOtpModel);
 	}
 
@@ -105,7 +107,6 @@ public class CustomerRegistrationController
 	 * eOtpHeader); return customerRegistrationService.validateOtp(mOtp, eOtp);
 	 * }
 	 */
-	
 
 	@RequestMapping(value = "/pub/reg/customer-registration", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<CustomerRegistrationResponse, Object> addNewCustomer(@RequestBody CustomerRegistrationRequest customerRegistrationRequest)
@@ -132,6 +133,8 @@ public class CustomerRegistrationController
 	public AmxApiResponse<?, Object> changePasswordOtpInitiate(@RequestHeader(value = "mOtp", required = false) String mOtpHeader, @RequestHeader(value = "eOtp", required = false) String eOtpHeader, @RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp,
 			@RequestBody ChangePasswordOtpRequest changePasswordRequest)
 	{
+		mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
+		eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
 		return customerRegistrationService.changePasswordOtpInitiate(eOtp, mOtp, changePasswordRequest);
 	}
 
