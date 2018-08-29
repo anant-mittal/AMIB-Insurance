@@ -593,21 +593,34 @@ public class CustomerRegistrationDao
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_RESET_PWD(?,?,?,?,?,?,?,?,?,?,?,?)}";
+		String civilId = "";
 
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setBigDecimal(1, regSession.getCountryId());
-			callableStatement.setBigDecimal(2, regSession.getCompCd());
-			callableStatement.setString(3, regSession.getUserType());
-			callableStatement.setString(4, regSession.getCivilId());
+			logger.info(TAG + " updatePassword :: regSession.getCivilId    :" + regSession.getCivilId());
+			logger.info(TAG + " updatePassword :: metadata.getCivilId      :" + metaData.getCivilId());
+			
+			if(null != regSession.getCivilId() && !regSession.getCivilId().equals(""))
+			{
+				civilId = regSession.getCivilId();
+			}
+			else if(null != metaData.getCivilId() && !metaData.getCivilId().equals(""))
+			{
+				civilId = metaData.getCivilId();
+			}
+			
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setString(3, metaData.getUserType());
+			callableStatement.setString(4, civilId);
 			callableStatement.setString(5, customerDetailModel.getPassword());
 			callableStatement.setBigDecimal(6, null);
 			callableStatement.setDate(7, getCurrentDate());
-			callableStatement.setString(8, regSession.getDeviceId());
-			callableStatement.setString(9, regSession.getDeviceType());
-			callableStatement.setString(10, regSession.getCivilId());
+			callableStatement.setString(8, metaData.getDeviceId());
+			callableStatement.setString(9, metaData.getDeviceType());
+			callableStatement.setString(10, civilId);
 			callableStatement.registerOutParameter(11, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(12, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
@@ -617,6 +630,9 @@ public class CustomerRegistrationDao
 			String errorCode = callableStatement.getString(11);
 			String errorMessage = callableStatement.getString(12);
 
+			logger.info(TAG + " updatePassword :: errorCode     :" + errorCode);
+			logger.info(TAG + " updatePassword :: errorMessage  :" + errorMessage);
+			
 			customerDetailModel.setErrorCode(errorCode);
 			customerDetailModel.setErrorMessage(errorMessage);
 

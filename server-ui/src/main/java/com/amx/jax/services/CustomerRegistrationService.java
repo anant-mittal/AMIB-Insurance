@@ -106,7 +106,7 @@ public class CustomerRegistrationService
 			metaData.setEmailFromConfigured(webConfig.getConfigEmail());
 
 			resp.setData(null);
-			resp.setStatus(ApiConstants.SUCCESS);
+			resp.setStatusKey(ApiConstants.SUCCESS);
 		}
 		catch (Exception e)
 		{
@@ -531,7 +531,7 @@ public class CustomerRegistrationService
 			e.printStackTrace();
 			resp.setData(null);
 			resp.setException(e.toString());
-			resp.setStatus(ApiConstants.FAILURE);
+			resp.setStatusKey(ApiConstants.FAILURE);
 			return resp;
 		}
 
@@ -550,7 +550,7 @@ public class CustomerRegistrationService
 			responseOtpModel.setMotpPrefix(mOtpPrefix);
 
 			resp.setData(responseOtpModel);
-			resp.setStatus(ApiConstants.SUCCESS);
+			resp.setStatusKey(ApiConstants.SUCCESS);
 
 			if (setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 			{
@@ -563,7 +563,7 @@ public class CustomerRegistrationService
 			e.printStackTrace();
 			resp.setData(null);
 			resp.setException(e.toString());
-			resp.setStatus(ApiConstants.FAILURE);
+			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
@@ -598,7 +598,7 @@ public class CustomerRegistrationService
 			e.printStackTrace();
 			resp.setData(null);
 			resp.setException(e.toString());
-			resp.setStatus(ApiConstants.FAILURE);
+			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
@@ -800,7 +800,7 @@ public class CustomerRegistrationService
 		{
 			resp.setMessageKey(customerDetailModel.getErrorCode());
 			resp.setMessage(customerDetailModel.getErrorMessage());
-			resp.setStatus(ApiConstants.FAILURE);
+			resp.setStatusKey(ApiConstants.FAILURE);
 			return resp;
 		}
 		else
@@ -819,7 +819,7 @@ public class CustomerRegistrationService
 					return setOtpCount;
 				}
 				resp.setData(responseOtpModel);
-				resp.setStatus(ApiConstants.SUCCESS);
+				resp.setStatusKey(ApiConstants.SUCCESS);
 
 			}
 			catch (Exception e)
@@ -868,7 +868,7 @@ public class CustomerRegistrationService
 		{
 			resp.setMessageKey(customerDetailModel.getErrorCode());
 			resp.setMessage(customerDetailModel.getErrorMessage());
-			resp.setStatus(ApiConstants.FAILURE);
+			resp.setStatusKey(ApiConstants.FAILURE);
 			return resp;
 		}
 		else
@@ -887,7 +887,7 @@ public class CustomerRegistrationService
 				{
 					return setOtpCount;
 				}
-				resp.setStatus(ApiConstants.SUCCESS);
+				resp.setStatusKey(ApiConstants.SUCCESS);
 
 			}
 			catch (Exception e)
@@ -910,7 +910,7 @@ public class CustomerRegistrationService
 		{
 			resp.setMessageKey(customerDetailModel.getErrorCode());
 			resp.setMessage(customerDetailModel.getErrorMessage());
-			resp.setStatus(ApiConstants.FAILURE);
+			resp.setStatusKey(ApiConstants.FAILURE);
 			return resp;
 		}
 		else
@@ -936,16 +936,18 @@ public class CustomerRegistrationService
 
 		if (customerDetailModel.getStatus())
 		{
+			logger.info(TAG + " updatePassword :: errorMessage True :");
 			resp.setMessageKey(customerDetailModel.getErrorCode());
 			resp.setError(customerDetailModel.getErrorMessage());
-			resp.setStatus(ApiConstants.SUCCESS);
+			resp.setStatusKey(ApiConstants.SUCCESS);
 			resp.setData(null);
 		}
 		else
 		{
+			logger.info(TAG + " updatePassword :: errorMessage false :");
 			resp.setMessageKey(customerDetailModel.getErrorCode());
 			resp.setError(customerDetailModel.getErrorMessage());
-			resp.setStatus(ApiConstants.FAILURE);
+			resp.setStatusKey(ApiConstants.FAILURE);
 			resp.setData(null);
 		}
 
@@ -965,14 +967,14 @@ public class CustomerRegistrationService
 		{
 			resp.setMessageKey(customerDetailModel.getErrorCode());
 			resp.setError(customerDetailModel.getErrorMessage());
-			resp.setStatus(ApiConstants.SUCCESS);
+			resp.setStatusKey(ApiConstants.SUCCESS);
 			resp.setData(null);
 		}
 		else
 		{
 			resp.setMessageKey(customerDetailModel.getErrorCode());
 			resp.setError(customerDetailModel.getErrorMessage());
-			resp.setStatus(ApiConstants.FAILURE);
+			resp.setStatusKey(ApiConstants.FAILURE);
 			resp.setData(null);
 		}
 
@@ -1235,7 +1237,7 @@ public class CustomerRegistrationService
 			e.printStackTrace();
 			resp.setData(null);
 			resp.setException(e.toString());
-			resp.setStatus(ApiConstants.FAILURE);
+			resp.setStatusKey(ApiConstants.FAILURE);
 			return resp;
 		}
 		return null;
