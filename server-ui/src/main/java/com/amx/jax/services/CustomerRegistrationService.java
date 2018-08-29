@@ -69,8 +69,7 @@ public class CustomerRegistrationService
 
 	@Autowired
 	private OtpService otpService;
-	
-	
+
 	public AmxApiResponse<Validate, Object> getCompanySetUp(BigDecimal languageId, String deviceId)
 	{
 		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
@@ -274,75 +273,56 @@ public class CustomerRegistrationService
 		return resp;
 	}
 
-	/*public AmxApiResponse<Validate, Object> isOtpEnabled(String civilId)
-	{
-		if (regSession.getCivilId() == null)
-		{
-			regSession.setCivilId(civilId);
-		}
+	/*
+	 * public AmxApiResponse<Validate, Object> isOtpEnabled(String civilId) { if
+	 * (regSession.getCivilId() == null) { regSession.setCivilId(civilId); }
+	 * 
+	 * if (regSession.getOtpCount() < 1 ||
+	 * !regSession.getCivilId().equals(civilId)) { regSession.setOtpCount(1); }
+	 * 
+	 * AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate,
+	 * Object>();
+	 * 
+	 * AmxApiResponse<Validate, Object> civilIdExistCheck =
+	 * isCivilIdExist(civilId);
+	 * 
+	 * if
+	 * (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+	 * { boolean isOtpEnable = customerRegistrationDao.isOtpEnabled(civilId);
+	 * 
+	 * if (isOtpEnable) { resp.setStatusKey(ApiConstants.SUCCESS);
+	 * resp.setMessage(Message.CUST_OTP_ENABLED);
+	 * resp.setMessageKey(MessageKey.KEY_USER_OTP_ENABLED); } else {
+	 * resp.setStatusKey(ApiConstants.FAILURE);
+	 * resp.setMessage(Message.CUST_OTP_NOT_ENABLED);
+	 * resp.setMessageKey(MessageKey.KEY_USER_OTP_NOT_ENABLED);
+	 * 
+	 * Validate validate = new Validate();
+	 * validate.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber
+	 * ()); validate.setContactUsEmail(regSession.getContactUsEmail());
+	 * resp.setData(validate); } } else { logger.info(TAG +
+	 * " otpSessionHandling :: regSession.getOtpCount() :" +
+	 * regSession.getOtpCount());
+	 * 
+	 * if (regSession.getOtpCount() > 3) {
+	 * resp.setStatusKey(ApiConstants.FAILURE);
+	 * resp.setMessage(Message.CUST_OTP_NOT_ENABLED);
+	 * resp.setMessageKey(MessageKey.KEY_USER_OTP_NOT_ENABLED);
+	 * 
+	 * Validate validate = new Validate();
+	 * validate.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber
+	 * ()); validate.setContactUsEmail(regSession.getContactUsEmail());
+	 * resp.setData(validate); } else { resp.setStatusKey(ApiConstants.SUCCESS);
+	 * resp.setMessage(Message.CUST_OTP_ENABLED);
+	 * resp.setMessageKey(MessageKey.KEY_USER_OTP_ENABLED); } int getOtpCount =
+	 * regSession.getOtpCount(); getOtpCount++;
+	 * regSession.setOtpCount(getOtpCount);
+	 * 
+	 * }
+	 * 
+	 * return resp; }
+	 */
 
-		if (regSession.getOtpCount() < 1 || !regSession.getCivilId().equals(civilId))
-		{
-			regSession.setOtpCount(1);
-		}
-
-		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
-
-		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(civilId);
-
-		if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
-		{
-			boolean isOtpEnable = customerRegistrationDao.isOtpEnabled(civilId);
-
-			if (isOtpEnable)
-			{
-				resp.setStatusKey(ApiConstants.SUCCESS);
-				resp.setMessage(Message.CUST_OTP_ENABLED);
-				resp.setMessageKey(MessageKey.KEY_USER_OTP_ENABLED);
-			}
-			else
-			{
-				resp.setStatusKey(ApiConstants.FAILURE);
-				resp.setMessage(Message.CUST_OTP_NOT_ENABLED);
-				resp.setMessageKey(MessageKey.KEY_USER_OTP_NOT_ENABLED);
-
-				Validate validate = new Validate();
-				validate.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
-				validate.setContactUsEmail(regSession.getContactUsEmail());
-				resp.setData(validate);
-			}
-		}
-		else
-		{
-			logger.info(TAG + " otpSessionHandling :: regSession.getOtpCount() :" + regSession.getOtpCount());
-
-			if (regSession.getOtpCount() > 3)
-			{
-				resp.setStatusKey(ApiConstants.FAILURE);
-				resp.setMessage(Message.CUST_OTP_NOT_ENABLED);
-				resp.setMessageKey(MessageKey.KEY_USER_OTP_NOT_ENABLED);
-
-				Validate validate = new Validate();
-				validate.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
-				validate.setContactUsEmail(regSession.getContactUsEmail());
-				resp.setData(validate);
-			}
-			else
-			{
-				resp.setStatusKey(ApiConstants.SUCCESS);
-				resp.setMessage(Message.CUST_OTP_ENABLED);
-				resp.setMessageKey(MessageKey.KEY_USER_OTP_ENABLED);
-			}
-			int getOtpCount = regSession.getOtpCount();
-			getOtpCount++;
-			regSession.setOtpCount(getOtpCount);
-
-		}
-
-		return resp;
-	}*/
-	
-	
 	public AmxApiResponse<Validate, Object> isOtpEnabled(String civilId)
 	{
 		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
@@ -381,7 +361,6 @@ public class CustomerRegistrationService
 
 		return resp;
 	}
-	
 
 	public AmxApiResponse<Validate, Object> setOtpCount(String civilId)
 	{
@@ -429,7 +408,7 @@ public class CustomerRegistrationService
 		customerDetailResponse.setMobileVerify(customerDetailModel.getMobileVerify());
 		customerDetailResponse.setUserName(customerDetailModel.getUserName());
 
-		logger.info(TAG + " getUserDetails :: customerDetailModel :" + customerDetailModel.getCustSequenceNumber());
+		logger.info(TAG + " getUserDetails :: getCustSequenceNumber :" + customerDetailModel.getCustSequenceNumber());
 
 		metaData.setCustomerSequenceNumber(customerDetailModel.getCustSequenceNumber());
 
@@ -564,7 +543,7 @@ public class CustomerRegistrationService
 			regSession.setMobileNumber(requestOtpModel.getMobileNumber());
 
 			AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(requestOtpModel.getCivilId());
-			
+
 			String eOtpPrefix = otpService.sendEmailOtp(requestOtpModel.getEmailId(), "");
 			String mOtpPrefix = otpService.sendMobileOtp(requestOtpModel.getMobileNumber(), "");
 			responseOtpModel.setEotpPrefix(eOtpPrefix);
@@ -676,7 +655,7 @@ public class CustomerRegistrationService
 			String mailData = "Al Mulla Insurance Registration Completed Successfully.";
 
 			emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
-			
+
 		}
 		else
 		{
@@ -834,7 +813,7 @@ public class CustomerRegistrationService
 				String mOtpPrefix = otpService.sendMobileOtp(customerDetailModel.getMobile(), "");
 				responseOtpModel.setEotpPrefix(eOtpPrefix);
 				responseOtpModel.setMotpPrefix(mOtpPrefix);
-				
+
 				if (setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 				{
 					return setOtpCount;
@@ -853,17 +832,16 @@ public class CustomerRegistrationService
 		}
 		return resp;
 	}
-	
-	
+
 	public AmxApiResponse<?, Object> changePasswordOtpInitiate(String eOtp, String mOtp, ChangePasswordOtpRequest changePasswordOtpRequest)
 	{
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
-		
-		if(null == changePasswordOtpRequest.getCivilId() || changePasswordOtpRequest.getCivilId().equals(""))
+
+		if (null == changePasswordOtpRequest.getCivilId() || changePasswordOtpRequest.getCivilId().equals(""))
 		{
 			changePasswordOtpRequest.setCivilId(metaData.getCivilId());
 		}
-		
+
 		regSession.setCivilId(changePasswordOtpRequest.getCivilId());
 
 		AmxApiResponse<Validate, Object> validateCivilID = isValidCivilId(changePasswordOtpRequest.getCivilId());
@@ -904,7 +882,7 @@ public class CustomerRegistrationService
 				{
 					return validateDOTP;
 				}
-				
+
 				if (setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 				{
 					return setOtpCount;
@@ -922,7 +900,30 @@ public class CustomerRegistrationService
 		}
 		return resp;
 	}
-	
+
+	public AmxApiResponse<?, Object> changePasswordLogedInUser(String eOtp, String mOtp, ChangePasswordRequest changePasswordRequest)
+	{
+		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
+
+		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(metaData.getCivilId());
+		if (null == customerDetailModel || customerDetailModel.getErrorCode() != null)
+		{
+			resp.setMessageKey(customerDetailModel.getErrorCode());
+			resp.setMessage(customerDetailModel.getErrorMessage());
+			resp.setStatus(ApiConstants.FAILURE);
+			return resp;
+		}
+		else
+		{
+			AmxApiResponse<?, Object> validateDOTP = otpService.validateDOTP(eOtp, mOtp, customerDetailModel.getEmail(), customerDetailModel.getMobile());
+			if (null != validateDOTP)
+			{
+				return validateDOTP;
+			}
+			
+			return updatePassword(changePasswordRequest);
+		}
+	}
 
 	public AmxApiResponse<ChangePasswordResponse, Object> updatePassword(ChangePasswordRequest changePasswordRequest)
 	{
@@ -950,21 +951,12 @@ public class CustomerRegistrationService
 
 		return resp;
 	}
-	
-	
-	
-	
+
 	public AmxApiResponse<ChangePasswordResponse, Object> updateUserPassword(String eOtp, String mOtp, ChangePasswordRequest changePasswordRequest)
 	{
 		AmxApiResponse<ChangePasswordResponse, Object> resp = new AmxApiResponse<ChangePasswordResponse, Object>();
-
-		/*AmxApiResponse<?, Object> validateDOTP = otpService.validateDOTP(eOtp, mOtp, changePasswordRequest.getEmai, customerProfileUpdateRequest.getMobile());
-		if (null != validateDOTP)
-		{
-			return validateDOTP;
-		}*/
-		
 		CustomerDetailModel customerDetailModel = new CustomerDetailModel();
+
 		customerDetailModel.setPassword(changePasswordRequest.getNewPassword());
 
 		customerDetailModel = customerRegistrationDao.updatePassword(customerDetailModel);
@@ -986,7 +978,6 @@ public class CustomerRegistrationService
 
 		return resp;
 	}
-	
 
 	public void sendFailedRegistration(String type, RequestOtpModel requestOtpModel, String exceptionMessage)
 	{
@@ -1151,12 +1142,12 @@ public class CustomerRegistrationService
 		String Subject = "Almulla Insurance Otp";
 		emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
 
-		//smservice.sendMessage(mobileWithCode, mailData);
+		// smservice.sendMessage(mobileWithCode, mailData);
 
 		return mobileOtpPrefix;
 	}
 
-	private AmxApiResponse<?, Object> initiateMobileEmailOtp(String emailId , String mobileNumber)
+	private AmxApiResponse<?, Object> initiateMobileEmailOtp(String emailId, String mobileNumber)
 	{
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
 		ResponseOtpModel responseOtpModel = new ResponseOtpModel();

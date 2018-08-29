@@ -101,38 +101,17 @@ public class OtpService
 
 	public AmxApiResponse<?, Object> validateDOTP(String eOtp, String mOtp, String emailId, String mobileNumber)
 	{
-		logger.info(TAG + " validateDOTP :: eOtp :"+eOtp);
-		logger.info(TAG + " validateDOTP :: mOtp :"+mOtp);
-		logger.info(TAG + " validateDOTP :: emailId :"+emailId);
-		logger.info(TAG + " validateDOTP :: mobileNumber :"+mobileNumber);
-
-		
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
 		
 		if (null != mOtp && !mOtp.equals("") && null != eOtp && !eOtp.equals(""))
 		{
-			logger.info(TAG + " validateDOTP :: eOtp1                             :"+eOtp);
-			logger.info(TAG + " validateDOTP :: metaData.geteOtpEmailId1          :"+metaData.geteOtpEmailId());
-			logger.info(TAG + " validateDOTP :: mOtp1                             :"+mOtp);
-			logger.info(TAG + " validateDOTP :: metaData.getmOtpMobileNumber()1   :"+metaData.getmOtpMobileNumber());
-			
 			if (!metaData.geteOtpEmailId().equals(emailId) || !metaData.getmOtpMobileNumber().equals(mobileNumber))
 			{
-				logger.info(TAG + " validateDOTP :: eOtp2                             :"+eOtp);
-				logger.info(TAG + " validateDOTP :: metaData.geteOtpEmailId2          :"+metaData.geteOtpEmailId());
-				logger.info(TAG + " validateDOTP :: mOtp2                             :"+mOtp);
-				logger.info(TAG + " validateDOTP :: metaData.getmOtpMobileNumber()2   :"+metaData.getmOtpMobileNumber());
-				
 				return initiateMobileEmailOtp(emailId, mobileNumber);
 			}
 			
 			if (!metaData.getMotp().equals(mOtp) || !metaData.getEotp().equals(eOtp))
 			{
-				logger.info(TAG + " validateDOTP :: eOtp3                             :"+eOtp);
-				logger.info(TAG + " validateDOTP :: metaData.geteOtpEmailId3          :"+metaData.geteOtpEmailId());
-				logger.info(TAG + " validateDOTP :: mOtp3                             :"+mOtp);
-				logger.info(TAG + " validateDOTP :: metaData.getmOtpMobileNumber()3   :"+metaData.getmOtpMobileNumber());
-				
 				resp.setError(Message.REG_INVALID_OTP);
 				resp.setStatusKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED_INVALID);
 				resp.setMessageKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED_INVALID);
@@ -141,11 +120,6 @@ public class OtpService
 		}
 		else
 		{
-			logger.info(TAG + " validateDOTP :: eOtp4                             :"+eOtp);
-			logger.info(TAG + " validateDOTP :: metaData.geteOtpEmailId4          :"+metaData.geteOtpEmailId());
-			logger.info(TAG + " validateDOTP :: mOtp4                             :"+mOtp);
-			logger.info(TAG + " validateDOTP :: metaData.getmOtpMobileNumber()4   :"+metaData.getmOtpMobileNumber());
-			
 			return initiateMobileEmailOtp(emailId, mobileNumber);
 		}
 		return null;

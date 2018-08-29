@@ -149,4 +149,13 @@ public class CustomerRegistrationController
 	{
 		return customerRegistrationService.getUserDetails();
 	}
+
+	@RequestMapping(value = "/pub/login/changepass-logedin-user", method = RequestMethod.POST)
+	public AmxApiResponse<?, Object> changePasswordLogedInUser(@RequestHeader(value = "mOtp", required = false) String mOtpHeader, @RequestHeader(value = "eOtp", required = false) String eOtpHeader, @RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp,
+			@RequestBody ChangePasswordRequest changePasswordRequest)
+	{
+		mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
+		eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
+		return customerRegistrationService.changePasswordLogedInUser(eOtp, mOtp, changePasswordRequest);
+	}
 }

@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.amx.jax.api.AmxApiResponse;
+import com.amx.jax.common.DateFormats;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.constants.Message;
@@ -357,8 +358,8 @@ public class PersonalDetailsService
 		{
 			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
-			java.util.Date todays = sdf.parse(formatDate(new java.util.Date().toString()));
-			java.util.Date idExpDateFormatted = sdf.parse(formatDate2(idExpiryDate));
+			java.util.Date todays = sdf.parse(DateFormats.formatType1(new java.util.Date().toString()));
+			java.util.Date idExpDateFormatted = sdf.parse(DateFormats.formatType2(idExpiryDate));
 
 			if (idExpDateFormatted.before(todays))
 			{
@@ -371,56 +372,5 @@ public class PersonalDetailsService
 		}
 		return false;
 	}
-
-	public String formatDate(String inDate)
-	{
-		String outDate = "";
-		SimpleDateFormat inputDateFormat = new SimpleDateFormat("E MMM dd HH:mm:ss Z yyyy");
-		SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-		try
-		{
-			java.util.Date date = inputDateFormat.parse(inDate);
-			outDate = outputDateFormat.format(date);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		return outDate;
-	}
-
-	public String formatDate2(String inDate)
-	{
-		String outDate = "";
-		SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd-MM-yyyy");
-		try
-		{
-			java.util.Date date = inputDateFormat.parse(inDate);
-			outDate = outputDateFormat.format(date);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		return outDate;
-	}
-
-	public String DATE_DD_MMM_YYYY(String inDate)
-	{
-		String outDate = "";
-		SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
-		try
-		{
-			java.util.Date date = inputDateFormat.parse(inDate);
-			outDate = outputDateFormat.format(date);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		return outDate;
-	}
-
+	
 }
