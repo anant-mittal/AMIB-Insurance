@@ -3,6 +3,7 @@ package com.amx.jax.services;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -77,17 +78,32 @@ public class PersonalDetailsService
 		customerProfileDetailResponse.setGenderDesc(customerProfileDetailModel.getGenderDesc());
 		customerProfileDetailResponse.setGovCode(customerProfileDetailModel.getGovCode());
 		customerProfileDetailResponse.setGovDesc(customerProfileDetailModel.getGovDesc());
-		
-		customerProfileDetailResponse.setIdExpiryDate(customerProfileDetailModel.getIdExpiryDate());
-		
+
+		logger.info(TAG + " getProfileDetails :: getIdExpiryDate :" + customerProfileDetailModel.getIdExpiryDate());// 2018-09-22
+
+		if (null != customerProfileDetailModel.getIdExpiryDate())
+		{
+			try
+			{
+				String idExpDateStr = DateFormats.formatType3(customerProfileDetailModel.getIdExpiryDate().toString());
+				customerProfileDetailResponse.setIdExpiryDate(idExpDateStr);
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+				customerProfileDetailModel.setIdExpiryDate(null);
+			}
+		}
+		else
+		{
+			customerProfileDetailResponse.setIdExpiryDate(null);
+		}
+
 		customerProfileDetailResponse.setLanguageId(customerProfileDetailModel.getLanguageId());
 		customerProfileDetailResponse.setMobile(customerProfileDetailModel.getMobile());
 		customerProfileDetailResponse.setNatyCode(customerProfileDetailModel.getNatyCode());
 		customerProfileDetailResponse.setNatyDesc(customerProfileDetailModel.getNatyDesc());
 		customerProfileDetailResponse.setNativeArabicName(customerProfileDetailModel.getNativeArabicName());
-
-		logger.info(TAG + " getProfileDetails :: customerProfileDetailResponse :" + customerProfileDetailResponse);
-
 		if (customerProfileDetailModel.getStatus())
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
@@ -120,7 +136,7 @@ public class PersonalDetailsService
 
 		if (null != customerProfileUpdateRequest.getIdExpiryDate())
 		{
-			String dateFromDb = customerProfileUpdateRequest.getIdExpiryDate().toString();
+			String dateFromDb = customerProfileUpdateRequest.getIdExpiryDate();
 			if (checkExpiryDate(dateFromDb))
 			{
 				resp.setStatusKey(ApiConstants.FAILURE);
@@ -222,7 +238,28 @@ public class PersonalDetailsService
 		customerProfileDetailModel.setEnglishName(customerProfileUpdateRequest.getEnglishName());
 		customerProfileDetailModel.setNativeArabicName(customerProfileUpdateRequest.getNativeArabicName());
 		customerProfileDetailModel.setGenderCode(customerProfileUpdateRequest.getGenderCode());
-		customerProfileDetailModel.setIdExpiryDate(customerProfileUpdateRequest.getIdExpiryDate());
+
+		if (null != customerProfileUpdateRequest.getIdExpiryDate() && !customerProfileUpdateRequest.getIdExpiryDate().toString().equals(""))
+		{
+			try
+			{
+				String idExpDateStr = DateFormats.formatType4(customerProfileUpdateRequest.getIdExpiryDate().toString());
+				DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+				java.util.Date date = format.parse(idExpDateStr);
+				customerProfileDetailModel.setIdExpiryDate(new Date(date.getTime()));
+				logger.info(TAG + " updateProfileDetails :: idExpDateStr :" + idExpDateStr);
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+				customerProfileDetailModel.setIdExpiryDate(null);
+			}
+		}
+		else
+		{
+			customerProfileDetailModel.setIdExpiryDate(null);
+		}
+
 		customerProfileDetailModel.setBusinessCode(customerProfileUpdateRequest.getBusinessCode());
 		customerProfileDetailModel.setNatyCode(customerProfileUpdateRequest.getNatyCode());
 		customerProfileDetailModel.setGovCode(customerProfileUpdateRequest.getGovCode());
@@ -230,14 +267,12 @@ public class PersonalDetailsService
 		customerProfileDetailModel.setMobile(customerProfileUpdateRequest.getMobile());
 		customerProfileDetailModel.setEmail(customerProfileUpdateRequest.getEmail());
 
-		customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel);
+		logger.info(TAG + " updateProfileDetails :: customerProfileDetailModel 1 :" + customerProfileDetailModel.toString());
 
+		customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel);
 		customerProfileUpdateResponse.setStatus(customerProfileDetailModel.getStatus());
 		customerProfileUpdateResponse.setErrorCode(customerProfileDetailModel.getErrorCode());
 		customerProfileUpdateResponse.setErrorMessage(customerProfileDetailModel.getErrorMessage());
-
-		logger.info(TAG + " updateProfileDetails :: customerProfileDetailModel :" + customerProfileDetailModel);
-
 		if (customerProfileUpdateResponse.getStatus())
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
@@ -246,7 +281,6 @@ public class PersonalDetailsService
 		{
 			resp.setStatusKey(ApiConstants.FAILURE);
 		}
-
 		resp.setMessageKey(customerProfileUpdateResponse.getErrorCode());
 		resp.setMessage(customerProfileUpdateResponse.getErrorCode());
 
@@ -359,7 +393,7 @@ public class PersonalDetailsService
 			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
 			java.util.Date todays = sdf.parse(DateFormats.formatType1(new java.util.Date().toString()));
-			java.util.Date idExpDateFormatted = sdf.parse(DateFormats.formatType2(idExpiryDate));
+			java.util.Date idExpDateFormatted = sdf.parse(DateFormats.formatType5(idExpiryDate));
 
 			if (idExpDateFormatted.before(todays))
 			{
@@ -372,5 +406,5 @@ public class PersonalDetailsService
 		}
 		return false;
 	}
-	
+
 }

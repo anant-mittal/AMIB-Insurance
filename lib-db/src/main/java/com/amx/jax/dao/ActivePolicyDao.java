@@ -80,10 +80,8 @@ public class ActivePolicyDao
 				activePolicyModel.setColourDesc(rs.getString(23));
 				activePolicyModel.setNoPass(rs.getBigDecimal(24));
 				activePolicyModel.setChassis(rs.getBigDecimal(25));
-				
 				logger.info(TAG + " getUserActivePolicy :: rs.getBigDecimal(26) :" + rs.getBigDecimal(26));
 				activePolicyModel.setKtNumber(rs.getBigDecimal(26));
-				
 				activePolicyModel.setVehicleConditionCode(rs.getString(27));
 				activePolicyModel.setVehicleConditionDesc(rs.getString(28));
 				activePolicyModel.setPurposeCode(rs.getString(29));

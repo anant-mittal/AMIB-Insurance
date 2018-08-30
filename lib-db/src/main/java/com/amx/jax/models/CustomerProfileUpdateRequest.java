@@ -2,7 +2,6 @@
 package com.amx.jax.models;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 
 public class CustomerProfileUpdateRequest
 {
@@ -12,7 +11,7 @@ public class CustomerProfileUpdateRequest
 
 	private String genderCode;
 
-	private Date idExpiryDate;
+	private String idExpiryDate;
 
 	private String businessCode;
 
@@ -58,12 +57,12 @@ public class CustomerProfileUpdateRequest
 		this.genderCode = genderCode;
 	}
 
-	public Date getIdExpiryDate()
+	public String getIdExpiryDate()
 	{
 		return idExpiryDate;
 	}
 
-	public void setIdExpiryDate(Date idExpiryDate)
+	public void setIdExpiryDate(String idExpiryDate)
 	{
 		this.idExpiryDate = idExpiryDate;
 	}
@@ -141,8 +140,8 @@ public class CustomerProfileUpdateRequest
 	@Override
 	public String toString()
 	{
-		return "CustomerProfileUpdateRequest [englishName=" + englishName + ", nativeArabicName=" + nativeArabicName + ", genderCode=" + genderCode + ", idExpiryDate=" + idExpiryDate + ", businessCode=" + businessCode + ", natyCode=" + natyCode
-				+ ", govCode=" + govCode + ", areaCode=" + areaCode + ", mobile=" + mobile + ", email=" + email + ", languageId=" + languageId + "]";
+		return "CustomerProfileUpdateRequest [englishName=" + englishName + ", nativeArabicName=" + nativeArabicName + ", genderCode=" + genderCode + ", idExpiryDate=" + idExpiryDate + ", businessCode=" + businessCode + ", natyCode=" + natyCode + ", govCode=" + govCode + ", areaCode=" + areaCode
+				+ ", mobile=" + mobile + ", email=" + email + ", languageId=" + languageId + "]";
 	}
 
 }

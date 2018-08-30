@@ -2,7 +2,8 @@
 package com.amx.jax.models;
 
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.util.Date;
+
 
 public class CustomerProfileDetailResponse
 {
@@ -15,7 +16,7 @@ public class CustomerProfileDetailResponse
 
 	private String genderDesc;
 
-	private Date idExpiryDate;
+	private String idExpiryDate;
 
 	private String businessCode;
 
@@ -79,12 +80,12 @@ public class CustomerProfileDetailResponse
 		this.genderDesc = genderDesc;
 	}
 
-	public Date getIdExpiryDate()
+	public String getIdExpiryDate()
 	{
 		return idExpiryDate;
 	}
 
-	public void setIdExpiryDate(Date idExpiryDate)
+	public void setIdExpiryDate(String idExpiryDate)
 	{
 		this.idExpiryDate = idExpiryDate;
 	}
