@@ -74,7 +74,7 @@ public class OtpService
 		String mailData = "Your Mobile OTP Generated From Al Mulla Insurance is :- " + mobileOtpToSend;
 
 		String emailIdFrom = regSession.getEmailFromConfigured();
-		String emailITo = "abhishek.tiwari@mobicule.com";
+		//String emailITo = "abhishek.tiwari@mobicule.com";
 		String emailITo = "dipali.pingale@mobicule.com";
 		String Subject = "Almulla Insurance Otp";
 		emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
