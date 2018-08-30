@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.amx.jax.models.ActivePolicyModel;
+import com.amx.jax.models.IncompleteApplResponse;
 import com.amx.jax.models.Validate;
 import com.amx.jax.services.ActivePolicyService;
 import com.amx.jax.api.AmxApiResponse;
@@ -27,4 +28,11 @@ public class ActivePolicyController
 	{
 		return activePolicyService.getUserActivePolicy();
 	}
+	
+	@RequestMapping(value = "/api/mypolicy/get-incomplete-app", method = RequestMethod.POST, produces = "application/json")
+	public AmxApiResponse<IncompleteApplResponse, Object> getIncompleteApplication()
+	{
+		return activePolicyService.getIncompleteApplication();
+	}
+	
 }

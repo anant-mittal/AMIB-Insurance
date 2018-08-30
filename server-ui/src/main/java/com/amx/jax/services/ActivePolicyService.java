@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.models.ActivePolicyModel;
+import com.amx.jax.models.IncompleteApplModel;
+import com.amx.jax.models.IncompleteApplResponse;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.RegSession;
 import com.amx.jax.models.Validate;
@@ -34,12 +36,10 @@ public class ActivePolicyService
 	public AmxApiResponse<ActivePolicyModel, Object> getUserActivePolicy()
 	{
 		AmxApiResponse<ActivePolicyModel, Object> resp = new AmxApiResponse<ActivePolicyModel, Object>();
-		
 		try
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
 			resp.setResults(activePolicyDao.getUserActivePolicy());
-
 		}
 		catch (Exception e)
 		{
@@ -48,7 +48,29 @@ public class ActivePolicyService
 			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
-		
+	}
+	
+	
+	public AmxApiResponse<IncompleteApplResponse, Object> getIncompleteApplication()
+	{
+		AmxApiResponse<IncompleteApplResponse, Object> resp = new AmxApiResponse<IncompleteApplResponse, Object>();
+		IncompleteApplResponse incompleteApplResponse = new IncompleteApplResponse();
+		try
+		{
+			IncompleteApplModel incompleteApplModel = activePolicyDao.getIncompleteApplication();
+			
+			incompleteApplResponse.setAppSeqNumber(incompleteApplModel.getAppSeqNumber());
+			incompleteApplResponse.setAppStage(incompleteApplModel.getAppStage());
+			resp.setData(incompleteApplResponse);
+			resp.setStatusKey(ApiConstants.SUCCESS);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
+		return resp;
 	}
 
 }

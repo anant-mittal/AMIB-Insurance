@@ -460,7 +460,8 @@ public class CustomerRegistrationDao
 		CustomerDetailModel customerDetailModel = null;
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_USERDTLS(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
-
+		String lastDate = null;
+		
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -487,22 +488,15 @@ public class CustomerRegistrationDao
 			callableStatement.executeUpdate();
 
 			customerDetailModel = new CustomerDetailModel();
-
 			customerDetailModel.setMobile(callableStatement.getString(7));
 			customerDetailModel.setEmail(callableStatement.getString(8));
 			customerDetailModel.setLanguageId(callableStatement.getBigDecimal(9));
 			customerDetailModel.setMobileVerify(callableStatement.getString(10));
 			customerDetailModel.setMailVerify(callableStatement.getString(11));
-			
-			String lastDate = null;
-			
 			if(null != callableStatement.getTimestamp(12))
 			{
-				logger.info(TAG + " getUserDetails :: Last Login Date :" + callableStatement.getTimestamp(12));
 				lastDate = formatDate(callableStatement.getTimestamp(12).toString());
-				logger.info(TAG + " getUserDetails :: lastDate :" + lastDate);
 			}
-			
 			customerDetailModel.setLastLogin(lastDate);
 			customerDetailModel.setDeviceId(callableStatement.getString(13));
 			customerDetailModel.setDeviceType(callableStatement.getString(14));
@@ -734,7 +728,6 @@ public class CustomerRegistrationDao
 		return new java.sql.Date(todayNew.getTime());
 	}
 	
-
 	private Connection getConnection()
 	{
 		try

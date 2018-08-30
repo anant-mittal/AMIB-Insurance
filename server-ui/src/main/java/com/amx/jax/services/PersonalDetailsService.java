@@ -391,14 +391,16 @@ public class PersonalDetailsService
 		try
 		{
 			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-
 			java.util.Date todays = sdf.parse(DateFormats.formatType1(new java.util.Date().toString()));
-			java.util.Date idExpDateFormatted = sdf.parse(DateFormats.formatType5(idExpiryDate));
-
+			java.util.Date idExpDateFormatted = sdf.parse(DateFormats.formatType1(new java.util.Date(idExpiryDate).toString()));
 			if (idExpDateFormatted.before(todays))
 			{
 				return true;
 			}
+			logger.info(TAG + " checkExpiryDate :: idExpiryDate 1 :" + idExpiryDate);
+			logger.info(TAG + " checkExpiryDate :: todays 2 :" + todays);
+			logger.info(TAG + " checkExpiryDate :: idExpDateFormatted 3 :" + idExpDateFormatted);
+			logger.info(TAG + " checkExpiryDate :: Condition 4 :" + idExpDateFormatted.before(todays));
 		}
 		catch (Exception e)
 		{

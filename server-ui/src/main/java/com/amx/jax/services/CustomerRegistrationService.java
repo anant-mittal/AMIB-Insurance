@@ -458,116 +458,6 @@ public class CustomerRegistrationService
 		return isEmailIdExist(emailId);
 	}
 
-	public AmxApiResponse<?, Object> registrationOtpInitiate(RequestOtpModel requestOtpModel)
-	{
-		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
-		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
-
-		try
-		{
-			if (null == requestOtpModel.getCivilId() || requestOtpModel.getCivilId().toString().equals(""))
-			{
-				requestOtpModel.setCivilId(metaData.getCivilId());
-			}
-
-			AmxApiResponse<Validate, Object> validateCivilID = isValidCivilId(requestOtpModel.getCivilId());
-			AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(requestOtpModel.getCivilId());
-			AmxApiResponse<Validate, Object> isValidMobileNumber = isValidMobileNumber(requestOtpModel.getMobileNumber());
-			AmxApiResponse<Validate, Object> mobileNumberExists = isMobileNumberExist(requestOtpModel.getMobileNumber());
-			AmxApiResponse<Validate, Object> validateEmailID = isValidEmailId(requestOtpModel.getEmailId());
-			AmxApiResponse<Validate, Object> emailIdExists = isEmailIdExist(requestOtpModel.getEmailId());
-			AmxApiResponse<Validate, Object> isOtpEnabled = isOtpEnabled(requestOtpModel.getCivilId());
-
-			if (validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-			{
-				return validateCivilID;
-			}
-
-			if (isValidMobileNumber.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-			{
-				return isValidMobileNumber;
-			}
-
-			if (validateEmailID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-			{
-				return validateEmailID;
-			}
-
-			if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
-			{
-				civilIdExistCheck.setStatusKey(ApiConstants.FAILURE);
-				return civilIdExistCheck;
-			}
-
-			if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS) && emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
-			{
-				sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_MOBE_MAIL, requestOtpModel, mobileNumberExists.getMessage());
-				mobileNumberExists.setMessageKey(MessageKey.KEY_MOBILE_OR_EMAIL_ALREADY_EXISTS);
-				mobileNumberExists.setStatusKey(ApiConstants.FAILURE);
-				return mobileNumberExists;
-			}
-			else if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
-			{
-				sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE, requestOtpModel, mobileNumberExists.getMessage());
-				mobileNumberExists.setMessageKey(MessageKey.KEY_MOBILE_NO_ALREADY_REGISTER);
-				mobileNumberExists.setStatusKey(ApiConstants.FAILURE);
-				return mobileNumberExists;
-			}
-			else if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
-			{
-				sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL, requestOtpModel, emailIdExists.getMessage());
-				emailIdExists.setMessageKey(MessageKey.KEY_EMAID_ALREADY_REGISTER);
-				emailIdExists.setStatusKey(ApiConstants.FAILURE);
-				return emailIdExists;
-			}
-
-			if (isOtpEnabled.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-			{
-				return isOtpEnabled;
-			}
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			resp.setData(null);
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
-			return resp;
-		}
-
-		try
-		{
-
-			regSession.setCivilId(requestOtpModel.getCivilId());
-			regSession.setEmailId(requestOtpModel.getEmailId());
-			regSession.setMobileNumber(requestOtpModel.getMobileNumber());
-
-			AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(requestOtpModel.getCivilId());
-
-			String eOtpPrefix = otpService.sendEmailOtp(requestOtpModel.getEmailId(), "");
-			String mOtpPrefix = otpService.sendMobileOtp(requestOtpModel.getMobileNumber(), "");
-			responseOtpModel.setEotpPrefix(eOtpPrefix);
-			responseOtpModel.setMotpPrefix(mOtpPrefix);
-
-			resp.setData(responseOtpModel);
-			resp.setStatusKey(ApiConstants.SUCCESS);
-
-			if (setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-			{
-				return setOtpCount;
-			}
-
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			resp.setData(null);
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
-		}
-		return resp;
-	}
-
 	public AmxApiResponse<?, Object> registrationOtp(String eOtp, String mOtp, RequestOtpModel requestOtpModel)
 	{
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
@@ -600,29 +490,6 @@ public class CustomerRegistrationService
 			resp.setException(e.toString());
 			resp.setStatusKey(ApiConstants.FAILURE);
 		}
-		return resp;
-	}
-
-	public AmxApiResponse<Validate, Object> validateOtp(String mOtp, String eOtp)
-	{
-		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
-		Validate validate = new Validate();
-
-		if (regSession.getMotp().equals(mOtp) && regSession.getEotp().equals(eOtp))
-		{
-			validate.setValid(true);
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			resp.setMessage(Message.REG_VALID_OTP);
-		}
-		else
-		{
-			validate.setValid(false);
-			resp.setStatusKey(ApiConstants.FAILURE);
-			resp.setMessage(Message.REG_INVALID_OTP);
-			resp.setMessageKey(MessageKey.KEY_REG_VALIDATE_OTP);
-		}
-		resp.setData(validate);
-
 		return resp;
 	}
 
@@ -695,14 +562,12 @@ public class CustomerRegistrationService
 
 			customerLoginModel.setCivilId(customerLoginRequest.getCivilId());
 			customerLoginModel.setPassword(customerLoginRequest.getPassword());
-
 			customerLoginModel = customerRegistrationDao.validateUserLogin(customerLoginModel);
 
 			if (customerLoginModel.getStatus())
 			{
 				onSuccessLogin(customerLoginRequest, customerLoginModel);
 				getUserDetails();
-
 				resp.setStatusKey(ApiConstants.SUCCESS);
 			}
 			else
@@ -765,72 +630,6 @@ public class CustomerRegistrationService
 		metaData.setDeviceType(regSession.getDeviceType());
 		metaData.setContactUsEmail(regSession.getContactUsEmail());
 		metaData.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
-
-	}
-
-	public AmxApiResponse<?, Object> changePasswordOtpInitiate(ChangePasswordOtpRequest changePasswordOtpRequest)
-	{
-		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
-		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
-		regSession.setCivilId(changePasswordOtpRequest.getCivilId());
-
-		AmxApiResponse<Validate, Object> validateCivilID = isValidCivilId(changePasswordOtpRequest.getCivilId());
-		if (validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-		{
-			return validateCivilID;
-		}
-
-		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(changePasswordOtpRequest.getCivilId());
-		logger.info(TAG + " changePasswordOtpInitiate :: civilIdExistCheck :" + civilIdExistCheck.getStatusKey());
-		if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-		{
-			return civilIdExistCheck;
-		}
-
-		AmxApiResponse<Validate, Object> isOtpEnabled = isOtpEnabled(changePasswordOtpRequest.getCivilId());
-		logger.info(TAG + " changePasswordOtpInitiate :: isOtpEnabled :" + isOtpEnabled.getStatusKey());
-		if (isOtpEnabled.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-		{
-			return isOtpEnabled;
-		}
-
-		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(changePasswordOtpRequest.getCivilId());
-
-		if (null == customerDetailModel || customerDetailModel.getErrorCode() != null)
-		{
-			resp.setMessageKey(customerDetailModel.getErrorCode());
-			resp.setMessage(customerDetailModel.getErrorMessage());
-			resp.setStatusKey(ApiConstants.FAILURE);
-			return resp;
-		}
-		else
-		{
-			try
-			{
-				AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(changePasswordOtpRequest.getCivilId());
-
-				String eOtpPrefix = otpService.sendEmailOtp(customerDetailModel.getEmail(), "");
-				String mOtpPrefix = otpService.sendMobileOtp(customerDetailModel.getMobile(), "");
-				responseOtpModel.setEotpPrefix(eOtpPrefix);
-				responseOtpModel.setMotpPrefix(mOtpPrefix);
-
-				if (setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-				{
-					return setOtpCount;
-				}
-				resp.setData(responseOtpModel);
-				resp.setStatusKey(ApiConstants.SUCCESS);
-
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-				resp.setStatusKey(ApiConstants.FAILURE);
-				resp.setMessage(Message.CP_EMAIL_NOT_SENT);
-				resp.setMessageKey(MessageKey.KEY_CP_OTP_NOT_GENERATED);
-			}
-		}
-		return resp;
 	}
 
 	public AmxApiResponse<?, Object> changePasswordOtpInitiate(String eOtp, String mOtp, ChangePasswordOtpRequest changePasswordOtpRequest)
@@ -936,7 +735,6 @@ public class CustomerRegistrationService
 
 		if (customerDetailModel.getStatus())
 		{
-			logger.info(TAG + " updatePassword :: errorMessage True :");
 			resp.setMessageKey(customerDetailModel.getErrorCode());
 			resp.setError(customerDetailModel.getErrorMessage());
 			resp.setStatusKey(ApiConstants.SUCCESS);
@@ -944,13 +742,11 @@ public class CustomerRegistrationService
 		}
 		else
 		{
-			logger.info(TAG + " updatePassword :: errorMessage false :");
 			resp.setMessageKey(customerDetailModel.getErrorCode());
 			resp.setError(customerDetailModel.getErrorMessage());
 			resp.setStatusKey(ApiConstants.FAILURE);
 			resp.setData(null);
 		}
-
 		return resp;
 	}
 
@@ -958,11 +754,8 @@ public class CustomerRegistrationService
 	{
 		AmxApiResponse<ChangePasswordResponse, Object> resp = new AmxApiResponse<ChangePasswordResponse, Object>();
 		CustomerDetailModel customerDetailModel = new CustomerDetailModel();
-
 		customerDetailModel.setPassword(changePasswordRequest.getNewPassword());
-
 		customerDetailModel = customerRegistrationDao.updatePassword(customerDetailModel);
-
 		if (customerDetailModel.getStatus())
 		{
 			resp.setMessageKey(customerDetailModel.getErrorCode());
@@ -977,7 +770,6 @@ public class CustomerRegistrationService
 			resp.setStatusKey(ApiConstants.FAILURE);
 			resp.setData(null);
 		}
-
 		return resp;
 	}
 
@@ -1059,24 +851,19 @@ public class CustomerRegistrationService
 	public ResponseOtpModel sendEmailOtpTemp(String emailId)
 	{
 		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
-
 		String emailOtpPrefix = Random.randomAlpha(3);
 		String mobileOtpPrefix = Random.randomAlpha(3);
-
 		String emailOtp = Random.randomNumeric(6);
 		String mobileOtp = Random.randomNumeric(6);
-
 		String emailOtpToSend = emailOtpPrefix + "-" + emailOtp;
 		String mobileOtpToSend = mobileOtpPrefix + "-" + mobileOtp;
 
 		responseOtpModel.setEotpPrefix(emailOtpPrefix);
 		responseOtpModel.setMotpPrefix(mobileOtpPrefix);
-
 		regSession.setMotpPrefix(mobileOtpPrefix);
 		regSession.setEotpPrefix(emailOtpPrefix);
 		regSession.setEotp(emailOtp);
 		regSession.setMotp(mobileOtp);
-
 		metaData.setMotpPrefix(mobileOtpPrefix);
 		metaData.setEotpPrefix(emailOtpPrefix);
 		metaData.setEotp(emailOtp);
@@ -1090,79 +877,6 @@ public class CustomerRegistrationService
 		emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
 
 		return responseOtpModel;
-	}
-
-	public String sendEmailOtp(String emailId, String data)
-	{
-		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
-
-		String emailOtpPrefix = Random.randomAlpha(3);
-		String emailOtp = Random.randomNumeric(6);
-		String emailOtpToSend = emailOtpPrefix + "-" + emailOtp;
-
-		responseOtpModel.setEotpPrefix(emailOtpPrefix);
-		responseOtpModel.setMotpPrefix(null);
-
-		regSession.setEotpPrefix(emailOtpPrefix);
-		regSession.setEotp(emailOtp);
-
-		metaData.setEotpPrefix(emailOtpPrefix);
-		metaData.setEotp(emailOtp);
-
-		String emailIdFrom = webConfig.getConfigEmail();
-		String emailITo = emailId;
-		String Subject = "OTP Verification";
-		String mailData = "Your Email OTP Generated From Almulla Insurance is : " + emailOtpToSend;
-
-		emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
-
-		return emailOtpPrefix;
-	}
-
-	public String sendMobileOtp(String mobileNumber, String data)
-	{
-		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
-
-		String mobileWithCode = "965" + mobileNumber;
-
-		String mobileOtpPrefix = Random.randomAlpha(3);
-		String mobileOtp = Random.randomNumeric(6);
-		String mobileOtpToSend = mobileOtpPrefix + "-" + mobileOtp;
-
-		responseOtpModel.setEotpPrefix(null);
-		responseOtpModel.setMotpPrefix(mobileOtpPrefix);
-
-		regSession.setMotpPrefix(mobileOtpPrefix);
-		regSession.setMotp(mobileOtp);
-
-		metaData.setMotpPrefix(mobileOtpPrefix);
-		metaData.setMotp(mobileOtp);
-		String mailData = "Your Mobile OTP Generated From Al Mulla Insurance is : " + mobileOtpToSend;
-
-		String emailIdFrom = webConfig.getConfigEmail();
-		String emailITo = "abhishek.tiwari@mobicule.com";
-		String Subject = "Almulla Insurance Otp";
-		emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
-
-		// smservice.sendMessage(mobileWithCode, mailData);
-
-		return mobileOtpPrefix;
-	}
-
-	private AmxApiResponse<?, Object> initiateMobileEmailOtp(String emailId, String mobileNumber)
-	{
-		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
-		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
-		String eOtpPrefix = sendEmailOtp(emailId, "");
-		String mOtpPrefix = sendMobileOtp(mobileNumber, "");
-		responseOtpModel.setEotpPrefix(eOtpPrefix);
-		responseOtpModel.setMotpPrefix(mOtpPrefix);
-		metaData.setmOtpMobileNumber(mobileNumber);
-		metaData.seteOtpEmailId(emailId);
-		resp.setMeta(responseOtpModel);
-		resp.setStatusKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
-		resp.setMessageKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
-		return resp;
 	}
 
 	private AmxApiResponse<?, Object> validateForRegistration(RequestOtpModel requestOtpModel)
