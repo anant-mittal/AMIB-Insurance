@@ -1,18 +1,33 @@
-package com.amx.jax.common;
+package com.amx.jax.models;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.amx.jax.services.CustomerRegistrationService;
 
 public class DateFormats
 {
 	static String TAG = "com.amx.jax.services :: PersonalDetailsService :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(DateFormats.class);
+	
+	public static String uiFormattedDate(java.sql.Date inDateSqlFormat)
+	{
+		if(null != inDateSqlFormat && !inDateSqlFormat.toString().equals(""))
+		{
+			try
+			{
+				String idExpDateStr = formatType3(inDateSqlFormat.toString());
+				return idExpDateStr;
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+	
 	
 	public static String formatType1(String inDate)
 	{
@@ -56,7 +71,6 @@ public class DateFormats
 		try
 		{
 			Date date = inputDateFormat.parse(inDate);
-			logger.info(TAG + " formatType3 :: date :" + date);
 			outDate = outputDateFormat.format(date);
 		}
 		catch (Exception e)
@@ -72,13 +86,9 @@ public class DateFormats
 		String outDate = "";
 		SimpleDateFormat inputDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
 		SimpleDateFormat outputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
 		try
 		{
 			Date date = inputDateFormat.parse(inDate);
-			
-			logger.info(TAG + " formatType3 :: date :" + date);
-			
 			outDate = outputDateFormat.format(date);
 		}
 		catch (Exception e)
@@ -98,9 +108,6 @@ public class DateFormats
 		try
 		{
 			Date date = inputDateFormat.parse(inDate);
-			
-			logger.info(TAG + " formatType3 :: date :" + date);
-			
 			outDate = outputDateFormat.format(date);
 		}
 		catch (Exception e)

@@ -1,7 +1,6 @@
 package com.amx.jax.models;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 
 public class ActivePolicyModel
 {
@@ -11,7 +10,7 @@ public class ActivePolicyModel
 
 	private BigDecimal docNumber;
 
-	private Date docDate;
+	private String docDate;
 
 	private BigDecimal finance;
 
@@ -75,9 +74,9 @@ public class ActivePolicyModel
 
 	private BigDecimal maxInsuredAmount;
 
-	private Date startDate;
+	private String startDate;
 
-	private Date endDate;
+	private String endDate;
 
 	private BigDecimal supervisionKey;
 
@@ -119,12 +118,12 @@ public class ActivePolicyModel
 		this.docNumber = docNumber;
 	}
 
-	public Date getDocDate()
+	public String getDocDate()
 	{
 		return docDate;
 	}
 
-	public void setDocDate(Date docDate)
+	public void setDocDate(String docDate)
 	{
 		this.docDate = docDate;
 	}
@@ -439,22 +438,22 @@ public class ActivePolicyModel
 		this.maxInsuredAmount = maxInsuredAmount;
 	}
 
-	public Date getStartDate()
+	public String getStartDate()
 	{
 		return startDate;
 	}
 
-	public void setStartDate(Date startDate)
+	public void setStartDate(String startDate)
 	{
 		this.startDate = startDate;
 	}
 
-	public Date getEndDate()
+	public String getEndDate()
 	{
 		return endDate;
 	}
 
-	public void setEndDate(Date endDate)
+	public void setEndDate(String endDate)
 	{
 		this.endDate = endDate;
 	}

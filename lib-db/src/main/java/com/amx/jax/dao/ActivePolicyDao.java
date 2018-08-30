@@ -11,10 +11,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import com.amx.jax.models.ActivePolicyModel;
 import com.amx.jax.models.CustomerProfileDetailModel;
+import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.IncompleteApplModel;
 import com.amx.jax.models.IncompleteApplResponse;
 import com.amx.jax.models.MetaData;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import oracle.jdbc.OracleTypes;
 
@@ -61,7 +61,7 @@ public class ActivePolicyDao
 				activePolicyModel.setCountryId(rs.getBigDecimal(1));
 				activePolicyModel.setCompCd(rs.getBigDecimal(2));
 				activePolicyModel.setDocNumber(rs.getBigDecimal(3));
-				activePolicyModel.setDocDate(rs.getDate(4));
+				activePolicyModel.setDocDate(DateFormats.uiFormattedDate(rs.getDate(4)));
 				activePolicyModel.setFinance(rs.getBigDecimal(5));
 				activePolicyModel.setShowRoom(rs.getBigDecimal(6));
 				activePolicyModel.setSalesman(rs.getBigDecimal(7));
@@ -83,7 +83,6 @@ public class ActivePolicyDao
 				activePolicyModel.setColourDesc(rs.getString(23));
 				activePolicyModel.setNoPass(rs.getBigDecimal(24));
 				activePolicyModel.setChassis(rs.getBigDecimal(25));
-				logger.info(TAG + " getUserActivePolicy :: rs.getBigDecimal(26) :" + rs.getBigDecimal(26));
 				activePolicyModel.setKtNumber(rs.getBigDecimal(26));
 				activePolicyModel.setVehicleConditionCode(rs.getString(27));
 				activePolicyModel.setVehicleConditionDesc(rs.getString(28));
@@ -94,18 +93,16 @@ public class ActivePolicyDao
 				activePolicyModel.setPolicyTypeDesc(rs.getString(33));
 				activePolicyModel.setPolicyNumber(rs.getString(34));
 				activePolicyModel.setMaxInsuredAmount(rs.getBigDecimal(35));
-				activePolicyModel.setStartDate(rs.getDate(36));
-				activePolicyModel.setEndDate(rs.getDate(37));
+				activePolicyModel.setStartDate(DateFormats.uiFormattedDate(rs.getDate(36)));
+				activePolicyModel.setEndDate(DateFormats.uiFormattedDate(rs.getDate(37)));
 				activePolicyModel.setSupervisionKey(rs.getBigDecimal(38));
 				activePolicyModel.setIssueFee(rs.getBigDecimal(39));
 				activePolicyModel.setPremium(rs.getBigDecimal(40));
 				activePolicyModel.setDiscount(rs.getBigDecimal(41));
 				activePolicyModel.setRenewalIndic(rs.getString(42));
 				activePolicyArray.add(activePolicyModel);
-	
 				logger.info(TAG + " getUserActivePolicy :: activePolicyModel :" + activePolicyModel.toString());
 			}
-			logger.info(TAG + " getUserActivePolicy :: customerProfileDetailResponse :" + activePolicyArray);
 		}
 		catch (Exception e)
 		{

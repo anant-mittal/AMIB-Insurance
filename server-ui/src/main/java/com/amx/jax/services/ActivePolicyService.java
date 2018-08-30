@@ -38,6 +38,8 @@ public class ActivePolicyService
 		AmxApiResponse<ActivePolicyModel, Object> resp = new AmxApiResponse<ActivePolicyModel, Object>();
 		try
 		{
+			
+			
 			resp.setStatusKey(ApiConstants.SUCCESS);
 			resp.setResults(activePolicyDao.getUserActivePolicy());
 		}
