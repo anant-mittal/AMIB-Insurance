@@ -31,8 +31,7 @@ public class VehicleDetailsDao
 {
 	String TAG = "com.insurance.vehicledetails.dao.VehicleDetailsDao :: ";
 
-	// private static final Logger logger =
-	// LoggerFactory.getLogger(VehicleDetailsDao.class);
+	private static final Logger logger = LoggerFactory.getLogger(VehicleDetailsDao.class);
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -49,12 +48,9 @@ public class VehicleDetailsDao
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_CHECK_INCOMPLETE_APPL(?,?,?,?,?,?,?,?,?)}";
 		ArrayList<Make> makeArray = new ArrayList<Make>();
-
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-
-			
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			callableStatement.setString(3, metaData.getUserType());
@@ -66,7 +62,6 @@ public class VehicleDetailsDao
 			callableStatement.executeUpdate();
 
 			ResultSet rs = (ResultSet) callableStatement.getObject(4);
-
 			while (rs.next())
 			{
 				Make make = new Make();
@@ -74,18 +69,15 @@ public class VehicleDetailsDao
 				make.setMakeDesc(rs.getString(2));
 				makeArray.add(make);
 			}
-
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-
 		return makeArray;
 	}
 
@@ -96,13 +88,9 @@ public class VehicleDetailsDao
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_MAKES(?,?,?,?,?,?)}";
 		ArrayList<Make> makeArray = new ArrayList<Make>();
-
-		// logger.info(TAG + " getMake ::");
-
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			callableStatement.setBigDecimal(3, metaData.getLanguageId());
@@ -138,17 +126,12 @@ public class VehicleDetailsDao
 	public ArrayList getModel(String make)
 	{
 		getConnection();
-
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_SUBMAKE(?,?,?,?,?,?,?)}";
 		ArrayList<Model> modelArray = new ArrayList<Model>();
-
-		// logger.info(TAG + " getModel :: make :" + make);
-
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			callableStatement.setString(3, make);
@@ -158,10 +141,7 @@ public class VehicleDetailsDao
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
 
-			// logger.info(TAG + " getModel :: make 1 :" + make);
-
 			ResultSet rs = (ResultSet) callableStatement.getObject(5);
-
 			while (rs.next())
 			{
 				Model model = new Model();
@@ -174,29 +154,22 @@ public class VehicleDetailsDao
 		{
 			e.printStackTrace();
 		}
-
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-
 		return modelArray;
 	}
 
 	public ArrayList getFuleType()
 	{
 		getConnection();
-
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_FUELTYPE(?,?,?,?,?,?)}";
 		ArrayList<FuelType> fuelArray = new ArrayList<FuelType>();
-
-		// logger.info(TAG + " getFuleType ::");
-
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			callableStatement.setBigDecimal(3, metaData.getLanguageId());
@@ -206,7 +179,6 @@ public class VehicleDetailsDao
 			callableStatement.executeUpdate();
 
 			ResultSet rs = (ResultSet) callableStatement.getObject(4);
-
 			while (rs.next())
 			{
 				FuelType fuelType = new FuelType();
@@ -219,29 +191,22 @@ public class VehicleDetailsDao
 		{
 			e.printStackTrace();
 		}
-
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-
 		return fuelArray;
 	}
 
 	public ArrayList getPurpose()
 	{
 		getConnection();
-
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_PURPOSE(?,?,?,?,?,?)}";
 		ArrayList<Purpose> purposeArray = new ArrayList<Purpose>();
-
-		// logger.info(TAG + " getPurpose ::");
-
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			callableStatement.setBigDecimal(3, metaData.getLanguageId());
@@ -251,7 +216,6 @@ public class VehicleDetailsDao
 			callableStatement.executeUpdate();
 
 			ResultSet rs = (ResultSet) callableStatement.getObject(4);
-
 			while (rs.next())
 			{
 				Purpose purpose = new Purpose();
@@ -265,7 +229,6 @@ public class VehicleDetailsDao
 		{
 			e.printStackTrace();
 		}
-
 		finally
 		{
 			CloseConnection(callableStatement, connection);
@@ -281,13 +244,9 @@ public class VehicleDetailsDao
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_SHAPES(?,?,?,?,?,?)}";
 		ArrayList<Shape> shapeArray = new ArrayList<Shape>();
-
-		// logger.info(TAG + " getShape ::");
-
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			callableStatement.setBigDecimal(3, metaData.getLanguageId());
@@ -297,7 +256,6 @@ public class VehicleDetailsDao
 			callableStatement.executeUpdate();
 
 			ResultSet rs = (ResultSet) callableStatement.getObject(4);
-
 			while (rs.next())
 			{
 				Shape shape = new Shape();
@@ -310,27 +268,22 @@ public class VehicleDetailsDao
 		{
 			e.printStackTrace();
 		}
-
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-
 		return shapeArray;
 	}
 
 	public ArrayList getColour()
 	{
 		getConnection();
-
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_COLORS(?,?,?,?,?,?)}";
 		ArrayList<Colour> colourArray = new ArrayList<Colour>();
-
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			callableStatement.setBigDecimal(3, metaData.getLanguageId());
@@ -340,7 +293,6 @@ public class VehicleDetailsDao
 			callableStatement.executeUpdate();
 
 			ResultSet rs = (ResultSet) callableStatement.getObject(4);
-
 			while (rs.next())
 			{
 				Colour colour = new Colour();
@@ -365,15 +317,12 @@ public class VehicleDetailsDao
 	public ArrayList getVehicleCondition()
 	{
 		getConnection();
-
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_VEHCONDITION(?,?,?,?,?,?)}";
 		ArrayList<VehicleCondition> vehicleConditionArray = new ArrayList<VehicleCondition>();
-
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			callableStatement.setBigDecimal(3, metaData.getLanguageId());
@@ -383,7 +332,6 @@ public class VehicleDetailsDao
 			callableStatement.executeUpdate();
 
 			ResultSet rs = (ResultSet) callableStatement.getObject(4);
-
 			while (rs.next())
 			{
 				VehicleCondition vehicleCondition = new VehicleCondition();
@@ -396,35 +344,28 @@ public class VehicleDetailsDao
 		{
 			e.printStackTrace();
 		}
-
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-
 		return vehicleConditionArray;
 	}
 
 	public ArrayList getMaxVehicleAgeAllowed()
 	{
-
 		getConnection();
 		Statement statement = null;
 		int ageAllowed = 0;
 		ArrayList<CodeDesc> maxVehicleAgeArray = new ArrayList<CodeDesc>();
-
 		String query = "SELECT A.MAX_ALLOWED_VEHICLE_AGE FROM IRB_V_ONLMAX_VEHAGE A";
-
 		try
 		{
 			statement = connection.createStatement();
 			ResultSet rs = statement.executeQuery(query);
-
 			while (rs.next())
 			{
 				ageAllowed = rs.getInt("MAX_ALLOWED_VEHICLE_AGE");
 			}
-
 			Calendar now = Calendar.getInstance();
 			int year = now.get(Calendar.YEAR);
 			int allowedAgeIsTillNextYear = year + 1;
@@ -435,46 +376,35 @@ public class VehicleDetailsDao
 				codeDesc.setCode("" + (allowedAgeIsTillNextYear));
 				codeDesc.setDesc("" + (allowedAgeIsTillNextYear));
 				maxVehicleAgeArray.add(codeDesc);
-
 				allowedAgeIsTillNextYear--;
 			}
-
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-
 		finally
 		{
 			CloseConnection(statement, connection);
 		}
-
 		return maxVehicleAgeArray;
 	}
 
 	public ArrayList getPolicyDuration()
 	{
-
 		getConnection();
 		Statement statement = null;
 		int maxAllowedYear = 0;
 		ArrayList<CodeDesc> maxVehicleAgeArray = new ArrayList<CodeDesc>();
-
 		String query = "SELECT MAX_ALLOWED_YEAR FROM IRB_V_ONLMAX_POLPERIOD";
-
 		try
 		{
 			statement = connection.createStatement();
 			ResultSet rs = statement.executeQuery(query);
-
 			while (rs.next())
 			{
 				maxAllowedYear = rs.getInt("MAX_ALLOWED_YEAR");
-				// logger.info(TAG + " getMaxVehicleAgeAllowed :: maxAllowedYear
-				// :" + maxAllowedYear);
 			}
-
 			for (int i = 1; i <= maxAllowedYear; i++)
 			{
 				CodeDesc codeDesc = new CodeDesc();
@@ -482,18 +412,15 @@ public class VehicleDetailsDao
 				codeDesc.setDesc("" + i);
 				maxVehicleAgeArray.add(codeDesc);
 			}
-
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-
 		finally
 		{
 			CloseConnection(statement, connection);
 		}
-
 		return maxVehicleAgeArray;
 	}
 

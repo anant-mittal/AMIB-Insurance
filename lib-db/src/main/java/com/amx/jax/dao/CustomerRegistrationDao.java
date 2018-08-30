@@ -301,9 +301,7 @@ public class CustomerRegistrationDao
 
 	public boolean isOtpEnabled(String civilId)
 	{
-
 		getConnection();
-
 		CallableStatement callableStatement = null;
 		String callFunction = "{ ? = call IRB_IF_OTP_ENABLED(?,?,?,?)}";
 

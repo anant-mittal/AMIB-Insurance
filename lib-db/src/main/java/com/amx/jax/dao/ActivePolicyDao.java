@@ -72,8 +72,8 @@ public class ActivePolicyDao
 				activePolicyModel.setDbcust(rs.getBigDecimal(14));
 				activePolicyModel.setMakeCode(rs.getString(15));
 				activePolicyModel.setMakeDesc(rs.getString(16));
-				activePolicyModel.setModelCode(rs.getString(17));
-				activePolicyModel.setModelDesc(rs.getString(18));
+				activePolicyModel.setSubMakeCode(rs.getString(17));
+				activePolicyModel.setSubMakeDesc(rs.getString(18));
 				activePolicyModel.setModelYear(rs.getBigDecimal(19));
 				activePolicyModel.setShapeCode(rs.getString(20));
 				activePolicyModel.setShapeDesc(rs.getString(21));

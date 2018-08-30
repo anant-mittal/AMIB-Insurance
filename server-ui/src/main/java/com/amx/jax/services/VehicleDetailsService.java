@@ -164,7 +164,7 @@ public class VehicleDetailsService
 		try
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
-			resp.setResults(vehicleDetailsDao.getVehicleCondition());
+			resp.setData(vehicleDetailsDao.getVehicleCondition());
 		}
 		catch (Exception e)
 		{

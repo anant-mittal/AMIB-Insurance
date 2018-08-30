@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 public class ActivePolicyModel
 {
 	private BigDecimal countryId;
-	
+
 	private BigDecimal compCd;
 
 	private BigDecimal docNumber;
@@ -36,9 +36,9 @@ public class ActivePolicyModel
 
 	private String makeDesc;
 
-	private String modelCode;
+	private String subMakeCode;
 
-	private String modelDesc;
+	private String subMakeDesc;
 
 	private BigDecimal modelYear;
 
@@ -246,26 +246,6 @@ public class ActivePolicyModel
 	public void setMakeDesc(String makeDesc)
 	{
 		this.makeDesc = makeDesc;
-	}
-
-	public String getModelCode()
-	{
-		return modelCode;
-	}
-
-	public void setModelCode(String modelCode)
-	{
-		this.modelCode = modelCode;
-	}
-
-	public String getModelDesc()
-	{
-		return modelDesc;
-	}
-
-	public void setModelDesc(String modelDesc)
-	{
-		this.modelDesc = modelDesc;
 	}
 
 	public BigDecimal getModelYear()
@@ -507,14 +487,25 @@ public class ActivePolicyModel
 	{
 		this.renewalIndic = renewalIndic;
 	}
-	
-	@Override
-	public String toString()
+
+	public String getSubMakeCode()
 	{
-		return "ActivePolicyModel [countryId=" + countryId + ", compCd=" + compCd + ", docNumber=" + docNumber + ", docDate=" + docDate + ", finance=" + finance + ", showRoom=" + showRoom + ", salesman=" + salesman + ", userAmibCustRef=" + userAmibCustRef + ", insuredEnglishName="
-				+ insuredEnglishName + ", insuredArabicName=" + insuredArabicName + ", idNumber=" + idNumber + ", insCompanyCode=" + insCompanyCode + ", insCompanyDesc=" + insCompanyDesc + ", dbcust=" + dbcust + ", makeCode=" + makeCode + ", makeDesc=" + makeDesc + ", modelCode=" + modelCode
-				+ ", modelDesc=" + modelDesc + ", modelYear=" + modelYear + ", shapeCode=" + shapeCode + ", shapeDesc=" + shapeDesc + ", colourCode=" + colourCode + ", colourDesc=" + colourDesc + ", noPass=" + noPass + ", chassis=" + chassis + ", ktNumber=" + ktNumber + ", vehicleConditionCode="
-				+ vehicleConditionCode + ", vehicleConditionDesc=" + vehicleConditionDesc + ", purposeCode=" + purposeCode + ", purposeDesc=" + purposeDesc + ", vehicleSrNumber=" + vehicleSrNumber + ", policyTypeCode=" + policyTypeCode + ", policyTypeDesc=" + policyTypeDesc + ", policyNumber="
-				+ policyNumber + ", maxInsuredAmount=" + maxInsuredAmount + ", startDate=" + startDate + ", endDate=" + endDate + ", supervisionKey=" + supervisionKey + ", issueFee=" + issueFee + ", premium=" + premium + ", discount=" + discount + ", renewalIndic=" + renewalIndic + "]";
+		return subMakeCode;
 	}
+
+	public void setSubMakeCode(String subMakeCode)
+	{
+		this.subMakeCode = subMakeCode;
+	}
+
+	public String getSubMakeDesc()
+	{
+		return subMakeDesc;
+	}
+
+	public void setSubMakeDesc(String subMakeDesc)
+	{
+		this.subMakeDesc = subMakeDesc;
+	}
+
 }
