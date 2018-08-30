@@ -67,7 +67,7 @@ public class DateFormats
 	{
 		String outDate = "";
 		SimpleDateFormat inputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-		SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+		SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd-MMM-yy");
 		try
 		{
 			Date date = inputDateFormat.parse(inDate);

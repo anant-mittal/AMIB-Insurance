@@ -84,7 +84,6 @@ public class PersonalDetailsService
 		customerProfileDetailResponse.setNatyCode(customerProfileDetailModel.getNatyCode());
 		customerProfileDetailResponse.setNatyDesc(customerProfileDetailModel.getNatyDesc());
 		customerProfileDetailResponse.setNativeArabicName(customerProfileDetailModel.getNativeArabicName());
-		
 		logger.info(TAG + " getProfileDetails :: getIdExpiryDate :" + customerProfileDetailModel.toString());
 		
 		if (customerProfileDetailModel.getStatus())
@@ -242,14 +241,12 @@ public class PersonalDetailsService
 		{
 			customerProfileDetailModel.setIdExpiryDate(null);
 		}
-
 		customerProfileDetailModel.setBusinessCode(customerProfileUpdateRequest.getBusinessCode());
 		customerProfileDetailModel.setNatyCode(customerProfileUpdateRequest.getNatyCode());
 		customerProfileDetailModel.setGovCode(customerProfileUpdateRequest.getGovCode());
 		customerProfileDetailModel.setAreaCode(customerProfileUpdateRequest.getAreaCode());
 		customerProfileDetailModel.setMobile(customerProfileUpdateRequest.getMobile());
 		customerProfileDetailModel.setEmail(customerProfileUpdateRequest.getEmail());
-
 		logger.info(TAG + " updateProfileDetails :: customerProfileDetailModel 1 :" + customerProfileDetailModel.toString());
 
 		customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel);
