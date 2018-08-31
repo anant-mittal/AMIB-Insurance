@@ -72,14 +72,12 @@ public class OtpService
 		metaData.setMotpPrefix(mobileOtpPrefix);
 		metaData.setMotp(mobileOtp);
 		String mailData = "Your Mobile OTP Generated From Al Mulla Insurance is :- " + mobileOtpToSend;
-
 		String emailIdFrom = regSession.getEmailFromConfigured();
-		//String emailITo = "abhishek.tiwari@mobicule.com";
-		String emailITo = "dipali.pingale@mobicule.com";// for Demo
+		String emailITo = "almulla.insurance.1427@gmail.com";// for Demo
 		String Subject = "Almulla Insurance Otp";
 		emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
+		
 		// smservice.sendMessage(mobileWithCode, mailData);
-
 		return mobileOtpPrefix;
 	}
 
