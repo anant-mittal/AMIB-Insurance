@@ -357,10 +357,11 @@ public class CustomerRegistrationService
 
 	public AmxApiResponse<CustomerRegistrationResponse, Object> addNewCustomer(CustomerRegistrationRequest userRegistartionRequest)
 	{
+		handleSession();
+		
 		AmxApiResponse<CustomerRegistrationResponse, Object> resp = new AmxApiResponse<CustomerRegistrationResponse, Object>();
 		CustomerRegistrationResponse customerRegistrationResponse = new CustomerRegistrationResponse();
 		CustomerRegistrationModel customerRegistrationModel = new CustomerRegistrationModel();
-
 		customerRegistrationModel.setPassword(userRegistartionRequest.getPassword());
 		customerRegistrationModel.setCountryId(regSession.getCountryId());
 		customerRegistrationModel.setCompCd(regSession.getCompCd());
@@ -373,18 +374,14 @@ public class CustomerRegistrationService
 		customerRegistrationModel.setDeviceType(regSession.getDeviceType());
 
 		customerRegistrationModel = customerRegistrationDao.addNewCustomer(customerRegistrationModel);
-
 		if (customerRegistrationModel.getStatus())
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
-
 			String emailIdFrom = webConfig.getConfigEmail();
 			String emailITo = regSession.getEmailId();
 			String Subject = "Al Mulla Insurance Registartion Confirmation";
 			String mailData = "Al Mulla Insurance Registration Completed Successfully.";
-
 			emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
-
 		}
 		else
 		{
@@ -393,23 +390,16 @@ public class CustomerRegistrationService
 
 		resp.setMessage(customerRegistrationModel.getErrorMessage());
 		resp.setMessageKey(customerRegistrationModel.getErrorCode());
-
 		customerRegistrationResponse.setCivilid(customerRegistrationModel.getCivilid());
 		customerRegistrationResponse.setUserSequenceNumber(customerRegistrationModel.getUserSequenceNumber());
-
 		resp.setData(customerRegistrationResponse);
-
 		return resp;
 
 	}
 
 	public AmxApiResponse<?, Object> validateUserLogin(CustomerLoginRequest customerLoginRequest)
 	{
-		if (httpService.getLanguage().toString().equalsIgnoreCase("EN"))
-		{
-			regSession.setLanguageId(new BigDecimal(0));
-			getCompanySetUp(new BigDecimal(0), httpService.getDeviceId());
-		}
+		handleSession();
 		
 		CustomerLoginResponse customerLoginResponse = new CustomerLoginResponse();
 		CustomerLoginModel customerLoginModel = new CustomerLoginModel();
@@ -772,6 +762,15 @@ public class CustomerRegistrationService
 			return resp;
 		}
 		return null;
+	}
+	
+	private void handleSession()
+	{
+		if (httpService.getLanguage().toString().equalsIgnoreCase("EN"))
+		{
+			regSession.setLanguageId(new BigDecimal(0));
+			getCompanySetUp(new BigDecimal(0), httpService.getDeviceId());
+		}
 	}
 
 }

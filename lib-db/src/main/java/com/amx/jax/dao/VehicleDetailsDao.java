@@ -14,8 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import com.amx.jax.models.ActivePolicyModel;
 import com.amx.jax.models.CodeDesc;
 import com.amx.jax.models.Colour;
+import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.FuelType;
 import com.amx.jax.models.Make;
 import com.amx.jax.models.MetaData;
@@ -23,6 +25,7 @@ import com.amx.jax.models.Model;
 import com.amx.jax.models.Purpose;
 import com.amx.jax.models.Shape;
 import com.amx.jax.models.VehicleCondition;
+import com.amx.jax.models.VehicleDetailsModel;
 
 import oracle.jdbc.OracleTypes;
 
@@ -422,6 +425,44 @@ public class VehicleDetailsDao
 			CloseConnection(statement, connection);
 		}
 		return maxVehicleAgeArray;
+	}
+
+	public ArrayList<VehicleDetailsModel> getAppVehicleDetails()
+	{
+		getConnection();
+		CallableStatement callableStatement = null;
+		String callProcedure = "{call IRB_GET_ACTIVE_POLICIES(?,?,?,?,?,?,?)}";
+		ArrayList<VehicleDetailsModel> activePolicyArray = new ArrayList<VehicleDetailsModel>();
+
+		try
+		{
+			callableStatement = connection.prepareCall(callProcedure);
+
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(3, metaData.getUserAmibCustRef());
+			callableStatement.setBigDecimal(4, metaData.getLanguageId());
+			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
+			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
+			callableStatement.executeUpdate();
+
+			ResultSet rs = (ResultSet) callableStatement.getObject(5);
+
+			while (rs.next())
+			{
+				
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		return null;
 	}
 
 	private Connection getConnection()

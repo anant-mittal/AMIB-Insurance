@@ -86,5 +86,11 @@ public class VehicleDetailsController
 	{
 		return vehicleDetailsService.getPolicyDuration();
 	}
+	
+	@RequestMapping(value = "/api/vehicledetails/details", method = RequestMethod.GET, produces = "application/json")
+	public AmxApiResponse<?, Object> getAppVehicleDetails()
+	{
+		return vehicleDetailsService.getAppVehicleDetails();
+	}
 
 }

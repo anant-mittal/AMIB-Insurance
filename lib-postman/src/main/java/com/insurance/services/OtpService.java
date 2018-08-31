@@ -90,8 +90,9 @@ public class OtpService
 		metaData.setmOtpMobileNumber("");
 		metaData.seteOtpEmailId("");
 
+		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(regSession.getCivilId());
 		AmxApiResponse<Validate, Object> isOtpEnabled = isOtpEnabled(regSession.getCivilId());
-		if (isOtpEnabled.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+		if (isOtpEnabled.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return isOtpEnabled;
 		}
@@ -109,7 +110,7 @@ public class OtpService
 		resp.setMessageKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
 		
 		AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(regSession.getCivilId());
-		if (setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+		if (setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return setOtpCount;
 		}
@@ -150,8 +151,9 @@ public class OtpService
 		metaData.setmOtpMobileNumber("");
 		metaData.seteOtpEmailId("");
 
+		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(regSession.getCivilId());
 		AmxApiResponse<Validate, Object> isOtpEnabled = isOtpEnabled(regSession.getCivilId());
-		if (isOtpEnabled.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+		if (isOtpEnabled.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return isOtpEnabled;
 		}
@@ -167,7 +169,7 @@ public class OtpService
 		resp.setMessageKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
 		
 		AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(regSession.getCivilId());
-		if (setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+		if (setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return setOtpCount;
 		}
@@ -205,8 +207,9 @@ public class OtpService
 		metaData.setmOtpMobileNumber("");
 		metaData.seteOtpEmailId("");
 
+		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(regSession.getCivilId());
 		AmxApiResponse<Validate, Object> isOtpEnabled = isOtpEnabled(regSession.getCivilId());
-		if (isOtpEnabled.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+		if (isOtpEnabled.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return isOtpEnabled;
 		}
@@ -222,7 +225,7 @@ public class OtpService
 		resp.setMessageKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
 		
 		AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(regSession.getCivilId());
-		if (setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+		if (setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return setOtpCount;
 		}
@@ -328,6 +331,27 @@ public class OtpService
 		}
 
 		return resp;
+	}
+	
+	public AmxApiResponse<Validate, Object> isCivilIdExist(String civilid)
+	{
+		boolean civilIdExistCheck = customerRegistrationDao.isCivilIdExist(civilid);
+		logger.info(TAG + " isCivilIdExist :: civilIdExistCheck :" + civilIdExistCheck);
+		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
+		if (civilIdExistCheck)
+		{
+			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setMessage(Message.CIVILID_ALREDAY_REGISTER);
+			resp.setMessageKey(MessageKey.KEY_CIVIL_ID_ALREADY_REGISTER);
+		}
+		else
+		{
+			resp.setStatusKey(ApiConstants.FAILURE);
+			resp.setMessage(Message.CIVILID_ALREDAY_NOT_REGISTER);
+			resp.setMessageKey(MessageKey.KEY_CIVIL_ID_NOT_REGISTERED);// Commit
+		}
+		return resp;
+
 	}
 
 }
