@@ -75,7 +75,7 @@ public class OtpService
 
 		String emailIdFrom = regSession.getEmailFromConfigured();
 		//String emailITo = "abhishek.tiwari@mobicule.com";
-		String emailITo = "dipali.pingale@mobicule.com";//
+		String emailITo = "dipali.pingale@mobicule.com";// for Demo
 		String Subject = "Almulla Insurance Otp";
 		emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
 		// smservice.sendMessage(mobileWithCode, mailData);
