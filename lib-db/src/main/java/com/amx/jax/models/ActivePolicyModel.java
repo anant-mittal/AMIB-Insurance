@@ -89,7 +89,11 @@ public class ActivePolicyModel
 	private BigDecimal discount;
 
 	private String renewalIndic;
-
+	
+	private String fuelCode;
+	
+	private String fuelDesc;
+	
 	public BigDecimal getCountryId()
 	{
 		return countryId;
@@ -519,5 +523,24 @@ public class ActivePolicyModel
 	{
 		this.subMakeDesc = subMakeDesc;
 	}
+	
+	public String getFuelCode()
+	{
+		return fuelCode;
+	}
 
+	public void setFuelCode(String fuelCode)
+	{
+		this.fuelCode = fuelCode;
+	}
+
+	public String getFuelDesc()
+	{
+		return fuelDesc;
+	}
+
+	public void setFuelDesc(String fuelDesc)
+	{
+		this.fuelDesc = fuelDesc;
+	}
 }

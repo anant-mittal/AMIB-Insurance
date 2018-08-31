@@ -99,6 +99,8 @@ public class ActivePolicyDao
 				activePolicyModel.setPremium(rs.getBigDecimal(41));
 				activePolicyModel.setDiscount(rs.getBigDecimal(42));
 				activePolicyModel.setRenewalIndic(rs.getString(43));
+				activePolicyModel.setFuelCode(rs.getString(44));
+				activePolicyModel.setFuelDesc(rs.getString(45));
 				activePolicyArray.add(activePolicyModel);
 				logger.info(TAG + " getUserActivePolicy :: activePolicyModel :" + activePolicyModel.toString());
 			}
