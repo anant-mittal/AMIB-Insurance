@@ -132,9 +132,7 @@ public class PersonalDetailsDao
 			callableStatement.setString(6, customerProfileDetailModel.getEnglishName());
 			callableStatement.setString(7, customerProfileDetailModel.getNativeArabicName());
 			callableStatement.setString(8, customerProfileDetailModel.getGenderCode());
-			
 			callableStatement.setDate(9, customerProfileDetailModel.getIdExpiryDate());
-			
 			callableStatement.setString(10, customerProfileDetailModel.getBusinessCode());
 			callableStatement.setString(11, customerProfileDetailModel.getNatyCode());
 			callableStatement.setString(12, customerProfileDetailModel.getGovCode());

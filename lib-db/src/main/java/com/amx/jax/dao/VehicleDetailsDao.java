@@ -1,6 +1,7 @@
 
 package com.amx.jax.dao;
 
+import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -431,13 +432,12 @@ public class VehicleDetailsDao
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
-		String callProcedure = "{call IRB_GET_ACTIVE_POLICIES(?,?,?,?,?,?,?)}";
-		ArrayList<VehicleDetailsModel> activePolicyArray = new ArrayList<VehicleDetailsModel>();
+		String callProcedure = "{call IRB_GET_APPLVEH_DTLS(?,?,?,?,?,?,?)}";
+		ArrayList<VehicleDetailsModel> vehicleDetailsArray = new ArrayList<VehicleDetailsModel>();
 
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			callableStatement.setBigDecimal(3, metaData.getUserAmibCustRef());
@@ -451,7 +451,38 @@ public class VehicleDetailsDao
 
 			while (rs.next())
 			{
-				
+				VehicleDetailsModel vehicleDetailsModel = new VehicleDetailsModel();
+				vehicleDetailsModel.setApplicationDate(DateFormats.uiFormattedDate(rs.getDate(1)));
+				vehicleDetailsModel.setApplicationType(rs.getString(2));
+				vehicleDetailsModel.setDocCategory(rs.getString(3));
+				vehicleDetailsModel.setCustSeqNumber(rs.getBigDecimal(4));
+				vehicleDetailsModel.setPolicyPeriod(rs.getBigDecimal(5));
+				vehicleDetailsModel.setUserSeqNumber(rs.getBigDecimal(6));
+				vehicleDetailsModel.setAppStatus(rs.getString(7));
+				vehicleDetailsModel.setCreStage(rs.getString(8));
+				vehicleDetailsModel.setOldDocNumber(rs.getBigDecimal(9));
+				vehicleDetailsModel.setRefDocNumber(rs.getBigDecimal(10));
+				vehicleDetailsModel.setOnLineLoccd(rs.getString(11));
+				vehicleDetailsModel.setQuoteSeqNumber(rs.getBigDecimal(12));
+				vehicleDetailsModel.setVerNumber(rs.getBigDecimal(13));
+				vehicleDetailsModel.setVehSrNumber(rs.getBigDecimal(14));
+				vehicleDetailsModel.setMakeCode(rs.getString(15));
+				vehicleDetailsModel.setMakeDesc(rs.getString(16));
+				vehicleDetailsModel.setSubMakeCode(rs.getString(17));
+				vehicleDetailsModel.setSubMakeDesc(rs.getString(18));
+				vehicleDetailsModel.setKtNumber(rs.getString(19));
+				vehicleDetailsModel.setChasis(rs.getString(20));
+				vehicleDetailsModel.setModelNumber(rs.getBigDecimal(21));
+				vehicleDetailsModel.setVehicleCondition(rs.getString(22));
+				vehicleDetailsModel.setPurpose(rs.getString(23));
+				vehicleDetailsModel.setShape(rs.getString(24));
+				vehicleDetailsModel.setColour(rs.getString(25));
+				vehicleDetailsModel.setFuel(rs.getString(26));
+				vehicleDetailsModel.setNoPass(rs.getBigDecimal(27));
+				vehicleDetailsModel.setReplacementType(rs.getString(28));
+				vehicleDetailsModel.setReplacementTypeDesc(rs.getString(29));
+				vehicleDetailsModel.setMaxInsmat(rs.getBigDecimal(30));
+				vehicleDetailsArray.add(vehicleDetailsModel);
 			}
 		}
 		catch (Exception e)
@@ -462,7 +493,7 @@ public class VehicleDetailsDao
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return null;
+		return vehicleDetailsArray;
 	}
 
 	private Connection getConnection()

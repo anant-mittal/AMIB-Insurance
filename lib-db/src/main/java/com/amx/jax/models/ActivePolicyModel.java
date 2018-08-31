@@ -29,6 +29,8 @@ public class ActivePolicyModel
 	private BigDecimal insCompanyCode;
 
 	private String insCompanyDesc;
+	
+	private String insCompanyPrefix;
 
 	private BigDecimal dbcust;
 
@@ -218,6 +220,16 @@ public class ActivePolicyModel
 		this.insCompanyDesc = insCompanyDesc;
 	}
 
+	public String getInsCompanyPrefix()
+	{
+		return insCompanyPrefix;
+	}
+
+	public void setInsCompanyPrefix(String insCompanyPrefix)
+	{
+		this.insCompanyPrefix = insCompanyPrefix;
+	}
+	
 	public BigDecimal getDbcust()
 	{
 		return dbcust;
