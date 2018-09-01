@@ -27,7 +27,8 @@ import com.amx.jax.models.Model;
 import com.amx.jax.models.Purpose;
 import com.amx.jax.models.Shape;
 import com.amx.jax.models.VehicleCondition;
-import com.amx.jax.models.VehicleDetailsModel;
+import com.amx.jax.models.VehicleDetailsGetResponse;
+import com.amx.jax.models.VehicleDetailsUpdateModel;
 import com.amx.jax.models.VehicleDetailsUpdateRequest;
 import com.amx.jax.models.VehicleSession;
 
@@ -434,12 +435,12 @@ public class VehicleDetailsDao
 		return maxVehicleAgeArray;
 	}
 
-	public ArrayList<VehicleDetailsModel> getAppVehicleDetails()
+	public ArrayList<VehicleDetailsGetResponse> getAppVehicleDetails()
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_APPLVEH_DTLS(?,?,?,?,?,?,?)}";
-		ArrayList<VehicleDetailsModel> vehicleDetailsArray = new ArrayList<VehicleDetailsModel>();
+		ArrayList<VehicleDetailsGetResponse> vehicleDetailsArray = new ArrayList<VehicleDetailsGetResponse>();
 
 		try
 		{
@@ -457,7 +458,7 @@ public class VehicleDetailsDao
 
 			while (rs.next())
 			{
-				VehicleDetailsModel vehicleDetailsModel = new VehicleDetailsModel();
+				VehicleDetailsGetResponse vehicleDetailsModel = new VehicleDetailsGetResponse();
 				vehicleDetailsModel.setApplicationDate(DateFormats.uiFormattedDate(rs.getDate(1)));
 				vehicleDetailsModel.setApplicationType(rs.getString(2));
 				vehicleDetailsModel.setDocCategory(rs.getString(3));
@@ -502,12 +503,74 @@ public class VehicleDetailsDao
 		return vehicleDetailsArray;
 	}
 	
-	public CustomerProfileDetailModel insUpdateVehicleDetails(VehicleDetailsUpdateRequest vehicleDetailsUpdateRequest)
+	public void setVehicleHeader(VehicleDetailsUpdateRequest vehicleDetailsUpdateRequest)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
-
+		VehicleDetailsUpdateModel vehicleDetailsUpdateModel = new VehicleDetailsUpdateModel();
 		String callProcedure = "{call IRB_INSUPD_VEHDTLS(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+
+		try
+		{
+			callableStatement = connection.prepareCall(callProcedure);
+
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(3, vehicleSession.getAppSeqNumber());
+			callableStatement.setString(4, "");//ApplicationType
+			callableStatement.setString(5,"M");
+			callableStatement.setBigDecimal(6, metaData.getCustomerSequenceNumber());
+			callableStatement.setString(7, "");//Policy Period
+			callableStatement.setBigDecimal(8, null);//
+			callableStatement.setString(9, vehicleDetailsUpdateRequest.getVehicleCondition());
+			callableStatement.setString(10, vehicleDetailsUpdateRequest.getPurpose());
+			callableStatement.setString(11, vehicleDetailsUpdateRequest.getShape());
+			callableStatement.setString(12, vehicleDetailsUpdateRequest.getColour());
+			callableStatement.setString(13, vehicleDetailsUpdateRequest.getFuelType());
+			callableStatement.setString(14, vehicleDetailsUpdateRequest.getEngine());
+			callableStatement.setBigDecimal(15, vehicleDetailsUpdateRequest.getPassenger());
+			callableStatement.setBigDecimal(16, vehicleDetailsUpdateRequest.getVehiclePower());
+			callableStatement.setBigDecimal(17, vehicleDetailsUpdateRequest.getWeight());
+			callableStatement.setString(18, vehicleDetailsUpdateRequest.getReplType());
+			callableStatement.setBigDecimal(17, vehicleDetailsUpdateRequest.getMaxInsuAmount());
+			callableStatement.setString(18, vehicleDetailsUpdateRequest.getEngine());
+			callableStatement.setString(19, vehicleDetailsUpdateRequest.getEngine());
+			callableStatement.setString(20, vehicleDetailsUpdateRequest.getEngine());
+			callableStatement.setString(21, metaData.getDeviceType());
+			callableStatement.setString(22, metaData.getDeviceId());
+			callableStatement.setString(23, metaData.getCivilId());
+			callableStatement.registerOutParameter(24, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(25, java.sql.Types.VARCHAR);
+			callableStatement.executeUpdate();
+			
+			vehicleDetailsUpdateModel.setErrorCode(callableStatement.getString(20));
+			vehicleDetailsUpdateModel.setErrorMessage(callableStatement.getString(21));
+
+			if (callableStatement.getString(24) == null)
+			{
+				vehicleDetailsUpdateModel.setStatus(true);
+			}
+			else
+			{
+				vehicleDetailsUpdateModel.setStatus(false);
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+	}
+	
+	public VehicleDetailsUpdateModel insUpdateVehicleDetails(VehicleDetailsUpdateRequest vehicleDetailsUpdateRequest)
+	{
+		getConnection();
+		CallableStatement callableStatement = null;
+		VehicleDetailsUpdateModel vehicleDetailsUpdateModel = new VehicleDetailsUpdateModel();
+		String callProcedure = "{call IRB_INSUPD_VEHDTLS(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
 
 		try
 		{
@@ -538,23 +601,21 @@ public class VehicleDetailsDao
 			callableStatement.setString(21, metaData.getDeviceType());
 			callableStatement.setString(22, metaData.getDeviceId());
 			callableStatement.setString(23, metaData.getCivilId());
-			
 			callableStatement.registerOutParameter(24, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(25, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
 			
-			/*VehicleDetailsModel vehicleDetailsModel = new VehicleDetailsModel();
-			vehicleDetailsModel.setErrorCode(callableStatement.getString(20));
-			vehicleDetailsModel.setErrorMessage(callableStatement.getString(21));
+			vehicleDetailsUpdateModel.setErrorCode(callableStatement.getString(24));
+			vehicleDetailsUpdateModel.setErrorMessage(callableStatement.getString(25));
 
-			if (callableStatement.getString(20) == null)
+			if (callableStatement.getString(24) == null)
 			{
-				customerProfileDetailModel.setStatus(true);
+				vehicleDetailsUpdateModel.setStatus(true);
 			}
 			else
 			{
-				customerProfileDetailModel.setStatus(false);
-			}*/
+				vehicleDetailsUpdateModel.setStatus(false);
+			}
 		}
 		catch (Exception e)
 		{
@@ -564,7 +625,7 @@ public class VehicleDetailsDao
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return null;
+		return vehicleDetailsUpdateModel;
 	}
 	
 	

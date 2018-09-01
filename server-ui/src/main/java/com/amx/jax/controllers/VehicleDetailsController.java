@@ -37,7 +37,7 @@ public class VehicleDetailsController
 
 	}
 
-	@RequestMapping(value = "/api/vehicledetails/model", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/api/vehicledetails/sub-make", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getModel(@RequestParam("make") String make)
 	{
 		logger.info(TAG + " getModel :: make :" + make);
@@ -76,7 +76,7 @@ public class VehicleDetailsController
 		return vehicleDetailsService.getVehicleCondition();
 	}
 
-	@RequestMapping(value = "/api/vehicledetails/vehicle-agealowed", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/api/vehicledetails/model-year", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getMaxVehicleAgeAllowed()
 	{
 		return vehicleDetailsService.getMaxVehicleAgeAllowed();
@@ -88,13 +88,13 @@ public class VehicleDetailsController
 		return vehicleDetailsService.getPolicyDuration();
 	}
 	
-	@RequestMapping(value = "/api/vehicledetails/details", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/api/vehicledetails/vehicle-details", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getAppVehicleDetails()
 	{
 		return vehicleDetailsService.getAppVehicleDetails();
 	}
-
-	@RequestMapping(value = "/api/vehicledetails/ins-upd", method = RequestMethod.GET, produces = "application/json")
+	
+	@RequestMapping(value = "/api/vehicledetails/ins-update", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> insUpdateVehicleDetails(VehicleDetailsUpdateRequest vehicleDetailsUpdateRequest)
 	{
 		return vehicleDetailsService.insUpdateVehicleDetails(vehicleDetailsUpdateRequest);

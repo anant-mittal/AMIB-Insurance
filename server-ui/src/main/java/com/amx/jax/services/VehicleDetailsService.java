@@ -8,7 +8,8 @@ import org.springframework.stereotype.Service;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.dao.VehicleDetailsDao;
-import com.amx.jax.models.VehicleDetailsModel;
+import com.amx.jax.models.VehicleDetailsGetResponse;
+import com.amx.jax.models.VehicleDetailsUpdateModel;
 import com.amx.jax.models.VehicleDetailsUpdateRequest;
 
 @Service
@@ -214,7 +215,7 @@ public class VehicleDetailsService
 	
 	public AmxApiResponse<?, Object> getAppVehicleDetails()
 	{
-		AmxApiResponse<VehicleDetailsModel, Object> resp = new AmxApiResponse<VehicleDetailsModel, Object>();
+		AmxApiResponse<VehicleDetailsGetResponse, Object> resp = new AmxApiResponse<VehicleDetailsGetResponse, Object>();
 
 		try
 		{
@@ -233,12 +234,26 @@ public class VehicleDetailsService
 	
 	public AmxApiResponse<?, Object> insUpdateVehicleDetails(VehicleDetailsUpdateRequest vehicleDetailsUpdateRequest)
 	{
-		AmxApiResponse<VehicleDetailsModel, Object> resp = new AmxApiResponse<VehicleDetailsModel, Object>();
+		AmxApiResponse<VehicleDetailsUpdateRequest, Object> resp = new AmxApiResponse<VehicleDetailsUpdateRequest, Object>();
 
 		try
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			resp.setData(null);
+			vehicleDetailsDao.setVehicleHeader(vehicleDetailsUpdateRequest);
+			
+			
+			VehicleDetailsUpdateModel vehicleDetailsUpdateModel = vehicleDetailsDao.insUpdateVehicleDetails(vehicleDetailsUpdateRequest);
+			
+			if (vehicleDetailsUpdateModel.getStatus())
+			{
+				resp.setStatusKey(ApiConstants.SUCCESS);
+			}
+			else
+			{
+				resp.setStatusKey(ApiConstants.FAILURE);
+			}
+
+			resp.setMessageKey(vehicleDetailsUpdateModel.getErrorCode());
+			resp.setMessage(vehicleDetailsUpdateModel.getErrorCode());
 		}
 		catch (Exception e)
 		{
