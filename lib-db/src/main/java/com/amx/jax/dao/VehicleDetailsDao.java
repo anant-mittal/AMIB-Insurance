@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import com.amx.jax.models.ActivePolicyModel;
 import com.amx.jax.models.CodeDesc;
 import com.amx.jax.models.Colour;
+import com.amx.jax.models.CustomerProfileDetailModel;
 import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.FuelType;
 import com.amx.jax.models.Make;
@@ -27,6 +28,8 @@ import com.amx.jax.models.Purpose;
 import com.amx.jax.models.Shape;
 import com.amx.jax.models.VehicleCondition;
 import com.amx.jax.models.VehicleDetailsModel;
+import com.amx.jax.models.VehicleDetailsUpdateRequest;
+import com.amx.jax.models.VehicleSession;
 
 import oracle.jdbc.OracleTypes;
 
@@ -44,6 +47,9 @@ public class VehicleDetailsDao
 
 	@Autowired
 	MetaData metaData;
+	
+	@Autowired
+	VehicleSession vehicleSession;
 
 	public ArrayList getPendingRequestQuote()
 	{
@@ -495,6 +501,73 @@ public class VehicleDetailsDao
 		}
 		return vehicleDetailsArray;
 	}
+	
+	public CustomerProfileDetailModel insUpdateVehicleDetails(VehicleDetailsUpdateRequest vehicleDetailsUpdateRequest)
+	{
+		getConnection();
+		CallableStatement callableStatement = null;
+
+		String callProcedure = "{call IRB_INSUPD_VEHDTLS(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+
+		try
+		{
+			callableStatement = connection.prepareCall(callProcedure);
+
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(3, vehicleSession.getAppSeqNumber());
+			callableStatement.setString(4, vehicleDetailsUpdateRequest.getMake());
+			callableStatement.setString(5, vehicleDetailsUpdateRequest.getSubMake());
+			callableStatement.setString(6, vehicleDetailsUpdateRequest.getKtNumber());
+			callableStatement.setString(7, vehicleDetailsUpdateRequest.getChasis());
+			callableStatement.setBigDecimal(8, vehicleDetailsUpdateRequest.getModelYear());
+			callableStatement.setString(9, vehicleDetailsUpdateRequest.getVehicleCondition());
+			callableStatement.setString(10, vehicleDetailsUpdateRequest.getPurpose());
+			callableStatement.setString(11, vehicleDetailsUpdateRequest.getShape());
+			callableStatement.setString(12, vehicleDetailsUpdateRequest.getColour());
+			callableStatement.setString(13, vehicleDetailsUpdateRequest.getFuelType());
+			callableStatement.setString(14, vehicleDetailsUpdateRequest.getEngine());
+			callableStatement.setBigDecimal(15, vehicleDetailsUpdateRequest.getPassenger());
+			callableStatement.setBigDecimal(16, vehicleDetailsUpdateRequest.getVehiclePower());
+			callableStatement.setBigDecimal(17, vehicleDetailsUpdateRequest.getWeight());
+			callableStatement.setString(18, vehicleDetailsUpdateRequest.getReplType());
+			callableStatement.setBigDecimal(17, vehicleDetailsUpdateRequest.getMaxInsuAmount());
+			callableStatement.setString(18, vehicleDetailsUpdateRequest.getEngine());
+			callableStatement.setString(19, vehicleDetailsUpdateRequest.getEngine());
+			callableStatement.setString(20, vehicleDetailsUpdateRequest.getEngine());
+			callableStatement.setString(21, metaData.getDeviceType());
+			callableStatement.setString(22, metaData.getDeviceId());
+			callableStatement.setString(23, metaData.getCivilId());
+			
+			callableStatement.registerOutParameter(24, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(25, java.sql.Types.VARCHAR);
+			callableStatement.executeUpdate();
+			
+			/*VehicleDetailsModel vehicleDetailsModel = new VehicleDetailsModel();
+			vehicleDetailsModel.setErrorCode(callableStatement.getString(20));
+			vehicleDetailsModel.setErrorMessage(callableStatement.getString(21));
+
+			if (callableStatement.getString(20) == null)
+			{
+				customerProfileDetailModel.setStatus(true);
+			}
+			else
+			{
+				customerProfileDetailModel.setStatus(false);
+			}*/
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		return null;
+	}
+	
+	
 
 	private Connection getConnection()
 	{

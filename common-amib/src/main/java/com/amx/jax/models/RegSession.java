@@ -56,8 +56,6 @@ public class RegSession implements Serializable
 	
 	private String emailFromConfigured;
 	
-	private ArrayList<OtpCountSession> userSessionOtpCount;
-
 	public String getEmailFromConfigured()
 	{
 		return emailFromConfigured;
@@ -78,16 +76,6 @@ public class RegSession implements Serializable
 		this.otpCount = otpCount;
 	}
 	
-	public ArrayList<OtpCountSession> getUserSessionOtpCount()
-	{
-		return userSessionOtpCount;
-	}
-
-	public void setUserSessionOtpCount(ArrayList<OtpCountSession> userSessionOtpCount)
-	{
-		this.userSessionOtpCount = userSessionOtpCount;
-	}
-
 	public String getContactUsEmail()
 	{
 		return contactUsEmail;

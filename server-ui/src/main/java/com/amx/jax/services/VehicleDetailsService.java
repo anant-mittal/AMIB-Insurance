@@ -9,6 +9,7 @@ import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.dao.VehicleDetailsDao;
 import com.amx.jax.models.VehicleDetailsModel;
+import com.amx.jax.models.VehicleDetailsUpdateRequest;
 
 @Service
 public class VehicleDetailsService
@@ -219,6 +220,25 @@ public class VehicleDetailsService
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
 			resp.setResults(vehicleDetailsDao.getAppVehicleDetails());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
+		return resp;
+	}
+	
+	
+	public AmxApiResponse<?, Object> insUpdateVehicleDetails(VehicleDetailsUpdateRequest vehicleDetailsUpdateRequest)
+	{
+		AmxApiResponse<VehicleDetailsModel, Object> resp = new AmxApiResponse<VehicleDetailsModel, Object>();
+
+		try
+		{
+			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setData(null);
 		}
 		catch (Exception e)
 		{

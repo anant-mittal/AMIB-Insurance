@@ -169,8 +169,6 @@ public class PersonalDetailsService
 		}
 		else if (null != customerProfileDetailModelCheck.getEmail() && !customerProfileDetailModelCheck.getEmail().equals(customerProfileUpdateRequest.getEmail()))
 		{
-			logger.info(TAG + " updateProfileDetails :: Email ");
-
 			AmxApiResponse<Validate, Object> validateEmailID = customerRegistrationService.isValidEmailId(customerProfileUpdateRequest.getEmail());
 			if (validateEmailID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 			{
@@ -184,7 +182,8 @@ public class PersonalDetailsService
 				emailIdExists.setStatusKey(ApiConstants.FAILURE);
 				return emailIdExists;
 			}
-
+			
+			logger.info(TAG + " updateProfileDetails :: Email "+customerProfileDetailModelCheck.getEmail());
 			AmxApiResponse<?, Object> validateEOTP = otpService.validateEOTP(eOtp, customerProfileDetailModelCheck.getEmail());
 			if (null != validateEOTP)
 			{

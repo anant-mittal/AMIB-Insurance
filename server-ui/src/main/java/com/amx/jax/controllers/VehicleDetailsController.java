@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.models.Model;
+import com.amx.jax.models.VehicleDetailsUpdateRequest;
 import com.amx.jax.services.VehicleDetailsService;
 
 @RestController
@@ -93,4 +94,10 @@ public class VehicleDetailsController
 		return vehicleDetailsService.getAppVehicleDetails();
 	}
 
+	@RequestMapping(value = "/api/vehicledetails/ins-upd", method = RequestMethod.GET, produces = "application/json")
+	public AmxApiResponse<?, Object> insUpdateVehicleDetails(VehicleDetailsUpdateRequest vehicleDetailsUpdateRequest)
+	{
+		return vehicleDetailsService.insUpdateVehicleDetails(vehicleDetailsUpdateRequest);
+	}
+	
 }

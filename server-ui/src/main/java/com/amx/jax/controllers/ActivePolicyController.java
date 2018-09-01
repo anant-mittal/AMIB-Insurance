@@ -34,5 +34,4 @@ public class ActivePolicyController
 	{
 		return activePolicyService.getIncompleteApplication();
 	}
-	
 }

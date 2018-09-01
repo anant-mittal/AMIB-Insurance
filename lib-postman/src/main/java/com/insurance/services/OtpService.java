@@ -349,7 +349,5 @@ public class OtpService
 			resp.setMessageKey(MessageKey.KEY_CIVIL_ID_NOT_REGISTERED);// Commit
 		}
 		return resp;
-
 	}
-
 }
