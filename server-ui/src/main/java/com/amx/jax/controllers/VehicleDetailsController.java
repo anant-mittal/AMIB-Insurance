@@ -34,7 +34,6 @@ public class VehicleDetailsController
 	public AmxApiResponse<?, Object> getMake()
 	{
 		return vehicleDetailsService.getMake();
-
 	}
 
 	@RequestMapping(value = "/api/vehicledetails/sub-make", method = RequestMethod.GET, produces = "application/json")

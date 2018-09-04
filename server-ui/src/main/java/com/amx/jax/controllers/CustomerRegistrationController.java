@@ -39,9 +39,9 @@ public class CustomerRegistrationController
 	RegSession regSession;
 
 	@RequestMapping(value = "/pub/reg/companysetup", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<Validate, Object> getCompanySetUp(BigDecimal languageId)
+	public AmxApiResponse<?, Object> getCompanySetUp()
 	{
-		return customerRegistrationService.getCompanySetUp(languageId, "");
+		return customerRegistrationService.getCompanySetUp();
 	}
 
 	@RequestMapping(value = "/pub/reg/civilid-valid", method = RequestMethod.POST, produces = "application/json")

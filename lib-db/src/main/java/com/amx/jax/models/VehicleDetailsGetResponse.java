@@ -64,6 +64,18 @@ public class VehicleDetailsGetResponse
 
 	private BigDecimal maxInsmat;
 
+	public String vehicleTypeDesc;
+	
+	public String getVehicleTypeDesc()
+	{
+		return vehicleTypeDesc;
+	}
+
+	public void setVehicleTypeDesc(String vehicleTypeDesc)
+	{
+		this.vehicleTypeDesc = vehicleTypeDesc;
+	}
+
 	public String getApplicationDate()
 	{
 		return applicationDate;

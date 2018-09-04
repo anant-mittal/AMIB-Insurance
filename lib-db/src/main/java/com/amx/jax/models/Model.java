@@ -5,7 +5,9 @@ public class Model
 	public String modelCode;
 
 	public String modelDesc;
-
+	
+	public String vehicleTypeDesc;
+	
 	public String getModelCode()
 	{
 		return modelCode;
@@ -25,4 +27,15 @@ public class Model
 	{
 		this.modelDesc = modelDesc;
 	}
+	
+	public String getVehicleTypeDesc()
+	{
+		return vehicleTypeDesc;
+	}
+
+	public void setVehicleTypeDesc(String vehicleTypeDesc)
+	{
+		this.vehicleTypeDesc = vehicleTypeDesc;
+	}
+
 }

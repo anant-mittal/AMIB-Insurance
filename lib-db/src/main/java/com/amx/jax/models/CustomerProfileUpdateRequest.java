@@ -24,9 +24,7 @@ public class CustomerProfileUpdateRequest
 	private String mobile;
 
 	private String email;
-
-	private BigDecimal languageId;
-
+	
 	public String getEnglishName()
 	{
 		return englishName;
@@ -126,22 +124,12 @@ public class CustomerProfileUpdateRequest
 	{
 		this.email = email;
 	}
-
-	public BigDecimal getLanguageId()
-	{
-		return languageId;
-	}
-
-	public void setLanguageId(BigDecimal languageId)
-	{
-		this.languageId = languageId;
-	}
-
+	
 	@Override
 	public String toString()
 	{
 		return "CustomerProfileUpdateRequest [englishName=" + englishName + ", nativeArabicName=" + nativeArabicName + ", genderCode=" + genderCode + ", idExpiryDate=" + idExpiryDate + ", businessCode=" + businessCode + ", natyCode=" + natyCode + ", govCode=" + govCode + ", areaCode=" + areaCode
-				+ ", mobile=" + mobile + ", email=" + email + ", languageId=" + languageId + "]";
+				+ ", mobile=" + mobile + ", email=" + email + "]";
 	}
 
 }

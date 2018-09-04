@@ -74,12 +74,22 @@ public class CustomerRegistrationService
 	@Autowired
 	HttpService httpService;
 
-	public AmxApiResponse<Validate, Object> getCompanySetUp(BigDecimal languageId, String deviceId)
+	public AmxApiResponse<CompanySetUp, Object> getCompanySetUp()
 	{
-		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
-
+		AmxApiResponse<CompanySetUp, Object> resp = new AmxApiResponse<CompanySetUp, Object>();
+		
 		try
 		{
+			BigDecimal languageId;
+			if(null != regSession.getLanguageId())
+			{
+				languageId = regSession.getLanguageId();
+			}
+			else
+			{
+				languageId = new BigDecimal(0);
+			}
+			
 			ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao.getCompanySetUp(languageId);
 
 			regSession.setCountryId(getCompanySetUp.get(0).getCntryCd());
@@ -109,7 +119,7 @@ public class CustomerRegistrationService
 			logger.info(TAG + " getCompanySetUp :: setContactUsEmail           :" + regSession.getContactUsEmail());
 			logger.info(TAG + " getCompanySetUp :: setContactUsHelpLineNumber  :" + regSession.getContactUsHelpLineNumber());
 			
-			resp.setData(null);
+			resp.setResults(getCompanySetUp);
 			resp.setStatusKey(ApiConstants.SUCCESS);
 		}
 		catch (Exception e)
@@ -769,7 +779,7 @@ public class CustomerRegistrationService
 		if (httpService.getLanguage().toString().equalsIgnoreCase("EN"))
 		{
 			regSession.setLanguageId(new BigDecimal(0));
-			getCompanySetUp(new BigDecimal(0), httpService.getDeviceId());
+			getCompanySetUp();
 		}
 	}
 

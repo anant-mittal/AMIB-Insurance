@@ -155,7 +155,7 @@ public class HomeController
 		if (httpService.getLanguage().toString().equalsIgnoreCase("EN"))
 		{
 			regSession.setLanguageId(new BigDecimal(0));
-			customerRegistrationService.getCompanySetUp(new BigDecimal(0), httpService.getDeviceId());
+			customerRegistrationService.getCompanySetUp();
 		}
 
 		return "app";
