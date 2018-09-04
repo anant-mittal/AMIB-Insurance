@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 public class VehicleDetailsGetResponse
 {
 	private String applicationDate;
-
+	
 	private String applicationType;
 
 	private String docCategory;
@@ -46,15 +46,25 @@ public class VehicleDetailsGetResponse
 
 	private BigDecimal modelNumber;
 
-	private String vehicleCondition;
+	private String vehicleConditionCode;
+	
+	private String vehicleConditionDesc;
 
-	private String purpose;
+	private String purposeCode;
 
-	private String shape;
+	private String purposeDesc;
+	
+	private String shapeCode;
+	
+	private String shapeDesc;
+	
+	private String colourCode;
+	
+	private String colourDesc;
 
-	private String colour;
-
-	private String fuel;
+	private String fuelCode;
+	
+	private String fuelDesc;
 
 	private BigDecimal noPass;
 
@@ -66,15 +76,6 @@ public class VehicleDetailsGetResponse
 
 	public String vehicleTypeDesc;
 	
-	public String getVehicleTypeDesc()
-	{
-		return vehicleTypeDesc;
-	}
-
-	public void setVehicleTypeDesc(String vehicleTypeDesc)
-	{
-		this.vehicleTypeDesc = vehicleTypeDesc;
-	}
 
 	public String getApplicationDate()
 	{
@@ -286,54 +287,104 @@ public class VehicleDetailsGetResponse
 		this.modelNumber = modelNumber;
 	}
 
-	public String getVehicleCondition()
+	public String getVehicleConditionCode()
 	{
-		return vehicleCondition;
+		return vehicleConditionCode;
 	}
 
-	public void setVehicleCondition(String vehicleCondition)
+	public void setVehicleConditionCode(String vehicleConditionCode)
 	{
-		this.vehicleCondition = vehicleCondition;
+		this.vehicleConditionCode = vehicleConditionCode;
 	}
 
-	public String getPurpose()
+	public String getVehicleConditionDesc()
 	{
-		return purpose;
+		return vehicleConditionDesc;
 	}
 
-	public void setPurpose(String purpose)
+	public void setVehicleConditionDesc(String vehicleConditionDesc)
 	{
-		this.purpose = purpose;
+		this.vehicleConditionDesc = vehicleConditionDesc;
 	}
 
-	public String getShape()
+	public String getPurposeCode()
 	{
-		return shape;
+		return purposeCode;
 	}
 
-	public void setShape(String shape)
+	public void setPurposeCode(String purposeCode)
 	{
-		this.shape = shape;
+		this.purposeCode = purposeCode;
 	}
 
-	public String getColour()
+	public String getPurposeDesc()
 	{
-		return colour;
+		return purposeDesc;
 	}
 
-	public void setColour(String colour)
+	public void setPurposeDesc(String purposeDesc)
 	{
-		this.colour = colour;
+		this.purposeDesc = purposeDesc;
 	}
 
-	public String getFuel()
+	public String getShapeCode()
 	{
-		return fuel;
+		return shapeCode;
 	}
 
-	public void setFuel(String fuel)
+	public void setShapeCode(String shapeCode)
 	{
-		this.fuel = fuel;
+		this.shapeCode = shapeCode;
+	}
+
+	public String getShapeDesc()
+	{
+		return shapeDesc;
+	}
+
+	public void setShapeDesc(String shapeDesc)
+	{
+		this.shapeDesc = shapeDesc;
+	}
+
+	public String getColourCode()
+	{
+		return colourCode;
+	}
+
+	public void setColourCode(String colourCode)
+	{
+		this.colourCode = colourCode;
+	}
+
+	public String getColourDesc()
+	{
+		return colourDesc;
+	}
+
+	public void setColourDesc(String colourDesc)
+	{
+		this.colourDesc = colourDesc;
+	}
+
+	public String getFuelCode()
+	{
+		return fuelCode;
+	}
+
+	public void setFuelCode(String fuelCode)
+	{
+		this.fuelCode = fuelCode;
+	}
+
+	public String getFuelDesc()
+	{
+		return fuelDesc;
+	}
+
+	public void setFuelDesc(String fuelDesc)
+	{
+		this.fuelDesc = fuelDesc;
 	}
 
 	public BigDecimal getNoPass()
@@ -376,12 +427,16 @@ public class VehicleDetailsGetResponse
 		this.maxInsmat = maxInsmat;
 	}
 
-	@Override
-	public String toString()
+	public String getVehicleTypeDesc()
 	{
-		return "VehicleDetailsModel [applicationDate=" + applicationDate + ", applicationType=" + applicationType + ", docCategory=" + docCategory + ", custSeqNumber=" + custSeqNumber + ", policyPeriod=" + policyPeriod + ", userSeqNumber=" + userSeqNumber + ", appStatus=" + appStatus + ", creStage="
-				+ creStage + ", oldDocNumber=" + oldDocNumber + ", refDocNumber=" + refDocNumber + ", onLineLoccd=" + onLineLoccd + ", quoteSeqNumber=" + quoteSeqNumber + ", verNumber=" + verNumber + ", vehSrNumber=" + vehSrNumber + ", makeCode=" + makeCode + ", makeDesc=" + makeDesc
-				+ ", subMakeCode=" + subMakeCode + ", subMakeDesc=" + subMakeDesc + ", ktNumber=" + ktNumber + ", chasis=" + chasis + ", modelNumber=" + modelNumber + ", vehicleCondition=" + vehicleCondition + ", purpose=" + purpose + ", shape=" + shape + ", colour=" + colour + ", fuel=" + fuel
-				+ ", noPass=" + noPass + ", replacementType=" + replacementType + ", replacementTypeDesc=" + replacementTypeDesc + ", maxInsmat=" + maxInsmat + "]";
+		return vehicleTypeDesc;
 	}
+
+	public void setVehicleTypeDesc(String vehicleTypeDesc)
+	{
+		this.vehicleTypeDesc = vehicleTypeDesc;
+	}
+
+	
+		
 }

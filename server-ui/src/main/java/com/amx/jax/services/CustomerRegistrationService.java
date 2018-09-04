@@ -70,18 +70,18 @@ public class CustomerRegistrationService
 
 	@Autowired
 	private OtpService otpService;
-	
+
 	@Autowired
 	HttpService httpService;
 
 	public AmxApiResponse<CompanySetUp, Object> getCompanySetUp()
 	{
 		AmxApiResponse<CompanySetUp, Object> resp = new AmxApiResponse<CompanySetUp, Object>();
-		
+
 		try
 		{
 			BigDecimal languageId;
-			if(null != regSession.getLanguageId())
+			if (null != regSession.getLanguageId())
 			{
 				languageId = regSession.getLanguageId();
 			}
@@ -89,7 +89,7 @@ public class CustomerRegistrationService
 			{
 				languageId = new BigDecimal(0);
 			}
-			
+
 			ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao.getCompanySetUp(languageId);
 
 			regSession.setCountryId(getCompanySetUp.get(0).getCntryCd());
@@ -118,7 +118,7 @@ public class CustomerRegistrationService
 			logger.info(TAG + " getCompanySetUp :: getDeviceType               :" + regSession.getDeviceType());
 			logger.info(TAG + " getCompanySetUp :: setContactUsEmail           :" + regSession.getContactUsEmail());
 			logger.info(TAG + " getCompanySetUp :: setContactUsHelpLineNumber  :" + regSession.getContactUsHelpLineNumber());
-			
+
 			resp.setResults(getCompanySetUp);
 			resp.setStatusKey(ApiConstants.SUCCESS);
 		}
@@ -262,8 +262,6 @@ public class CustomerRegistrationService
 		return resp;
 	}
 
-	
-
 	public AmxApiResponse<CustomerDetailResponse, Object> getUserDetails()
 	{
 		AmxApiResponse<CustomerDetailResponse, Object> resp = new AmxApiResponse<CustomerDetailResponse, Object>();
@@ -368,7 +366,7 @@ public class CustomerRegistrationService
 	public AmxApiResponse<CustomerRegistrationResponse, Object> addNewCustomer(CustomerRegistrationRequest userRegistartionRequest)
 	{
 		handleSession();
-		
+
 		AmxApiResponse<CustomerRegistrationResponse, Object> resp = new AmxApiResponse<CustomerRegistrationResponse, Object>();
 		CustomerRegistrationResponse customerRegistrationResponse = new CustomerRegistrationResponse();
 		CustomerRegistrationModel customerRegistrationModel = new CustomerRegistrationModel();
@@ -410,17 +408,7 @@ public class CustomerRegistrationService
 	public AmxApiResponse<?, Object> validateUserLogin(CustomerLoginRequest customerLoginRequest)
 	{
 		handleSession();
-		
-		if(null == customerLoginRequest.getPassword() || customerLoginRequest.getPassword().equals(""))
-		{
-			AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
-			resp.setStatusKey(ApiConstants.FAILURE);
-			resp.setMessage(Message.EMPTY_PASSWORD);
-			resp.setMessageKey(MessageKey.KEY_EMPTY_PASSWORD);
-			return resp;
-		}
-		
-		
+
 		CustomerLoginResponse customerLoginResponse = new CustomerLoginResponse();
 		CustomerLoginModel customerLoginModel = new CustomerLoginModel();
 		AmxApiResponse<CustomerLoginResponse, Object> resp = new AmxApiResponse<CustomerLoginResponse, Object>();
@@ -431,65 +419,75 @@ public class CustomerRegistrationService
 		{
 			return validateCivilID;
 		}
-		else if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+
+		if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 		{
 			return civilIdExistCheck;
 		}
-		else
+
+		if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
-
-			customerLoginModel.setCivilId(customerLoginRequest.getCivilId());
-			customerLoginModel.setPassword(customerLoginRequest.getPassword());
-			customerLoginModel = customerRegistrationDao.validateUserLogin(customerLoginModel);
-
-			if (customerLoginModel.getStatus())
-			{
-				onSuccessLogin(customerLoginRequest, customerLoginModel);
-				getUserDetails();
-				resp.setStatusKey(ApiConstants.SUCCESS);
-			}
-			else
+			if (null == customerLoginRequest.getPassword() || customerLoginRequest.getPassword().equals(""))
 			{
 				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setMessage(Message.EMPTY_PASSWORD);
+				resp.setMessageKey(MessageKey.KEY_EMPTY_PASSWORD);
+				return resp;
 			}
+		}
 
-			if (null != customerLoginModel.getErrorMessage() && customerLoginModel.getErrorCode().toString().equalsIgnoreCase(DatabaseErrorKey.INVALID_USER_LOGIN))
-			{
-				logger.info(TAG + " validateUserLogin :: Invalid Attempts :");
+		customerLoginModel.setCivilId(customerLoginRequest.getCivilId());
+		customerLoginModel.setPassword(customerLoginRequest.getPassword());
+		customerLoginModel = customerRegistrationDao.validateUserLogin(customerLoginModel);
 
-				String countData = "";
-				int count = Integer.parseInt(customerLoginModel.getErrorMessage());
-				int userInvalidCountRemaining = 3 - count;
-				if (userInvalidCountRemaining == 0)
-				{
-					countData = " No ";
-				}
-				else
-				{
-					countData = "" + userInvalidCountRemaining;
-				}
-				resp.setMessageKey(customerLoginModel.getErrorCode());
-				resp.setMessage(countData);
-			}
-			else if (null != customerLoginModel.getErrorCode() && customerLoginModel.getErrorCode().equalsIgnoreCase(DatabaseErrorKey.USER_ACCOUNT_LOCK))
+		if (customerLoginModel.getStatus())
+		{
+			onSuccessLogin(customerLoginRequest, customerLoginModel);
+			getUserDetails();
+			resp.setStatusKey(ApiConstants.SUCCESS);
+		}
+		else
+		{
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
+
+		if (null != customerLoginModel.getErrorMessage() && customerLoginModel.getErrorCode().toString().equalsIgnoreCase(DatabaseErrorKey.INVALID_USER_LOGIN))
+		{
+			logger.info(TAG + " validateUserLogin :: Invalid Attempts :");
+
+			String countData = "";
+			int count = Integer.parseInt(customerLoginModel.getErrorMessage());
+			int userInvalidCountRemaining = 3 - count;
+			if (userInvalidCountRemaining == 0)
 			{
-				logger.info(TAG + " validateUserLogin :: Lock Account :");
-				resp.setMessageKey(customerLoginModel.getErrorCode());
-				resp.setMessage(customerLoginModel.getErrorCode());
-				customerLoginResponse.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
-				customerLoginResponse.setContactUsEmail(regSession.getContactUsEmail());
+				countData = " No ";
 			}
 			else
 			{
-				resp.setMessageKey(customerLoginModel.getErrorCode());
-				resp.setMessage(customerLoginModel.getErrorCode());
+				countData = "" + userInvalidCountRemaining;
 			}
-
-			customerLoginResponse.setAmibRef(customerLoginModel.getAmibRef());
-			customerLoginResponse.setUserSeqNum(customerLoginModel.getUserSeqNum());
-			resp.setData(customerLoginResponse);
-			logger.info(TAG + " validateUserLogin :: customerLoginResponse :" + customerLoginResponse.toString());
+			resp.setMessageKey(customerLoginModel.getErrorCode());
+			resp.setMessage(countData);
 		}
+		else if (null != customerLoginModel.getErrorCode() && customerLoginModel.getErrorCode().equalsIgnoreCase(DatabaseErrorKey.USER_ACCOUNT_LOCK))
+		{
+			logger.info(TAG + " validateUserLogin :: Lock Account :");
+			resp.setMessageKey(customerLoginModel.getErrorCode());
+			resp.setMessage(customerLoginModel.getErrorCode());
+			customerLoginResponse.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
+			customerLoginResponse.setContactUsEmail(regSession.getContactUsEmail());
+		}
+		else
+		{
+			resp.setMessageKey(customerLoginModel.getErrorCode());
+			resp.setMessage(customerLoginModel.getErrorCode());
+		}
+
+		customerLoginResponse.setAmibRef(customerLoginModel.getAmibRef());
+		customerLoginResponse.setUserSeqNum(customerLoginModel.getUserSeqNum());
+		resp.setData(customerLoginResponse);
+		logger.info(TAG + " validateUserLogin :: customerLoginResponse :" + customerLoginResponse.toString());
+
 		return resp;
 	}
 
@@ -529,7 +527,7 @@ public class CustomerRegistrationService
 		{
 			return civilIdExistCheck;
 		}
-		
+
 		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(changePasswordOtpRequest.getCivilId());
 
 		if (null == customerDetailModel || customerDetailModel.getErrorCode() != null)
@@ -543,13 +541,13 @@ public class CustomerRegistrationService
 		{
 			try
 			{
-				
+
 				AmxApiResponse<?, Object> validateDOTP = otpService.validateDOTP(eOtp, mOtp, customerDetailModel.getEmail(), customerDetailModel.getMobile());
 				if (null != validateDOTP)
 				{
 					return validateDOTP;
 				}
-				
+
 				resp.setStatusKey(ApiConstants.SUCCESS);
 
 			}
@@ -583,7 +581,7 @@ public class CustomerRegistrationService
 			{
 				return validateDOTP;
 			}
-			
+
 			return updatePassword(changePasswordRequest);
 		}
 	}
@@ -722,7 +720,7 @@ public class CustomerRegistrationService
 		AmxApiResponse<Validate, Object> mobileNumberExists = isMobileNumberExist(requestOtpModel.getMobileNumber());
 		AmxApiResponse<Validate, Object> validateEmailID = isValidEmailId(requestOtpModel.getEmailId());
 		AmxApiResponse<Validate, Object> emailIdExists = isEmailIdExist(requestOtpModel.getEmailId());
-		
+
 		try
 		{
 			if (null == requestOtpModel.getCivilId() || requestOtpModel.getCivilId().toString().equals(""))
@@ -783,7 +781,7 @@ public class CustomerRegistrationService
 		}
 		return null;
 	}
-	
+
 	private void handleSession()
 	{
 		if (httpService.getLanguage().toString().equalsIgnoreCase("EN"))

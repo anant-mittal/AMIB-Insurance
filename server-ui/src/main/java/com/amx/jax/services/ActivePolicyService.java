@@ -49,27 +49,4 @@ public class ActivePolicyService
 		}
 		return resp;
 	}
-	
-	
-	public AmxApiResponse<IncompleteApplResponse, Object> getIncompleteApplication()
-	{
-		AmxApiResponse<IncompleteApplResponse, Object> resp = new AmxApiResponse<IncompleteApplResponse, Object>();
-		IncompleteApplResponse incompleteApplResponse = new IncompleteApplResponse();
-		try
-		{
-			IncompleteApplModel incompleteApplModel = activePolicyDao.getIncompleteApplication();
-			incompleteApplResponse.setAppSeqNumber(incompleteApplModel.getAppSeqNumber());
-			incompleteApplResponse.setAppStage(incompleteApplModel.getAppStage());
-			resp.setData(incompleteApplResponse);
-			resp.setStatusKey(ApiConstants.SUCCESS);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
-		}
-		return resp;
-	}
-
 }

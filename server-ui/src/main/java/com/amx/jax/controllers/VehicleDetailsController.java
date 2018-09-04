@@ -101,7 +101,7 @@ public class VehicleDetailsController
 		return vehicleDetailsService.setVehicleDetailsHeader(vehicleDetailsHeaderRequest);
 	}
 	
-	@RequestMapping(value = "/api/vehicledetails/ins-update", method = RequestMethod.POST, produces = "application/json")
+	@RequestMapping(value = "/api/vehicledetails/vehicle-details-update", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> insUpdateVehicleDetails(@RequestBody VehicleDetailsUpdateRequest vehicleDetailsUpdateRequest)
 	{
 		return vehicleDetailsService.insUpdateVehicleDetails(vehicleDetailsUpdateRequest);

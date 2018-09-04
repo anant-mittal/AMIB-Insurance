@@ -451,7 +451,8 @@ public class VehicleDetailsDao
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
-			callableStatement.setBigDecimal(3, metaData.getUserAmibCustRef());
+			callableStatement.setBigDecimal(3, vehicleSession.getAppSeqNumber());
+			logger.info(TAG + " getAppVehicleDetails :: getAppSeqNumber :" + vehicleSession.getAppSeqNumber());
 			callableStatement.setBigDecimal(4, metaData.getLanguageId());
 			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -484,16 +485,21 @@ public class VehicleDetailsDao
 				vehicleDetailsModel.setKtNumber(rs.getString(19));
 				vehicleDetailsModel.setChasis(rs.getString(20));
 				vehicleDetailsModel.setModelNumber(rs.getBigDecimal(21));
-				vehicleDetailsModel.setVehicleCondition(rs.getString(22));
-				vehicleDetailsModel.setPurpose(rs.getString(23));
-				vehicleDetailsModel.setShape(rs.getString(24));
-				vehicleDetailsModel.setColour(rs.getString(25));
-				vehicleDetailsModel.setFuel(rs.getString(26));
-				vehicleDetailsModel.setNoPass(rs.getBigDecimal(27));
-				vehicleDetailsModel.setReplacementType(rs.getString(28));
-				vehicleDetailsModel.setReplacementTypeDesc(rs.getString(29));
-				vehicleDetailsModel.setMaxInsmat(rs.getBigDecimal(30));
-				vehicleDetailsModel.setVehicleTypeDesc(rs.getString(31));
+				vehicleDetailsModel.setVehicleConditionCode(rs.getString(22));
+				vehicleDetailsModel.setVehicleConditionDesc(rs.getString(23));
+				vehicleDetailsModel.setPurposeCode(rs.getString(24));
+				vehicleDetailsModel.setPurposeDesc(rs.getString(25));
+				vehicleDetailsModel.setShapeCode(rs.getString(26));
+				vehicleDetailsModel.setShapeDesc(rs.getString(27));
+				vehicleDetailsModel.setColourCode(rs.getString(28));
+				vehicleDetailsModel.setColourDesc(rs.getString(29));
+				vehicleDetailsModel.setFuelCode(rs.getString(30));
+				vehicleDetailsModel.setFuelDesc(rs.getString(31));
+				vehicleDetailsModel.setNoPass(rs.getBigDecimal(32));
+				vehicleDetailsModel.setReplacementType(rs.getString(33));
+				vehicleDetailsModel.setReplacementTypeDesc(rs.getString(34));
+				vehicleDetailsModel.setMaxInsmat(rs.getBigDecimal(35));
+				vehicleDetailsModel.setVehicleTypeDesc(rs.getString(36));
 				vehicleDetailsArray.add(vehicleDetailsModel);
 			}
 		}

@@ -120,55 +120,6 @@ public class ActivePolicyDao
 		}
 		return activePolicyArray;
 	}
-
-	
-	public IncompleteApplModel getIncompleteApplication()
-	{
-		getConnection();
-		CallableStatement callableStatement = null;
-		String callProcedure = "{call IRB_CHECK_INCOMPLETE_APPL(?,?,?,?,?,?,?,?,?)}";
-		IncompleteApplModel incompleteApplModel = new IncompleteApplModel();
-		
-		try
-		{
-			callableStatement = connection.prepareCall(callProcedure);
-
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
-			callableStatement.setString(3, metaData.getUserType());
-			callableStatement.setString(4, metaData.getCivilId());
-			callableStatement.setBigDecimal(5, metaData.getCustomerSequenceNumber());
-			callableStatement.registerOutParameter(6, java.sql.Types.INTEGER);
-			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
-			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
-			callableStatement.registerOutParameter(9, java.sql.Types.VARCHAR);
-			callableStatement.executeUpdate();
-
-			incompleteApplModel.setAppSeqNumber(callableStatement.getBigDecimal(6));
-			incompleteApplModel.setAppStage(callableStatement.getString(7));
-			incompleteApplModel.setErrorCode(callableStatement.getString(8));
-			incompleteApplModel.setErrorMessage(callableStatement.getString(9));
-
-			if (callableStatement.getString(8) == null)
-			{
-				incompleteApplModel.setStatus(true);
-			}
-			else
-			{
-				incompleteApplModel.setStatus(false);
-			}
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		finally
-		{
-			CloseConnection(callableStatement, connection);
-		}
-		return incompleteApplModel;
-	}
-	
 	
 	private Connection getConnection()
 	{
