@@ -52,4 +52,7 @@ public class MessageKey
 	
 	public static String KEY_CIVIL_ID_EXPIRED = "CIVIL_ID_EXPIRED";
 
+	public static String KEY_EMPTY_PASSWORD = "EMPTY_PASSWORD";
+	
 }
+

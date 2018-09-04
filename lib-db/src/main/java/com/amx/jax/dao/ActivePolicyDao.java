@@ -13,6 +13,8 @@ import com.amx.jax.models.ActivePolicyModel;
 import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.IncompleteApplModel;
 import com.amx.jax.models.MetaData;
+import com.amx.jax.models.VehicleSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import oracle.jdbc.OracleTypes;
 
@@ -28,6 +30,9 @@ public class ActivePolicyDao
 
 	@Autowired
 	MetaData metaData;
+	
+	@Autowired
+	VehicleSession vehicleSession;
 
 	Connection connection;
 

@@ -6,6 +6,8 @@ public class Message
 	public static String CIVILID_VALID = "Valid Civil ID";
 
 	public static String CIVILID_INVALID = "Invalid Civil ID";
+	
+	public static String EMPTY_PASSWORD = "Password is Empty";
 
 	public static String CIVILID_ALREDAY_REGISTER = "CivilId Already Registered";
 

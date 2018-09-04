@@ -411,6 +411,16 @@ public class CustomerRegistrationService
 	{
 		handleSession();
 		
+		if(null == customerLoginRequest.getPassword() || customerLoginRequest.getPassword().equals(""))
+		{
+			AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
+			resp.setStatusKey(ApiConstants.FAILURE);
+			resp.setMessage(Message.EMPTY_PASSWORD);
+			resp.setMessageKey(MessageKey.KEY_EMPTY_PASSWORD);
+			return resp;
+		}
+		
+		
 		CustomerLoginResponse customerLoginResponse = new CustomerLoginResponse();
 		CustomerLoginModel customerLoginModel = new CustomerLoginModel();
 		AmxApiResponse<CustomerLoginResponse, Object> resp = new AmxApiResponse<CustomerLoginResponse, Object>();

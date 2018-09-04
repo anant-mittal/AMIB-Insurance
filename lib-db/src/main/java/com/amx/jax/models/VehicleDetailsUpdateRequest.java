@@ -4,38 +4,6 @@ import java.math.BigDecimal;
 
 public class VehicleDetailsUpdateRequest
 {
-	
-	/*(P_CNTRYCD     IN  NUMBER,
-	P_COMPCD      IN  NUMBER,
-    P_APPLSEQNO   IN  NUMBER,
-    P_MAKE        IN  VARCHAR2,
-    P_SUBMAKE     IN  VARCHAR2,
-    P_KTNO        IN  VARCHAR2,
-    P_CHASSIS     IN  VARCHAR2,
-    P_MODELYR     IN  NUMBER,
-    P_VEHCOND     IN  VARCHAR2,
-    P_PURPOSE     IN  VARCHAR2,
-    P_SHAPE       IN  VARCHAR2,
-    P_COLOR       IN  VARCHAR2,
-    P_FUEL        IN  VARCHAR2,
-    P_ENGINE      IN  VARCHAR2,
-    P_PASSANGER   IN  NUMBER,
-    P_VEHPOWER    IN  NUMBER,
-    P_WEIGHT      IN  NUMBER,
-    P_REPLTYPE    IN  VARCHAR2,// null;
-    P_MAXINSAMT   IN  NUMBER,
-    P_DEVICETYP   IN  VARCHAR2,
-    P_DEVICE_ADDR IN  VARCHAR2,
-    P_USER_BY     IN  VARCHAR2,
-    P_ERRCD       OUT VARCHAR2,
-    P_ERRM        OUT VARCHAR2)
-	IRB_INSUPD_VEHDTLS*/
-	
-	
-	
-	
-	
-	
 	String make;
 
 	String subMake;
@@ -58,7 +26,7 @@ public class VehicleDetailsUpdateRequest
 
 	String engine;
 
-	BigDecimal passenger;
+	BigDecimal seatingCapacity;
 
 	BigDecimal vehiclePower;
 
@@ -178,14 +146,14 @@ public class VehicleDetailsUpdateRequest
 		this.engine = engine;
 	}
 
-	public BigDecimal getPassenger()
+	public BigDecimal getSeatingCapacity()
 	{
-		return passenger;
+		return seatingCapacity;
 	}
 
-	public void setPassenger(BigDecimal passenger)
+	public void setSeatingCapacity(BigDecimal seatingCapacity)
 	{
-		this.passenger = passenger;
+		this.seatingCapacity = seatingCapacity;
 	}
 
 	public BigDecimal getVehiclePower()

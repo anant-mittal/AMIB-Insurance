@@ -7,8 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
+import com.amx.jax.dao.ActivePolicyDao;
 import com.amx.jax.dao.VehicleDetailsDao;
 import com.amx.jax.models.VehicleDetailsGetResponse;
+import com.amx.jax.models.VehicleDetailsHeaderRequest;
+import com.amx.jax.models.VehicleDetailsHeaderResponse;
 import com.amx.jax.models.VehicleDetailsUpdateModel;
 import com.amx.jax.models.VehicleDetailsUpdateRequest;
 
@@ -22,6 +25,9 @@ public class VehicleDetailsService
 
 	@Autowired
 	public VehicleDetailsDao vehicleDetailsDao;
+
+	@Autowired
+	private ActivePolicyDao activePolicyDao;
 
 	public AmxApiResponse<?, Object> getPendingRequestQuote()
 	{
@@ -211,8 +217,7 @@ public class VehicleDetailsService
 		}
 		return resp;
 	}
-	
-	
+
 	public AmxApiResponse<?, Object> getAppVehicleDetails()
 	{
 		AmxApiResponse<VehicleDetailsGetResponse, Object> resp = new AmxApiResponse<VehicleDetailsGetResponse, Object>();
@@ -230,19 +235,14 @@ public class VehicleDetailsService
 		}
 		return resp;
 	}
-	
-	
+
 	public AmxApiResponse<?, Object> insUpdateVehicleDetails(VehicleDetailsUpdateRequest vehicleDetailsUpdateRequest)
 	{
 		AmxApiResponse<VehicleDetailsUpdateRequest, Object> resp = new AmxApiResponse<VehicleDetailsUpdateRequest, Object>();
-
 		try
 		{
-			vehicleDetailsDao.setVehicleHeader(vehicleDetailsUpdateRequest);
-			
-			
 			VehicleDetailsUpdateModel vehicleDetailsUpdateModel = vehicleDetailsDao.insUpdateVehicleDetails(vehicleDetailsUpdateRequest);
-			
+
 			if (vehicleDetailsUpdateModel.getStatus())
 			{
 				resp.setStatusKey(ApiConstants.SUCCESS);
@@ -251,9 +251,35 @@ public class VehicleDetailsService
 			{
 				resp.setStatusKey(ApiConstants.FAILURE);
 			}
-
 			resp.setMessageKey(vehicleDetailsUpdateModel.getErrorCode());
 			resp.setMessage(vehicleDetailsUpdateModel.getErrorCode());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
+		return resp;
+	}
+
+	public AmxApiResponse<VehicleDetailsHeaderResponse , Object> setVehicleDetailsHeader(VehicleDetailsHeaderRequest vehicleDetailsHeaderRequest)
+	{
+		AmxApiResponse<VehicleDetailsHeaderResponse, Object> resp = new AmxApiResponse<VehicleDetailsHeaderResponse, Object>();
+		try
+		{
+			VehicleDetailsHeaderResponse vehicleDetailsHeaderResponse = vehicleDetailsDao.setVehicleDetailsHeader(vehicleDetailsHeaderRequest);
+
+			if (vehicleDetailsHeaderResponse.getStatus())
+			{
+				resp.setStatusKey(ApiConstants.SUCCESS);
+			}
+			else
+			{
+				resp.setStatusKey(ApiConstants.FAILURE);
+			}
+			resp.setMessageKey(vehicleDetailsHeaderResponse.getErrorCode());
+			resp.setMessage(vehicleDetailsHeaderResponse.getErrorCode());
 		}
 		catch (Exception e)
 		{

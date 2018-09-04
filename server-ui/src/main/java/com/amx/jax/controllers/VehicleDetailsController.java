@@ -5,12 +5,14 @@ import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.models.Model;
+import com.amx.jax.models.VehicleDetailsHeaderRequest;
 import com.amx.jax.models.VehicleDetailsUpdateRequest;
 import com.amx.jax.services.VehicleDetailsService;
 
@@ -93,8 +95,14 @@ public class VehicleDetailsController
 		return vehicleDetailsService.getAppVehicleDetails();
 	}
 	
-	@RequestMapping(value = "/api/vehicledetails/ins-update", method = RequestMethod.GET, produces = "application/json")
-	public AmxApiResponse<?, Object> insUpdateVehicleDetails(VehicleDetailsUpdateRequest vehicleDetailsUpdateRequest)
+	@RequestMapping(value = "/api/vehicledetails/vehicle-header", method = RequestMethod.POST, produces = "application/json")
+	public AmxApiResponse<?, Object> setVehicleDetailsHeader(@RequestBody VehicleDetailsHeaderRequest vehicleDetailsHeaderRequest)
+	{
+		return vehicleDetailsService.setVehicleDetailsHeader(vehicleDetailsHeaderRequest);
+	}
+	
+	@RequestMapping(value = "/api/vehicledetails/ins-update", method = RequestMethod.POST, produces = "application/json")
+	public AmxApiResponse<?, Object> insUpdateVehicleDetails(@RequestBody VehicleDetailsUpdateRequest vehicleDetailsUpdateRequest)
 	{
 		return vehicleDetailsService.insUpdateVehicleDetails(vehicleDetailsUpdateRequest);
 	}
