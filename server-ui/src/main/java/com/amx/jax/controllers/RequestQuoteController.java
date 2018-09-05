@@ -15,7 +15,7 @@ public class RequestQuoteController
 {
 	String TAG = "com.amx.jax.controllers :: RequestQuoteController :: ";
 
-	private static final Logger logger = LoggerFactory.getLogger(ActivePolicyController.class);
+	private static final Logger logger = LoggerFactory.getLogger(RequestQuoteController.class);
 
 	@Autowired
 	private RequestQuoteService requestQuoteService;

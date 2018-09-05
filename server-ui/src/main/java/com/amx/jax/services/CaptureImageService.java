@@ -4,13 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
-import com.amx.jax.controllers.ActivePolicyController;
 import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.ImageMandatoryResponse;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.RegSession;
 import com.amx.jax.dao.CaptureImageDao;
-import com.amx.jax.dao.RequestQuoteDao;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,7 +17,7 @@ public class CaptureImageService
 {
 	String TAG = "com.amx.jax.services :: RequestQuoteService :: ";
 
-	private static final Logger logger = LoggerFactory.getLogger(ActivePolicyController.class);
+	private static final Logger logger = LoggerFactory.getLogger(CaptureImageService.class);
 	
 	@Autowired
 	RegSession regSession;

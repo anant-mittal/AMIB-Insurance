@@ -10,7 +10,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import com.amx.jax.models.ActivePolicyModel;
+import com.amx.jax.models.ArrayResponseModel;
+import com.amx.jax.models.CompanySetUp;
 import com.amx.jax.models.DateFormats;
+import com.amx.jax.models.ImageMandatoryResponse;
 import com.amx.jax.models.IncompleteApplModel;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.VehicleSession;
@@ -18,11 +21,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import oracle.jdbc.OracleTypes;
 
 @Repository
-public class RequestQuoteDao
+public class CaptureImageDao
 {
 	String TAG = "com.amx.jax.dao.RequestQuoteDao :: ";
 
-	private static final Logger logger = LoggerFactory.getLogger(RequestQuoteDao.class);
+	private static final Logger logger = LoggerFactory.getLogger(CaptureImageDao.class);
 
 	@Autowired
 	JdbcTemplate jdbcTemplate;
@@ -35,12 +38,13 @@ public class RequestQuoteDao
 
 	Connection connection;
 	
-	public IncompleteApplModel getIncompleteApplication()
+	public ArrayResponseModel getMandatoryImage()
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
-		String callProcedure = "{call IRB_CHECK_INCOMPLETE_APPL(?,?,?,?,?,?,?,?,?)}";
-		IncompleteApplModel incompleteApplModel = new IncompleteApplModel();
+		String callProcedure = "{call IRB_GET_ONLINE_DOCS(?,?,?,?,?,?)}";
+		ArrayList<ImageMandatoryResponse> imageMandatoryArray = new ArrayList<ImageMandatoryResponse>();
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		
 		try
 		{
@@ -48,30 +52,26 @@ public class RequestQuoteDao
 
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
-			callableStatement.setString(3, metaData.getUserType());
-			callableStatement.setString(4, metaData.getCivilId());
-			callableStatement.setBigDecimal(5, metaData.getCustomerSequenceNumber());
-			callableStatement.registerOutParameter(6, java.sql.Types.INTEGER);
-			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
-			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
-			callableStatement.registerOutParameter(9, java.sql.Types.VARCHAR);
+			callableStatement.setBigDecimal(3, metaData.getLanguageId());
+			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
+			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
+			ResultSet rs = (ResultSet) callableStatement.getObject(4);
 
-			incompleteApplModel.setAppSeqNumber(callableStatement.getBigDecimal(6));
-			logger.info(TAG + " getIncompleteApplication :: callableStatement.getBigDecimal(6) :" + callableStatement.getBigDecimal(6));
-			vehicleSession.setAppSeqNumber(callableStatement.getBigDecimal(6));
-			incompleteApplModel.setAppStage(callableStatement.getString(7));
-			incompleteApplModel.setErrorCode(callableStatement.getString(8));
-			incompleteApplModel.setErrorMessage(callableStatement.getString(9));
-
-			if (callableStatement.getString(8) == null)
+			while (rs.next())
 			{
-				incompleteApplModel.setStatus(true);
+				ImageMandatoryResponse imageMandatoryModel = new ImageMandatoryResponse();
+				imageMandatoryModel.setDocType(rs.getString(1));
+				imageMandatoryModel.setDeCode(rs.getString(2));
+				imageMandatoryModel.setRequiredCheck(rs.getString(3));
+				imageMandatoryModel.setDispOrder(rs.getString(4));
+				imageMandatoryModel.setDocStatus(rs.getString(5));
+				imageMandatoryArray.add(imageMandatoryModel);
 			}
-			else
-			{
-				incompleteApplModel.setStatus(false);
-			}
+			arrayResponseModel.setDataArray(imageMandatoryArray);
+			arrayResponseModel.setErrorCode(callableStatement.getString(4));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(5));
 		}
 		catch (Exception e)
 		{
@@ -81,7 +81,7 @@ public class RequestQuoteDao
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return incompleteApplModel;
+		return arrayResponseModel;
 	}
 	
 	

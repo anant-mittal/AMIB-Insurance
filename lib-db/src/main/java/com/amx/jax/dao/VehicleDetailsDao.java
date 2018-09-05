@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.models.ActivePolicyModel;
+import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CodeDesc;
 import com.amx.jax.models.Colour;
 import com.amx.jax.models.CustomerProfileDetailModel;
@@ -55,13 +56,15 @@ public class VehicleDetailsDao
 	@Autowired
 	VehicleSession vehicleSession;
 
-	public ArrayList getPendingRequestQuote()
+	public ArrayResponseModel getPendingRequestQuote()
 	{
 		getConnection();
 
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_CHECK_INCOMPLETE_APPL(?,?,?,?,?,?,?,?,?)}";
 		ArrayList<Make> makeArray = new ArrayList<Make>();
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
+		
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -73,6 +76,7 @@ public class VehicleDetailsDao
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(9, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
 
 			ResultSet rs = (ResultSet) callableStatement.getObject(4);
@@ -83,6 +87,9 @@ public class VehicleDetailsDao
 				make.setMakeDesc(rs.getString(2));
 				makeArray.add(make);
 			}
+			arrayResponseModel.setDataArray(makeArray);
+			arrayResponseModel.setErrorCode(callableStatement.getString(4));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(5));
 		}
 		catch (Exception e)
 		{
@@ -92,16 +99,17 @@ public class VehicleDetailsDao
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return makeArray;
+		return arrayResponseModel;
 	}
 
-	public ArrayList getMake()
+	public ArrayResponseModel getMake()
 	{
 		getConnection();
 
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_MAKES(?,?,?,?,?,?)}";
 		ArrayList<Make> makeArray = new ArrayList<Make>();
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -114,7 +122,6 @@ public class VehicleDetailsDao
 			callableStatement.executeUpdate();
 
 			ResultSet rs = (ResultSet) callableStatement.getObject(4);
-
 			while (rs.next())
 			{
 				Make make = new Make();
@@ -122,6 +129,9 @@ public class VehicleDetailsDao
 				make.setMakeDesc(rs.getString(2));
 				makeArray.add(make);
 			}
+			arrayResponseModel.setDataArray(makeArray);
+			arrayResponseModel.setErrorCode(callableStatement.getString(5));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(6));
 
 		}
 		catch (Exception e)
@@ -134,15 +144,16 @@ public class VehicleDetailsDao
 			CloseConnection(callableStatement, connection);
 		}
 
-		return makeArray;
+		return arrayResponseModel;
 	}
 
-	public ArrayList getModel(String make)
+	public ArrayResponseModel getModel(String make)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_SUBMAKE(?,?,?,?,?,?,?)}";
 		ArrayList<Model> modelArray = new ArrayList<Model>();
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -164,6 +175,9 @@ public class VehicleDetailsDao
 				model.setVehicleTypeDesc(rs.getString(8));
 				modelArray.add(model);
 			}
+			arrayResponseModel.setDataArray(modelArray);
+			arrayResponseModel.setErrorCode(callableStatement.getString(6));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(7));
 		}
 		catch (Exception e)
 		{
@@ -173,15 +187,16 @@ public class VehicleDetailsDao
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return modelArray;
+		return arrayResponseModel;
 	}
 
-	public ArrayList getFuleType()
+	public ArrayResponseModel getFuleType()
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_FUELTYPE(?,?,?,?,?,?)}";
 		ArrayList<FuelType> fuelArray = new ArrayList<FuelType>();
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -201,6 +216,9 @@ public class VehicleDetailsDao
 				fuelType.setFuelDesc(rs.getString(2));
 				fuelArray.add(fuelType);
 			}
+			arrayResponseModel.setDataArray(fuelArray);
+			arrayResponseModel.setErrorCode(callableStatement.getString(5));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(6));
 		}
 		catch (Exception e)
 		{
@@ -210,15 +228,16 @@ public class VehicleDetailsDao
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return fuelArray;
+		return arrayResponseModel;
 	}
 
-	public ArrayList getPurpose()
+	public ArrayResponseModel getPurpose()
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_PURPOSE(?,?,?,?,?,?)}";
 		ArrayList<Purpose> purposeArray = new ArrayList<Purpose>();
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -238,6 +257,9 @@ public class VehicleDetailsDao
 				purpose.setPurposeDesc(rs.getString(2));
 				purposeArray.add(purpose);
 			}
+			arrayResponseModel.setDataArray(purposeArray);
+			arrayResponseModel.setErrorCode(callableStatement.getString(5));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(6));
 
 		}
 		catch (Exception e)
@@ -249,16 +271,17 @@ public class VehicleDetailsDao
 			CloseConnection(callableStatement, connection);
 		}
 
-		return purposeArray;
+		return arrayResponseModel;
 	}
 
-	public ArrayList getShape()
+	public ArrayResponseModel getShape()
 	{
 		getConnection();
 
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_SHAPES(?,?,?,?,?,?)}";
 		ArrayList<Shape> shapeArray = new ArrayList<Shape>();
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -278,6 +301,9 @@ public class VehicleDetailsDao
 				shape.setShapeDesc(rs.getString(2));
 				shapeArray.add(shape);
 			}
+			arrayResponseModel.setDataArray(shapeArray);
+			arrayResponseModel.setErrorCode(callableStatement.getString(5));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(6));
 		}
 		catch (Exception e)
 		{
@@ -287,15 +313,16 @@ public class VehicleDetailsDao
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return shapeArray;
+		return arrayResponseModel;
 	}
 
-	public ArrayList getColour()
+	public ArrayResponseModel getColour()
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_COLORS(?,?,?,?,?,?)}";
 		ArrayList<Colour> colourArray = new ArrayList<Colour>();
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -315,6 +342,9 @@ public class VehicleDetailsDao
 				colour.setColourDesc(rs.getString(2));
 				colourArray.add(colour);
 			}
+			arrayResponseModel.setDataArray(colourArray);
+			arrayResponseModel.setErrorCode(callableStatement.getString(5));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(6));
 		}
 		catch (Exception e)
 		{
@@ -326,15 +356,16 @@ public class VehicleDetailsDao
 			CloseConnection(callableStatement, connection);
 		}
 
-		return colourArray;
+		return arrayResponseModel;
 	}
 
-	public ArrayList getVehicleCondition()
+	public ArrayResponseModel getVehicleCondition()
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_VEHCONDITION(?,?,?,?,?,?)}";
 		ArrayList<VehicleCondition> vehicleConditionArray = new ArrayList<VehicleCondition>();
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -354,6 +385,9 @@ public class VehicleDetailsDao
 				vehicleCondition.setVehicleConditionDesc(rs.getString(2));
 				vehicleConditionArray.add(vehicleCondition);
 			}
+			arrayResponseModel.setDataArray(vehicleConditionArray);
+			arrayResponseModel.setErrorCode(callableStatement.getString(5));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(6));
 		}
 		catch (Exception e)
 		{
@@ -363,7 +397,7 @@ public class VehicleDetailsDao
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return vehicleConditionArray;
+		return arrayResponseModel;
 	}
 
 	public ArrayList getMaxVehicleAgeAllowed()
@@ -439,12 +473,13 @@ public class VehicleDetailsDao
 		return maxVehicleAgeArray;
 	}
 
-	public ArrayList<VehicleDetailsGetResponse> getAppVehicleDetails()
+	public ArrayResponseModel getAppVehicleDetails()
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_APPLVEH_DTLS(?,?,?,?,?,?,?)}";
 		ArrayList<VehicleDetailsGetResponse> vehicleDetailsArray = new ArrayList<VehicleDetailsGetResponse>();
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 
 		try
 		{
@@ -502,6 +537,9 @@ public class VehicleDetailsDao
 				vehicleDetailsModel.setVehicleTypeDesc(rs.getString(36));
 				vehicleDetailsArray.add(vehicleDetailsModel);
 			}
+			arrayResponseModel.setDataArray(vehicleDetailsArray);
+			arrayResponseModel.setErrorCode(callableStatement.getString(6));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(7));
 		}
 		catch (Exception e)
 		{
@@ -511,7 +549,7 @@ public class VehicleDetailsDao
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return vehicleDetailsArray;
+		return arrayResponseModel;
 	}
 	
 	public VehicleDetailsHeaderResponse setVehicleDetailsHeader(VehicleDetailsHeaderRequest vehicleDetailsHeaderRequest)

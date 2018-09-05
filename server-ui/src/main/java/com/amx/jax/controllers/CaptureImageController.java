@@ -2,11 +2,8 @@ package com.amx.jax.controllers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.amx.jax.models.ImageMandatoryResponse;
-import com.amx.jax.models.IncompleteApplResponse;
 import com.amx.jax.services.CaptureImageService;
-import com.amx.jax.services.RequestQuoteService;
 import com.amx.jax.api.AmxApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,7 +15,7 @@ public class CaptureImageController
 {
 	String TAG = "com.amx.jax.controllers :: RequestQuoteController :: ";
 
-	private static final Logger logger = LoggerFactory.getLogger(ActivePolicyController.class);
+	private static final Logger logger = LoggerFactory.getLogger(CaptureImageController.class);
 
 	@Autowired
 	private  CaptureImageService captureImageService;
