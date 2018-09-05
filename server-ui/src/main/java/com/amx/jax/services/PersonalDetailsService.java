@@ -261,7 +261,7 @@ public class PersonalDetailsService
 			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		resp.setMessageKey(customerProfileUpdateResponse.getErrorCode());
-		resp.setMessage(customerProfileUpdateResponse.getErrorCode());
+		resp.setMessage(customerProfileUpdateResponse.getErrorMessage());
 
 		return resp;
 	}

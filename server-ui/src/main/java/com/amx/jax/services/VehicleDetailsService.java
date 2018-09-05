@@ -9,6 +9,7 @@ import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.dao.ActivePolicyDao;
 import com.amx.jax.dao.VehicleDetailsDao;
+import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.VehicleDetailsGetResponse;
 import com.amx.jax.models.VehicleDetailsHeaderRequest;
 import com.amx.jax.models.VehicleDetailsHeaderResponse;
@@ -29,34 +30,24 @@ public class VehicleDetailsService
 	@Autowired
 	private ActivePolicyDao activePolicyDao;
 
-	public AmxApiResponse<?, Object> getPendingRequestQuote()
-	{
-		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
-
-		try
-		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			resp.setResults(vehicleDetailsDao.getPendingRequestQuote());
-
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
-		}
-		return resp;
-
-	}
-
 	public AmxApiResponse<?, Object> getMake()
 	{
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
 
 		try
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			resp.setResults(vehicleDetailsDao.getMake());
+			ArrayResponseModel arrayResponseModel = vehicleDetailsDao.getMake();
+			if (null == arrayResponseModel.getErrorCode())
+			{
+				resp.setStatusKey(ApiConstants.SUCCESS);
+			}
+			else
+			{
+				resp.setStatusKey(ApiConstants.FAILURE);
+			}
+			resp.setMessageKey(arrayResponseModel.getErrorCode());
+			resp.setMessage(arrayResponseModel.getErrorMessage());
+			resp.setResults(arrayResponseModel.getDataArray());
 
 		}
 		catch (Exception e)
@@ -75,9 +66,18 @@ public class VehicleDetailsService
 
 		try
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			resp.setResults(vehicleDetailsDao.getModel(make));
-
+			ArrayResponseModel arrayResponseModel = vehicleDetailsDao.getModel(make);
+			if (null == arrayResponseModel.getErrorCode())
+			{
+				resp.setStatusKey(ApiConstants.SUCCESS);
+			}
+			else
+			{
+				resp.setStatusKey(ApiConstants.FAILURE);
+			}
+			resp.setMessageKey(arrayResponseModel.getErrorCode());
+			resp.setMessage(arrayResponseModel.getErrorMessage());
+			resp.setResults(arrayResponseModel.getDataArray());
 		}
 		catch (Exception e)
 		{
@@ -95,8 +95,18 @@ public class VehicleDetailsService
 
 		try
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			resp.setResults(vehicleDetailsDao.getFuleType());
+			ArrayResponseModel arrayResponseModel = vehicleDetailsDao.getFuleType();
+			if (null == arrayResponseModel.getErrorCode())
+			{
+				resp.setStatusKey(ApiConstants.SUCCESS);
+			}
+			else
+			{
+				resp.setStatusKey(ApiConstants.FAILURE);
+			}
+			resp.setMessageKey(arrayResponseModel.getErrorCode());
+			resp.setMessage(arrayResponseModel.getErrorMessage());
+			resp.setResults(arrayResponseModel.getDataArray());
 
 		}
 		catch (Exception e)
@@ -114,8 +124,18 @@ public class VehicleDetailsService
 
 		try
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			resp.setResults(vehicleDetailsDao.getPurpose());
+			ArrayResponseModel arrayResponseModel = vehicleDetailsDao.getPurpose();
+			if (null == arrayResponseModel.getErrorCode())
+			{
+				resp.setStatusKey(ApiConstants.SUCCESS);
+			}
+			else
+			{
+				resp.setStatusKey(ApiConstants.FAILURE);
+			}
+			resp.setMessageKey(arrayResponseModel.getErrorCode());
+			resp.setMessage(arrayResponseModel.getErrorMessage());
+			resp.setResults(arrayResponseModel.getDataArray());
 
 		}
 		catch (Exception e)
@@ -133,8 +153,18 @@ public class VehicleDetailsService
 
 		try
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			resp.setResults(vehicleDetailsDao.getShape());
+			ArrayResponseModel arrayResponseModel = vehicleDetailsDao.getShape();
+			if (null == arrayResponseModel.getErrorCode())
+			{
+				resp.setStatusKey(ApiConstants.SUCCESS);
+			}
+			else
+			{
+				resp.setStatusKey(ApiConstants.FAILURE);
+			}
+			resp.setMessageKey(arrayResponseModel.getErrorCode());
+			resp.setMessage(arrayResponseModel.getErrorMessage());
+			resp.setResults(arrayResponseModel.getDataArray());
 
 		}
 		catch (Exception e)
@@ -152,8 +182,18 @@ public class VehicleDetailsService
 
 		try
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			resp.setResults(vehicleDetailsDao.getColour());
+			ArrayResponseModel arrayResponseModel = vehicleDetailsDao.getColour();
+			if (null == arrayResponseModel.getErrorCode())
+			{
+				resp.setStatusKey(ApiConstants.SUCCESS);
+			}
+			else
+			{
+				resp.setStatusKey(ApiConstants.FAILURE);
+			}
+			resp.setMessageKey(arrayResponseModel.getErrorCode());
+			resp.setMessage(arrayResponseModel.getErrorMessage());
+			resp.setResults(arrayResponseModel.getDataArray());
 		}
 		catch (Exception e)
 		{
@@ -170,8 +210,18 @@ public class VehicleDetailsService
 
 		try
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			resp.setResults(vehicleDetailsDao.getVehicleCondition());
+			ArrayResponseModel arrayResponseModel = vehicleDetailsDao.getVehicleCondition();
+			if (null == arrayResponseModel.getErrorCode())
+			{
+				resp.setStatusKey(ApiConstants.SUCCESS);
+			}
+			else
+			{
+				resp.setStatusKey(ApiConstants.FAILURE);
+			}
+			resp.setMessageKey(arrayResponseModel.getErrorCode());
+			resp.setMessage(arrayResponseModel.getErrorMessage());
+			resp.setResults(arrayResponseModel.getDataArray());
 		}
 		catch (Exception e)
 		{
@@ -221,11 +271,20 @@ public class VehicleDetailsService
 	public AmxApiResponse<?, Object> getAppVehicleDetails()
 	{
 		AmxApiResponse<VehicleDetailsGetResponse, Object> resp = new AmxApiResponse<VehicleDetailsGetResponse, Object>();
-
 		try
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			resp.setResults(vehicleDetailsDao.getAppVehicleDetails());
+			ArrayResponseModel arrayResponseModel = vehicleDetailsDao.getAppVehicleDetails();
+			if (null == arrayResponseModel.getErrorCode())
+			{
+				resp.setStatusKey(ApiConstants.SUCCESS);
+			}
+			else
+			{
+				resp.setStatusKey(ApiConstants.FAILURE);
+			}
+			resp.setMessageKey(arrayResponseModel.getErrorCode());
+			resp.setMessage(arrayResponseModel.getErrorMessage());
+			resp.setResults(arrayResponseModel.getDataArray());
 		}
 		catch (Exception e)
 		{
@@ -263,7 +322,7 @@ public class VehicleDetailsService
 		return resp;
 	}
 
-	public AmxApiResponse<VehicleDetailsHeaderResponse , Object> setVehicleDetailsHeader(VehicleDetailsHeaderRequest vehicleDetailsHeaderRequest)
+	public AmxApiResponse<VehicleDetailsHeaderResponse, Object> setVehicleDetailsHeader(VehicleDetailsHeaderRequest vehicleDetailsHeaderRequest)
 	{
 		AmxApiResponse<VehicleDetailsHeaderResponse, Object> resp = new AmxApiResponse<VehicleDetailsHeaderResponse, Object>();
 		try

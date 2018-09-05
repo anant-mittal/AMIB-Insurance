@@ -77,7 +77,6 @@ public class CustomerRegistrationService
 	public AmxApiResponse<CompanySetUp, Object> getCompanySetUp()
 	{
 		AmxApiResponse<CompanySetUp, Object> resp = new AmxApiResponse<CompanySetUp, Object>();
-
 		try
 		{
 			BigDecimal languageId;
@@ -279,7 +278,6 @@ public class CustomerRegistrationService
 		customerDetailResponse.setMobile(customerDetailModel.getMobile());
 		customerDetailResponse.setMobileVerify(customerDetailModel.getMobileVerify());
 		customerDetailResponse.setUserName(customerDetailModel.getUserName());
-		logger.info(TAG + " getUserDetails :: getCustSequenceNumber :" + customerDetailModel.getCustSequenceNumber());
 		metaData.setCustomerSequenceNumber(customerDetailModel.getCustSequenceNumber());
 
 		resp.setData(customerDetailResponse);
