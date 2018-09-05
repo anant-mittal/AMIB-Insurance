@@ -26,7 +26,7 @@ public class RequestQuoteDao
 
 	@Autowired
 	JdbcTemplate jdbcTemplate;
-
+	
 	@Autowired
 	MetaData metaData;
 	

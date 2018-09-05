@@ -19,7 +19,7 @@ public class RequestQuoteService
 {
 	String TAG = "com.amx.jax.services :: RequestQuoteService :: ";
 
-	private static final Logger logger = LoggerFactory.getLogger(ActivePolicyController.class);
+	private static final Logger logger = LoggerFactory.getLogger(RequestQuoteService.class);
 	
 	@Autowired
 	RegSession regSession;
