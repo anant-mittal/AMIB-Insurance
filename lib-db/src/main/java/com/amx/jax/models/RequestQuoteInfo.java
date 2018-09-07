@@ -2,20 +2,20 @@ package com.amx.jax.models;
 
 import java.math.BigDecimal;
 
-public class VehicleDetailsHeaderRequest
+public class RequestQuoteInfo
 {
+	private BigDecimal appSeqNumber;
+
 	private BigDecimal docNumber;
 	
-	private BigDecimal policyDuration;
-	
-	public BigDecimal getPolicyDuration()
+	public BigDecimal getAppSeqNumber()
 	{
-		return policyDuration;
+		return appSeqNumber;
 	}
 
-	public void setPolicyDuration(BigDecimal policyDuration)
+	public void setAppSeqNumber(BigDecimal appSeqNumber)
 	{
-		this.policyDuration = policyDuration;
+		this.appSeqNumber = appSeqNumber;
 	}
 
 	public BigDecimal getDocNumber()
@@ -27,6 +27,4 @@ public class VehicleDetailsHeaderRequest
 	{
 		this.docNumber = docNumber;
 	}
-	
-	
 }

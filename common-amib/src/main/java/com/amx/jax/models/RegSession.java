@@ -38,16 +38,21 @@ public class RegSession implements Serializable
 
 	private BigDecimal compCd;
 
-	private String userType;
-
 	private String deviceType;
 
 	private String deviceId;
 
 	private BigDecimal languageId;
 
+	
+	
+	private String userType;
+	
 	private BigDecimal userSequenceNumber;
 
+	
+	
+	
 	private String contactUsEmail;
 
 	private String contactUsHelpLineNumber;

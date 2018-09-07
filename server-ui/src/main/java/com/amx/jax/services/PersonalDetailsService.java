@@ -84,8 +84,6 @@ public class PersonalDetailsService
 		customerProfileDetailResponse.setNatyCode(customerProfileDetailModel.getNatyCode());
 		customerProfileDetailResponse.setNatyDesc(customerProfileDetailModel.getNatyDesc());
 		customerProfileDetailResponse.setNativeArabicName(customerProfileDetailModel.getNativeArabicName());
-		logger.info(TAG + " getProfileDetails :: getIdExpiryDate :" + customerProfileDetailModel.toString());
-		
 		if (customerProfileDetailModel.getStatus())
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
@@ -94,7 +92,6 @@ public class PersonalDetailsService
 		{
 			resp.setStatusKey(ApiConstants.FAILURE);
 		}
-
 		resp.setData(customerProfileDetailResponse);
 		resp.setMessageKey(customerProfileDetailModel.getErrorCode());
 		resp.setMessage(customerProfileDetailModel.getErrorCode());

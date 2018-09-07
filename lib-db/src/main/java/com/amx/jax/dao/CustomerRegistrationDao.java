@@ -143,7 +143,6 @@ public class CustomerRegistrationDao
 	{
 
 		getConnection();
-
 		CallableStatement callableStatement = null;
 		String callFunction = "{ ? = call IRB_IF_ONLINE_USEREXIST(?,?,?,?)}";
 

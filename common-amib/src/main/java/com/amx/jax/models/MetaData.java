@@ -13,9 +13,17 @@ import org.springframework.stereotype.Component;
 public class MetaData implements Serializable
 {
 
-	private MetaData metaData;
-
 	private static final long serialVersionUID = 4265567700694960490L;
+
+	@Override
+	public String toString()
+	{
+		return "MetaData [metaData=" + metaData + ", motpPrefix=" + motpPrefix + ", eotpPrefix=" + eotpPrefix + ", motp=" + motp + ", eotp=" + eotp + ", civilId=" + civilId + ", mobileNumber=" + mobileNumber + ", emailId=" + emailId + ", changePasswordOtp=" + changePasswordOtp + ", countryId="
+				+ countryId + ", compCd=" + compCd + ", userType=" + userType + ", deviceType=" + deviceType + ", deviceId=" + deviceId + ", languageId=" + languageId + ", contactUsEmail=" + contactUsEmail + ", contactUsHelpLineNumber=" + contactUsHelpLineNumber + ", mOtpMobileNumber="
+				+ mOtpMobileNumber + ", eOtpEmailId=" + eOtpEmailId + ", emailFromConfigured=" + emailFromConfigured + ", customerSequenceNumber=" + customerSequenceNumber + ", userSequenceNumber=" + userSequenceNumber + ", userAmibCustRef=" + userAmibCustRef + "]";
+	}
+	
+	private MetaData metaData;
 
 	private String motpPrefix;
 
@@ -45,12 +53,6 @@ public class MetaData implements Serializable
 
 	private BigDecimal languageId;
 
-	private BigDecimal customerSequenceNumber;
-
-	private BigDecimal userSequenceNumber;
-
-	private BigDecimal userAmibCustRef;
-
 	private String contactUsEmail;
 
 	private String contactUsHelpLineNumber;
@@ -58,9 +60,24 @@ public class MetaData implements Serializable
 	private String mOtpMobileNumber = "";
 
 	private String eOtpEmailId = "";
-	
+
 	String emailFromConfigured;
 	
+	
+	
+	/**************************ASK************************/
+
+	private BigDecimal customerSequenceNumber; //[Get:- Update Profile Details and getUser Details] , [USED :- veh_headre_dtl, get_prof_dtls , set_veh_dtls] 
+
+	private BigDecimal userSequenceNumber; //[Get:- On User Login] , [USED :- get_user_dtls, set_veh_dtls]  
+
+	private BigDecimal userAmibCustRef; // [Get:- On User Login] , [USED :- set_veh_dtls]  
+	
+	/**************************ASK************************/
+	
+	
+	
+
 	public String getEmailFromConfigured()
 	{
 		return emailFromConfigured;
@@ -275,7 +292,7 @@ public class MetaData implements Serializable
 	{
 		this.userSequenceNumber = userSequenceNumber;
 	}
-	
+
 	public String getmOtpMobileNumber()
 	{
 		return mOtpMobileNumber;

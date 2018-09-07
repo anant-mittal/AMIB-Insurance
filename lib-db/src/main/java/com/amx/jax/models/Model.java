@@ -1,33 +1,83 @@
 package com.amx.jax.models;
 
+import java.math.BigDecimal;
+
 public class Model
 {
-	public String modelCode;
+	private String makeCode;
 
-	public String modelDesc;
-	
-	public String vehicleTypeDesc;
-	
-	public String getModelCode()
+	private String subMakeCode;
+
+	private String subMakeDesc;
+
+	private BigDecimal seatingCapacity;
+
+	private String shapeCode;
+
+	private String shapeDesc;
+
+	private String vehicleTypeDesc;
+
+	public String getMakeCode()
 	{
-		return modelCode;
+		return makeCode;
 	}
 
-	public void setModelCode(String modelCode)
+	public void setMakeCode(String makeCode)
 	{
-		this.modelCode = modelCode;
+		this.makeCode = makeCode;
 	}
 
-	public String getModelDesc()
+	public String getSubMakeCode()
 	{
-		return modelDesc;
+		return subMakeCode;
 	}
 
-	public void setModelDesc(String modelDesc)
+	public void setSubMakeCode(String subMakeCode)
 	{
-		this.modelDesc = modelDesc;
+		this.subMakeCode = subMakeCode;
 	}
-	
+
+	public String getSubMakeDesc()
+	{
+		return subMakeDesc;
+	}
+
+	public void setSubMakeDesc(String subMakeDesc)
+	{
+		this.subMakeDesc = subMakeDesc;
+	}
+
+	public BigDecimal getSeatingCapacity()
+	{
+		return seatingCapacity;
+	}
+
+	public void setSeatingCapacity(BigDecimal seatingCapacity)
+	{
+		this.seatingCapacity = seatingCapacity;
+	}
+
+	public String getShapeCode()
+	{
+		return shapeCode;
+	}
+
+	public void setShapeCode(String shapeCode)
+	{
+		this.shapeCode = shapeCode;
+	}
+
+	public String getShapeDesc()
+	{
+		return shapeDesc;
+	}
+
+	public void setShapeDesc(String shapeDesc)
+	{
+		this.shapeDesc = shapeDesc;
+	}
+
 	public String getVehicleTypeDesc()
 	{
 		return vehicleTypeDesc;
@@ -37,5 +87,12 @@ public class Model
 	{
 		this.vehicleTypeDesc = vehicleTypeDesc;
 	}
+	
+	@Override
+	public String toString()
+	{
+		return "Model [makeCode=" + makeCode + ", subMakeCode=" + subMakeCode + ", subMakeDesc=" + subMakeDesc + ", seatingCapacity=" + seatingCapacity + ", shapeCode=" + shapeCode + ", shapeDesc=" + shapeDesc + ", vehicleTypeDesc=" + vehicleTypeDesc + "]";
+	}
 
+	
 }

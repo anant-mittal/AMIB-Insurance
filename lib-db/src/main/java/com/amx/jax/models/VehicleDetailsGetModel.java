@@ -2,9 +2,9 @@ package com.amx.jax.models;
 
 import java.math.BigDecimal;
 
-public class VehicleDetailsGetResponse
+public class VehicleDetailsGetModel
 {
-	private String applicationDate;
+private String applicationDate;
 	
 	private String applicationType;
 
@@ -436,7 +436,16 @@ public class VehicleDetailsGetResponse
 	{
 		this.vehicleTypeDesc = vehicleTypeDesc;
 	}
+	
+	@Override
+	public String toString()
+	{
+		return "VehicleDetailsGetModel [applicationDate=" + applicationDate + ", applicationType=" + applicationType + ", docCategory=" + docCategory + ", custSeqNumber=" + custSeqNumber + ", policyPeriod=" + policyPeriod + ", userSeqNumber=" + userSeqNumber + ", appStatus=" + appStatus
+				+ ", creStage=" + creStage + ", oldDocNumber=" + oldDocNumber + ", refDocNumber=" + refDocNumber + ", onLineLoccd=" + onLineLoccd + ", quoteSeqNumber=" + quoteSeqNumber + ", verNumber=" + verNumber + ", vehSrNumber=" + vehSrNumber + ", makeCode=" + makeCode + ", makeDesc=" + makeDesc
+				+ ", subMakeCode=" + subMakeCode + ", subMakeDesc=" + subMakeDesc + ", ktNumber=" + ktNumber + ", chasis=" + chasis + ", modelNumber=" + modelNumber + ", vehicleConditionCode=" + vehicleConditionCode + ", vehicleConditionDesc=" + vehicleConditionDesc + ", purposeCode=" + purposeCode
+				+ ", purposeDesc=" + purposeDesc + ", shapeCode=" + shapeCode + ", shapeDesc=" + shapeDesc + ", colourCode=" + colourCode + ", colourDesc=" + colourDesc + ", fuelCode=" + fuelCode + ", fuelDesc=" + fuelDesc + ", noPass=" + noPass + ", replacementType=" + replacementType
+				+ ", replacementTypeDesc=" + replacementTypeDesc + ", maxInsmat=" + maxInsmat + ", vehicleTypeDesc=" + vehicleTypeDesc + "]";
+	}
 
 	
-		
 }
