@@ -607,6 +607,7 @@ public class RequestQuoteDao
 			vehicleDetailsHeaderModel.setErrorMessage(callableStatement.getString(15));
 			if (callableStatement.getString(3) != null)
 			{
+				logger.info(TAG + " getAppVehicleDetails :: callableStatement.getBigDecimal(3) :" + callableStatement.getBigDecimal(3));
 				vehicleDetailsHeaderModel.setAppSeqNumber(callableStatement.getBigDecimal(3));
 			}
 		}

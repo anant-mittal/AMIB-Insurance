@@ -384,6 +384,10 @@ public class RequestQuoteService
 			VehicleDetailsHeaderModel vehicleDetailsHeaderModel = requestQuoteDao.setVehicleDetailsHeader(requestQuoteModel);
 			if (null == vehicleDetailsHeaderModel.getErrorCode())
 			{
+				RequestQuoteInfo requestQuoteInfo = new RequestQuoteInfo();
+				requestQuoteInfo.setAppSeqNumber(vehicleDetailsHeaderModel.getAppSeqNumber());
+				logger.info(TAG + " setAppVehicleDetails :: getAppSeqNumber :" + vehicleDetailsHeaderModel.getAppSeqNumber());
+				requestQuoteModel.setRequestQuoteInfo(requestQuoteInfo);
 				resp.setStatusKey(ApiConstants.SUCCESS);
 			}
 			else
@@ -395,6 +399,7 @@ public class RequestQuoteService
 				return resp;
 			}
 
+			logger.info(TAG + " setAppVehicleDetails :: requestQuoteModel :" + requestQuoteModel.toString());
 			VehicleDetailsUpdateModel vehicleDetailsUpdateModel = requestQuoteDao.insUpdateVehicleDetails(requestQuoteModel);
 			if (null == vehicleDetailsUpdateModel.getErrorCode())
 			{
@@ -588,7 +593,6 @@ public class RequestQuoteService
 		resp.setData(requestQuoteModel);
 		resp.setMessageKey(customerProfileDetailModel.getErrorCode());
 		resp.setMessage(customerProfileDetailModel.getErrorMessage());
-
 		return resp;
 	}
 
