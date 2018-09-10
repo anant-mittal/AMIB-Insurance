@@ -5,8 +5,20 @@ public class RequestQuoteModel
 	private RequestQuoteInfo requestQuoteInfo;
 
 	private VehicleDetails vehicleDetails;
-	
+
 	private PersonalDetails personalDetails;
+
+	private VehicleImageDetails vehicleImageDetails;
+
+	public VehicleImageDetails getVehicleImageDetails()
+	{
+		return vehicleImageDetails;
+	}
+
+	public void setVehicleImageDetails(VehicleImageDetails vehicleImageDetails)
+	{
+		this.vehicleImageDetails = vehicleImageDetails;
+	}
 
 	public PersonalDetails getPersonalDetails()
 	{

@@ -50,7 +50,7 @@ public class RequestQuoteDao
 
 	@Autowired
 	MetaData metaData;
-	
+
 	@Autowired
 	VehicleSession vehicleSession;
 
@@ -60,10 +60,11 @@ public class RequestQuoteDao
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_CHECK_INCOMPLETE_APPL(?,?,?,?,?,?,?,?,?)}";
 		IncompleteApplModel incompleteApplModel = new IncompleteApplModel();
-		
+
 		try
 		{
 			logger.info(TAG + " getIncompleteApplication :: metaData :" + metaData.toString());
+
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
@@ -76,13 +77,12 @@ public class RequestQuoteDao
 			callableStatement.registerOutParameter(9, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
 			incompleteApplModel.setAppSeqNumber(callableStatement.getBigDecimal(6));
-			logger.info(TAG + " getIncompleteApplication :: callableStatement.getBigDecimal(6) :" + callableStatement.getBigDecimal(6));
 			incompleteApplModel.setAppStage(callableStatement.getString(7));
 			incompleteApplModel.setErrorCode(callableStatement.getString(8));
 			incompleteApplModel.setErrorMessage(callableStatement.getString(9));
 
 			logger.info(TAG + " getIncompleteApplication :: callableStatement.getBigDecimal(6) :" + callableStatement.getBigDecimal(6));
-			
+
 			if (callableStatement.getString(8) == null)
 			{
 				incompleteApplModel.setStatus(true);
@@ -102,7 +102,7 @@ public class RequestQuoteDao
 		}
 		return incompleteApplModel;
 	}
-	
+
 	public ArrayResponseModel getMake()
 	{
 		getConnection();
@@ -491,7 +491,8 @@ public class RequestQuoteDao
 		{
 			requestQuoteInfo = requestQuoteModel.getRequestQuoteInfo();
 			logger.info(TAG + " getAppVehicleDetails :: getAppSeqNumber :" + requestQuoteInfo.getAppSeqNumber());
-			
+			logger.info(TAG + " getAppVehicleDetails :: metaData :" + metaData.toString());
+
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
@@ -542,6 +543,7 @@ public class RequestQuoteDao
 				vehicleDetailsModel.setReplacementTypeDesc(rs.getString(34));
 				vehicleDetailsModel.setMaxInsmat(rs.getBigDecimal(35));
 				vehicleDetailsModel.setVehicleTypeDesc(rs.getString(36));
+				logger.info(TAG + " getAppVehicleDetails :: vehicleDetailsModel :" + vehicleDetailsModel.toString());
 				vehicleDetailsArray.add(vehicleDetailsModel);
 			}
 			arrayResponseModel.setDataArray(vehicleDetailsArray);
@@ -558,7 +560,7 @@ public class RequestQuoteDao
 		}
 		return arrayResponseModel;
 	}
-	
+
 	public VehicleDetailsHeaderModel setVehicleDetailsHeader(RequestQuoteModel requestQuoteModel)
 	{
 		getConnection();
@@ -567,18 +569,19 @@ public class RequestQuoteDao
 		VehicleDetailsHeaderModel vehicleDetailsHeaderModel = new VehicleDetailsHeaderModel();
 		RequestQuoteInfo requestQuoteInfo = new RequestQuoteInfo();
 		String callProcedure = "{call IRB_INSUPD_APPLICATION_HEADER(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
-		
+
 		try
 		{
 			requestQuoteInfo = requestQuoteModel.getRequestQuoteInfo();
 			logger.info(TAG + " getAppVehicleDetails :: getAppSeqNumber :" + requestQuoteInfo.getAppSeqNumber());
-			
+
 			vehicleDetails = requestQuoteModel.getVehicleDetails();
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			callableStatement.setBigDecimal(3, requestQuoteInfo.getAppSeqNumber());
-			if(null == requestQuoteInfo.getDocNumber())//Suggested By Ashok Sir
+			if (null == requestQuoteInfo.getDocNumber())// Suggested By Ashok
+														// Sir
 			{
 				callableStatement.setString(4, HardCodedValues.NEW_POLICY);
 			}
@@ -599,7 +602,7 @@ public class RequestQuoteDao
 			callableStatement.registerOutParameter(14, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(15, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
-			
+
 			vehicleDetailsHeaderModel.setErrorCode(callableStatement.getString(14));
 			vehicleDetailsHeaderModel.setErrorMessage(callableStatement.getString(15));
 			if (callableStatement.getString(3) != null)
@@ -617,7 +620,7 @@ public class RequestQuoteDao
 		}
 		return vehicleDetailsHeaderModel;
 	}
-	
+
 	public VehicleDetailsUpdateModel insUpdateVehicleDetails(RequestQuoteModel requestQuoteModel)
 	{
 		getConnection();
@@ -626,18 +629,18 @@ public class RequestQuoteDao
 		VehicleDetailsUpdateModel vehicleDetailsUpdateModel = new VehicleDetailsUpdateModel();
 		RequestQuoteInfo requestQuoteInfo = new RequestQuoteInfo();
 		String callProcedure = "{call IRB_INSUPD_VEHDTLS(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
-		
+
 		logger.info(TAG + " insUpdateVehicleDetails :: requestQuoteModel :" + requestQuoteModel.toString());
 		logger.info(TAG + " insUpdateVehicleDetails :: metaData :" + metaData.toString());
 
 		try
 		{
 			requestQuoteInfo = requestQuoteModel.getRequestQuoteInfo();
-			logger.info(TAG + " getAppVehicleDetails :: getAppSeqNumber :" + requestQuoteInfo.getAppSeqNumber());
-			
 			vehicleDetails = requestQuoteModel.getVehicleDetails();
+
+			logger.info(TAG + " getAppVehicleDetails :: getAppSeqNumber :" + requestQuoteInfo.getAppSeqNumber());
 			logger.info(TAG + " insUpdateVehicleDetails :: vehicleDetails :" + vehicleDetails.toString());
-			
+
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
@@ -652,12 +655,14 @@ public class RequestQuoteDao
 			callableStatement.setString(11, vehicleDetails.getShapeCode());
 			callableStatement.setString(12, vehicleDetails.getColourCode());
 			callableStatement.setString(13, vehicleDetails.getFuelCode());
-			callableStatement.setString(14, null);//Hard Coded As Per Ashok Sir
+			callableStatement.setString(14, null);// Hard Coded As Per Ashok Sir
 			callableStatement.setBigDecimal(15, vehicleDetails.getSeatingCapacity());
-			callableStatement.setBigDecimal(16, null);//Hard Coded As Per Ashok Sir
-			callableStatement.setBigDecimal(17, null);//Hard Coded As Per Ashok Sir
-			callableStatement.setString(18, null);//Hard Coded As Per Ashok Sir
-			callableStatement.setBigDecimal(19, vehicleDetails.getVehicleValue());//Hard Coded As Per Ashok Sir
+			callableStatement.setBigDecimal(16, null);// Hard Coded As Per Ashok
+														// Sir
+			callableStatement.setBigDecimal(17, null);// Hard Coded As Per Ashok
+														// Sir
+			callableStatement.setString(18, null);// Hard Coded As Per Ashok Sir
+			callableStatement.setBigDecimal(19, vehicleDetails.getVehicleValue());
 			callableStatement.setString(20, metaData.getDeviceType());
 			callableStatement.setString(21, metaData.getDeviceId());
 			callableStatement.setString(22, metaData.getCivilId());
@@ -666,7 +671,7 @@ public class RequestQuoteDao
 			callableStatement.executeUpdate();
 			vehicleDetailsUpdateModel.setErrorCode(callableStatement.getString(23));
 			vehicleDetailsUpdateModel.setErrorMessage(callableStatement.getString(24));
-			
+
 		}
 		catch (Exception e)
 		{
@@ -678,7 +683,7 @@ public class RequestQuoteDao
 		}
 		return vehicleDetailsUpdateModel;
 	}
-	
+
 	public ArrayResponseModel getMandatoryImage()
 	{
 		getConnection();
@@ -686,7 +691,7 @@ public class RequestQuoteDao
 		String callProcedure = "{call IRB_GET_ONLINE_DOCS(?,?,?,?,?,?)}";
 		ArrayList<ImageMandatoryResponse> imageMandatoryArray = new ArrayList<ImageMandatoryResponse>();
 		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
-		
+
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -724,8 +729,7 @@ public class RequestQuoteDao
 		}
 		return arrayResponseModel;
 	}
-	
-	
+
 	public String checkIfImageAlreadyUploaded(String docType)
 	{
 		getConnection();
@@ -739,7 +743,8 @@ public class RequestQuoteDao
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
 			callableStatement.setBigDecimal(2, metaData.getCountryId());
 			callableStatement.setBigDecimal(3, metaData.getCompCd());
-			//callableStatement.setBigDecimal(4, vehicleSession.getAppSeqNumber());
+			// callableStatement.setBigDecimal(4,
+			// vehicleSession.getAppSeqNumber());
 			callableStatement.setString(5, docType);
 			callableStatement.executeUpdate();
 			result = callableStatement.getString(1);

@@ -116,7 +116,7 @@ public class PersonalDetailsService
 		if (null != customerProfileUpdateRequest.getIdExpiryDate())
 		{
 			String dateFromDb = customerProfileUpdateRequest.getIdExpiryDate();
-			if (checkExpiryDate(dateFromDb))
+			if (DateFormats.checkExpiryDate(dateFromDb))
 			{
 				resp.setStatusKey(ApiConstants.FAILURE);
 				resp.setMessageKey(MessageKey.KEY_CIVIL_ID_EXPIRED);
@@ -216,35 +216,14 @@ public class PersonalDetailsService
 		customerProfileDetailModel.setEnglishName(customerProfileUpdateRequest.getEnglishName());
 		customerProfileDetailModel.setNativeArabicName(customerProfileUpdateRequest.getNativeArabicName());
 		customerProfileDetailModel.setGenderCode(customerProfileUpdateRequest.getGenderCode());
-
-		if (null != customerProfileUpdateRequest.getIdExpiryDate() && !customerProfileUpdateRequest.getIdExpiryDate().toString().equals(""))
-		{
-			try
-			{
-				String idExpDateStr = DateFormats.formatType4(customerProfileUpdateRequest.getIdExpiryDate().toString());
-				DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-				java.util.Date date = format.parse(idExpDateStr);
-				customerProfileDetailModel.setIdExpiryDate(new Date(date.getTime()));
-				logger.info(TAG + " updateProfileDetails :: idExpDateStr :" + idExpDateStr);
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-				customerProfileDetailModel.setIdExpiryDate(null);
-			}
-		}
-		else
-		{
-			customerProfileDetailModel.setIdExpiryDate(null);
-		}
+		customerProfileDetailModel.setIdExpiryDate(DateFormats.setExpiryDateToDb(customerProfileUpdateRequest.getIdExpiryDate().toString()));
 		customerProfileDetailModel.setBusinessCode(customerProfileUpdateRequest.getBusinessCode());
 		customerProfileDetailModel.setNatyCode(customerProfileUpdateRequest.getNatyCode());
 		customerProfileDetailModel.setGovCode(customerProfileUpdateRequest.getGovCode());
 		customerProfileDetailModel.setAreaCode(customerProfileUpdateRequest.getAreaCode());
 		customerProfileDetailModel.setMobile(customerProfileUpdateRequest.getMobile());
 		customerProfileDetailModel.setEmail(customerProfileUpdateRequest.getEmail());
-		logger.info(TAG + " updateProfileDetails :: customerProfileDetailModel 1 :" + customerProfileDetailModel.toString());
-
+		
 		customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel);
 		customerProfileUpdateResponse.setStatus(customerProfileDetailModel.getStatus());
 		customerProfileUpdateResponse.setErrorCode(customerProfileDetailModel.getErrorCode());
@@ -361,28 +340,4 @@ public class PersonalDetailsService
 		return resp;
 
 	}
-
-	public boolean checkExpiryDate(String idExpiryDate)
-	{
-		try
-		{
-			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-			java.util.Date todays = sdf.parse(DateFormats.formatType1(new java.util.Date().toString()));
-			java.util.Date idExpDateFormatted = sdf.parse(DateFormats.formatType1(new java.util.Date(idExpiryDate).toString()));
-			if (idExpDateFormatted.before(todays))
-			{
-				return true;
-			}
-			logger.info(TAG + " checkExpiryDate :: idExpiryDate 1 :" + idExpiryDate);
-			logger.info(TAG + " checkExpiryDate :: todays 2 :" + todays);
-			logger.info(TAG + " checkExpiryDate :: idExpDateFormatted 3 :" + idExpDateFormatted);
-			logger.info(TAG + " checkExpiryDate :: Condition 4 :" + idExpDateFormatted.before(todays));
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		return false;
-	}
-
 }
