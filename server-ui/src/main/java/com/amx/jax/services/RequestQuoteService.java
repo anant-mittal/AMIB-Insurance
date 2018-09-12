@@ -633,20 +633,13 @@ public class RequestQuoteService
 		return resp;
 	}
 	
-	public AmxApiResponse<RequestQuoteModel, Object> setUploadImage(MultipartFile file , RequestQuoteModel requestQuoteModel)
+	public AmxApiResponse<RequestQuoteModel, Object> setUploadImage(RequestQuoteModel requestQuoteModel)
 	{
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
 		try
 		{
-			/*logger.info(TAG + " setUploadImage :: file :"+file.toString());
-			
-			Blob imageBlob = ImageToBlob.convertFileContentToBlob(file); 
-			
-			logger.info(TAG + " setUploadImage :: imageBlob :"+imageBlob.toString());*/
-			
-			ImageModel imageModel = requestQuoteDao.setUploadImage(file , requestQuoteModel);
+			ImageModel imageModel = requestQuoteDao.setUploadImage(requestQuoteModel);
 			requestQuoteModel.setVehicleImageDetails(imageModel.getVehicleImageDetails());
-			
 			if (null == imageModel.getErrorCode())
 			{
 				resp.setStatusKey(ApiConstants.SUCCESS);

@@ -2,11 +2,25 @@ package com.amx.jax.models;
 
 import java.math.BigDecimal;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public class ImageUploadDetails
 {
 	String docCode;
 	
 	BigDecimal docSeqNumber;
+	
+	MultipartFile file;
+
+	public MultipartFile getFile()
+	{
+		return file;
+	}
+
+	public void setFile(MultipartFile file)
+	{
+		this.file = file;
+	}
 
 	public String getDocCode()
 	{

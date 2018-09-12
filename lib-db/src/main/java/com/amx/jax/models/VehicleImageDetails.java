@@ -6,16 +6,17 @@ public class VehicleImageDetails
 {
 	ArrayList<ImageInitInfo> imageInfoArray;
 	
-	ImageUploadDetails uploadImageDetails;
+	ImageUploadDetails imageUploadDetails;
 
-	public ImageUploadDetails getUploadImageDetails()
+	
+	public ImageUploadDetails getImageUploadDetails()
 	{
-		return uploadImageDetails;
+		return imageUploadDetails;
 	}
 
-	public void setUploadImageDetails(ImageUploadDetails uploadImageDetails)
+	public void setImageUploadDetails(ImageUploadDetails imageUploadDetails)
 	{
-		this.uploadImageDetails = uploadImageDetails;
+		this.imageUploadDetails = imageUploadDetails;
 	}
 
 	public ArrayList<ImageInitInfo> getImageInfoArray()

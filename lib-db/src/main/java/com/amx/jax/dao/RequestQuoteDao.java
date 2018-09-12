@@ -788,7 +788,7 @@ public class RequestQuoteDao
 		return result;
 	}
 
-	public ImageModel setUploadImage(MultipartFile image , RequestQuoteModel requestQuoteModel)
+	public ImageModel setUploadImage(RequestQuoteModel requestQuoteModel)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -797,12 +797,18 @@ public class RequestQuoteDao
 		VehicleImageDetails vehicleImageDetails = new VehicleImageDetails();
 		ImageUploadDetails uploadImageDetails = new ImageUploadDetails();
 		ImageModel imageModel = new ImageModel();
+		MultipartFile file = null;
 		
 		try
 		{
+			
 			requestQuoteInfo = requestQuoteModel.getRequestQuoteInfo();
 			vehicleImageDetails = requestQuoteModel.getVehicleImageDetails();
-			uploadImageDetails = vehicleImageDetails.getUploadImageDetails();
+			uploadImageDetails = vehicleImageDetails.getImageUploadDetails();
+			file = uploadImageDetails.getFile();
+			InputStream inputStream = file.getInputStream();
+			
+			logger.info(TAG + " setUploadImage :: file :"+file);
 			logger.info(TAG + " setUploadImage :: vehicleImageDetails :"+vehicleImageDetails.toString());
 			logger.info(TAG + " setUploadImage :: uploadImageDetails  :"+uploadImageDetails.toString());
 			
@@ -812,7 +818,7 @@ public class RequestQuoteDao
 			callableStatement.setBigDecimal(3, requestQuoteInfo.getAppSeqNumber());
 			callableStatement.setString(4, uploadImageDetails.getDocCode());
 			callableStatement.setBigDecimal(5, uploadImageDetails.getDocSeqNumber());
-			callableStatement.setBinaryStream(6, image.getInputStream());
+			callableStatement.setBlob(6, inputStream, inputStream.available());
 			callableStatement.setString(7, metaData.getDeviceType());
 			callableStatement.setString(8, metaData.getDeviceId());
 			callableStatement.setString(9, metaData.getCivilId());
@@ -827,8 +833,10 @@ public class RequestQuoteDao
 			}
 			
 			logger.info(TAG + " setUploadImage :: uploadImageDetails  :"+uploadImageDetails.toString());
+			logger.info(TAG + " setUploadImage :: callableStatement.getBigDecimal(10)  :"+callableStatement.getString(10));
+			logger.info(TAG + " setUploadImage :: callableStatement.getBigDecimal(11)  :"+callableStatement.getString(11));
 			
-			vehicleImageDetails.setUploadImageDetails(uploadImageDetails);
+			vehicleImageDetails.setImageUploadDetails(uploadImageDetails);
 			imageModel.setVehicleImageDetails(vehicleImageDetails);
 			imageModel.setErrorCode(callableStatement.getString(10));
 			imageModel.setErrorMessage(callableStatement.getString(11));
@@ -839,7 +847,15 @@ public class RequestQuoteDao
 		}
 		finally
 		{
-			CloseConnection(callableStatement, connection);
+			try
+			{
+				file.getInputStream().close();
+				CloseConnection(callableStatement, connection);
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
 		}
 		return imageModel;
 	}
@@ -854,17 +870,17 @@ public class RequestQuoteDao
 		
 		try
 		{
+			logger.info(TAG + " setUploadImage :: metaData  :"+metaData.toString());
 			InputStream inputStream = file.getInputStream();
 			logger.info(TAG + " doUpload :: file 1 :" + inputStream);
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			callableStatement.setBigDecimal(3, new BigDecimal(41));
-			callableStatement.setString(4, "REV");
+			callableStatement.setString(4, "LEV");
 			callableStatement.setBigDecimal(5, null);
 			logger.info(TAG + " doUpload :: file 2 :" + inputStream);
 			callableStatement.setBlob(6, inputStream, inputStream.available());
-			
 			callableStatement.setString(7, metaData.getDeviceType());
 			callableStatement.setString(8, metaData.getDeviceId());
 			callableStatement.setString(9, metaData.getCivilId());
@@ -875,6 +891,8 @@ public class RequestQuoteDao
 			callableStatement.executeUpdate();
 			
 			logger.info(TAG + " setUploadImage :: callableStatement.getBigDecimal(5)  :"+callableStatement.getBigDecimal(5));
+			logger.info(TAG + " setUploadImage :: callableStatement.getBigDecimal(10)  :"+callableStatement.getString(10));
+			logger.info(TAG + " setUploadImage :: callableStatement.getBigDecimal(11)  :"+callableStatement.getString(11));
 			
 		}
 		catch (Exception e)

@@ -128,14 +128,13 @@ public class RequestQuoteController
 	{
 		return requestQuoteService.getMandatoryImage(requestQuoteModel);
 	}
-
-	@RequestMapping(value = "/api/request-quote/set-image-upload", method = RequestMethod.POST)
-	public AmxApiResponse<?, Object> setUploadImage(@RequestParam MultipartFile file, @RequestBody RequestQuoteModel requestQuoteModel) throws Exception
+	
+	@RequestMapping(value = "/api/request-quote/upload-image", method = RequestMethod.POST)
+	public AmxApiResponse<?, Object> setUploadImage(@RequestParam MultipartFile file, @RequestBody RequestQuoteModel requestQuoteModel) throws IOException
 	{
-		logger.info(TAG + " setUploadImage :: file :" + file);
-		return requestQuoteService.setUploadImage(file, requestQuoteModel);
+		return requestQuoteService.setUploadImage(requestQuoteModel);
 	}
-
+	
 	@RequestMapping(value = "/doUpload", method = RequestMethod.POST)
 	public String upload(@RequestParam MultipartFile file) throws IOException
 	{
