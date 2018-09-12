@@ -27,7 +27,7 @@
 	<repositories>
 		<repository>
 			<id>gitlab.com.almullagroup.maven.amx-maven</id>
-			<url>https://gitlab.com/almullagroup/maven/amx-maven/raw/1.0.9/</url>
+			<url>https://gitlab.com/almullagroup/maven/amx-maven/raw/1.0.10/</url>
 		</repository>
 	</repositories>
 
