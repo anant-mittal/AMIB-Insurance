@@ -2,6 +2,7 @@ package com.insurance.services;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.Message;
@@ -195,7 +196,7 @@ public class OtpService
 		{
 			return initiateEmailOtp(emailId);
 		}
-		return null;
+		return null;//
 	}
 
 	public AmxApiResponse<?, Object> initiateMobileOtp(String mobileNumber)

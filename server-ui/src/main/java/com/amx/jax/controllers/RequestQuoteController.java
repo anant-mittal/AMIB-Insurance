@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.http.MediaType;
@@ -130,7 +131,7 @@ public class RequestQuoteController
 	}
 	
 	@RequestMapping(value = "/api/request-quote/upload-image", method = RequestMethod.POST)
-	public AmxApiResponse<?, Object> setUploadImage(@RequestParam MultipartFile file, @RequestBody RequestQuoteModel requestQuoteModel) throws IOException
+	public AmxApiResponse<?, Object> setUploadImage(@RequestPart MultipartFile file, @RequestPart RequestQuoteModel requestQuoteModel) throws IOException
 	{
 		return requestQuoteService.setUploadImage(requestQuoteModel);
 	}
