@@ -1,10 +1,14 @@
 package com.amx.jax.models;
 
-public class ImageMandatoryResponse
-{
-	private String docType;
+import java.math.BigDecimal;
 
-	private String deCode;
+public class ImageInitInfo
+{
+	private String docCode;
+
+	private String docDesc;
+	
+	private BigDecimal docSeqNumber;
 
 	private String requiredCheck;
 
@@ -12,24 +16,24 @@ public class ImageMandatoryResponse
 
 	private String docStatus;
 
-	public String getDocType()
+	public String getDocCode()
 	{
-		return docType;
+		return docCode;
 	}
 
-	public void setDocType(String docType)
+	public void setDocCode(String docCode)
 	{
-		this.docType = docType;
+		this.docCode = docCode;
 	}
 
-	public String getDeCode()
+	public String getDocDesc()
 	{
-		return deCode;
+		return docDesc;
 	}
 
-	public void setDeCode(String deCode)
+	public void setDocDesc(String docDesc)
 	{
-		this.deCode = deCode;
+		this.docDesc = docDesc;
 	}
 
 	public String getRequiredCheck()
@@ -61,6 +65,14 @@ public class ImageMandatoryResponse
 	{
 		this.docStatus = docStatus;
 	}
-
 	
+	public BigDecimal getDocSeqNumber()
+	{
+		return docSeqNumber;
+	}
+
+	public void setDocSeqNumber(BigDecimal docSeqNumber)
+	{
+		this.docSeqNumber = docSeqNumber;
+	}
 }

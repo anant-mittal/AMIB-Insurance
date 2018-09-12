@@ -1,6 +1,7 @@
 
 package com.amx.jax.services;
 
+import java.sql.Blob;
 import java.sql.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -10,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.MessageKey;
@@ -21,8 +24,9 @@ import com.amx.jax.models.CustomerProfileDetailResponse;
 import com.amx.jax.models.CustomerProfileUpdateRequest;
 import com.amx.jax.models.CustomerProfileUpdateResponse;
 import com.amx.jax.models.DateFormats;
-import com.amx.jax.models.ImageMandatoryResponse;
-import com.amx.jax.models.ImageUploadStatusResponse;
+import com.amx.jax.models.ImageInitInfo;
+import com.amx.jax.models.ImageModel;
+import com.amx.jax.models.ImageToBlob;
 import com.amx.jax.models.IncompleteApplModel;
 import com.amx.jax.models.PersonalDetails;
 import com.amx.jax.models.RequestQuoteInfo;
@@ -32,6 +36,7 @@ import com.amx.jax.models.VehicleDetails;
 import com.amx.jax.models.VehicleDetailsGetModel;
 import com.amx.jax.models.VehicleDetailsHeaderModel;
 import com.amx.jax.models.VehicleDetailsUpdateModel;
+import com.amx.jax.models.VehicleImageDetails;
 import com.insurance.services.OtpService;
 
 @Service
@@ -40,7 +45,7 @@ public class RequestQuoteService
 
 	private static final Logger logger = LoggerFactory.getLogger(RequestQuoteService.class);
 
-	String TAG = "com.amx.jax.vehicledetails.service.VehicleDetailsService :- ";
+	String TAG = "com.amx.jax.vehicledetails.service.RequestQuoteService :- ";
 
 	@Autowired
 	public RequestQuoteDao requestQuoteDao;
@@ -596,7 +601,83 @@ public class RequestQuoteService
 		return resp;
 	}
 
-	public AmxApiResponse<ImageUploadStatusResponse, Object> checkIfImageAlreadyUploaded(String docType)
+	public AmxApiResponse<RequestQuoteModel, Object> getMandatoryImage(RequestQuoteModel requestQuoteModel)
+	{
+		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
+		VehicleImageDetails vehicleImageDetails = new VehicleImageDetails();
+		
+		try
+		{
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getMandatoryImage(requestQuoteModel);
+			if (null == arrayResponseModel.getErrorCode())
+			{
+				resp.setStatusKey(ApiConstants.SUCCESS);
+				vehicleImageDetails.setImageInfoArray(arrayResponseModel.getDataArray());
+				requestQuoteModel.setVehicleImageDetails(vehicleImageDetails);
+				resp.setData(requestQuoteModel);
+			}
+			else
+			{
+				resp.setStatusKey(ApiConstants.FAILURE);
+			}
+			
+			resp.setMessageKey(arrayResponseModel.getErrorCode());
+			resp.setMessage(arrayResponseModel.getErrorCode());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
+		return resp;
+	}
+	
+	public AmxApiResponse<RequestQuoteModel, Object> setUploadImage(MultipartFile file , RequestQuoteModel requestQuoteModel)
+	{
+		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
+		try
+		{
+			/*logger.info(TAG + " setUploadImage :: file :"+file.toString());
+			
+			Blob imageBlob = ImageToBlob.convertFileContentToBlob(file); 
+			
+			logger.info(TAG + " setUploadImage :: imageBlob :"+imageBlob.toString());*/
+			
+			ImageModel imageModel = requestQuoteDao.setUploadImage(file , requestQuoteModel);
+			requestQuoteModel.setVehicleImageDetails(imageModel.getVehicleImageDetails());
+			
+			if (null == imageModel.getErrorCode())
+			{
+				resp.setStatusKey(ApiConstants.SUCCESS);
+				resp.setData(requestQuoteModel);
+			}
+			else
+			{
+				resp.setStatusKey(ApiConstants.FAILURE);
+			}
+			resp.setMessageKey(imageModel.getErrorCode());
+			resp.setMessage(imageModel.getErrorCode());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
+		return resp;
+	}
+	
+	
+	public void setUploadImageTest(MultipartFile file)
+	{
+		logger.info(TAG + " doUpload :: file :" + file);
+		requestQuoteDao.setUploadImageTest(file);
+	}
+	
+	
+
+	/*public AmxApiResponse<ImageUploadStatusResponse, Object> checkIfImageAlreadyUploaded(String docType)
 	{
 		AmxApiResponse<ImageUploadStatusResponse, Object> resp = new AmxApiResponse<ImageUploadStatusResponse, Object>();
 		try
@@ -614,33 +695,5 @@ public class RequestQuoteService
 			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
-	}
-
-	public AmxApiResponse<ImageMandatoryResponse, Object> getMandatoryImage()
-	{
-		AmxApiResponse<ImageMandatoryResponse, Object> resp = new AmxApiResponse<ImageMandatoryResponse, Object>();
-		try
-		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getMandatoryImage();
-			if (null == arrayResponseModel.getErrorCode())
-			{
-				resp.setStatusKey(ApiConstants.SUCCESS);
-			}
-			else
-			{
-				resp.setStatusKey(ApiConstants.FAILURE);
-			}
-			resp.setResults(arrayResponseModel.getDataArray());
-			resp.setMessageKey(arrayResponseModel.getErrorCode());
-			resp.setMessage(arrayResponseModel.getErrorCode());
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
-		}
-		return resp;
-	}
-
+	}*/
 }

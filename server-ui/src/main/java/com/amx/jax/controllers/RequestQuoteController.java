@@ -1,18 +1,24 @@
 
 package com.amx.jax.controllers;
 
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.MediaType;
 import com.amx.jax.api.AmxApiResponse;
-import com.amx.jax.models.ImageMandatoryResponse;
-import com.amx.jax.models.ImageUploadStatusResponse;
+import com.amx.jax.models.ImageInitInfo;
 import com.amx.jax.models.RequestQuoteModel;
 import com.amx.jax.services.RequestQuoteService;
 import com.amx.utils.ArgUtil;
@@ -22,7 +28,7 @@ public class RequestQuoteController
 {
 	private static final Logger logger = LoggerFactory.getLogger(RequestQuoteController.class);
 
-	String TAG = "com.amx.jax.vehicledetails.controller.VehicleDetailsController :- ";
+	String TAG = "com.amx.jax.vehicledetails.controller.RequestQuoteController :- ";
 
 	@Autowired
 	public RequestQuoteService requestQuoteService;
@@ -118,14 +124,31 @@ public class RequestQuoteController
 	}
 
 	@RequestMapping(value = "/api/request-quote/get-image-mandatorylist", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<ImageMandatoryResponse, Object> getMandatoryImage()
+	public AmxApiResponse<?, Object> getMandatoryImage(@RequestBody RequestQuoteModel requestQuoteModel)
 	{
-		return requestQuoteService.getMandatoryImage();
+		return requestQuoteService.getMandatoryImage(requestQuoteModel);
 	}
 
-	@RequestMapping(value = "/api/request-quote/get-image-uploadcheck", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<ImageUploadStatusResponse, Object> checkIfImageAlreadyUploaded(@RequestParam("docType") String docType)
+	@RequestMapping(value = "/api/request-quote/set-image-upload", method = RequestMethod.POST)
+	public AmxApiResponse<?, Object> setUploadImage(@RequestParam MultipartFile file, @RequestBody RequestQuoteModel requestQuoteModel) throws Exception
 	{
-		return requestQuoteService.checkIfImageAlreadyUploaded(docType);
+		logger.info(TAG + " setUploadImage :: file :" + file);
+		return requestQuoteService.setUploadImage(file, requestQuoteModel);
 	}
+
+	@RequestMapping(value = "/doUpload", method = RequestMethod.POST)
+	public String upload(@RequestParam MultipartFile file) throws IOException
+	{
+		logger.info(TAG + " doUpload :: file :" + file);
+		requestQuoteService.setUploadImageTest(file);
+		return "";
+	}
+
+	/*
+	 * @RequestMapping(value = "/api/request-quote/get-image-uploadcheck",
+	 * method = RequestMethod.POST, produces = "application/json") public
+	 * AmxApiResponse<ImageUploadStatusResponse, Object>
+	 * checkIfImageAlreadyUploaded(@RequestParam("docType") String docType) {
+	 * return requestQuoteService.checkIfImageAlreadyUploaded(docType); }
+	 */
 }

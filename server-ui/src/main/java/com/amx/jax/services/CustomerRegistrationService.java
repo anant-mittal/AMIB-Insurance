@@ -412,14 +412,6 @@ public class CustomerRegistrationService
 		AmxApiResponse<Validate, Object> validateCivilID = isValidCivilId(customerLoginRequest.getCivilId());
 		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(customerLoginRequest.getCivilId());
 
-		/*if (null == customerLoginRequest.getPassword() || customerLoginRequest.getPassword().equals(""))
-		{
-			resp.setStatusKey(ApiConstants.FAILURE);
-			resp.setMessage(Message.EMPTY_PASSWORD);
-			resp.setMessageKey(MessageKey.KEY_EMPTY_PASSWORD);
-			return resp;
-		}*/
-		
 		if (validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 		{
 			return validateCivilID;

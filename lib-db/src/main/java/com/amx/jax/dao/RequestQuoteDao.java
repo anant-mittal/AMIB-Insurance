@@ -1,6 +1,13 @@
 
 package com.amx.jax.dao;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.sql.Blob;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -8,18 +15,25 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
+
+import javax.sql.rowset.serial.SerialBlob;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
 import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CodeDesc;
 import com.amx.jax.models.Colour;
 import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.FuelType;
-import com.amx.jax.models.ImageMandatoryResponse;
+import com.amx.jax.models.ImageInitInfo;
+import com.amx.jax.models.ImageModel;
+import com.amx.jax.models.ImageToBlob;
 import com.amx.jax.models.IncompleteApplModel;
 import com.amx.jax.models.Make;
 import com.amx.jax.models.MetaData;
@@ -28,18 +42,21 @@ import com.amx.jax.models.Purpose;
 import com.amx.jax.models.RequestQuoteInfo;
 import com.amx.jax.models.RequestQuoteModel;
 import com.amx.jax.models.Shape;
+import com.amx.jax.models.ImageUploadDetails;
 import com.amx.jax.models.VehicleCondition;
 import com.amx.jax.models.VehicleDetails;
 import com.amx.jax.models.VehicleDetailsGetModel;
 import com.amx.jax.models.VehicleDetailsHeaderModel;
 import com.amx.jax.models.VehicleDetailsUpdateModel;
+import com.amx.jax.models.VehicleImageDetails;
 import com.amx.jax.models.VehicleSession;
 import oracle.jdbc.OracleTypes;
+import oracle.sql.BLOB;
 
 @Component
 public class RequestQuoteDao
 {
-	String TAG = "com.insurance.vehicledetails.dao.VehicleDetailsDao :: ";
+	String TAG = "com.insurance.vehicledetails.dao.RequestQuoteDao :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(RequestQuoteDao.class);
 
@@ -491,7 +508,7 @@ public class RequestQuoteDao
 		{
 			requestQuoteInfo = requestQuoteModel.getRequestQuoteInfo();
 			logger.info(TAG + " getAppVehicleDetails :: getAppSeqNumber :" + requestQuoteInfo.getAppSeqNumber());
-			logger.info(TAG + " getAppVehicleDetails :: metaData :" + metaData.toString());
+			logger.info(TAG + " getAppVehicleDetails :: metaData        :" + metaData.toString());
 
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
@@ -658,10 +675,8 @@ public class RequestQuoteDao
 			callableStatement.setString(13, vehicleDetails.getFuelCode());
 			callableStatement.setString(14, null);// Hard Coded As Per Ashok Sir
 			callableStatement.setBigDecimal(15, vehicleDetails.getSeatingCapacity());
-			callableStatement.setBigDecimal(16, null);// Hard Coded As Per Ashok
-														// Sir
-			callableStatement.setBigDecimal(17, null);// Hard Coded As Per Ashok
-														// Sir
+			callableStatement.setBigDecimal(16, null);// HardCode As Per AshokSir
+			callableStatement.setBigDecimal(17, null);// HardCode As Per AshokSir
 			callableStatement.setString(18, null);// Hard Coded As Per Ashok Sir
 			callableStatement.setBigDecimal(19, vehicleDetails.getVehicleValue());
 			callableStatement.setString(20, metaData.getDeviceType());
@@ -685,18 +700,20 @@ public class RequestQuoteDao
 		return vehicleDetailsUpdateModel;
 	}
 
-	public ArrayResponseModel getMandatoryImage()
+	public ArrayResponseModel getMandatoryImage(RequestQuoteModel requestQuoteModel)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_ONLINE_DOCS(?,?,?,?,?,?)}";
-		ArrayList<ImageMandatoryResponse> imageMandatoryArray = new ArrayList<ImageMandatoryResponse>();
+		ArrayList<ImageInitInfo> imageInfoArray = new ArrayList<ImageInitInfo>();
 		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
+		RequestQuoteInfo requestQuoteInfo = new RequestQuoteInfo();
 
 		try
 		{
+			requestQuoteInfo = requestQuoteModel.getRequestQuoteInfo();
+			
 			callableStatement = connection.prepareCall(callProcedure);
-
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			callableStatement.setBigDecimal(3, metaData.getLanguageId());
@@ -708,15 +725,16 @@ public class RequestQuoteDao
 
 			while (rs.next())
 			{
-				ImageMandatoryResponse imageMandatoryModel = new ImageMandatoryResponse();
-				imageMandatoryModel.setDocType(rs.getString(1));
-				imageMandatoryModel.setDeCode(rs.getString(2));
+				ImageInitInfo imageMandatoryModel = new ImageInitInfo();
+				imageMandatoryModel.setDocCode(rs.getString(1));
+				imageMandatoryModel.setDocDesc(rs.getString(2));
+				imageMandatoryModel.setDocSeqNumber(checkIfImageAlreadyUploaded(rs.getString(1), requestQuoteInfo.getAppSeqNumber()));
 				imageMandatoryModel.setRequiredCheck(rs.getString(3));
 				imageMandatoryModel.setDispOrder(rs.getString(4));
 				imageMandatoryModel.setDocStatus(rs.getString(5));
-				imageMandatoryArray.add(imageMandatoryModel);
+				imageInfoArray.add(imageMandatoryModel);
 			}
-			arrayResponseModel.setDataArray(imageMandatoryArray);
+			arrayResponseModel.setDataArray(imageInfoArray);
 			arrayResponseModel.setErrorCode(callableStatement.getString(4));
 			arrayResponseModel.setErrorMessage(callableStatement.getString(5));
 		}
@@ -731,12 +749,13 @@ public class RequestQuoteDao
 		return arrayResponseModel;
 	}
 
-	public String checkIfImageAlreadyUploaded(String docType)
+	public BigDecimal checkIfImageAlreadyUploaded(String docType, BigDecimal appSeqNumber)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callFunction = "{ ? = call IRB_IF_IMAGE_UPLOADED(?,?,?,?)}";
-		String result = null;
+		RequestQuoteInfo requestQuoteInfo = new RequestQuoteInfo();
+		BigDecimal result = null;
 
 		try
 		{
@@ -744,11 +763,19 @@ public class RequestQuoteDao
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
 			callableStatement.setBigDecimal(2, metaData.getCountryId());
 			callableStatement.setBigDecimal(3, metaData.getCompCd());
-			// callableStatement.setBigDecimal(4,
-			// vehicleSession.getAppSeqNumber());
+			callableStatement.setBigDecimal(4, appSeqNumber);
 			callableStatement.setString(5, docType);
 			callableStatement.executeUpdate();
-			result = callableStatement.getString(1);
+			result = callableStatement.getBigDecimal(1);
+			logger.info(TAG + " checkIfImageAlreadyUploaded :: result :" + result);
+			if(result.intValue() > 0)
+			{
+				return result;
+			}
+			else
+			{
+				return null;
+			}
 		}
 		catch (SQLException e)
 		{
@@ -761,6 +788,116 @@ public class RequestQuoteDao
 		return result;
 	}
 
+	public ImageModel setUploadImage(MultipartFile image , RequestQuoteModel requestQuoteModel)
+	{
+		getConnection();
+		CallableStatement callableStatement = null;
+		String callProcedure = "{call IRB_GET_ONLINE_DOCS(?,?,?,?,?,?,?,?,?,?,?)}";
+		RequestQuoteInfo requestQuoteInfo = new RequestQuoteInfo();
+		VehicleImageDetails vehicleImageDetails = new VehicleImageDetails();
+		ImageUploadDetails uploadImageDetails = new ImageUploadDetails();
+		ImageModel imageModel = new ImageModel();
+		
+		try
+		{
+			requestQuoteInfo = requestQuoteModel.getRequestQuoteInfo();
+			vehicleImageDetails = requestQuoteModel.getVehicleImageDetails();
+			uploadImageDetails = vehicleImageDetails.getUploadImageDetails();
+			logger.info(TAG + " setUploadImage :: vehicleImageDetails :"+vehicleImageDetails.toString());
+			logger.info(TAG + " setUploadImage :: uploadImageDetails  :"+uploadImageDetails.toString());
+			
+			callableStatement = connection.prepareCall(callProcedure);
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(3, requestQuoteInfo.getAppSeqNumber());
+			callableStatement.setString(4, uploadImageDetails.getDocCode());
+			callableStatement.setBigDecimal(5, uploadImageDetails.getDocSeqNumber());
+			callableStatement.setBinaryStream(6, image.getInputStream());
+			callableStatement.setString(7, metaData.getDeviceType());
+			callableStatement.setString(8, metaData.getDeviceId());
+			callableStatement.setString(9, metaData.getCivilId());
+			callableStatement.registerOutParameter(4, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(10, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(11, java.sql.Types.VARCHAR);
+			callableStatement.executeUpdate();
+			
+			if(null != callableStatement.getBigDecimal(5))
+			{
+				uploadImageDetails.setDocSeqNumber(callableStatement.getBigDecimal(5));
+			}
+			
+			logger.info(TAG + " setUploadImage :: uploadImageDetails  :"+uploadImageDetails.toString());
+			
+			vehicleImageDetails.setUploadImageDetails(uploadImageDetails);
+			imageModel.setVehicleImageDetails(vehicleImageDetails);
+			imageModel.setErrorCode(callableStatement.getString(10));
+			imageModel.setErrorMessage(callableStatement.getString(11));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		return imageModel;
+	}
+	
+	
+	public void setUploadImageTest(MultipartFile file)
+	{
+		getConnection();
+		CallableStatement callableStatement = null;
+		String callProcedure = "{call IRB_UPLOAD_IMAGE(?,?,?,?,?,?,?,?,?,?,?)}";
+		logger.info(TAG + " doUpload :: file :" + file);
+		
+		try
+		{
+			InputStream inputStream = file.getInputStream();
+			logger.info(TAG + " doUpload :: file 1 :" + inputStream);
+			callableStatement = connection.prepareCall(callProcedure);
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(3, new BigDecimal(41));
+			callableStatement.setString(4, "REV");
+			callableStatement.setBigDecimal(5, null);
+			logger.info(TAG + " doUpload :: file 2 :" + inputStream);
+			callableStatement.setBlob(6, inputStream, inputStream.available());
+			
+			callableStatement.setString(7, metaData.getDeviceType());
+			callableStatement.setString(8, metaData.getDeviceId());
+			callableStatement.setString(9, metaData.getCivilId());
+			callableStatement.registerOutParameter(5, java.sql.Types.NUMERIC);
+			callableStatement.registerOutParameter(10, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(11, java.sql.Types.VARCHAR);
+			logger.info(TAG + " doUpload :: file 3 :" + inputStream);
+			callableStatement.executeUpdate();
+			
+			logger.info(TAG + " setUploadImage :: callableStatement.getBigDecimal(5)  :"+callableStatement.getBigDecimal(5));
+			
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try
+			{
+				file.getInputStream().close();
+			}
+			catch (IOException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			CloseConnection(callableStatement, connection);
+		}
+	}
+	
+	
+	
 	private Connection getConnection()
 	{
 		try
@@ -771,7 +908,6 @@ public class RequestQuoteDao
 		{
 			e.printStackTrace();
 		}
-
 		return connection;
 	}
 
@@ -783,7 +919,6 @@ public class RequestQuoteDao
 			{
 				callableStatement.close();
 			}
-
 			if (connection != null)
 			{
 				connection.close();
