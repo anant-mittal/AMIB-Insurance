@@ -1,6 +1,7 @@
 
 package com.amx.jax.services;
 
+import java.math.BigDecimal;
 import java.sql.Blob;
 import java.sql.Date;
 import java.text.DateFormat;
@@ -633,22 +634,21 @@ public class RequestQuoteService
 		return resp;
 	}
 	
-	public AmxApiResponse<RequestQuoteModel, Object> setUploadImage(RequestQuoteModel requestQuoteModel)
+	public AmxApiResponse<Object, Object> setUploadImage(MultipartFile file ,String appSeqNumber , String docTypeCode ,String docSeqNumber)
 	{
-		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
+		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
 		try
 		{
-			ImageModel imageModel = requestQuoteDao.setUploadImage(requestQuoteModel);
-			requestQuoteModel.setVehicleImageDetails(imageModel.getVehicleImageDetails());
+			ImageModel imageModel = requestQuoteDao.setUploadImage(file , appSeqNumber ,docTypeCode , docSeqNumber );
 			if (null == imageModel.getErrorCode())
 			{
 				resp.setStatusKey(ApiConstants.SUCCESS);
-				resp.setData(requestQuoteModel);
 			}
 			else
 			{
 				resp.setStatusKey(ApiConstants.FAILURE);
 			}
+			resp.setMeta(imageModel.getDocSeqNumber());
 			resp.setMessageKey(imageModel.getErrorCode());
 			resp.setMessage(imageModel.getErrorCode());
 		}

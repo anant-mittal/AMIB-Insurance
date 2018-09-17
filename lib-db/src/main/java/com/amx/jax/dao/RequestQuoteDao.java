@@ -788,56 +788,52 @@ public class RequestQuoteDao
 		return result;
 	}
 
-	public ImageModel setUploadImage(RequestQuoteModel requestQuoteModel)
+	public ImageModel setUploadImage(MultipartFile file ,String appSeqNumber , String docTypeCode ,String docSeqNumber)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
-		String callProcedure = "{call IRB_GET_ONLINE_DOCS(?,?,?,?,?,?,?,?,?,?,?)}";
-		RequestQuoteInfo requestQuoteInfo = new RequestQuoteInfo();
-		VehicleImageDetails vehicleImageDetails = new VehicleImageDetails();
-		ImageUploadDetails uploadImageDetails = new ImageUploadDetails();
+		String callProcedure = "{call IRB_UPLOAD_IMAGE(?,?,?,?,?,?,?,?,?,?,?)}";
 		ImageModel imageModel = new ImageModel();
-		MultipartFile file = null;
 		
 		try
 		{
-			
-			requestQuoteInfo = requestQuoteModel.getRequestQuoteInfo();
-			vehicleImageDetails = requestQuoteModel.getVehicleImageDetails();
-			uploadImageDetails = vehicleImageDetails.getImageUploadDetails();
-			file = uploadImageDetails.getFile();
 			InputStream inputStream = file.getInputStream();
-			
-			logger.info(TAG + " setUploadImage :: file :"+file);
-			logger.info(TAG + " setUploadImage :: vehicleImageDetails :"+vehicleImageDetails.toString());
-			logger.info(TAG + " setUploadImage :: uploadImageDetails  :"+uploadImageDetails.toString());
 			
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
-			callableStatement.setBigDecimal(3, requestQuoteInfo.getAppSeqNumber());
-			callableStatement.setString(4, uploadImageDetails.getDocCode());
-			callableStatement.setBigDecimal(5, uploadImageDetails.getDocSeqNumber());
+			if(null == appSeqNumber || appSeqNumber.equals("0"))
+			{
+				callableStatement.setBigDecimal(3, null);
+			}
+			else
+			{
+				callableStatement.setBigDecimal(3, new BigDecimal(appSeqNumber));
+			}
+			
+			callableStatement.setString(4, docTypeCode);
+			if(null == docSeqNumber || docSeqNumber.equals("0"))
+			{
+				callableStatement.setBigDecimal(5, null);
+			}
+			else
+			{
+				callableStatement.setBigDecimal(5, new BigDecimal(docSeqNumber));
+			}
 			callableStatement.setBlob(6, inputStream, inputStream.available());
 			callableStatement.setString(7, metaData.getDeviceType());
 			callableStatement.setString(8, metaData.getDeviceId());
 			callableStatement.setString(9, metaData.getCivilId());
-			callableStatement.registerOutParameter(4, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(10, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(11, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(5, java.sql.Types.NUMERIC);
 			callableStatement.executeUpdate();
 			
-			if(null != callableStatement.getBigDecimal(5))
-			{
-				uploadImageDetails.setDocSeqNumber(callableStatement.getBigDecimal(5));
-			}
-			
-			logger.info(TAG + " setUploadImage :: uploadImageDetails  :"+uploadImageDetails.toString());
+			logger.info(TAG + " setUploadImage :: callableStatement.getBigDecimal(5)  :"+callableStatement.getBigDecimal(5));
 			logger.info(TAG + " setUploadImage :: callableStatement.getBigDecimal(10)  :"+callableStatement.getString(10));
 			logger.info(TAG + " setUploadImage :: callableStatement.getBigDecimal(11)  :"+callableStatement.getString(11));
 			
-			vehicleImageDetails.setImageUploadDetails(uploadImageDetails);
-			imageModel.setVehicleImageDetails(vehicleImageDetails);
+			imageModel.setDocSeqNumber(callableStatement.getBigDecimal(5));
 			imageModel.setErrorCode(callableStatement.getString(10));
 			imageModel.setErrorMessage(callableStatement.getString(11));
 		}
@@ -852,7 +848,7 @@ public class RequestQuoteDao
 				file.getInputStream().close();
 				CloseConnection(callableStatement, connection);
 			}
-			catch (IOException e)
+			catch (Exception e)
 			{
 				e.printStackTrace();
 			}

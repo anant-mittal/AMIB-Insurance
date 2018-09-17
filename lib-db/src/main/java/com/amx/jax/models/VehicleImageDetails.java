@@ -7,7 +7,6 @@ public class VehicleImageDetails
 	ArrayList<ImageInitInfo> imageInfoArray;
 	
 	ImageUploadDetails imageUploadDetails;
-
 	
 	public ImageUploadDetails getImageUploadDetails()
 	{

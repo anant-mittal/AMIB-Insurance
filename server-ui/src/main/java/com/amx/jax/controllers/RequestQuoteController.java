@@ -2,6 +2,7 @@
 package com.amx.jax.controllers;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -129,17 +130,16 @@ public class RequestQuoteController
 	{
 		return requestQuoteService.getMandatoryImage(requestQuoteModel);
 	}
-	
+
 	@RequestMapping(value = "/api/request-quote/upload-image", method = RequestMethod.POST)
-	public AmxApiResponse<?, Object> setUploadImage(@RequestPart MultipartFile file, @RequestPart RequestQuoteModel requestQuoteModel) throws IOException
+	public AmxApiResponse<?, Object> setUploadImage(@RequestParam MultipartFile file, @RequestParam("appSeqNumber") String appSeqNumber, @RequestParam("docTypeCode") String docTypeCode, @RequestParam("docSeqNumber") String docSeqNumber) throws IOException
 	{
-		return requestQuoteService.setUploadImage(requestQuoteModel);
+		return requestQuoteService.setUploadImage(file, appSeqNumber, docTypeCode, docSeqNumber);
 	}
-	
+
 	@RequestMapping(value = "/doUpload", method = RequestMethod.POST)
 	public String upload(@RequestParam MultipartFile file) throws IOException
 	{
-		logger.info(TAG + " doUpload :: file :" + file);
 		requestQuoteService.setUploadImageTest(file);
 		return "";
 	}
