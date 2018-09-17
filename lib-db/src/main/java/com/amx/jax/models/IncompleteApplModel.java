@@ -8,12 +8,12 @@ public class IncompleteApplModel
 
 	String appStage;
 	
-	private String errorMessage;
-
-	private String errorCode;
+	String errorMessage;
 	
-	private boolean status;
-
+	String errorCode;
+	
+	boolean status;
+	
 	public BigDecimal getAppSeqNumber()
 	{
 		return appSeqNumber;

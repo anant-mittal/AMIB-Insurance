@@ -8,6 +8,18 @@ public class RequestQuoteInfo
 
 	private BigDecimal docNumber;
 	
+	String appStage;
+	
+	public String getAppStage()
+	{
+		return appStage;
+	}
+
+	public void setAppStage(String appStage)
+	{
+		this.appStage = appStage;
+	}
+
 	public BigDecimal getAppSeqNumber()
 	{
 		return appSeqNumber;

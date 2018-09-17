@@ -2,18 +2,14 @@
 package com.amx.jax.services;
 
 import java.math.BigDecimal;
-import java.sql.Blob;
-import java.sql.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.MessageKey;
@@ -21,13 +17,8 @@ import com.amx.jax.dao.PersonalDetailsDao;
 import com.amx.jax.dao.RequestQuoteDao;
 import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CustomerProfileDetailModel;
-import com.amx.jax.models.CustomerProfileDetailResponse;
-import com.amx.jax.models.CustomerProfileUpdateRequest;
-import com.amx.jax.models.CustomerProfileUpdateResponse;
 import com.amx.jax.models.DateFormats;
-import com.amx.jax.models.ImageInitInfo;
 import com.amx.jax.models.ImageModel;
-import com.amx.jax.models.ImageToBlob;
 import com.amx.jax.models.IncompleteApplModel;
 import com.amx.jax.models.PersonalDetails;
 import com.amx.jax.models.RequestQuoteInfo;
@@ -37,7 +28,6 @@ import com.amx.jax.models.VehicleDetails;
 import com.amx.jax.models.VehicleDetailsGetModel;
 import com.amx.jax.models.VehicleDetailsHeaderModel;
 import com.amx.jax.models.VehicleDetailsUpdateModel;
-import com.amx.jax.models.VehicleImageDetails;
 import com.insurance.services.OtpService;
 
 @Service
@@ -46,7 +36,7 @@ public class RequestQuoteService
 
 	private static final Logger logger = LoggerFactory.getLogger(RequestQuoteService.class);
 
-	String TAG = "com.amx.jax.vehicledetails.service.RequestQuoteService :- ";
+	String TAG = "com.amx.jax.services.RequestQuoteService :- ";
 
 	@Autowired
 	public RequestQuoteDao requestQuoteDao;
@@ -70,6 +60,7 @@ public class RequestQuoteService
 		{
 			IncompleteApplModel incompleteApplModel = requestQuoteDao.getIncompleteApplication();
 			requestQuoteInfo.setAppSeqNumber(incompleteApplModel.getAppSeqNumber());
+			requestQuoteInfo.setAppStage(incompleteApplModel.getAppStage());
 			requestQuoteModel.setRequestQuoteInfo(requestQuoteInfo);
 
 			if (null == incompleteApplModel.getErrorCode())
@@ -602,26 +593,21 @@ public class RequestQuoteService
 		return resp;
 	}
 
-	public AmxApiResponse<RequestQuoteModel, Object> getMandatoryImage(RequestQuoteModel requestQuoteModel)
+	public AmxApiResponse<?, Object> getImageDetails(BigDecimal appSeqNumber)
 	{
-		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
-		VehicleImageDetails vehicleImageDetails = new VehicleImageDetails();
-		
+		AmxApiResponse<?, Object> resp = new AmxApiResponse<Object, Object>();
 		try
 		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getMandatoryImage(requestQuoteModel);
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getImageDetails(appSeqNumber);
 			if (null == arrayResponseModel.getErrorCode())
 			{
 				resp.setStatusKey(ApiConstants.SUCCESS);
-				vehicleImageDetails.setImageInfoArray(arrayResponseModel.getDataArray());
-				requestQuoteModel.setVehicleImageDetails(vehicleImageDetails);
-				resp.setData(requestQuoteModel);
+				resp.setResults(arrayResponseModel.getDataArray());
 			}
 			else
 			{
 				resp.setStatusKey(ApiConstants.FAILURE);
 			}
-			
 			resp.setMessageKey(arrayResponseModel.getErrorCode());
 			resp.setMessage(arrayResponseModel.getErrorCode());
 		}
@@ -633,13 +619,26 @@ public class RequestQuoteService
 		}
 		return resp;
 	}
-	
-	public AmxApiResponse<Object, Object> setUploadImage(MultipartFile file ,String appSeqNumber , String docTypeCode ,String docSeqNumber)
+
+	public byte[] getUploadedImage(BigDecimal appSeqNumber, String docTypeCode, BigDecimal docSeqNumber)
+	{
+		try
+		{
+			return requestQuoteDao.getUploadedImage(appSeqNumber, docTypeCode, docSeqNumber);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public AmxApiResponse<Object, Object> setUploadImage(MultipartFile file, BigDecimal appSeqNumber, String docTypeCode, BigDecimal docSeqNumber)
 	{
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
 		try
 		{
-			ImageModel imageModel = requestQuoteDao.setUploadImage(file , appSeqNumber ,docTypeCode , docSeqNumber );
+			ImageModel imageModel = requestQuoteDao.setUploadImage(file, appSeqNumber, docTypeCode, docSeqNumber);
 			if (null == imageModel.getErrorCode())
 			{
 				resp.setStatusKey(ApiConstants.SUCCESS);
@@ -660,33 +659,4 @@ public class RequestQuoteService
 		}
 		return resp;
 	}
-	
-	
-	public void setUploadImageTest(MultipartFile file)
-	{
-		logger.info(TAG + " doUpload :: file :" + file);
-		requestQuoteDao.setUploadImageTest(file);
-	}
-	
-	
-
-	/*public AmxApiResponse<ImageUploadStatusResponse, Object> checkIfImageAlreadyUploaded(String docType)
-	{
-		AmxApiResponse<ImageUploadStatusResponse, Object> resp = new AmxApiResponse<ImageUploadStatusResponse, Object>();
-		try
-		{
-			String docSequenceNumber = requestQuoteDao.checkIfImageAlreadyUploaded(docType);
-			ImageUploadStatusResponse imageUploadStatusResponse = new ImageUploadStatusResponse();
-			imageUploadStatusResponse.setDocSequenceNumber(docSequenceNumber);
-			resp.setData(imageUploadStatusResponse);
-			resp.setStatusKey(ApiConstants.SUCCESS);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
-		}
-		return resp;
-	}*/
 }

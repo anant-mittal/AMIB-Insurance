@@ -1,13 +1,14 @@
 package com.amx.jax.models;
 
 import java.math.BigDecimal;
+import java.sql.Blob;
 
 public class ImageInitInfo
 {
 	private String docCode;
 
 	private String docDesc;
-	
+
 	private BigDecimal docSeqNumber;
 
 	private String requiredCheck;
@@ -65,7 +66,7 @@ public class ImageInitInfo
 	{
 		this.docStatus = docStatus;
 	}
-	
+
 	public BigDecimal getDocSeqNumber()
 	{
 		return docSeqNumber;
