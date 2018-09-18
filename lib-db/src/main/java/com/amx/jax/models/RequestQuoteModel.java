@@ -1,5 +1,7 @@
 package com.amx.jax.models;
 
+import java.util.List;
+
 public class RequestQuoteModel
 {
 	private RequestQuoteInfo requestQuoteInfo;
@@ -8,16 +10,16 @@ public class RequestQuoteModel
 
 	private PersonalDetails personalDetails;
 
-	private VehicleImageDetails vehicleImageDetails;
+	private List<?> vehicleImageDetails;
 
-	public VehicleImageDetails getVehicleImageDetails()
+	public List<?> getVehicleImageDetails()
 	{
 		return vehicleImageDetails;
 	}
 
-	public void setVehicleImageDetails(VehicleImageDetails vehicleImageDetails)
+	public void setVehicleImageDetails(List<?> list)
 	{
-		this.vehicleImageDetails = vehicleImageDetails;
+		this.vehicleImageDetails = list;
 	}
 
 	public PersonalDetails getPersonalDetails()

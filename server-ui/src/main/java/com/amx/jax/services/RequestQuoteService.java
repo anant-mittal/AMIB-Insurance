@@ -3,8 +3,6 @@ package com.amx.jax.services;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-
-import org.apache.tomcat.util.http.fileupload.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +16,7 @@ import com.amx.jax.dao.RequestQuoteDao;
 import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CustomerProfileDetailModel;
 import com.amx.jax.models.DateFormats;
+import com.amx.jax.models.DownloadImageModel;
 import com.amx.jax.models.ImageModel;
 import com.amx.jax.models.IncompleteApplModel;
 import com.amx.jax.models.PersonalDetails;
@@ -44,15 +43,9 @@ public class RequestQuoteService
 	@Autowired
 	public PersonalDetailsDao personalDetailsDao;
 
-	@Autowired
-	private CustomerRegistrationService customerRegistrationService;
-
-	@Autowired
-	private OtpService otpService;
-
-	public AmxApiResponse<RequestQuoteModel, Object> getIncompleteApplication()
+	public AmxApiResponse<RequestQuoteInfo, Object> getIncompleteApplication()
 	{
-		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
+		AmxApiResponse<RequestQuoteInfo, Object> resp = new AmxApiResponse<RequestQuoteInfo, Object>();
 		RequestQuoteModel requestQuoteModel = new RequestQuoteModel();
 		RequestQuoteInfo requestQuoteInfo = new RequestQuoteInfo();
 
@@ -60,7 +53,6 @@ public class RequestQuoteService
 		{
 			IncompleteApplModel incompleteApplModel = requestQuoteDao.getIncompleteApplication();
 			requestQuoteInfo.setAppSeqNumber(incompleteApplModel.getAppSeqNumber());
-			requestQuoteInfo.setAppStage(incompleteApplModel.getAppStage());
 			requestQuoteModel.setRequestQuoteInfo(requestQuoteInfo);
 
 			if (null == incompleteApplModel.getErrorCode())
@@ -73,7 +65,7 @@ public class RequestQuoteService
 			}
 			resp.setMessageKey(incompleteApplModel.getErrorCode());
 			resp.setMessage(incompleteApplModel.getErrorMessage());
-			resp.setData(requestQuoteModel);
+			resp.setData(requestQuoteInfo);
 		}
 		catch (Exception e)
 		{
@@ -322,13 +314,89 @@ public class RequestQuoteService
 		return resp;
 	}
 
-	public AmxApiResponse<?, Object> getAppVehicleDetails(RequestQuoteModel requestQuoteModel)
+	public AmxApiResponse<?, Object> getRequestQuoteDetails()
 	{
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
-		VehicleDetails vehicleDetails = new VehicleDetails();
+		RequestQuoteModel requestQuoteModel = new RequestQuoteModel();
+
 		try
 		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getAppVehicleDetails(requestQuoteModel);
+			IncompleteApplModel incompleteApplModel = requestQuoteDao.getIncompleteApplication();
+			BigDecimal appSeqNumber = incompleteApplModel.getAppSeqNumber();
+			AmxApiResponse<?, Object> respInfoDetails = getIncompleteApplication();
+			if (respInfoDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			{
+				return respInfoDetails;
+			}
+			else
+			{
+				requestQuoteModel.setRequestQuoteInfo((RequestQuoteInfo) respInfoDetails.getData());
+			}
+
+			AmxApiResponse<?, Object> respVehicleDetails = getAppVehicleDetails(appSeqNumber);
+			if (respVehicleDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			{
+				return respVehicleDetails;
+			}
+			else if (null == appSeqNumber)
+			{
+				requestQuoteModel.setVehicleDetails(null);
+			}
+			else
+			{
+				requestQuoteModel.setVehicleDetails((VehicleDetails) respVehicleDetails.getData());
+			}
+
+			AmxApiResponse<?, Object> respPersonalDetails = getProfileDetails();
+			if (respPersonalDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			{
+				return respPersonalDetails;
+			}
+			else
+			{
+				requestQuoteModel.setPersonalDetails((PersonalDetails) respPersonalDetails.getData());
+			}
+
+			AmxApiResponse<?, Object> respImageMeta = getImageMetaData();
+			if (respImageMeta.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			{
+				return respImageMeta;
+			}
+			else
+			{
+				resp.setMeta(respImageMeta.getMeta());
+			}
+
+			AmxApiResponse<?, Object> respImageDetails = getImageDetails(appSeqNumber);
+			if (respImageDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			{
+				return respImageDetails;
+			}
+			else
+			{
+				requestQuoteModel.setVehicleImageDetails(respImageDetails.getResults());
+			}
+
+			resp.setData(requestQuoteModel);
+
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
+		return resp;
+	}
+
+	public AmxApiResponse<?, Object> getAppVehicleDetails(BigDecimal appSeqNumber)
+	{
+		AmxApiResponse<VehicleDetails, Object> resp = new AmxApiResponse<VehicleDetails, Object>();
+		VehicleDetails vehicleDetails = new VehicleDetails();
+
+		try
+		{
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getAppVehicleDetails(appSeqNumber);
 
 			if (null == arrayResponseModel.getErrorCode())
 			{
@@ -337,7 +405,6 @@ public class RequestQuoteService
 				if (vehicleDetailsArray.size() >= 1)
 				{
 					VehicleDetailsGetModel vehicleDetailsGetModel = vehicleDetailsArray.get(0);
-					logger.info(TAG + " getAppVehicleDetails :: vehicleDetailsGetModel :" + vehicleDetailsGetModel.toString());
 					vehicleDetails.setMakeCode(vehicleDetailsGetModel.getMakeCode());
 					vehicleDetails.setSubMakeCode(vehicleDetailsGetModel.getSubMakeCode());
 					vehicleDetails.setVehicleTypeDesc(vehicleDetailsGetModel.getVehicleTypeDesc());
@@ -359,10 +426,9 @@ public class RequestQuoteService
 			{
 				resp.setStatusKey(ApiConstants.FAILURE);
 			}
-			requestQuoteModel.setVehicleDetails(vehicleDetails);
 			resp.setMessageKey(arrayResponseModel.getErrorCode());
 			resp.setMessage(arrayResponseModel.getErrorMessage());
-			resp.setData(requestQuoteModel);
+			resp.setData(vehicleDetails);
 		}
 		catch (Exception e)
 		{
@@ -373,31 +439,33 @@ public class RequestQuoteService
 		return resp;
 	}
 
-	public AmxApiResponse<?, Object> setAppVehicleDetails(RequestQuoteModel requestQuoteModel)
+	public AmxApiResponse<?, Object> setAppVehicleDetails(BigDecimal appSeqNumber, VehicleDetails vehicleDetails)
 	{
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
+		RequestQuoteModel requestQuoteModel = new RequestQuoteModel();
+		RequestQuoteInfo requestQuoteInfo = new RequestQuoteInfo();
+
 		try
 		{
-			VehicleDetailsHeaderModel vehicleDetailsHeaderModel = requestQuoteDao.setVehicleDetailsHeader(requestQuoteModel);
+			VehicleDetailsHeaderModel vehicleDetailsHeaderModel = requestQuoteDao.setVehicleDetailsHeader(appSeqNumber, vehicleDetails);
 			if (null == vehicleDetailsHeaderModel.getErrorCode())
 			{
-				RequestQuoteInfo requestQuoteInfo = new RequestQuoteInfo();
-				requestQuoteInfo.setAppSeqNumber(vehicleDetailsHeaderModel.getAppSeqNumber());
-				logger.info(TAG + " setAppVehicleDetails :: getAppSeqNumber :" + vehicleDetailsHeaderModel.getAppSeqNumber());
-				requestQuoteModel.setRequestQuoteInfo(requestQuoteInfo);
+				if (null == appSeqNumber)
+				{
+					appSeqNumber = vehicleDetailsHeaderModel.getAppSeqNumber();
+					logger.info(TAG + " setAppVehicleDetails :: appSeqNumber2 :" + appSeqNumber);
+				}
 				resp.setStatusKey(ApiConstants.SUCCESS);
 			}
 			else
 			{
 				resp.setStatusKey(ApiConstants.FAILURE);
-				resp.setData(requestQuoteModel);
 				resp.setMessageKey(vehicleDetailsHeaderModel.getErrorCode());
 				resp.setMessage(vehicleDetailsHeaderModel.getErrorMessage());
 				return resp;
 			}
 
-			logger.info(TAG + " setAppVehicleDetails :: requestQuoteModel :" + requestQuoteModel.toString());
-			VehicleDetailsUpdateModel vehicleDetailsUpdateModel = requestQuoteDao.insUpdateVehicleDetails(requestQuoteModel);
+			VehicleDetailsUpdateModel vehicleDetailsUpdateModel = requestQuoteDao.insUpdateVehicleDetails(appSeqNumber, vehicleDetails);
 			if (null == vehicleDetailsUpdateModel.getErrorCode())
 			{
 				resp.setStatusKey(ApiConstants.SUCCESS);
@@ -405,7 +473,17 @@ public class RequestQuoteService
 			else
 			{
 				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setMessageKey(vehicleDetailsUpdateModel.getErrorCode());
+				resp.setMessage(vehicleDetailsUpdateModel.getErrorMessage());
+				return resp;
 			}
+
+			requestQuoteInfo.setAppSeqNumber(appSeqNumber);
+			requestQuoteModel.setRequestQuoteInfo(requestQuoteInfo);
+			requestQuoteModel.setPersonalDetails(null);
+			requestQuoteModel.setVehicleDetails(vehicleDetails);
+			requestQuoteModel.setVehicleImageDetails(null);
+
 			resp.setData(requestQuoteModel);
 			resp.setMessageKey(vehicleDetailsUpdateModel.getErrorCode());
 			resp.setMessage(vehicleDetailsUpdateModel.getErrorMessage());
@@ -419,10 +497,9 @@ public class RequestQuoteService
 		return resp;
 	}
 
-	public AmxApiResponse<RequestQuoteModel, Object> getProfileDetails(RequestQuoteModel requestQuoteModel)
+	public AmxApiResponse<PersonalDetails, Object> getProfileDetails()
 	{
-		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
-
+		AmxApiResponse<PersonalDetails, Object> resp = new AmxApiResponse<PersonalDetails, Object>();
 		PersonalDetails personalDetails = new PersonalDetails();
 		CustomerProfileDetailModel customerProfileDetailModel = new CustomerProfileDetailModel();
 		customerProfileDetailModel = personalDetailsDao.getProfileDetails();
@@ -437,7 +514,6 @@ public class RequestQuoteService
 		personalDetails.setMobile(customerProfileDetailModel.getMobile());
 		personalDetails.setNatyCode(customerProfileDetailModel.getNatyCode());
 		personalDetails.setNativeArabicName(customerProfileDetailModel.getNativeArabicName());
-		requestQuoteModel.setPersonalDetails(personalDetails);
 
 		if (customerProfileDetailModel.getStatus())
 		{
@@ -447,25 +523,18 @@ public class RequestQuoteService
 		{
 			resp.setStatusKey(ApiConstants.FAILURE);
 		}
-		resp.setData(requestQuoteModel);
+		resp.setData(personalDetails);
 		resp.setMessageKey(customerProfileDetailModel.getErrorCode());
 		resp.setMessage(customerProfileDetailModel.getErrorCode());
 		return resp;
 	}
 
-	public AmxApiResponse<?, Object> setProfileDetails(String mOtp, String eOtp, RequestQuoteModel requestQuoteModel)
+	public AmxApiResponse<?, Object> setProfileDetails(BigDecimal appSeqNumber, PersonalDetails personalDetails)
 	{
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
 		CustomerProfileDetailModel customerProfileDetailModel = new CustomerProfileDetailModel();
-		CustomerProfileDetailModel customerProfileDetailModelCheck = new CustomerProfileDetailModel();
-		PersonalDetails personalDetails = requestQuoteModel.getPersonalDetails();
-
-		customerProfileDetailModelCheck = personalDetailsDao.getProfileDetails();
-
-		logger.info(TAG + " updateProfileDetails :: getMobile 1 :" + customerProfileDetailModelCheck.getMobile());
-		logger.info(TAG + " updateProfileDetails :: getEmail  2 :" + customerProfileDetailModelCheck.getEmail());
-		logger.info(TAG + " updateProfileDetails :: getMobile 3 :" + personalDetails.getMobile());
-		logger.info(TAG + " updateProfileDetails :: getEmail  4 :" + personalDetails.getEmail());
+		RequestQuoteModel requestQuoteModel = new RequestQuoteModel();
+		RequestQuoteInfo requestQuoteInfo = new RequestQuoteInfo();
 
 		if (null != personalDetails.getIdExpiryDate())
 		{
@@ -477,95 +546,6 @@ public class RequestQuoteService
 				return resp;
 			}
 		}
-
-		if (null != customerProfileDetailModelCheck.getMobile() && null != customerProfileDetailModelCheck.getEmail() && !customerProfileDetailModelCheck.getMobile().equals(personalDetails.getMobile()) && !customerProfileDetailModelCheck.getEmail().equals(personalDetails.getEmail()))
-
-		{
-			logger.info(TAG + " updateProfileDetails :: Both Chnaged");
-
-			AmxApiResponse<Validate, Object> isValidMobileNumber = customerRegistrationService.isValidMobileNumber(personalDetails.getMobile());
-			if (isValidMobileNumber.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-			{
-				return isValidMobileNumber;
-			}
-
-			AmxApiResponse<Validate, Object> validateEmailID = customerRegistrationService.isValidEmailId(personalDetails.getEmail());
-			if (validateEmailID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-			{
-				return validateEmailID;
-			}
-
-			AmxApiResponse<Validate, Object> mobileNumberExists = customerRegistrationService.isMobileNumberExist(personalDetails.getMobile());
-			if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
-			{
-				mobileNumberExists.setMessageKey(MessageKey.KEY_MOBILE_NO_ALREADY_REGISTER);
-				mobileNumberExists.setStatusKey(ApiConstants.FAILURE);
-				return mobileNumberExists;
-			}
-
-			AmxApiResponse<Validate, Object> emailIdExists = customerRegistrationService.isEmailIdExist(personalDetails.getEmail());
-			if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
-			{
-				emailIdExists.setMessageKey(MessageKey.KEY_EMAID_ALREADY_REGISTER);
-				emailIdExists.setStatusKey(ApiConstants.FAILURE);
-				return emailIdExists;
-			}
-
-			AmxApiResponse<?, Object> validateDOTP = otpService.validateDOTP(eOtp, mOtp, personalDetails.getEmail(), personalDetails.getMobile());
-			if (null != validateDOTP)
-			{
-				return validateDOTP;
-			}
-		}
-		else if (null != customerProfileDetailModelCheck.getEmail() && !customerProfileDetailModelCheck.getEmail().equals(personalDetails.getEmail()))
-		{
-			AmxApiResponse<Validate, Object> validateEmailID = customerRegistrationService.isValidEmailId(personalDetails.getEmail());
-			if (validateEmailID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-			{
-				return validateEmailID;
-			}
-
-			AmxApiResponse<Validate, Object> emailIdExists = customerRegistrationService.isEmailIdExist(personalDetails.getEmail());
-			if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
-			{
-				emailIdExists.setMessageKey(MessageKey.KEY_EMAID_ALREADY_REGISTER);
-				emailIdExists.setStatusKey(ApiConstants.FAILURE);
-				return emailIdExists;
-			}
-
-			logger.info(TAG + " updateProfileDetails :: Email " + customerProfileDetailModelCheck.getEmail());
-			AmxApiResponse<?, Object> validateEOTP = otpService.validateEOTP(eOtp, customerProfileDetailModelCheck.getEmail());
-			if (null != validateEOTP)
-			{
-				return validateEOTP;
-			}
-
-		}
-		else if (null != customerProfileDetailModelCheck.getMobile() && !customerProfileDetailModelCheck.getMobile().equals(personalDetails.getMobile()))
-		{
-			logger.info(TAG + " updateProfileDetails :: Mobile Chnaged");
-
-			AmxApiResponse<Validate, Object> isValidMobileNumber = customerRegistrationService.isValidMobileNumber(personalDetails.getMobile());
-			if (isValidMobileNumber.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-			{
-				return isValidMobileNumber;
-			}
-
-			AmxApiResponse<Validate, Object> mobileNumberExists = customerRegistrationService.isMobileNumberExist(personalDetails.getMobile());
-			if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
-			{
-				mobileNumberExists.setMessageKey(MessageKey.KEY_MOBILE_NO_ALREADY_REGISTER);
-				mobileNumberExists.setStatusKey(ApiConstants.FAILURE);
-				return mobileNumberExists;
-			}
-
-			AmxApiResponse<?, Object> validateMOTP = otpService.validateMOTP(mOtp, customerProfileDetailModelCheck.getMobile());
-			if (null != validateMOTP)
-			{
-				return validateMOTP;
-			}
-		}
-
 		customerProfileDetailModel.setEnglishName(personalDetails.getEnglishName());
 		customerProfileDetailModel.setNativeArabicName(personalDetails.getNativeArabicName());
 		customerProfileDetailModel.setGenderCode(personalDetails.getGenderCode());
@@ -576,7 +556,6 @@ public class RequestQuoteService
 		customerProfileDetailModel.setAreaCode(personalDetails.getAreaCode());
 		customerProfileDetailModel.setMobile(personalDetails.getMobile());
 		customerProfileDetailModel.setEmail(personalDetails.getEmail());
-
 		customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel);
 
 		if (null == customerProfileDetailModel.getErrorCode())
@@ -587,9 +566,43 @@ public class RequestQuoteService
 		{
 			resp.setStatusKey(ApiConstants.FAILURE);
 		}
+
+		requestQuoteInfo.setAppSeqNumber(appSeqNumber);
+		requestQuoteModel.setRequestQuoteInfo(requestQuoteInfo);
+		requestQuoteModel.setPersonalDetails(personalDetails);
+		requestQuoteModel.setVehicleDetails(null);
+		requestQuoteModel.setVehicleImageDetails(null);
+
 		resp.setData(requestQuoteModel);
 		resp.setMessageKey(customerProfileDetailModel.getErrorCode());
 		resp.setMessage(customerProfileDetailModel.getErrorMessage());
+		return resp;
+	}
+
+	public AmxApiResponse<?, Object> getImageMetaData()
+	{
+		AmxApiResponse<?, Object> resp = new AmxApiResponse<Object, Object>();
+		try
+		{
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getImageMetaData();
+			if (null == arrayResponseModel.getErrorCode())
+			{
+				resp.setStatusKey(ApiConstants.SUCCESS);
+				resp.setMeta(arrayResponseModel.getDataArray());
+			}
+			else
+			{
+				resp.setStatusKey(ApiConstants.FAILURE);
+			}
+			resp.setMessageKey(arrayResponseModel.getErrorCode());
+			resp.setMessage(arrayResponseModel.getErrorCode());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
 		return resp;
 	}
 
@@ -620,11 +633,11 @@ public class RequestQuoteService
 		return resp;
 	}
 
-	public byte[] getUploadedImage(BigDecimal appSeqNumber, String docTypeCode, BigDecimal docSeqNumber)
+	public DownloadImageModel downloadVehicleImage(BigDecimal docSeqNumber)
 	{
 		try
 		{
-			return requestQuoteDao.getUploadedImage(appSeqNumber, docTypeCode, docSeqNumber);
+			return requestQuoteDao.downloadVehicleImage(docSeqNumber);
 		}
 		catch (Exception e)
 		{
@@ -633,21 +646,38 @@ public class RequestQuoteService
 		return null;
 	}
 
-	public AmxApiResponse<Object, Object> setUploadImage(MultipartFile file, BigDecimal appSeqNumber, String docTypeCode, BigDecimal docSeqNumber)
+	public AmxApiResponse<?, Object> uploadVehicleImage(MultipartFile file, BigDecimal appSeqNumber, String docTypeCode, BigDecimal docSeqNumber)
 	{
-		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
+		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
+		RequestQuoteModel requestQuoteModel = new RequestQuoteModel();
+		RequestQuoteInfo requestQuoteInfo = new RequestQuoteInfo();
 		try
 		{
-			ImageModel imageModel = requestQuoteDao.setUploadImage(file, appSeqNumber, docTypeCode, docSeqNumber);
+			ImageModel imageModel = requestQuoteDao.uploadVehicleImage(file, appSeqNumber, docTypeCode, docSeqNumber);
 			if (null == imageModel.getErrorCode())
 			{
 				resp.setStatusKey(ApiConstants.SUCCESS);
+				AmxApiResponse<?, Object> respImageDetails = getImageDetails(appSeqNumber);
+				if (respImageDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+				{
+					return respImageDetails;
+				}
+				else
+				{
+					requestQuoteModel.setVehicleImageDetails(respImageDetails.getResults());
+				}
 			}
 			else
 			{
 				resp.setStatusKey(ApiConstants.FAILURE);
 			}
-			resp.setMeta(imageModel.getDocSeqNumber());
+
+			requestQuoteInfo.setAppSeqNumber(appSeqNumber);
+			requestQuoteModel.setRequestQuoteInfo(requestQuoteInfo);
+			requestQuoteModel.setPersonalDetails(null);
+			requestQuoteModel.setVehicleDetails(null);
+
+			resp.setData(requestQuoteModel);
 			resp.setMessageKey(imageModel.getErrorCode());
 			resp.setMessage(imageModel.getErrorCode());
 		}

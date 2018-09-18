@@ -3,23 +3,23 @@ package com.amx.jax.controllers;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.amx.jax.api.AmxApiResponse;
-import com.amx.jax.models.RequestQuoteModel;
+import com.amx.jax.models.DownloadImageModel;
+import com.amx.jax.models.PersonalDetails;
+import com.amx.jax.models.VehicleDetails;
 import com.amx.jax.services.RequestQuoteService;
-import com.amx.utils.ArgUtil;
 
 @RestController
 public class RequestQuoteController
@@ -30,12 +30,6 @@ public class RequestQuoteController
 
 	@Autowired
 	public RequestQuoteService requestQuoteService;
-
-	@RequestMapping(value = "/api/request-quote/get-pending-policy", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> getIncompleteApplication()
-	{
-		return requestQuoteService.getIncompleteApplication();
-	}
 
 	@RequestMapping(value = "/api/vehicledetails/make", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getMake()
@@ -94,48 +88,46 @@ public class RequestQuoteController
 		return requestQuoteService.getPolicyDuration();
 	}
 
-	@RequestMapping(value = "/api/request-quote/get-vehicle-details", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> getAppVehicleDetails(@RequestBody RequestQuoteModel requestQuoteModel)
+	@RequestMapping(value = "/api/request-quote/get-requestquote-details", method = RequestMethod.POST, produces = "application/json")
+	public AmxApiResponse<?, Object> getRequestQuoteDetails()
 	{
-		return requestQuoteService.getAppVehicleDetails(requestQuoteModel);
+		return requestQuoteService.getRequestQuoteDetails();
 	}
 
 	@RequestMapping(value = "/api/request-quote/set-vehicle-details", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> setAppVehicleDetails(@RequestBody RequestQuoteModel requestQuoteModel)
+	public AmxApiResponse<?, Object> setAppVehicleDetails(@RequestParam(name = "appSeqNumber", required = false) BigDecimal appSeqNumber, @RequestBody VehicleDetails vehicleDetails)
 	{
-		return requestQuoteService.setAppVehicleDetails(requestQuoteModel);
-	}
-
-	@RequestMapping(value = "/api/request-quote/get-personal-details", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> getProfileDetails(@RequestBody RequestQuoteModel requestQuoteModel)
-	{
-		return requestQuoteService.getProfileDetails(requestQuoteModel);
+		return requestQuoteService.setAppVehicleDetails(appSeqNumber, vehicleDetails);
 	}
 
 	@RequestMapping(value = "/api/request-quote/set-personal-details", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> setProfileDetails(@RequestHeader(value = "mOtp", required = false) String mOtpHeader, @RequestHeader(value = "eOtp", required = false) String eOtpHeader, @RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp,
-			@RequestBody RequestQuoteModel requestQuoteModel)
+	public AmxApiResponse<?, Object> setProfileDetails(@RequestParam(name = "appSeqNumber", required = false) BigDecimal appSeqNumber, @RequestBody PersonalDetails personalDetails)
 	{
-		mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
-		eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
-		return requestQuoteService.setProfileDetails(mOtp, eOtp, requestQuoteModel);
+		return requestQuoteService.setProfileDetails(appSeqNumber, personalDetails);
 	}
 
-	@RequestMapping(value = "/api/request-quote/get-image-details", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> getImageDetails(@RequestParam("appSeqNumber") BigDecimal appSeqNumber)
+	@RequestMapping(value = "/api/request-quote/upload-vehicle-image", method = RequestMethod.POST)
+	public AmxApiResponse<?, Object> uploadVehicleImage(@RequestParam MultipartFile file, @RequestParam("appSeqNumber") BigDecimal appSeqNumber, @RequestParam("docTypeCode") String docTypeCode, @RequestParam(name = "docSeqNumber", required = false) BigDecimal docSeqNumber) throws IOException
 	{
-		return requestQuoteService.getImageDetails(appSeqNumber);
+		return requestQuoteService.uploadVehicleImage(file, appSeqNumber, docTypeCode, docSeqNumber);
 	}
 
-	@RequestMapping(value = "/api/request-quote/downlaod-vehicle-images" , method = RequestMethod.GET , produces = MediaType.IMAGE_JPEG_VALUE)
-	public @ResponseBody byte[] getUploadedImage(@RequestParam("appSeqNumber") BigDecimal appSeqNumber, @RequestParam("docTypeCode") String docTypeCode, @RequestParam(name = "docSeqNumber", required = false) BigDecimal docSeqNumber) throws IOException
+	@RequestMapping(value = "/api/request-quote/downlaod-vehicle-images", method = RequestMethod.GET , produces = MediaType.IMAGE_JPEG_VALUE)
+	public ResponseEntity<byte[]> downloadVehicleImage(@RequestParam(name = "docSeqNumber", required = false) BigDecimal docSeqNumber) throws IOException
 	{
-		return requestQuoteService.getUploadedImage(appSeqNumber, docTypeCode, docSeqNumber);
-	}
-
-	@RequestMapping(value = "/api/request-quote/set-image-upload", method = RequestMethod.POST)
-	public AmxApiResponse<?, Object> setUploadImage(@RequestParam MultipartFile file, @RequestParam("appSeqNumber") BigDecimal appSeqNumber, @RequestParam("docTypeCode") String docTypeCode, @RequestParam(name = "docSeqNumber", required = false) BigDecimal docSeqNumber) throws IOException
-	{
-		return requestQuoteService.setUploadImage(file, appSeqNumber, docTypeCode, docSeqNumber);
+		DownloadImageModel downloadImageModel = requestQuoteService.downloadVehicleImage(docSeqNumber);
+		byte[] imageByteArray = downloadImageModel.getImageByteArray();
+		String imageType = downloadImageModel.getImageType();
+		MediaType mediaType = null;
+		logger.info(TAG + " downloadVehicleImage :: imageType :" + imageType);
+		if(imageType.contains("jpeg"))
+		{
+			mediaType = MediaType.IMAGE_JPEG;
+		}
+		else if(imageType.contains("png"))
+		{
+			mediaType = MediaType.IMAGE_PNG;
+		}
+		return ResponseEntity.ok().contentLength(imageByteArray.length).contentType(mediaType).body(imageByteArray);
 	}
 }

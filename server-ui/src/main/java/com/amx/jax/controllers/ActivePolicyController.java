@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.amx.jax.models.ActivePolicyModel;
-import com.amx.jax.models.IncompleteApplResponse;
+import com.amx.jax.models.RequestQuoteDetrails;
 import com.amx.jax.models.Validate;
 import com.amx.jax.services.ActivePolicyService;
 import com.amx.jax.api.AmxApiResponse;

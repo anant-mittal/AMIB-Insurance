@@ -2,7 +2,7 @@ package com.amx.jax.models;
 
 import java.math.BigDecimal;
 
-public class IncompleteApplResponse
+public class RequestQuoteDetrails
 {
 	BigDecimal appSeqNumber;
 

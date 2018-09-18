@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class VehicleImageDetails
 {
-	ArrayList<ImageInitInfo> imageInfoArray;
+	ArrayList<ImageDetails> imageInfoArray;
 	
 	ImageUploadDetails imageUploadDetails;
 	
@@ -18,12 +18,12 @@ public class VehicleImageDetails
 		this.imageUploadDetails = imageUploadDetails;
 	}
 
-	public ArrayList<ImageInitInfo> getImageInfoArray()
+	public ArrayList<ImageDetails> getImageInfoArray()
 	{
 		return imageInfoArray;
 	}
 
-	public void setImageInfoArray(ArrayList<ImageInitInfo> imageInfoArray)
+	public void setImageInfoArray(ArrayList<ImageDetails> imageInfoArray)
 	{
 		this.imageInfoArray = imageInfoArray;
 	}

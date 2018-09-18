@@ -2,8 +2,6 @@
 package com.amx.jax;
 
 import java.math.BigDecimal;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +18,6 @@ import com.amx.jax.models.RegSession;
 import com.amx.jax.rest.RestService;
 import com.amx.jax.service.HttpService;
 import com.amx.jax.services.CustomerRegistrationService;
-import com.amx.utils.ArgUtil;
 import com.amx.utils.JsonUtil;
 import io.swagger.annotations.Api;
 
@@ -160,5 +157,4 @@ public class HomeController
 
 		return "app";
 	}
-
 }
