@@ -2,7 +2,17 @@ package com.amx.jax.models;
 
 public class DashBoardDetails
 {
-	private RequestQuoteDetrails requestQuoteDetrails;
+	private RequestQuoteDetrails requestQuoteDetails;
+
+	public RequestQuoteDetrails getRequestQuoteDetails()
+	{
+		return requestQuoteDetails;
+	}
+
+	public void setRequestQuoteDetails(RequestQuoteDetrails requestQuoteDetails)
+	{
+		this.requestQuoteDetails = requestQuoteDetails;
+	}
 
 	private ActivePolicyDetails activePolicyDetails;
 
@@ -40,14 +50,6 @@ public class DashBoardDetails
 		this.myQuotesDetaills = myQuotesDetaills;
 	}
 
-	public RequestQuoteDetrails getRequestQuoteDetrails()
-	{
-		return requestQuoteDetrails;
-	}
-
-	public void setRequestQuoteDetrails(RequestQuoteDetrails requestQuoteDetrails)
-	{
-		this.requestQuoteDetrails = requestQuoteDetrails;
-	}
+	
 
 }

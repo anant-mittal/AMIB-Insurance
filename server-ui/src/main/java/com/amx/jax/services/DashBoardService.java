@@ -40,7 +40,7 @@ public class DashBoardService
 			{
 				resp.setStatusKey(ApiConstants.FAILURE);
 			}
-			dashBoardDetails.setRequestQuoteDetrails(incompleteApplResponse);
+			dashBoardDetails.setRequestQuoteDetails(incompleteApplResponse);
 			resp.setMessageKey(incompleteApplModel.getErrorCode());
 			resp.setMessage(incompleteApplModel.getErrorMessage());
 			resp.setData(dashBoardDetails);
