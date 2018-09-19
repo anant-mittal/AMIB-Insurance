@@ -54,5 +54,7 @@ public class MessageKey
 
 	public static String KEY_EMPTY_PASSWORD = "EMPTY_PASSWORD";
 	
+	public static String KEY_EMPTY_APPSEQUENCE_NUMBER = "EMPTY_APPSEQUENCE_NUMBER";
+	
 }
 

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
+import com.amx.jax.constants.Message;
 import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.PersonalDetailsDao;
 import com.amx.jax.dao.RequestQuoteDao;
@@ -441,10 +442,27 @@ public class RequestQuoteService
 
 	public AmxApiResponse<?, Object> setAppVehicleDetails(BigDecimal appSeqNumber, VehicleDetails vehicleDetails)
 	{
+		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
 		RequestQuoteModel requestQuoteModel = new RequestQuoteModel();
 		RequestQuoteInfo requestQuoteInfo = new RequestQuoteInfo();
-
+		
+		IncompleteApplModel incompleteApplModel = requestQuoteDao.getIncompleteApplication();
+		BigDecimal appSeqNumberFromDb = incompleteApplModel.getAppSeqNumber();
+		logger.info(TAG + " setAppVehicleDetails :: appSeqNumberFromDb :" + appSeqNumberFromDb);
+		AmxApiResponse<?, Object> respInfoDetails = getIncompleteApplication();
+		if (respInfoDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+		{
+			return respInfoDetails;
+		}
+		else if(!(appSeqNumberFromDb.equals(appSeqNumber)))
+		{
+			resp.setStatusKey(ApiConstants.FAILURE);
+			resp.setMessageKey(MessageKey.KEY_EMPTY_APPSEQUENCE_NUMBER);
+			resp.setMessage(Message.EMPTY_APP_SEQUENCE_NUMBER);
+			return resp;
+		}		
+		
 		try
 		{
 			VehicleDetailsHeaderModel vehicleDetailsHeaderModel = requestQuoteDao.setVehicleDetailsHeader(appSeqNumber, vehicleDetails);

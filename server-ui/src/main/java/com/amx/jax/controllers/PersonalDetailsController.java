@@ -11,14 +11,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.amx.jax.api.AmxApiResponse;
-import com.amx.jax.models.CustomerDetailResponse;
 import com.amx.jax.models.CustomerProfileDetailResponse;
 import com.amx.jax.models.CustomerProfileUpdateRequest;
-import com.amx.jax.models.CustomerProfileUpdateResponse;
-import com.amx.jax.models.PersonalDetailsOtpRequest;
 import com.amx.jax.services.PersonalDetailsService;
 import com.amx.utils.ArgUtil;
-import com.insurance.model.RequestOtpModel;
 
 @RestController
 public class PersonalDetailsController

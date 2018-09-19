@@ -115,6 +115,7 @@ public class RequestQuoteDao
 		catch (Exception e)
 		{
 			e.printStackTrace();
+			logger.info(TAG + " getIncompleteApplication :: e.printStackTrace() :" + e);
 		}
 		finally
 		{
@@ -582,6 +583,18 @@ public class RequestQuoteDao
 
 	public VehicleDetailsHeaderModel setVehicleDetailsHeader(BigDecimal appSeqNumber, VehicleDetails vehicleDetails)
 	{
+		
+		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
+		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
+		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
+		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
+		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
+		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
+		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
+		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
+		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
+		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
+		
 		getConnection();
 		CallableStatement callableStatement = null;
 		VehicleDetailsHeaderModel vehicleDetailsHeaderModel = new VehicleDetailsHeaderModel();
@@ -824,7 +837,6 @@ public class RequestQuoteDao
 
 		try
 		{
-			
 
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
@@ -926,11 +938,16 @@ public class RequestQuoteDao
 	{
 		try
 		{
-			connection = jdbcTemplate.getDataSource().getConnection();
+			if(null == connection || connection.isClosed())
+			{
+				connection = jdbcTemplate.getDataSource().getConnection();
+			}
+			return connection;
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
+			logger.info(TAG + " getConnection :: e.printStackTrace() :" + e);
 		}
 		return connection;
 	}
@@ -951,6 +968,7 @@ public class RequestQuoteDao
 		catch (Exception e)
 		{
 			e.printStackTrace();
+			logger.info(TAG + " CloseConnection1 :: e.printStackTrace() :" + e);
 		}
 	}
 
@@ -971,6 +989,7 @@ public class RequestQuoteDao
 		catch (Exception e)
 		{
 			e.printStackTrace();
+			logger.info(TAG + " CloseConnection2 :: e.printStackTrace() :" + e);
 		}
 	}
 }

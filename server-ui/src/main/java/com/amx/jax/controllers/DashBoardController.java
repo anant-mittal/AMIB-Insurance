@@ -14,7 +14,7 @@ public class DashBoardController
 {
 	private static final Logger logger = LoggerFactory.getLogger(RequestQuoteController.class);
 
-	String TAG = "com.amx.jax.controllers.RequestQuoteController :- ";
+	String TAG = "com.amx.jax.controllers.DashBoardController :- ";
 
 	@Autowired
 	public DashBoardService dashBoardService;

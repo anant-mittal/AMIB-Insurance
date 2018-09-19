@@ -40,7 +40,6 @@ public class RequestQuoteController
 	@RequestMapping(value = "/api/vehicledetails/sub-make", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getModel(@RequestParam("make") String make)
 	{
-		logger.info(TAG + " getModel :: make :" + make);
 		return requestQuoteService.getModel(make);
 	}
 
@@ -65,14 +64,12 @@ public class RequestQuoteController
 	@RequestMapping(value = "/api/vehicledetails/colour", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getColour()
 	{
-		logger.info(TAG + " getColour :: ");
 		return requestQuoteService.getColour();
 	}
 
 	@RequestMapping(value = "/api/vehicledetails/vehicle-condition", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getVehicleCondition()
 	{
-		logger.info(TAG + " getVehicleCondition :: ");
 		return requestQuoteService.getVehicleCondition();
 	}
 
@@ -112,7 +109,7 @@ public class RequestQuoteController
 		return requestQuoteService.uploadVehicleImage(file, appSeqNumber, docTypeCode, docSeqNumber);
 	}
 
-	@RequestMapping(value = "/api/request-quote/downlaod-vehicle-images", method = RequestMethod.GET , produces = MediaType.IMAGE_JPEG_VALUE)
+	@RequestMapping(value = "/api/request-quote/downlaod-vehicle-images", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
 	public ResponseEntity<byte[]> downloadVehicleImage(@RequestParam(name = "docSeqNumber", required = false) BigDecimal docSeqNumber) throws IOException
 	{
 		DownloadImageModel downloadImageModel = requestQuoteService.downloadVehicleImage(docSeqNumber);
@@ -120,11 +117,11 @@ public class RequestQuoteController
 		String imageType = downloadImageModel.getImageType();
 		MediaType mediaType = null;
 		logger.info(TAG + " downloadVehicleImage :: imageType :" + imageType);
-		if(imageType.contains("jpeg"))
+		if (imageType.contains("jpeg"))
 		{
 			mediaType = MediaType.IMAGE_JPEG;
 		}
-		else if(imageType.contains("png"))
+		else if (imageType.contains("png"))
 		{
 			mediaType = MediaType.IMAGE_PNG;
 		}
