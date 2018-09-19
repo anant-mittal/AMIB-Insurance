@@ -455,7 +455,7 @@ public class RequestQuoteService
 		{
 			return respInfoDetails;
 		}
-		else if(!(appSeqNumberFromDb.equals(appSeqNumber)))
+		else if(null != appSeqNumber && null != appSeqNumberFromDb && !(appSeqNumberFromDb.equals(appSeqNumber)))
 		{
 			resp.setStatusKey(ApiConstants.FAILURE);
 			resp.setMessageKey(MessageKey.KEY_EMPTY_APPSEQUENCE_NUMBER);
