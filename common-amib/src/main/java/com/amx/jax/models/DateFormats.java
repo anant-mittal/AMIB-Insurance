@@ -83,7 +83,7 @@ public class DateFormats
 	public static String formatType4(String inDate)
 	{
 		String outDate = "";
-		SimpleDateFormat inputDateFormat = new SimpleDateFormat("dd-MMM-yy");
+		SimpleDateFormat inputDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
 		SimpleDateFormat outputDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		try
 		{
