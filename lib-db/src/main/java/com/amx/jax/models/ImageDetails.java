@@ -6,6 +6,20 @@ public class ImageDetails
 {
 	private String docTypeCode;
 
+	private BigDecimal docSeqNumber;
+
+	private String imageSubmittedDate;
+
+	public String getImageSubmittedDate()
+	{
+		return imageSubmittedDate;
+	}
+
+	public void setImageSubmittedDate(String imageSubmittedDate)
+	{
+		this.imageSubmittedDate = imageSubmittedDate;
+	}
+
 	public String getDocTypeCode()
 	{
 		return docTypeCode;
@@ -15,8 +29,6 @@ public class ImageDetails
 	{
 		this.docTypeCode = docTypeCode;
 	}
-
-	private BigDecimal docSeqNumber;
 
 	public BigDecimal getDocSeqNumber()
 	{

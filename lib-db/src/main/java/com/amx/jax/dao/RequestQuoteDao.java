@@ -27,6 +27,7 @@ import com.amx.jax.models.DownloadImageModel;
 import com.amx.jax.models.FuelType;
 import com.amx.jax.models.ImageDetails;
 import com.amx.jax.models.ImageModel;
+import com.amx.jax.models.ImageStatus;
 import com.amx.jax.models.IncompleteApplModel;
 import com.amx.jax.models.InsuranceCompanyDetails;
 import com.amx.jax.models.Make;
@@ -569,7 +570,7 @@ public class RequestQuoteDao
 
 	public VehicleDetailsHeaderModel setVehicleDetailsHeader(BigDecimal appSeqNumber, VehicleDetails vehicleDetails)
 	{
-		
+
 		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
 		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
 		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
@@ -580,7 +581,7 @@ public class RequestQuoteDao
 		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
 		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
 		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
-		
+
 		getConnection();
 		CallableStatement callableStatement = null;
 		VehicleDetailsHeaderModel vehicleDetailsHeaderModel = new VehicleDetailsHeaderModel();
@@ -752,8 +753,9 @@ public class RequestQuoteDao
 			{
 				ImageDetails imageDetails = new ImageDetails();
 				imageDetails.setDocTypeCode(rs.getString(1));
-				BigDecimal docSeqNumber = checkIfImageAlreadyUploaded(appSeqNumber, rs.getString(1));
-				imageDetails.setDocSeqNumber(docSeqNumber);
+				ImageStatus imageStatus = imageUploadedStatus(appSeqNumber, rs.getString(1));
+				imageDetails.setImageSubmittedDate(imageStatus.getImageDate());
+				imageDetails.setDocSeqNumber(imageStatus.getDocSeqNumber());
 				imageMetaInfoArray.add(imageDetails);
 			}
 			arrayResponseModel.setDataArray(imageMetaInfoArray);
@@ -769,6 +771,47 @@ public class RequestQuoteDao
 			CloseConnection(callableStatement, connection);
 		}
 		return arrayResponseModel;
+	}
+
+	public ImageStatus imageUploadedStatus(BigDecimal appSeqNumber, String docType)
+	{
+		getConnection();
+		CallableStatement callableStatement = null;
+		ImageStatus imageStatus = new ImageStatus();
+		String callProcedure = "{call IRB_CHECK_IMAGE_UPLOADED(?,?,?,?,?,?)}";
+		String epochDate = null;
+		try
+		{
+			callableStatement = connection.prepareCall(callProcedure);
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(3, appSeqNumber);
+			callableStatement.setString(4, docType);
+			callableStatement.registerOutParameter(5, java.sql.Types.NUMERIC);
+			callableStatement.registerOutParameter(6, java.sql.Types.TIMESTAMP);
+			callableStatement.executeUpdate();
+
+			logger.info(TAG + " setUploadImage :: DocSeqNum)  :" + callableStatement.getBigDecimal(5));
+			logger.info(TAG + " setUploadImage :: DocSeqNum)  :" + callableStatement.getTimestamp(6));
+			if (null != callableStatement.getTimestamp(6))
+			{
+				epochDate = DateFormats.convertTimeStampToEpoc(callableStatement.getTimestamp(6).toString());
+			}
+			imageStatus.setDocSeqNumber(callableStatement.getBigDecimal(5));
+			imageStatus.setImageDate(epochDate);
+
+			return imageStatus;
+
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		return null;
 	}
 
 	public BigDecimal checkIfImageAlreadyUploaded(BigDecimal appSeqNumber, String docType)
@@ -918,8 +961,7 @@ public class RequestQuoteDao
 		}
 		return imageModel;
 	}
-	
-	
+
 	public ArrayResponseModel getInsuranceCompanyDetails(BigDecimal appSeqNumber)
 	{
 		getConnection();
@@ -946,7 +988,7 @@ public class RequestQuoteDao
 				insuranceCompanyDetails.setCompanyCode(rs.getBigDecimal(3));
 				insuranceCompanyDetails.setCompanyName(rs.getString(5));
 				insuranceCompanyDetails.setCompanyShortCode(rs.getString(15));
-				String insuranceSelected = appSelectedProvider(rs.getBigDecimal(3) , appSeqNumber);
+				String insuranceSelected = appSelectedProvider(rs.getBigDecimal(3), appSeqNumber);
 				insuranceCompanyDetails.setInsuranceSelected(insuranceSelected);
 				insuranceCompanyArray.add(insuranceCompanyDetails);
 			}
@@ -964,8 +1006,8 @@ public class RequestQuoteDao
 		}
 		return arrayResponseModel;
 	}
-	
-	public String appSelectedProvider(BigDecimal companyCode , BigDecimal appSeqNumber)
+
+	public String appSelectedProvider(BigDecimal companyCode, BigDecimal appSeqNumber)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -1003,18 +1045,17 @@ public class RequestQuoteDao
 		return "N";
 	}
 
-	
-	public ArrayResponseModel updateInsuranceProvider(BigDecimal appSeqNumber ,BigDecimal insuranceCompCode , String prefIndic)
+	public ArrayResponseModel updateInsuranceProvider(BigDecimal appSeqNumber, BigDecimal insuranceCompCode, String prefIndic)
 	{
 		logger.info(TAG + " updateInsuranceProvider :: appSeqNumber       :" + appSeqNumber);
 		logger.info(TAG + " updateInsuranceProvider :: insuranceCompCode  :" + insuranceCompCode);
 		logger.info(TAG + " updateInsuranceProvider :: prefIndic          :" + prefIndic);
-		
+
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_INSUPD_PREFERRED_PROVIDER(?,?,?,?,?,?,?,?,?,?)}";
 		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
-		
+
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -1029,7 +1070,7 @@ public class RequestQuoteDao
 			callableStatement.registerOutParameter(9, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(10, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
-			
+
 			logger.info(TAG + " updateInsuranceProvider :: errorCode        :" + callableStatement.getString(9));
 			arrayResponseModel.setErrorCode(callableStatement.getString(9));
 			arrayResponseModel.setErrorMessage(callableStatement.getString(10));
@@ -1044,14 +1085,14 @@ public class RequestQuoteDao
 		}
 		return arrayResponseModel;
 	}
-	
+
 	public ArrayResponseModel submitRequestQuote(BigDecimal appSeqNumber)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_SUBMIT_ONLINE_APPL(?,?,?,?,?,?,?,?)}";
 		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
-		
+
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -1064,7 +1105,7 @@ public class RequestQuoteDao
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
-			
+
 			arrayResponseModel.setErrorCode(callableStatement.getString(7));
 			arrayResponseModel.setErrorMessage(callableStatement.getString(8));
 		}
@@ -1078,14 +1119,12 @@ public class RequestQuoteDao
 		}
 		return arrayResponseModel;
 	}
-	
-	
-	
+
 	private Connection getConnection()
 	{
 		try
 		{
-			if(null == connection || connection.isClosed())
+			if (null == connection || connection.isClosed())
 			{
 				connection = jdbcTemplate.getDataSource().getConnection();
 			}

@@ -2,6 +2,10 @@ package com.amx.jax.models;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -155,5 +159,31 @@ public class DateFormats
 		{
 			return null;
 		}
+	}
+
+	public static String convertTimeStampToEpoc(String inDate)
+	{
+		//System.out.println("convertTimeStampToEpoc :: inDate1 :"+inDate);
+		if (null != inDate && !inDate.equals(""))
+		{
+			//System.out.println("convertTimeStampToEpoc :: inDate2 :"+inDate);
+			try
+			{
+				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
+				LocalDateTime dt = LocalDateTime.parse(inDate, dtf);
+				Instant instant = dt.toInstant(ZoneOffset.UTC);
+				long epochLong = instant.toEpochMilli();
+				
+				//System.out.println("convertTimeStampToEpoc :: epochLong :"+epochLong);
+				//System.out.println("convertTimeStampToEpoc :: String.valueOf(epochLong) :"+String.valueOf(epochLong));
+				return String.valueOf(epochLong);
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+				return null;
+			}
+		}
+		return null;
 	}
 }
