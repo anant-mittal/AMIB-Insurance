@@ -20,6 +20,7 @@ import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.DownloadImageModel;
 import com.amx.jax.models.ImageModel;
 import com.amx.jax.models.IncompleteApplModel;
+import com.amx.jax.models.MetaData;
 import com.amx.jax.models.PersonalDetails;
 import com.amx.jax.models.RequestQuoteInfo;
 import com.amx.jax.models.RequestQuoteModel;
@@ -43,6 +44,9 @@ public class RequestQuoteService
 
 	@Autowired
 	public PersonalDetailsDao personalDetailsDao;
+
+	@Autowired
+	MetaData metaData;
 
 	public AmxApiResponse<RequestQuoteInfo, Object> getIncompleteApplication()
 	{
@@ -446,7 +450,7 @@ public class RequestQuoteService
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
 		RequestQuoteModel requestQuoteModel = new RequestQuoteModel();
 		RequestQuoteInfo requestQuoteInfo = new RequestQuoteInfo();
-		
+
 		IncompleteApplModel incompleteApplModel = requestQuoteDao.getIncompleteApplication();
 		BigDecimal appSeqNumberFromDb = incompleteApplModel.getAppSeqNumber();
 		logger.info(TAG + " setAppVehicleDetails :: appSeqNumberFromDb :" + appSeqNumberFromDb);
@@ -455,14 +459,14 @@ public class RequestQuoteService
 		{
 			return respInfoDetails;
 		}
-		else if(null != appSeqNumber && null != appSeqNumberFromDb && !(appSeqNumberFromDb.equals(appSeqNumber)))
+		else if (null != appSeqNumberFromDb && null != appSeqNumber && !(appSeqNumberFromDb.equals(appSeqNumber)))
 		{
 			resp.setStatusKey(ApiConstants.FAILURE);
 			resp.setMessageKey(MessageKey.KEY_EMPTY_APPSEQUENCE_NUMBER);
 			resp.setMessage(Message.EMPTY_APP_SEQUENCE_NUMBER);
 			return resp;
-		}		
-		
+		}
+
 		try
 		{
 			VehicleDetailsHeaderModel vehicleDetailsHeaderModel = requestQuoteDao.setVehicleDetailsHeader(appSeqNumber, vehicleDetails);
@@ -553,6 +557,7 @@ public class RequestQuoteService
 		CustomerProfileDetailModel customerProfileDetailModel = new CustomerProfileDetailModel();
 		RequestQuoteModel requestQuoteModel = new RequestQuoteModel();
 		RequestQuoteInfo requestQuoteInfo = new RequestQuoteInfo();
+		boolean custSeqNumberAvailable = false;
 
 		if (null != personalDetails.getIdExpiryDate())
 		{
@@ -574,7 +579,27 @@ public class RequestQuoteService
 		customerProfileDetailModel.setAreaCode(personalDetails.getAreaCode());
 		customerProfileDetailModel.setMobile(personalDetails.getMobile());
 		customerProfileDetailModel.setEmail(personalDetails.getEmail());
+
+		
+		logger.info(TAG + " setProfileDetails :: metaData.getCustomerSequenceNumber() :" + metaData.getCustomerSequenceNumber());
+		if (null == metaData.getCustomerSequenceNumber() || metaData.getCustomerSequenceNumber().toString().equals(""))
+		{
+			custSeqNumberAvailable = false;
+		}
+		
+		logger.info(TAG + " setProfileDetails :: custSeqNumberAvailable :" + custSeqNumberAvailable);
 		customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel);
+
+		if (!custSeqNumberAvailable)
+		{
+			logger.info(TAG + " setProfileDetails :: customerProfileDetailModel.getCustSequenceNumber() :" + customerProfileDetailModel.getCustSequenceNumber());
+			logger.info(TAG + " setProfileDetails :: appSeqNumber :" + appSeqNumber);
+			AmxApiResponse<Validate, Object> updateCustSeqNum = updateCustomerSequenceNumber(customerProfileDetailModel.getCustSequenceNumber(),appSeqNumber);
+			if (updateCustSeqNum.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			{
+				return updateCustSeqNum;
+			}
+		}
 
 		if (null == customerProfileDetailModel.getErrorCode())
 		{
@@ -707,4 +732,49 @@ public class RequestQuoteService
 		}
 		return resp;
 	}
+
+	public AmxApiResponse<?, Object> getInsuranceCompanyDetails(BigDecimal appSeqNumber)
+	{
+		AmxApiResponse<?, Object> resp = new AmxApiResponse<Object, Object>();
+		try
+		{
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getInsuranceCompanyDetails(appSeqNumber);
+
+			if (null == arrayResponseModel.getErrorCode())
+			{
+				resp.setResults(arrayResponseModel.getDataArray());
+				resp.setStatusKey(ApiConstants.SUCCESS);
+			}
+			else
+			{
+				resp.setStatusKey(ApiConstants.FAILURE);
+			}
+			resp.setMessageKey(arrayResponseModel.getErrorCode());
+			resp.setMessage(arrayResponseModel.getErrorMessage());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
+		return resp;
+	}
+	
+	public AmxApiResponse<Validate, Object> updateCustomerSequenceNumber(BigDecimal custSeqNumber,BigDecimal appSeqNumber)
+	{
+		CustomerProfileDetailModel customerProfileDetailModel = personalDetailsDao.updateCustomerSequenceNumber(custSeqNumber, appSeqNumber);
+		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
+		if (null == customerProfileDetailModel.getErrorCode())
+		{
+			resp.setStatusKey(ApiConstants.SUCCESS);
+		}
+		else
+		{
+			resp.setStatusKey(ApiConstants.FAILURE);
+			resp.setMessageKey(customerProfileDetailModel.getErrorCode());
+		}
+		return resp;
+	}
+
 }

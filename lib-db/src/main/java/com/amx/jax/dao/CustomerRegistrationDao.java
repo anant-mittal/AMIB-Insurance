@@ -263,7 +263,6 @@ public class CustomerRegistrationDao
 	{
 
 		getConnection();
-
 		CallableStatement callableStatement = null;
 		String callFunction = "{ ? = call IRB_IF_DUP_EMAIL(?,?,?,?)}";
 
@@ -458,7 +457,7 @@ public class CustomerRegistrationDao
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_USERDTLS(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
 		String lastDate = null;
-		
+
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -490,7 +489,7 @@ public class CustomerRegistrationDao
 			customerDetailModel.setLanguageId(callableStatement.getBigDecimal(9));
 			customerDetailModel.setMobileVerify(callableStatement.getString(10));
 			customerDetailModel.setMailVerify(callableStatement.getString(11));
-			if(null != callableStatement.getTimestamp(12))
+			if (null != callableStatement.getTimestamp(12))
 			{
 				lastDate = formatDate(callableStatement.getTimestamp(12).toString());
 			}
@@ -592,16 +591,16 @@ public class CustomerRegistrationDao
 
 			logger.info(TAG + " updatePassword :: regSession.getCivilId    :" + regSession.getCivilId());
 			logger.info(TAG + " updatePassword :: metadata.getCivilId      :" + metaData.getCivilId());
-			
-			if(null != regSession.getCivilId() && !regSession.getCivilId().equals(""))
+
+			if (null != regSession.getCivilId() && !regSession.getCivilId().equals(""))
 			{
 				civilId = regSession.getCivilId();
 			}
-			else if(null != metaData.getCivilId() && !metaData.getCivilId().equals(""))
+			else if (null != metaData.getCivilId() && !metaData.getCivilId().equals(""))
 			{
 				civilId = metaData.getCivilId();
 			}
-			
+
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			callableStatement.setString(3, metaData.getUserType());
@@ -623,7 +622,7 @@ public class CustomerRegistrationDao
 
 			logger.info(TAG + " updatePassword :: errorCode     :" + errorCode);
 			logger.info(TAG + " updatePassword :: errorMessage  :" + errorMessage);
-			
+
 			customerDetailModel.setErrorCode(errorCode);
 			customerDetailModel.setErrorMessage(errorMessage);
 
@@ -724,7 +723,7 @@ public class CustomerRegistrationDao
 		}
 		return new java.sql.Date(todayNew.getTime());
 	}
-	
+
 	private Connection getConnection()
 	{
 		try
@@ -758,7 +757,7 @@ public class CustomerRegistrationDao
 			e.printStackTrace();
 		}
 	}
-	
+
 	public String formatDate(String inDate)
 	{
 		String outDate = "";

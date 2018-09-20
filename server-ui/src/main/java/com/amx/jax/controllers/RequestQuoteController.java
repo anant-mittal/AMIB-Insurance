@@ -127,4 +127,5 @@ public class RequestQuoteController
 		}
 		return ResponseEntity.ok().contentLength(imageByteArray.length).contentType(mediaType).body(imageByteArray);
 	}
+
 }

@@ -41,6 +41,7 @@ import com.amx.jax.models.FuelType;
 import com.amx.jax.models.ImageDetails;
 import com.amx.jax.models.ImageModel;
 import com.amx.jax.models.IncompleteApplModel;
+import com.amx.jax.models.InsuranceCompanyDetails;
 import com.amx.jax.models.Make;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.Model;
@@ -932,6 +933,90 @@ public class RequestQuoteDao
 			}
 		}
 		return imageModel;
+	}
+	
+	
+	public ArrayResponseModel getInsuranceCompanyDetails(BigDecimal appSeqNumber)
+	{
+		getConnection();
+		CallableStatement callableStatement = null;
+		String callProcedure = "{call IRB_GET_ONLINE_INSCOMPANY(?,?,?,?,?,?)}";
+		ArrayList<InsuranceCompanyDetails> insuranceCompanyArray = new ArrayList<InsuranceCompanyDetails>();
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
+		try
+		{
+
+			callableStatement = connection.prepareCall(callProcedure);
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(3, metaData.getLanguageId());
+			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
+			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
+			callableStatement.executeUpdate();
+
+			ResultSet rs = (ResultSet) callableStatement.getObject(4);
+			while (rs.next())
+			{
+				InsuranceCompanyDetails insuranceCompanyDetails = new InsuranceCompanyDetails();
+				insuranceCompanyDetails.setCompanyCode(rs.getBigDecimal(3));
+				insuranceCompanyDetails.setCompanyName(rs.getString(5));
+				insuranceCompanyDetails.setCompanyShortCode(rs.getString(15));
+				boolean insuranceSelected = appSelectedProvider(rs.getBigDecimal(3) , appSeqNumber);
+				insuranceCompanyDetails.setInsuranceSelected(insuranceSelected);
+				insuranceCompanyArray.add(insuranceCompanyDetails);
+			}
+			arrayResponseModel.setDataArray(insuranceCompanyArray);
+			arrayResponseModel.setErrorCode(callableStatement.getString(6));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(7));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		return arrayResponseModel;
+	}
+	
+	public boolean appSelectedProvider(BigDecimal companyCode , BigDecimal appSeqNumber)
+	{
+		getConnection();
+		CallableStatement callableStatement = null;
+		String callFunction = "{ ? = call IRB_IF_PREFERRED_PROVIDER(?,?,?,?)}";
+		String result = null;
+
+		try
+		{
+			callableStatement = connection.prepareCall(callFunction);
+			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
+			callableStatement.setBigDecimal(2, metaData.getCountryId());
+			callableStatement.setBigDecimal(3, metaData.getCompCd());
+			callableStatement.setBigDecimal(4, appSeqNumber);
+			callableStatement.setBigDecimal(5, companyCode);
+			callableStatement.executeUpdate();
+			result = callableStatement.getString(1);
+			logger.info(TAG + " appSelectedProvider :: result :" + result);
+			if (result.toString().equalsIgnoreCase("Y"))
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		return false;
 	}
 
 	private Connection getConnection()
