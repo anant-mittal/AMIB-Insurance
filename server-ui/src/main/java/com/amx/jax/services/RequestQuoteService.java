@@ -20,6 +20,7 @@ import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.DownloadImageModel;
 import com.amx.jax.models.ImageModel;
 import com.amx.jax.models.IncompleteApplModel;
+import com.amx.jax.models.InsuranceCompanyDetails;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.PersonalDetails;
 import com.amx.jax.models.RequestQuoteInfo;
@@ -391,7 +392,7 @@ public class RequestQuoteService
 			{
 				requestQuoteModel.setInsuranceCompDetails(insuranceCompDetails.getData());
 			}
-			
+
 			resp.setData(requestQuoteModel);
 
 		}
@@ -590,13 +591,12 @@ public class RequestQuoteService
 		customerProfileDetailModel.setMobile(personalDetails.getMobile());
 		customerProfileDetailModel.setEmail(personalDetails.getEmail());
 
-		
 		logger.info(TAG + " setProfileDetails :: metaData.getCustomerSequenceNumber() :" + metaData.getCustomerSequenceNumber());
 		if (null == metaData.getCustomerSequenceNumber() || metaData.getCustomerSequenceNumber().toString().equals(""))
 		{
 			custSeqNumberAvailable = false;
 		}
-		
+
 		logger.info(TAG + " setProfileDetails :: custSeqNumberAvailable :" + custSeqNumberAvailable);
 		customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel);
 
@@ -604,7 +604,7 @@ public class RequestQuoteService
 		{
 			logger.info(TAG + " setProfileDetails :: customerProfileDetailModel.getCustSequenceNumber() :" + customerProfileDetailModel.getCustSequenceNumber());
 			logger.info(TAG + " setProfileDetails :: appSeqNumber :" + appSeqNumber);
-			AmxApiResponse<Validate, Object> updateCustSeqNum = updateCustomerSequenceNumber(customerProfileDetailModel.getCustSequenceNumber(),appSeqNumber);
+			AmxApiResponse<Validate, Object> updateCustSeqNum = updateCustomerSequenceNumber(customerProfileDetailModel.getCustSequenceNumber(), appSeqNumber);
 			if (updateCustSeqNum.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 			{
 				return updateCustSeqNum;
@@ -745,7 +745,7 @@ public class RequestQuoteService
 
 	public AmxApiResponse<?, Object> getInsuranceCompanyDetails(BigDecimal appSeqNumber)
 	{
-		AmxApiResponse<Object , Object> resp = new AmxApiResponse<Object, Object>();
+		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
 		try
 		{
 			ArrayResponseModel arrayResponseModel = requestQuoteDao.getInsuranceCompanyDetails(appSeqNumber);
@@ -770,8 +770,8 @@ public class RequestQuoteService
 		}
 		return resp;
 	}
-	
-	public AmxApiResponse<Validate, Object> updateCustomerSequenceNumber(BigDecimal custSeqNumber,BigDecimal appSeqNumber)
+
+	public AmxApiResponse<Validate, Object> updateCustomerSequenceNumber(BigDecimal custSeqNumber, BigDecimal appSeqNumber)
 	{
 		CustomerProfileDetailModel customerProfileDetailModel = personalDetailsDao.updateCustomerSequenceNumber(custSeqNumber, appSeqNumber);
 		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
@@ -787,4 +787,58 @@ public class RequestQuoteService
 		return resp;
 	}
 
+	public AmxApiResponse<?, Object> submitRequestQuote(BigDecimal appSeqNumber, BigDecimal insuranceCompCode)
+	{
+		logger.info(TAG + " submitRequestQuote :: appSeqNumber      :" + appSeqNumber);
+		logger.info(TAG + " submitRequestQuote :: insuranceCompCode :" + insuranceCompCode);
+
+		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
+
+		AmxApiResponse<?, Object> getInsuranceCompanyDetails = getInsuranceCompanyDetails(appSeqNumber);
+		if (getInsuranceCompanyDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+		{
+			return getInsuranceCompanyDetails;
+		}
+		else
+		{
+			ArrayList<InsuranceCompanyDetails> dataArray = (ArrayList<InsuranceCompanyDetails>) getInsuranceCompanyDetails.getData();
+			for (int i = 0; i < dataArray.size(); i++)
+			{
+				String status = "";
+				InsuranceCompanyDetails insuranceCompanyDetails = dataArray.get(i);
+
+				logger.info(TAG + " submitRequestQuote :: insuranceCompanyDetails.getCompanyCode :" + insuranceCompanyDetails.getCompanyCode());
+				logger.info(TAG + " submitRequestQuote :: insuranceCompCodee :" + insuranceCompCode);
+
+				if (null != insuranceCompCode && null != insuranceCompanyDetails.getCompanyCode() && insuranceCompCode.equals(insuranceCompanyDetails.getCompanyCode()))
+				{
+					logger.info(TAG + " submitRequestQuote :: EqualsCheck :" + insuranceCompCode.equals(insuranceCompanyDetails.getCompanyCode()));
+					status = "Y";
+				}
+				else
+				{
+					status = "N";
+				}
+				ArrayResponseModel updateInsuranceProvider = requestQuoteDao.updateInsuranceProvider(appSeqNumber, insuranceCompanyDetails.getCompanyCode(), status);
+				if (updateInsuranceProvider.getErrorCode() != null)
+				{
+					return getInsuranceCompanyDetails;
+				}
+			}
+
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.submitRequestQuote(appSeqNumber);
+			logger.info(TAG + " submitRequestQuote :: arrayResponseModel.getErrorCode() :" + arrayResponseModel.getErrorCode());
+			if (null == arrayResponseModel.getErrorCode())
+			{
+				resp.setStatusKey(ApiConstants.SUCCESS);
+			}
+			else
+			{
+				resp.setStatusKey(ApiConstants.FAILURE);
+			}
+			resp.setMessageKey(arrayResponseModel.getErrorCode());
+			resp.setMessage(arrayResponseModel.getErrorMessage());
+		}
+		return resp;
+	}
 }

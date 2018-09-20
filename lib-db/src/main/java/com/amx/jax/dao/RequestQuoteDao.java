@@ -1004,8 +1004,12 @@ public class RequestQuoteDao
 	}
 
 	
-	public ArrayResponseModel updateInsuranceProvider(BigDecimal appSeqNumber ,BigDecimal insuranceComp , String prefIndic)
+	public ArrayResponseModel updateInsuranceProvider(BigDecimal appSeqNumber ,BigDecimal insuranceCompCode , String prefIndic)
 	{
+		logger.info(TAG + " updateInsuranceProvider :: appSeqNumber       :" + appSeqNumber);
+		logger.info(TAG + " updateInsuranceProvider :: insuranceCompCode  :" + insuranceCompCode);
+		logger.info(TAG + " updateInsuranceProvider :: prefIndic          :" + prefIndic);
+		
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_INSUPD_PREFERRED_PROVIDER(?,?,?,?,?,?,?,?,?,?)}";
@@ -1017,7 +1021,7 @@ public class RequestQuoteDao
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			callableStatement.setBigDecimal(3, appSeqNumber);
-			callableStatement.setBigDecimal(4, insuranceComp);
+			callableStatement.setBigDecimal(4, insuranceCompCode);
 			callableStatement.setString(5, prefIndic);
 			callableStatement.setString(6, metaData.getDeviceType());
 			callableStatement.setString(7, metaData.getDeviceId());
@@ -1026,6 +1030,7 @@ public class RequestQuoteDao
 			callableStatement.registerOutParameter(10, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
 			
+			logger.info(TAG + " updateInsuranceProvider :: errorCode        :" + callableStatement.getString(9));
 			arrayResponseModel.setErrorCode(callableStatement.getString(9));
 			arrayResponseModel.setErrorMessage(callableStatement.getString(10));
 		}
