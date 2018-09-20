@@ -20,6 +20,7 @@ import com.amx.jax.models.DownloadImageModel;
 import com.amx.jax.models.PersonalDetails;
 import com.amx.jax.models.VehicleDetails;
 import com.amx.jax.services.RequestQuoteService;
+import com.amx.utils.ArgUtil;
 
 @RestController
 public class RequestQuoteController
@@ -92,27 +93,54 @@ public class RequestQuoteController
 	}
 
 	@RequestMapping(value = "/api/request-quote/set-vehicle-details", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> setAppVehicleDetails(@RequestParam(name = "appSeqNumber", required = false) BigDecimal appSeqNumber, @RequestBody VehicleDetails vehicleDetails)
+	public AmxApiResponse<?, Object> setAppVehicleDetails(@RequestParam(name = "appSeqNumber", required = false) String appSeqNumber, @RequestBody VehicleDetails vehicleDetails)
 	{
-		return requestQuoteService.setAppVehicleDetails(appSeqNumber, vehicleDetails);
+		BigDecimal appSeqNumberDet = null;
+		if (null != appSeqNumber && !appSeqNumber.equals("") && !appSeqNumber.equalsIgnoreCase("null"))
+		{
+			appSeqNumberDet = ArgUtil.parseAsBigDecimal(appSeqNumber);
+		}
+		return requestQuoteService.setAppVehicleDetails(appSeqNumberDet, vehicleDetails);
 	}
 
 	@RequestMapping(value = "/api/request-quote/set-personal-details", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> setProfileDetails(@RequestParam(name = "appSeqNumber", required = false) BigDecimal appSeqNumber, @RequestBody PersonalDetails personalDetails)
+	public AmxApiResponse<?, Object> setProfileDetails(@RequestParam(name = "appSeqNumber", required = false) String appSeqNumber, @RequestBody PersonalDetails personalDetails)
 	{
-		return requestQuoteService.setProfileDetails(appSeqNumber, personalDetails);
+		BigDecimal appSeqNumberDet = null;
+		if (null != appSeqNumber && !appSeqNumber.equals("") && !appSeqNumber.equalsIgnoreCase("null"))
+		{
+			appSeqNumberDet = ArgUtil.parseAsBigDecimal(appSeqNumber, null);
+		}
+		return requestQuoteService.setProfileDetails(appSeqNumberDet, personalDetails);
 	}
 
 	@RequestMapping(value = "/api/request-quote/upload-vehicle-image", method = RequestMethod.POST)
-	public AmxApiResponse<?, Object> uploadVehicleImage(@RequestParam MultipartFile file, @RequestParam("appSeqNumber") BigDecimal appSeqNumber, @RequestParam("docTypeCode") String docTypeCode, @RequestParam(name = "docSeqNumber", required = false) BigDecimal docSeqNumber) throws IOException
+	public AmxApiResponse<?, Object> uploadVehicleImage(@RequestParam MultipartFile file, @RequestParam("appSeqNumber") String appSeqNumber, @RequestParam("docTypeCode") String docTypeCode, @RequestParam(name = "docSeqNumber", required = false) String docSeqNumber) throws IOException
 	{
-		return requestQuoteService.uploadVehicleImage(file, appSeqNumber, docTypeCode, docSeqNumber);
+		BigDecimal appSeqNumberDet = null;
+		if (null != appSeqNumber && !appSeqNumber.equals("") && !appSeqNumber.equalsIgnoreCase("null"))
+		{
+			appSeqNumberDet = ArgUtil.parseAsBigDecimal(appSeqNumber);
+		}
+
+		BigDecimal docSeqNumberDet = null;
+		if (null != docSeqNumber && !docSeqNumber.equals("") && !docSeqNumber.equalsIgnoreCase("null"))
+		{
+			docSeqNumberDet = ArgUtil.parseAsBigDecimal(docSeqNumber);
+		}
+		return requestQuoteService.uploadVehicleImage(file, appSeqNumberDet, docTypeCode, docSeqNumberDet);
 	}
 
 	@RequestMapping(value = "/api/request-quote/downlaod-vehicle-images", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
-	public ResponseEntity<byte[]> downloadVehicleImage(@RequestParam(name = "docSeqNumber", required = false) BigDecimal docSeqNumber) throws IOException
+	public ResponseEntity<byte[]> downloadVehicleImage(@RequestParam(name = "docSeqNumber", required = false) String docSeqNumber) throws IOException
 	{
-		DownloadImageModel downloadImageModel = requestQuoteService.downloadVehicleImage(docSeqNumber);
+		BigDecimal docSeqNumberDet = null;
+		if (null != docSeqNumber && !docSeqNumber.equals("") && !docSeqNumber.equalsIgnoreCase("null"))
+		{
+			docSeqNumberDet = ArgUtil.parseAsBigDecimal(docSeqNumber);
+		}
+
+		DownloadImageModel downloadImageModel = requestQuoteService.downloadVehicleImage(docSeqNumberDet);
 		byte[] imageByteArray = downloadImageModel.getImageByteArray();
 		String imageType = downloadImageModel.getImageType();
 		MediaType mediaType = null;

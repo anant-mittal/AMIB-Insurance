@@ -11,6 +11,18 @@ public class RequestQuoteModel
 	private PersonalDetails personalDetails;
 
 	private List<?> vehicleImageDetails;
+	
+	private Object insuranceCompDetails;
+
+	public Object getInsuranceCompDetails()
+	{
+		return insuranceCompDetails;
+	}
+
+	public void setInsuranceCompDetails(Object object)
+	{
+		this.insuranceCompDetails = object;
+	}
 
 	public List<?> getVehicleImageDetails()
 	{

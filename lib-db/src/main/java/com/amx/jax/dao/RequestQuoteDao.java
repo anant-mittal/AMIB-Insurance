@@ -11,20 +11,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
-
-import javax.json.JsonArray;
-import javax.json.JsonNumber;
-import javax.json.JsonObject;
-import javax.json.JsonString;
-import javax.json.JsonValue;
-import javax.json.JsonValue.ValueType;
-
-import org.apache.commons.collections.map.HashedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,8 +33,6 @@ import com.amx.jax.models.Make;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.Model;
 import com.amx.jax.models.Purpose;
-import com.amx.jax.models.RequestQuoteInfo;
-import com.amx.jax.models.RequestQuoteModel;
 import com.amx.jax.models.Shape;
 import com.amx.jax.models.VehicleCondition;
 import com.amx.jax.models.VehicleDetails;
@@ -889,7 +874,6 @@ public class RequestQuoteDao
 		try
 		{
 			logger.info(TAG + " setUploadImage :: metaData  :" + metaData.toString());
-
 			InputStream inputStream = file.getInputStream();
 			logger.info(TAG + " getContentType :: " + file.getContentType());
 			callableStatement = connection.prepareCall(callProcedure);
@@ -962,13 +946,13 @@ public class RequestQuoteDao
 				insuranceCompanyDetails.setCompanyCode(rs.getBigDecimal(3));
 				insuranceCompanyDetails.setCompanyName(rs.getString(5));
 				insuranceCompanyDetails.setCompanyShortCode(rs.getString(15));
-				boolean insuranceSelected = appSelectedProvider(rs.getBigDecimal(3) , appSeqNumber);
+				String insuranceSelected = appSelectedProvider(rs.getBigDecimal(3) , appSeqNumber);
 				insuranceCompanyDetails.setInsuranceSelected(insuranceSelected);
 				insuranceCompanyArray.add(insuranceCompanyDetails);
 			}
 			arrayResponseModel.setDataArray(insuranceCompanyArray);
-			arrayResponseModel.setErrorCode(callableStatement.getString(6));
-			arrayResponseModel.setErrorMessage(callableStatement.getString(7));
+			arrayResponseModel.setErrorCode(callableStatement.getString(5));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(6));
 		}
 		catch (Exception e)
 		{
@@ -981,7 +965,7 @@ public class RequestQuoteDao
 		return arrayResponseModel;
 	}
 	
-	public boolean appSelectedProvider(BigDecimal companyCode , BigDecimal appSeqNumber)
+	public String appSelectedProvider(BigDecimal companyCode , BigDecimal appSeqNumber)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -1001,11 +985,11 @@ public class RequestQuoteDao
 			logger.info(TAG + " appSelectedProvider :: result :" + result);
 			if (result.toString().equalsIgnoreCase("Y"))
 			{
-				return true;
+				return "Y";
 			}
 			else
 			{
-				return false;
+				return "N";
 			}
 		}
 		catch (SQLException e)
@@ -1016,9 +1000,82 @@ public class RequestQuoteDao
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return false;
+		return "N";
 	}
 
+	
+	public ArrayResponseModel updateInsuranceProvider(BigDecimal appSeqNumber ,BigDecimal insuranceComp , String prefIndic)
+	{
+		getConnection();
+		CallableStatement callableStatement = null;
+		String callProcedure = "{call IRB_INSUPD_PREFERRED_PROVIDER(?,?,?,?,?,?,?,?,?,?)}";
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
+		
+		try
+		{
+			callableStatement = connection.prepareCall(callProcedure);
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(3, appSeqNumber);
+			callableStatement.setBigDecimal(4, insuranceComp);
+			callableStatement.setString(5, prefIndic);
+			callableStatement.setString(6, metaData.getDeviceType());
+			callableStatement.setString(7, metaData.getDeviceId());
+			callableStatement.setString(8, metaData.getCivilId());
+			callableStatement.registerOutParameter(9, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(10, java.sql.Types.VARCHAR);
+			callableStatement.executeUpdate();
+			
+			arrayResponseModel.setErrorCode(callableStatement.getString(9));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(10));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		return arrayResponseModel;
+	}
+	
+	public ArrayResponseModel submitRequestQuote(BigDecimal appSeqNumber)
+	{
+		getConnection();
+		CallableStatement callableStatement = null;
+		String callProcedure = "{call IRB_SUBMIT_ONLINE_APPL(?,?,?,?,?,?,?,?)}";
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
+		
+		try
+		{
+			callableStatement = connection.prepareCall(callProcedure);
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(3, appSeqNumber);
+			callableStatement.setString(4, metaData.getDeviceType());
+			callableStatement.setString(5, metaData.getDeviceId());
+			callableStatement.setString(6, metaData.getCivilId());
+			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
+			callableStatement.executeUpdate();
+			
+			arrayResponseModel.setErrorCode(callableStatement.getString(7));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(8));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		return arrayResponseModel;
+	}
+	
+	
+	
 	private Connection getConnection()
 	{
 		try

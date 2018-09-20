@@ -10,7 +10,7 @@ public class InsuranceCompanyDetails
 
 	private String companyShortCode;
 
-	private boolean insuranceSelected;
+	private String insuranceSelected;
 
 	public BigDecimal getCompanyCode()
 	{
@@ -42,12 +42,12 @@ public class InsuranceCompanyDetails
 		this.companyShortCode = companyShortCode;
 	}
 
-	public boolean getInsuranceSelected()
+	public String getInsuranceSelected()
 	{
 		return insuranceSelected;
 	}
 
-	public void setInsuranceSelected(boolean insuranceSelected)
+	public void setInsuranceSelected(String insuranceSelected)
 	{
 		this.insuranceSelected = insuranceSelected;
 	}

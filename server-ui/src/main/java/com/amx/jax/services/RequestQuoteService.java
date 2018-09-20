@@ -382,6 +382,16 @@ public class RequestQuoteService
 				requestQuoteModel.setVehicleImageDetails(respImageDetails.getResults());
 			}
 
+			AmxApiResponse<?, Object> insuranceCompDetails = getInsuranceCompanyDetails(appSeqNumber);
+			if (insuranceCompDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			{
+				return insuranceCompDetails;
+			}
+			else
+			{
+				requestQuoteModel.setInsuranceCompDetails(insuranceCompDetails.getData());
+			}
+			
 			resp.setData(requestQuoteModel);
 
 		}
@@ -735,14 +745,14 @@ public class RequestQuoteService
 
 	public AmxApiResponse<?, Object> getInsuranceCompanyDetails(BigDecimal appSeqNumber)
 	{
-		AmxApiResponse<?, Object> resp = new AmxApiResponse<Object, Object>();
+		AmxApiResponse<Object , Object> resp = new AmxApiResponse<Object, Object>();
 		try
 		{
 			ArrayResponseModel arrayResponseModel = requestQuoteDao.getInsuranceCompanyDetails(appSeqNumber);
 
 			if (null == arrayResponseModel.getErrorCode())
 			{
-				resp.setResults(arrayResponseModel.getDataArray());
+				resp.setData(arrayResponseModel.getDataArray());
 				resp.setStatusKey(ApiConstants.SUCCESS);
 			}
 			else
