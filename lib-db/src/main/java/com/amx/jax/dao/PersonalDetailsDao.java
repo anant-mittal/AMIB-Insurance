@@ -400,44 +400,6 @@ public class PersonalDetailsDao
 		return genderArray;
 	}
 	
-	public CustomerProfileDetailModel updateCustomerSequenceNumber(BigDecimal custSeqNumber , BigDecimal appSeqNumber)
-	{
-		getConnection();
-		CallableStatement callableStatement = null;
-		CustomerProfileDetailModel customerProfileDetailModel = new CustomerProfileDetailModel();
-		String callProcedure = "{call IRB_UPD_APPLHD_CUSTSEQNO(?,?,?,?,?,?,?,?,?)}";
-
-		try
-		{
-			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
-			callableStatement.setBigDecimal(3, appSeqNumber);
-			callableStatement.setBigDecimal(4, custSeqNumber);
-			callableStatement.setString(5, metaData.getDeviceType());
-			callableStatement.setString(6, metaData.getDeviceId());
-			callableStatement.setString(7, metaData.getCivilId());
-			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
-			callableStatement.registerOutParameter(9, java.sql.Types.VARCHAR);
-			callableStatement.executeUpdate();
-			
-			customerProfileDetailModel.setErrorCode(callableStatement.getString(8));
-			logger.info(TAG + " updateCustomerSequenceNumber :: callableStatement.getString(8) :" + callableStatement.getString(8));
-			customerProfileDetailModel.setErrorMessage(callableStatement.getString(9));
-
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		finally
-		{
-			CloseConnection(callableStatement, connection);
-		}
-		return customerProfileDetailModel;
-	}
-	
-
 	private Connection getConnection()
 	{
 		try

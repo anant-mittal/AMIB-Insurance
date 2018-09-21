@@ -15,6 +15,7 @@ import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.PersonalDetailsDao;
 import com.amx.jax.dao.RequestQuoteDao;
 import com.amx.jax.models.ArrayResponseModel;
+import com.amx.jax.models.CustomerDetailResponse;
 import com.amx.jax.models.CustomerProfileDetailModel;
 import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.DownloadImageModel;
@@ -45,6 +46,9 @@ public class RequestQuoteService
 
 	@Autowired
 	public PersonalDetailsDao personalDetailsDao;
+
+	@Autowired
+	private CustomerRegistrationService customerRegistrationService;
 
 	@Autowired
 	MetaData metaData;
@@ -363,15 +367,12 @@ public class RequestQuoteService
 				requestQuoteModel.setPersonalDetails((PersonalDetails) respPersonalDetails.getData());
 			}
 
-			/*AmxApiResponse<?, Object> respImageMeta = getImageMetaData();
-			if (respImageMeta.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-			{
-				return respImageMeta;
-			}
-			else
-			{
-				resp.setMeta(respImageMeta.getMeta());
-			}*/
+			/*
+			 * AmxApiResponse<?, Object> respImageMeta = getImageMetaData(); if
+			 * (respImageMeta.getStatusKey().equalsIgnoreCase(ApiConstants.
+			 * FAILURE)) { return respImageMeta; } else {
+			 * resp.setMeta(respImageMeta.getMeta()); }
+			 */
 
 			AmxApiResponse<?, Object> respImageDetails = getImageDetails(appSeqNumber);
 			if (respImageDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
@@ -773,7 +774,7 @@ public class RequestQuoteService
 
 	public AmxApiResponse<Validate, Object> updateCustomerSequenceNumber(BigDecimal custSeqNumber, BigDecimal appSeqNumber)
 	{
-		CustomerProfileDetailModel customerProfileDetailModel = personalDetailsDao.updateCustomerSequenceNumber(custSeqNumber, appSeqNumber);
+		CustomerProfileDetailModel customerProfileDetailModel = requestQuoteDao.updateCustomerSequenceNumber(custSeqNumber, appSeqNumber);
 		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
 		if (null == customerProfileDetailModel.getErrorCode())
 		{
@@ -841,4 +842,5 @@ public class RequestQuoteService
 		}
 		return resp;
 	}
+	
 }
