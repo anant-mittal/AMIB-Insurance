@@ -95,9 +95,11 @@ public class CustomerRegistrationService
 			regSession.setCompCd(getCompanySetUp.get(0).getCompCd());
 			regSession.setContactUsEmail(getCompanySetUp.get(0).getEmail());
 			regSession.setContactUsHelpLineNumber(getCompanySetUp.get(0).getHelpLineNumber());
+			
 			regSession.setUserType("D");
 			regSession.setDeviceId("12345678");
 			regSession.setDeviceType("ONLINE");
+			
 			regSession.setEmailFromConfigured(webConfig.getConfigEmail());
 
 			metaData.setCountryId(regSession.getCountryId());
@@ -110,6 +112,10 @@ public class CustomerRegistrationService
 			metaData.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
 			metaData.setEmailFromConfigured(webConfig.getConfigEmail());
 
+			logger.info(TAG + " getCompanySetUp :: getDeviceId                 :" + httpService.getDeviceId());
+			logger.info(TAG + " getCompanySetUp :: getIPAddress                :" + httpService.getIPAddress());
+			logger.info(TAG + " getCompanySetUp :: getCurrentDevice            :" + httpService.getCurrentDevice());
+			
 			logger.info(TAG + " getCompanySetUp :: getCountryId                :" + regSession.getCountryId());
 			logger.info(TAG + " getCompanySetUp :: getCompCd                   :" + regSession.getCompCd());
 			logger.info(TAG + " getCompanySetUp :: getUserType                 :" + regSession.getUserType());

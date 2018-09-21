@@ -10,6 +10,18 @@ public class ImageDetails
 
 	private String imageSubmittedDate;
 
+	private String isImageMandatory;
+
+	public String getIsImageMandatory()
+	{
+		return isImageMandatory;
+	}
+
+	public void setIsImageMandatory(String isImageMandatory)
+	{
+		this.isImageMandatory = isImageMandatory;
+	}
+
 	public String getImageSubmittedDate()
 	{
 		return imageSubmittedDate;

@@ -754,8 +754,16 @@ public class RequestQuoteDao
 				ImageDetails imageDetails = new ImageDetails();
 				imageDetails.setDocTypeCode(rs.getString(1));
 				ImageStatus imageStatus = imageUploadedStatus(appSeqNumber, rs.getString(1));
+				imageDetails.setIsImageMandatory(rs.getString(3));
 				imageDetails.setImageSubmittedDate(imageStatus.getImageDate());
-				imageDetails.setDocSeqNumber(imageStatus.getDocSeqNumber());
+				if (null != imageStatus.getDocSeqNumber() && !imageStatus.getDocSeqNumber().toString().equals("0") && !imageStatus.getDocSeqNumber().toString().equals(""))
+				{
+					imageDetails.setDocSeqNumber(imageStatus.getDocSeqNumber());
+				}
+				else
+				{
+					imageDetails.setDocSeqNumber(null);
+				}
 				imageMetaInfoArray.add(imageDetails);
 			}
 			arrayResponseModel.setDataArray(imageMetaInfoArray);
@@ -812,44 +820,6 @@ public class RequestQuoteDao
 			CloseConnection(callableStatement, connection);
 		}
 		return null;
-	}
-
-	public BigDecimal checkIfImageAlreadyUploaded(BigDecimal appSeqNumber, String docType)
-	{
-		getConnection();
-		CallableStatement callableStatement = null;
-		String callFunction = "{ ? = call IRB_IF_IMAGE_UPLOADED(?,?,?,?)}";
-		BigDecimal result = null;
-
-		try
-		{
-			callableStatement = connection.prepareCall(callFunction);
-			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
-			callableStatement.setBigDecimal(2, metaData.getCountryId());
-			callableStatement.setBigDecimal(3, metaData.getCompCd());
-			callableStatement.setBigDecimal(4, appSeqNumber);
-			callableStatement.setString(5, docType);
-			callableStatement.executeUpdate();
-			result = callableStatement.getBigDecimal(1);
-			logger.info(TAG + " checkIfImageAlreadyUploaded :: result :" + result);
-			if (result.intValue() > 0)
-			{
-				return result;
-			}
-			else
-			{
-				return null;
-			}
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-		finally
-		{
-			CloseConnection(callableStatement, connection);
-		}
-		return result;
 	}
 
 	public DownloadImageModel downloadVehicleImage(BigDecimal docSeqNumber)

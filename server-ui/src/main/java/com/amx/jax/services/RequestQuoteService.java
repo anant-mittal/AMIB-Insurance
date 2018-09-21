@@ -363,7 +363,7 @@ public class RequestQuoteService
 				requestQuoteModel.setPersonalDetails((PersonalDetails) respPersonalDetails.getData());
 			}
 
-			AmxApiResponse<?, Object> respImageMeta = getImageMetaData();
+			/*AmxApiResponse<?, Object> respImageMeta = getImageMetaData();
 			if (respImageMeta.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 			{
 				return respImageMeta;
@@ -371,7 +371,7 @@ public class RequestQuoteService
 			else
 			{
 				resp.setMeta(respImageMeta.getMeta());
-			}
+			}*/
 
 			AmxApiResponse<?, Object> respImageDetails = getImageDetails(appSeqNumber);
 			if (respImageDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
