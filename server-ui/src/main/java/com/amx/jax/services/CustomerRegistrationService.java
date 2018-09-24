@@ -32,14 +32,11 @@ import com.amx.jax.models.MetaData;
 import com.amx.jax.models.RegSession;
 import com.amx.jax.models.Validate;
 import com.amx.jax.service.HttpService;
-import com.amx.utils.Random;
-import com.insurance.model.Email;
 import com.insurance.model.RequestOtpModel;
 import com.insurance.model.ResponseOtpModel;
 import com.insurance.services.EmailService;
 import com.insurance.services.OtpService;
 import com.insurance.services.SMService;
-
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 

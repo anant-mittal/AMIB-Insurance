@@ -154,24 +154,23 @@ public class RequestQuoteController
 		}
 		return ResponseEntity.ok().contentLength(imageByteArray.length).contentType(mediaType).body(imageByteArray);
 	}
-	
+
 	@RequestMapping(value = "/api/request-quote/submit-request-quote", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> submitRequestQuote(@RequestParam String appSeqNumber, @RequestParam String insuranceCompCode)
 	{
 		BigDecimal appSeqNumberDet = null;
 		if (null != appSeqNumber && !appSeqNumber.equals("") && !appSeqNumber.equalsIgnoreCase("null"))
 		{
-			appSeqNumberDet = ArgUtil.parseAsBigDecimal(appSeqNumber, null);
+			appSeqNumberDet = ArgUtil.parseAsBigDecimal(appSeqNumber);
 		}
-		
+
 		BigDecimal insuranceCompDet = null;
 		if (null != insuranceCompCode && !appSeqNumber.equals("") && !insuranceCompCode.equalsIgnoreCase("null"))
 		{
 			insuranceCompDet = ArgUtil.parseAsBigDecimal(insuranceCompCode, null);
 		}
-		
+
 		return requestQuoteService.submitRequestQuote(appSeqNumberDet, insuranceCompDet);
 	}
-	
 
 }
