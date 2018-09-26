@@ -56,5 +56,7 @@ public class MessageKey
 	
 	public static String KEY_EMPTY_APPSEQUENCE_NUMBER = "EMPTY_APPSEQUENCE_NUMBER";
 	
+	public static String KEY_EMPTY_VEHICLE_DETAILS = "KEY_EMPTY_VEHICLE_DETAILS";
+	
 }
 

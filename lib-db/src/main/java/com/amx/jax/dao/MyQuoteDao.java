@@ -5,25 +5,26 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
 import com.amx.jax.models.ActivePolicyModel;
 import com.amx.jax.models.DateFormats;
-import com.amx.jax.models.IncompleteApplModel;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.VehicleSession;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import oracle.jdbc.OracleTypes;
 
 @Repository
-public class ActivePolicyDao
+public class MyQuoteDao
 {
-	String TAG = "com.amx.jax.dao.ActivePolicyDao :: ";
+	String TAG = "com.amx.jax.dao.MyQuoteDao :: ";
 
-	private static final Logger logger = LoggerFactory.getLogger(ActivePolicyDao.class);
+	private static final Logger logger = LoggerFactory.getLogger(MyQuoteDao.class);
 
 	@Autowired
 	JdbcTemplate jdbcTemplate;
@@ -36,11 +37,11 @@ public class ActivePolicyDao
 
 	Connection connection;
 
-	public ArrayList<ActivePolicyModel> getUserActivePolicy()
+	public ArrayList<ActivePolicyModel> getUserQuote()
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
-		String callProcedure = "{call IRB_GET_MYQUOTES(?,?,?,?,?,?,?)}";//
+		String callProcedure = "{call IRB_GET_ACTIVE_POLICIES(?,?,?,?,?,?,?)}";//
 		ArrayList<ActivePolicyModel> activePolicyArray = new ArrayList<ActivePolicyModel>();
 
 		try

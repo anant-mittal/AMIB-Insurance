@@ -63,9 +63,6 @@ public class CustomerRegistrationService
 	private WebConfig webConfig;
 
 	@Autowired
-	private SMService smservice;
-
-	@Autowired
 	private OtpService otpService;
 
 	@Autowired
@@ -92,11 +89,9 @@ public class CustomerRegistrationService
 			regSession.setCompCd(getCompanySetUp.get(0).getCompCd());
 			regSession.setContactUsEmail(getCompanySetUp.get(0).getEmail());
 			regSession.setContactUsHelpLineNumber(getCompanySetUp.get(0).getHelpLineNumber());
-			
 			regSession.setUserType("D");
 			regSession.setDeviceId("12345678");
 			regSession.setDeviceType("ONLINE");
-			
 			regSession.setEmailFromConfigured(webConfig.getConfigEmail());
 
 			metaData.setCountryId(regSession.getCountryId());
@@ -108,18 +103,6 @@ public class CustomerRegistrationService
 			metaData.setContactUsEmail(regSession.getContactUsEmail());
 			metaData.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
 			metaData.setEmailFromConfigured(webConfig.getConfigEmail());
-
-			logger.info(TAG + " getCompanySetUp :: getDeviceId                 :" + httpService.getDeviceId());
-			logger.info(TAG + " getCompanySetUp :: getIPAddress                :" + httpService.getIPAddress());
-			logger.info(TAG + " getCompanySetUp :: getCurrentDevice            :" + httpService.getCurrentDevice());
-			
-			logger.info(TAG + " getCompanySetUp :: getCountryId                :" + regSession.getCountryId());
-			logger.info(TAG + " getCompanySetUp :: getCompCd                   :" + regSession.getCompCd());
-			logger.info(TAG + " getCompanySetUp :: getUserType                 :" + regSession.getUserType());
-			logger.info(TAG + " getCompanySetUp :: getDeviceId                 :" + regSession.getDeviceId());
-			logger.info(TAG + " getCompanySetUp :: getDeviceType               :" + regSession.getDeviceType());
-			logger.info(TAG + " getCompanySetUp :: setContactUsEmail           :" + regSession.getContactUsEmail());
-			logger.info(TAG + " getCompanySetUp :: setContactUsHelpLineNumber  :" + regSession.getContactUsHelpLineNumber());
 
 			resp.setResults(getCompanySetUp);
 			resp.setStatusKey(ApiConstants.SUCCESS);

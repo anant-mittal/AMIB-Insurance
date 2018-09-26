@@ -569,19 +569,10 @@ public class RequestQuoteDao
 		return arrayResponseModel;
 	}
 
-	public VehicleDetailsHeaderModel setVehicleDetailsHeader(BigDecimal appSeqNumber, VehicleDetails vehicleDetails)
+	public VehicleDetailsHeaderModel setVehicleDetailsHeader(BigDecimal appSeqNumber, VehicleDetails vehicleDetails, BigDecimal oldDocNumber)
 	{
-
 		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
-		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
-		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
-		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
-		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
-		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
-		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
-		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
-		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
-		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
+		logger.info(TAG + " setAppVehicleDetails :: oldDocNumber  :" + oldDocNumber);
 
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -594,7 +585,7 @@ public class RequestQuoteDao
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			callableStatement.setBigDecimal(3, appSeqNumber);
-			if (null == appSeqNumber)// Suggested By Ashok
+			if (null == oldDocNumber)// Suggested By Ashok
 			{
 				callableStatement.setString(4, HardCodedValues.NEW_POLICY);
 			}
@@ -605,10 +596,7 @@ public class RequestQuoteDao
 			callableStatement.setString(5, HardCodedValues.DOCATT);
 			callableStatement.setBigDecimal(6, metaData.getCustomerSequenceNumber());
 			callableStatement.setBigDecimal(7, vehicleDetails.getPolicyDuration());
-			callableStatement.setBigDecimal(8, null);// Suggested By Ashok for
-														// current status will
-														// look afterwards on
-														// renue quote
+			callableStatement.setBigDecimal(8, oldDocNumber);
 			callableStatement.setBigDecimal(9, metaData.getUserSequenceNumber());
 			callableStatement.setString(10, HardCodedValues.ONLINE_LOC_CODE);
 			callableStatement.setString(11, metaData.getDeviceType());
@@ -765,6 +753,9 @@ public class RequestQuoteDao
 				{
 					imageDetails.setDocSeqNumber(null);
 				}
+
+				logger.info(TAG + " getImageDetails :: imageDetails)  :" + imageDetails.toString());
+
 				imageMetaInfoArray.add(imageDetails);
 			}
 			arrayResponseModel.setDataArray(imageMetaInfoArray);
@@ -985,6 +976,11 @@ public class RequestQuoteDao
 		String callFunction = "{ ? = call IRB_IF_PREFERRED_PROVIDER(?,?,?,?)}";
 		String result = null;
 
+		if (null == appSeqNumber)
+		{
+			return "N";
+		}
+
 		try
 		{
 			callableStatement = connection.prepareCall(callFunction);
@@ -1090,9 +1086,8 @@ public class RequestQuoteDao
 		}
 		return arrayResponseModel;
 	}
-	
-	
-	public CustomerProfileDetailModel updateCustomerSequenceNumber(BigDecimal custSeqNumber , BigDecimal appSeqNumber)
+
+	public CustomerProfileDetailModel updateCustomerSequenceNumber(BigDecimal custSeqNumber, BigDecimal appSeqNumber)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -1112,7 +1107,7 @@ public class RequestQuoteDao
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(9, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
-			
+
 			customerProfileDetailModel.setErrorCode(callableStatement.getString(8));
 			logger.info(TAG + " updateCustomerSequenceNumber :: callableStatement.getString(8) :" + callableStatement.getString(8));
 			customerProfileDetailModel.setErrorMessage(callableStatement.getString(9));
@@ -1127,6 +1122,74 @@ public class RequestQuoteDao
 			CloseConnection(callableStatement, connection);
 		}
 		return customerProfileDetailModel;
+	}
+
+	public ArrayResponseModel getRenewPolicyVehicleDetails(BigDecimal appDocNumberDet)
+	{
+		getConnection();
+		CallableStatement callableStatement = null;
+		String callProcedure = "{call IRB_POPULATE_RENEWAL_DTLS(?,?,?,?,?,?,?)}";
+		ArrayList<VehicleDetails> vehicleDetailsArray = new ArrayList<VehicleDetails>();
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
+		BigDecimal companyCode = null;
+
+		try
+		{
+			logger.info(TAG + " getRenewPolicyVehicleDetails :: appDocNumberDet    :" + appDocNumberDet);
+			logger.info(TAG + " getRenewPolicyVehicleDetails :: metaData        :" + metaData.toString());
+
+			callableStatement = connection.prepareCall(callProcedure);
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(3, appDocNumberDet);
+			callableStatement.setBigDecimal(4, metaData.getLanguageId());
+			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
+			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
+			callableStatement.executeUpdate();
+
+			ResultSet rs = (ResultSet) callableStatement.getObject(5);
+			while (rs.next())
+			{
+				companyCode = rs.getBigDecimal(5);
+
+				VehicleDetails vehicleDetails = new VehicleDetails();
+				vehicleDetails.setMakeCode(rs.getString(7));
+				vehicleDetails.setSubMakeCode(rs.getString(9));
+				vehicleDetails.setModelYear(rs.getBigDecimal(11));
+				vehicleDetails.setShapeCode(rs.getString(12));
+				vehicleDetails.setColourCode(rs.getString(14));
+				vehicleDetails.setSeatingCapacity(rs.getBigDecimal(16));
+				vehicleDetails.setChasis(rs.getString(17));
+				vehicleDetails.setKtNumber(rs.getString(18));
+				vehicleDetails.setVehicleConditionCode(rs.getString(19));
+				vehicleDetails.setPurposeCode(rs.getString(21));
+				vehicleDetails.setVehicleValue(rs.getBigDecimal(24));
+				vehicleDetails.setFuelCode(rs.getString(25));
+				vehicleDetails.setVehicleTypeDesc(rs.getString(27));
+				vehicleDetails.setPolicyDuration(rs.getBigDecimal(28));
+				vehicleDetailsArray.add(vehicleDetails);
+				logger.info(TAG + " getRenewPolicyVehicleDetails :: vehicleDetails :" + vehicleDetails.toString());
+				logger.info(TAG + " getRenewPolicyVehicleDetails :: companyCode    :" + companyCode);
+			}
+
+			arrayResponseModel.setDataArray(vehicleDetailsArray);
+			arrayResponseModel.setErrorCode(callableStatement.getString(6));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(7));
+			if (null != companyCode)
+			{
+				arrayResponseModel.setData(companyCode.toString());
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		return arrayResponseModel;
 	}
 
 	private Connection getConnection()

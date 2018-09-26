@@ -36,5 +36,7 @@ public class Message
 	public static String CUST_OTP_NOT_ENABLED = "Customer has crossed his per day OTP limit";
 
 	public static String EMPTY_APP_SEQUENCE_NUMBER = "App Sequence Number Is Empty While Submitting Vehicle Details even after already Genertaed App Sequnece Number";
+
+	public static String EMPTY_VEHICLE_DETAILS = "Vehicle Details Empty While Renewing Policy";
 	
 }

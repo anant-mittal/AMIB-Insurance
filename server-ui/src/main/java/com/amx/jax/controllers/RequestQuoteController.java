@@ -86,9 +86,14 @@ public class RequestQuoteController
 	}
 
 	@RequestMapping(value = "/api/request-quote/get-requestquote-details", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> getRequestQuoteDetails()
+	public AmxApiResponse<?, Object> getRequestQuoteDetails(@RequestParam(name = "renewAppDocNumber", required = false) String renewAppDocNumber)
 	{
-		return requestQuoteService.getRequestQuoteDetails();
+		BigDecimal renewAppDocNumberDet = null;
+		if (null != renewAppDocNumber && !renewAppDocNumber.equals("") && !renewAppDocNumber.equalsIgnoreCase("null"))
+		{
+			renewAppDocNumberDet = ArgUtil.parseAsBigDecimal(renewAppDocNumber);
+		}
+		return requestQuoteService.getRequestQuoteDetails(renewAppDocNumberDet);
 	}
 
 	@RequestMapping(value = "/api/request-quote/set-vehicle-details", method = RequestMethod.POST, produces = "application/json")
@@ -99,7 +104,7 @@ public class RequestQuoteController
 		{
 			appSeqNumberDet = ArgUtil.parseAsBigDecimal(appSeqNumber);
 		}
-		return requestQuoteService.setAppVehicleDetails(appSeqNumberDet, vehicleDetails);
+		return requestQuoteService.setAppVehicleDetails(appSeqNumberDet, vehicleDetails ,null);
 	}
 
 	@RequestMapping(value = "/api/request-quote/set-personal-details", method = RequestMethod.POST, produces = "application/json")
@@ -172,5 +177,4 @@ public class RequestQuoteController
 
 		return requestQuoteService.submitRequestQuote(appSeqNumberDet, insuranceCompDet);
 	}
-
 }

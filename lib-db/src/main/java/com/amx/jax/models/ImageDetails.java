@@ -52,4 +52,10 @@ public class ImageDetails
 		this.docSeqNumber = docSeqNumber;
 	}
 
+	@Override
+	public String toString()
+	{
+		return "ImageDetails [docTypeCode=" + docTypeCode + ", docSeqNumber=" + docSeqNumber + ", imageSubmittedDate=" + imageSubmittedDate + ", isImageMandatory=" + isImageMandatory + "]";
+	}
+
 }

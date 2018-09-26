@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.amx.jax.WebConfig;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.Message;
@@ -24,6 +26,7 @@ import com.amx.jax.models.IncompleteApplModel;
 import com.amx.jax.models.InsuranceCompanyDetails;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.PersonalDetails;
+import com.amx.jax.models.RegSession;
 import com.amx.jax.models.RequestQuoteInfo;
 import com.amx.jax.models.RequestQuoteModel;
 import com.amx.jax.models.Validate;
@@ -31,6 +34,7 @@ import com.amx.jax.models.VehicleDetails;
 import com.amx.jax.models.VehicleDetailsGetModel;
 import com.amx.jax.models.VehicleDetailsHeaderModel;
 import com.amx.jax.models.VehicleDetailsUpdateModel;
+import com.insurance.services.EmailService;
 import com.insurance.services.OtpService;
 
 @Service
@@ -51,7 +55,16 @@ public class RequestQuoteService
 	private CustomerRegistrationService customerRegistrationService;
 
 	@Autowired
+	EmailService emailNotification;
+
+	@Autowired
+	RegSession regSession;
+
+	@Autowired
 	MetaData metaData;
+
+	@Autowired
+	private WebConfig webConfig;
 
 	public AmxApiResponse<RequestQuoteInfo, Object> getIncompleteApplication()
 	{
@@ -324,15 +337,32 @@ public class RequestQuoteService
 		return resp;
 	}
 
-	public AmxApiResponse<?, Object> getRequestQuoteDetails()
+	public AmxApiResponse<?, Object> getRequestQuoteDetails(BigDecimal oldDocNumber)
 	{
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
 		RequestQuoteModel requestQuoteModel = new RequestQuoteModel();
+
+		if (null != oldDocNumber)
+		{
+			try
+			{
+				AmxApiResponse<?, Object> renewPolicy = getRenewPolicyDetails(oldDocNumber);
+				if (renewPolicy.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+				{
+					return renewPolicy;
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
 
 		try
 		{
 			IncompleteApplModel incompleteApplModel = requestQuoteDao.getIncompleteApplication();
 			BigDecimal appSeqNumber = incompleteApplModel.getAppSeqNumber();
+			logger.info(TAG + " getRequestQuoteDetails :: appSeqNumber :" + appSeqNumber);
 			AmxApiResponse<?, Object> respInfoDetails = getIncompleteApplication();
 			if (respInfoDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 			{
@@ -366,13 +396,6 @@ public class RequestQuoteService
 			{
 				requestQuoteModel.setPersonalDetails((PersonalDetails) respPersonalDetails.getData());
 			}
-
-			/*
-			 * AmxApiResponse<?, Object> respImageMeta = getImageMetaData(); if
-			 * (respImageMeta.getStatusKey().equalsIgnoreCase(ApiConstants.
-			 * FAILURE)) { return respImageMeta; } else {
-			 * resp.setMeta(respImageMeta.getMeta()); }
-			 */
 
 			AmxApiResponse<?, Object> respImageDetails = getImageDetails(appSeqNumber);
 			if (respImageDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
@@ -456,32 +479,33 @@ public class RequestQuoteService
 		return resp;
 	}
 
-	public AmxApiResponse<?, Object> setAppVehicleDetails(BigDecimal appSeqNumber, VehicleDetails vehicleDetails)
+	public AmxApiResponse<?, Object> setAppVehicleDetails(BigDecimal appSeqNumber, VehicleDetails vehicleDetails, BigDecimal oldDocNumber)
 	{
-		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
 		RequestQuoteModel requestQuoteModel = new RequestQuoteModel();
 		RequestQuoteInfo requestQuoteInfo = new RequestQuoteInfo();
 
-		IncompleteApplModel incompleteApplModel = requestQuoteDao.getIncompleteApplication();
-		BigDecimal appSeqNumberFromDb = incompleteApplModel.getAppSeqNumber();
-		logger.info(TAG + " setAppVehicleDetails :: appSeqNumberFromDb :" + appSeqNumberFromDb);
-		AmxApiResponse<?, Object> respInfoDetails = getIncompleteApplication();
-		if (respInfoDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-		{
-			return respInfoDetails;
-		}
-		else if (null != appSeqNumberFromDb && null != appSeqNumber && !(appSeqNumberFromDb.equals(appSeqNumber)))
-		{
-			resp.setStatusKey(ApiConstants.FAILURE);
-			resp.setMessageKey(MessageKey.KEY_EMPTY_APPSEQUENCE_NUMBER);
-			resp.setMessage(Message.EMPTY_APP_SEQUENCE_NUMBER);
-			return resp;
-		}
-
 		try
 		{
-			VehicleDetailsHeaderModel vehicleDetailsHeaderModel = requestQuoteDao.setVehicleDetailsHeader(appSeqNumber, vehicleDetails);
+
+			logger.info(TAG + " setAppVehicleDetails :: oldDocNumber1 :" + oldDocNumber);
+			if (null == oldDocNumber)
+			{
+				ArrayResponseModel arrayResponseModel = requestQuoteDao.getAppVehicleDetails(appSeqNumber);
+				if (null == arrayResponseModel.getErrorCode())
+				{
+					ArrayList<VehicleDetailsGetModel> vehicleDetailsArray = arrayResponseModel.getDataArray();
+					logger.info(TAG + " getAppVehicleDetails :: vehicleDetailsArray :" + vehicleDetailsArray.toString());
+					if (vehicleDetailsArray.size() >= 1)
+					{
+						VehicleDetailsGetModel vehicleDetailsGetModel = vehicleDetailsArray.get(0);
+						oldDocNumber = vehicleDetailsGetModel.getOldDocNumber();
+						logger.info(TAG + " setAppVehicleDetails :: oldDocNumber2 :" + oldDocNumber);
+					}
+				}
+			}
+
+			VehicleDetailsHeaderModel vehicleDetailsHeaderModel = requestQuoteDao.setVehicleDetailsHeader(appSeqNumber, vehicleDetails, oldDocNumber);
 			if (null == vehicleDetailsHeaderModel.getErrorCode())
 			{
 				if (null == appSeqNumber)
@@ -517,7 +541,6 @@ public class RequestQuoteService
 			requestQuoteModel.setPersonalDetails(null);
 			requestQuoteModel.setVehicleDetails(vehicleDetails);
 			requestQuoteModel.setVehicleImageDetails(null);
-
 			resp.setData(requestQuoteModel);
 			resp.setMessageKey(vehicleDetailsUpdateModel.getErrorCode());
 			resp.setMessage(vehicleDetailsUpdateModel.getErrorMessage());
@@ -792,7 +815,48 @@ public class RequestQuoteService
 	{
 		logger.info(TAG + " submitRequestQuote :: appSeqNumber      :" + appSeqNumber);
 		logger.info(TAG + " submitRequestQuote :: insuranceCompCode :" + insuranceCompCode);
+		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
 
+		AmxApiResponse<?, Object> updateInsuranceProvider = updateInsuranceProvider(appSeqNumber, insuranceCompCode);
+		if (updateInsuranceProvider.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+		{
+			return updateInsuranceProvider;
+		}
+
+		ArrayResponseModel arrayResponseModel = requestQuoteDao.submitRequestQuote(appSeqNumber);
+		logger.info(TAG + " submitRequestQuote :: arrayResponseModel.getErrorCode() :" + arrayResponseModel.getErrorCode());
+		if (null == arrayResponseModel.getErrorCode())
+		{
+			// QUOTE SUBITTED SUCCESFULLY MAIL TO AMIB
+			String emailIdFrom = metaData.getEmailFromConfigured();
+			String emailITo = metaData.getContactUsEmail();
+			String Subject = "Al Mulla Insurance Policy Submit Confirmation";
+			String mailData = "Al Mulla Insurance Policy Submited Successfully.";
+			emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
+
+			// QUOTE SUBITTED SUCCESFULLY MAIL TO USER
+			String emailIdFrom1 = metaData.getEmailFromConfigured();
+			String emailITo1 = regSession.getEmailId();
+			String Subject1 = "Al Mulla Insurance Policy Submit Confirmation";
+			String mailData1 = "Al Mulla Insurance Policy Submited Successfully.";
+			emailNotification.sendEmail(emailIdFrom1, emailITo1, Subject1, mailData1);
+
+			resp.setStatusKey(ApiConstants.SUCCESS);
+		}
+		else
+		{
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
+		resp.setMessageKey(arrayResponseModel.getErrorCode());
+		resp.setMessage(arrayResponseModel.getErrorMessage());
+
+		return resp;
+	}
+
+	public AmxApiResponse<?, Object> updateInsuranceProvider(BigDecimal appSeqNumber, BigDecimal insuranceCompCode)
+	{
+		logger.info(TAG + " updateInsuranceProvider :: appSeqNumber      :" + appSeqNumber);
+		logger.info(TAG + " updateInsuranceProvider :: insuranceCompCode :" + insuranceCompCode);
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
 
 		AmxApiResponse<?, Object> getInsuranceCompanyDetails = getInsuranceCompanyDetails(appSeqNumber);
@@ -808,8 +872,8 @@ public class RequestQuoteService
 				String status = "";
 				InsuranceCompanyDetails insuranceCompanyDetails = dataArray.get(i);
 
-				logger.info(TAG + " submitRequestQuote :: insuranceCompanyDetails.getCompanyCode :" + insuranceCompanyDetails.getCompanyCode());
-				logger.info(TAG + " submitRequestQuote :: insuranceCompCodee :" + insuranceCompCode);
+				logger.info(TAG + " updateInsuranceProvider :: insuranceCompanyDetails.getCompanyCode :" + insuranceCompanyDetails.getCompanyCode());
+				logger.info(TAG + " updateInsuranceProvider :: insuranceCompCodee :" + insuranceCompCode);
 
 				if (null != insuranceCompCode && null != insuranceCompanyDetails.getCompanyCode() && insuranceCompCode.equals(insuranceCompanyDetails.getCompanyCode()))
 				{
@@ -823,14 +887,107 @@ public class RequestQuoteService
 				ArrayResponseModel updateInsuranceProvider = requestQuoteDao.updateInsuranceProvider(appSeqNumber, insuranceCompanyDetails.getCompanyCode(), status);
 				if (updateInsuranceProvider.getErrorCode() != null)
 				{
-					return getInsuranceCompanyDetails;
+					if (null == updateInsuranceProvider.getErrorCode())
+					{
+						resp.setStatusKey(ApiConstants.SUCCESS);
+					}
+					else
+					{
+						resp.setStatusKey(ApiConstants.FAILURE);
+					}
+					resp.setMessageKey(updateInsuranceProvider.getErrorCode());
+					resp.setMessage(updateInsuranceProvider.getErrorMessage());
 				}
 			}
+		}
+		return resp;
+	}
 
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.submitRequestQuote(appSeqNumber);
-			logger.info(TAG + " submitRequestQuote :: arrayResponseModel.getErrorCode() :" + arrayResponseModel.getErrorCode());
+	public AmxApiResponse<?, Object> getRenewPolicyDetails(BigDecimal oldDocNumber)
+	{
+		BigDecimal insuranceCompCode = null;
+		BigDecimal appSeqNumber = null;
+		logger.info(TAG + " getRenewPolicyDetails :: oldDocNumber :" + oldDocNumber);
+
+		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
+		try
+		{
+			AmxApiResponse<?, Object> getVehicleDetails = getRenewPolicyVehicleDetails(oldDocNumber);
+			if (getVehicleDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			{
+				return getVehicleDetails;
+			}
+			else
+			{
+				if (null != getVehicleDetails.getMeta())
+				{
+					insuranceCompCode = (BigDecimal) getVehicleDetails.getMeta();
+					logger.info(TAG + " getRenewPolicyDetails :: insuranceCompCode :" + insuranceCompCode);
+				}
+
+				AmxApiResponse<?, Object> submitVehicleDetails = setAppVehicleDetails(appSeqNumber, (VehicleDetails) getVehicleDetails.getData(), oldDocNumber);
+				if (submitVehicleDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+				{
+					return submitVehicleDetails;
+				}
+				else
+				{
+					RequestQuoteModel requestQuoteModel = (RequestQuoteModel) submitVehicleDetails.getData();
+					RequestQuoteInfo requestQuoteInfo = requestQuoteModel.getRequestQuoteInfo();
+					appSeqNumber = requestQuoteInfo.getAppSeqNumber();
+					logger.info(TAG + " getRenewPolicyDetails :: appSeqNumber1 :" + appSeqNumber);
+				}
+
+				AmxApiResponse<?, Object> respPersonalDetails = getProfileDetails();
+				if (respPersonalDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+				{
+					return respPersonalDetails;
+				}
+				else
+				{
+					AmxApiResponse<?, Object> setPersonalDetails = setProfileDetails(appSeqNumber, (PersonalDetails) respPersonalDetails.getData());
+					if (setPersonalDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+					{
+						return setPersonalDetails;
+					}
+				}
+
+				AmxApiResponse<?, Object> updateInsuranceProvider = updateInsuranceProvider(appSeqNumber, insuranceCompCode);
+				if (updateInsuranceProvider.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+				{
+					return updateInsuranceProvider;
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setMessage(e.toString());
+			return resp;
+		}
+		return resp;
+	}
+
+	public AmxApiResponse<?, Object> getRenewPolicyVehicleDetails(BigDecimal appDocNumberDet)
+	{
+		AmxApiResponse<VehicleDetails, Object> resp = new AmxApiResponse<VehicleDetails, Object>();
+		VehicleDetails vehicleDetails = new VehicleDetails();
+		BigDecimal companyCode = null;
+		try
+		{
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getRenewPolicyVehicleDetails(appDocNumberDet);
 			if (null == arrayResponseModel.getErrorCode())
 			{
+				if (null != arrayResponseModel && null != arrayResponseModel.getDataArray() && arrayResponseModel.getDataArray().size() > 0)
+				{
+					vehicleDetails = (VehicleDetails) arrayResponseModel.getDataArray().get(0);
+				}
+
+				if (null != arrayResponseModel.getData())
+				{
+					companyCode = new BigDecimal(arrayResponseModel.getData());
+				}
+
 				resp.setStatusKey(ApiConstants.SUCCESS);
 			}
 			else
@@ -839,8 +996,15 @@ public class RequestQuoteService
 			}
 			resp.setMessageKey(arrayResponseModel.getErrorCode());
 			resp.setMessage(arrayResponseModel.getErrorMessage());
+			resp.setData(vehicleDetails);
+			resp.setMeta(companyCode);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
-	
 }
