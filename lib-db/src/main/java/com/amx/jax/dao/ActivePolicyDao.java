@@ -40,11 +40,23 @@ public class ActivePolicyDao
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
-		String callProcedure = "{call IRB_GET_MYQUOTES(?,?,?,?,?,?,?)}";//
+		String callProcedure = "{call IRB_GET_ACTIVE_POLICIES(?,?,?,?,?,?,?)}";//
 		ArrayList<ActivePolicyModel> activePolicyArray = new ArrayList<ActivePolicyModel>();
 
 		try
 		{
+			logger.info(TAG + " getUserActivePolicy :: Dao");
+			logger.info(TAG + " getUserActivePolicy :: Dao");
+			logger.info(TAG + " getUserActivePolicy :: Dao");
+			logger.info(TAG + " getUserActivePolicy :: Dao");
+			logger.info(TAG + " getUserActivePolicy :: Dao");
+			logger.info(TAG + " getUserActivePolicy :: Dao");
+			logger.info(TAG + " getUserActivePolicy :: Dao");
+			logger.info(TAG + " getUserActivePolicy :: Dao");
+			logger.info(TAG + " getUserActivePolicy :: Dao");
+			logger.info(TAG + " getUserActivePolicy :: Dao");
+			logger.info(TAG + " getUserActivePolicy :: Dao");
+			
 			callableStatement = connection.prepareCall(callProcedure);
 			
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
@@ -58,19 +70,25 @@ public class ActivePolicyDao
 			
 			ResultSet rs = (ResultSet) callableStatement.getObject(5);
 			
+			logger.info(TAG + " getUserActivePolicy :: Dao :: rs :"+rs.getRow());
+			logger.info(TAG + " getUserActivePolicy :: Dao :: rs :"+rs.getRow());
+			logger.info(TAG + " getUserActivePolicy :: Dao :: rs :"+rs.getRow());
+			logger.info(TAG + " getUserActivePolicy :: Dao :: rs :"+rs.getRow());
+			logger.info(TAG + " getUserActivePolicy :: Dao :: rs :"+rs.getRow());
+			logger.info(TAG + " getUserActivePolicy :: Dao :: rs :"+rs.getRow());
+			logger.info(TAG + " getUserActivePolicy :: Dao :: rs :"+rs.getRow());
+			logger.info(TAG + " getUserActivePolicy :: Dao :: rs :"+rs.getRow());
+			logger.info(TAG + " getUserActivePolicy :: Dao :: rs :"+rs.getRow());
+			logger.info(TAG + " getUserActivePolicy :: Dao :: rs :"+rs.getRow());
+			logger.info(TAG + " getUserActivePolicy :: Dao :: rs :"+rs.getRow());
+			logger.info(TAG + " getUserActivePolicy :: Dao :: rs :"+rs.getRow());
+			logger.info(TAG + " getUserActivePolicy :: Dao :: rs :"+rs.getRow());
+			
+			
+			
 			while (rs.next())
 			{
-				logger.info(TAG + " getUserActivePolicy :: Dao");
-				logger.info(TAG + " getUserActivePolicy :: Dao");
-				logger.info(TAG + " getUserActivePolicy :: Dao");
-				logger.info(TAG + " getUserActivePolicy :: Dao");
-				logger.info(TAG + " getUserActivePolicy :: Dao");
-				logger.info(TAG + " getUserActivePolicy :: Dao");
-				logger.info(TAG + " getUserActivePolicy :: Dao");
-				logger.info(TAG + " getUserActivePolicy :: Dao");
-				logger.info(TAG + " getUserActivePolicy :: Dao");
-				logger.info(TAG + " getUserActivePolicy :: Dao");
-				logger.info(TAG + " getUserActivePolicy :: Dao");
+				
 				
 				ActivePolicyModel activePolicyModel = new ActivePolicyModel();
 				activePolicyModel.setCountryId(rs.getBigDecimal(1));

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ActivePolicyController
 {
-	String TAG = "com.amx.jax.controllers :: MyPolicyController :: ";
+	String TAG = "com.amx.jax.controllers :: ActivePolicyController :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(ActivePolicyController.class);
 

@@ -41,7 +41,7 @@ public class MyQuoteDao
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
-		String callProcedure = "{call IRB_GET_ACTIVE_POLICIES(?,?,?,?,?,?,?)}";//
+		String callProcedure = "{call IRB_GET_MYQUOTES(?,?,?,?,?,?,?)}";//
 		ArrayList<ActivePolicyModel> activePolicyArray = new ArrayList<ActivePolicyModel>();
 
 		try

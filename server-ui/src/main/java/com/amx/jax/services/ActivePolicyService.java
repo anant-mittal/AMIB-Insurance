@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Service
 public class ActivePolicyService
 {
-	String TAG = "com.amx.jax.services :: MyPolicyService :: ";
+	String TAG = "com.amx.jax.services :: ActivePolicyService :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(ActivePolicyService.class);
 
@@ -44,8 +44,9 @@ public class ActivePolicyService
 			logger.info(TAG + " getUserActivePolicy :: service");
 			logger.info(TAG + " getUserActivePolicy :: service");
 			
-			resp.setStatusKey(ApiConstants.SUCCESS);
 			resp.setResults(activePolicyDao.getUserActivePolicy());
+			resp.setStatusKey(ApiConstants.SUCCESS);
+			
 		}
 		catch (Exception e)
 		{
