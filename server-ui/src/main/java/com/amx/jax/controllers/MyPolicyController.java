@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import com.amx.jax.models.ActivePolicyModel;
 import com.amx.jax.models.RequestQuoteDetrails;
 import com.amx.jax.models.Validate;
-import com.amx.jax.services.ActivePolicyService;
+import com.amx.jax.services.MyPolicyService;
 import com.amx.utils.ArgUtil;
 import com.amx.jax.api.AmxApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,19 +18,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ActivePolicyController
+public class MyPolicyController
 {
-	String TAG = "com.amx.jax.controllers :: ActivePolicyController :: ";
+	String TAG = "com.amx.jax.controllers :: MyPolicyController :: ";
 
-	private static final Logger logger = LoggerFactory.getLogger(ActivePolicyController.class);
+	private static final Logger logger = LoggerFactory.getLogger(MyPolicyController.class);
 
 	@Autowired
-	private ActivePolicyService activePolicyService;
+	private MyPolicyService myPolicyService;
 
 	@RequestMapping(value = "/api/mypolicy/get-activepolicy", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<ActivePolicyModel, Object> getUserActivePolicy()
 	{
-		return activePolicyService.getUserActivePolicy();
+		return myPolicyService.getUserActivePolicy();
 	}
 	
 	@RequestMapping(value = "/api/mypolicy/renew-policy", method = RequestMethod.POST, produces = "application/json")
@@ -41,6 +41,6 @@ public class ActivePolicyController
 		{
 			renewAppDocNumberDet = ArgUtil.parseAsBigDecimal(renewAppDocNumber);
 		}
-		return activePolicyService.renewInsuranceOldPolicy(renewAppDocNumberDet);
+		return myPolicyService.renewInsuranceOldPolicy(renewAppDocNumberDet);
 	}
 }

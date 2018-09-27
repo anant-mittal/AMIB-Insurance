@@ -1,6 +1,5 @@
 package com.amx.jax.dao;
 
-import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -30,13 +29,13 @@ public class MyQuoteDao
 
 	@Autowired
 	MetaData metaData;
-	
+
 	@Autowired
 	VehicleSession vehicleSession;
 
 	Connection connection;
 
-	public ArrayList<MyQuoteModel> getUserQuote()
+	public ArrayList getUserQuote()
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -45,11 +44,12 @@ public class MyQuoteDao
 
 		try
 		{
+			logger.info(TAG + " getUserQuote :: metaData :"+metaData.toString());
 			callableStatement = connection.prepareCall(callProcedure);
-			
+
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
-			callableStatement.setBigDecimal(3, metaData.getUserAmibCustRef());
+			callableStatement.setBigDecimal(3, metaData.getCustomerSequenceNumber());
 			callableStatement.setBigDecimal(4, metaData.getLanguageId());
 			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -57,6 +57,8 @@ public class MyQuoteDao
 			callableStatement.executeUpdate();
 			
 			ResultSet rs = (ResultSet) callableStatement.getObject(5);
+			logger.info(TAG + " getUserQuote :: rs.getRow :" + rs.getRow());
+			
 			
 			while (rs.next())
 			{
@@ -84,27 +86,26 @@ public class MyQuoteDao
 				myQuoteModel.setShapeDesc(rs.getString(21));
 				myQuoteModel.setColourCode(rs.getString(22));
 				myQuoteModel.setColourDesc(rs.getString(23));
-				myQuoteModel.setNumberOfPassenger(rs.getBigDecimal(11));
-				myQuoteModel.setChassisNumber(rs.getBigDecimal(11));
-				myQuoteModel.setKtNumber(rs.getBigDecimal(11));
-				myQuoteModel.setVehicleConditionCode(rs.getString(23));
-				myQuoteModel.setVehicleConditionDesc(rs.getString(23));
-				myQuoteModel.setPurposeCode(rs.getString(23));
-				myQuoteModel.setPurposeDesc(rs.getString(23));
-				myQuoteModel.setFuelCode(rs.getString(23));
-				myQuoteModel.setFuelDesc(rs.getString(23));
-				myQuoteModel.setVehicleValue(rs.getBigDecimal(11));
-				myQuoteModel.setPremium(rs.getBigDecimal(11));
-				
-				myQuoteModel.setSupervisionFees(rs.getBigDecimal(11));
-				myQuoteModel.setIssueFee(rs.getBigDecimal(11));
-				myQuoteModel.setDiscount(rs.getBigDecimal(11));
-				myQuoteModel.setAddlPremium(rs.getBigDecimal(11));
-				myQuoteModel.setNetAmount(rs.getBigDecimal(11));
-				
-				
+				myQuoteModel.setNumberOfPassenger(rs.getBigDecimal(24));
+				myQuoteModel.setChassisNumber(rs.getBigDecimal(25));
+				myQuoteModel.setKtNumber(rs.getBigDecimal(26));
+				myQuoteModel.setVehicleConditionCode(rs.getString(27));
+				myQuoteModel.setVehicleConditionDesc(rs.getString(28));
+				myQuoteModel.setPurposeCode(rs.getString(29));
+				myQuoteModel.setPurposeDesc(rs.getString(30));
+				myQuoteModel.setFuelCode(rs.getString(31));
+				myQuoteModel.setFuelDesc(rs.getString(32));
+				myQuoteModel.setVehicleValue(rs.getBigDecimal(33));
+				myQuoteModel.setPremium(rs.getBigDecimal(34));
+				myQuoteModel.setSupervisionFees(rs.getBigDecimal(35));
+				myQuoteModel.setIssueFee(rs.getBigDecimal(36));
+				myQuoteModel.setDiscount(rs.getBigDecimal(37));
+				myQuoteModel.setAddlPremium(rs.getBigDecimal(38));
+				myQuoteModel.setNetAmount(rs.getBigDecimal(39));
+				myQuoteModel.setPolCondition(rs.getString(40));
+				myQuoteModel.setVehicleType(rs.getString(41));
 				activePolicyArray.add(myQuoteModel);
-				logger.info(TAG + " getUserActivePolicy :: myQuoteModel :" + myQuoteModel.toString());
+				logger.info(TAG + " getUserQuote :: myQuoteModel :" + myQuoteModel.toString());
 			}
 		}
 		catch (Exception e)
@@ -117,7 +118,7 @@ public class MyQuoteDao
 		}
 		return activePolicyArray;
 	}
-	
+
 	private Connection getConnection()
 	{
 		try

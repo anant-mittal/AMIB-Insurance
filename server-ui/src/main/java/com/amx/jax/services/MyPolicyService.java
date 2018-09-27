@@ -13,16 +13,16 @@ import com.amx.jax.models.RegSession;
 import com.amx.jax.models.RequestQuoteInfo;
 import com.amx.jax.models.RequestQuoteModel;
 import com.amx.jax.models.VehicleDetails;
-import com.amx.jax.dao.ActivePolicyDao;
+import com.amx.jax.dao.MyPolicyDao;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
-public class ActivePolicyService
+public class MyPolicyService
 {
-	String TAG = "com.amx.jax.services :: ActivePolicyService :: ";
+	String TAG = "com.amx.jax.services :: MyPolicyService :: ";
 
-	private static final Logger logger = LoggerFactory.getLogger(ActivePolicyService.class);
+	private static final Logger logger = LoggerFactory.getLogger(MyPolicyService.class);
 
 	@Autowired
 	RegSession regSession;
@@ -31,7 +31,7 @@ public class ActivePolicyService
 	MetaData metaData;
 
 	@Autowired
-	private ActivePolicyDao activePolicyDao;
+	private MyPolicyDao myPolicyDao;
 	
 	@Autowired
 	public RequestQuoteService requestQuoteService;
@@ -41,7 +41,7 @@ public class ActivePolicyService
 		AmxApiResponse<ActivePolicyModel, Object> resp = new AmxApiResponse<ActivePolicyModel, Object>();
 		try
 		{
-			resp.setResults(activePolicyDao.getUserActivePolicy());
+			resp.setResults(myPolicyDao.getUserActivePolicy());
 			resp.setStatusKey(ApiConstants.SUCCESS);
 			
 		}

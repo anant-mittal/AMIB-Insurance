@@ -19,11 +19,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import oracle.jdbc.OracleTypes;
 
 @Repository
-public class ActivePolicyDao
+public class MyPolicyDao
 {
 	String TAG = "com.amx.jax.dao.ActivePolicyDao :: ";
 
-	private static final Logger logger = LoggerFactory.getLogger(ActivePolicyDao.class);
+	private static final Logger logger = LoggerFactory.getLogger(MyPolicyDao.class);
 
 	@Autowired
 	JdbcTemplate jdbcTemplate;

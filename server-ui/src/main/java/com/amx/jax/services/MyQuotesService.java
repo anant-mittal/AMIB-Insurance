@@ -29,11 +29,12 @@ public class MyQuotesService
 
 	public AmxApiResponse<?, Object> getUserQuote()
 	{
-		AmxApiResponse<?, Object> resp = new AmxApiResponse<ActivePolicyModel, Object>();
+		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
 		try
 		{
+			logger.info(TAG + " getUserQuote :: ");
 			resp.setStatusKey(ApiConstants.SUCCESS);
-			//resp.setResults(myQuoteDao.getUserQuote());
+			resp.setResults(myQuoteDao.getUserQuote());
 		}
 		catch (Exception e)
 		{

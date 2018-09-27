@@ -21,8 +21,9 @@ public class MyQuotesController
 	private MyQuotesService myQuotesService;
 
 	@RequestMapping(value = "/api/myquote/get-myquote", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> getUserActivePolicy()
+	public AmxApiResponse<?, Object> getUserQuote()
 	{
+		logger.info(TAG + " getUserQuote :: ");
 		return myQuotesService.getUserQuote();
 	}
 }
