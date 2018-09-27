@@ -1,20 +1,19 @@
 package com.amx.jax.dao;
 
+import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
-import com.amx.jax.models.ActivePolicyModel;
 import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.MetaData;
+import com.amx.jax.models.MyQuoteModel;
 import com.amx.jax.models.VehicleSession;
 
 import oracle.jdbc.OracleTypes;
@@ -37,12 +36,12 @@ public class MyQuoteDao
 
 	Connection connection;
 
-	public ArrayList<ActivePolicyModel> getUserQuote()
+	public ArrayList<MyQuoteModel> getUserQuote()
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_MYQUOTES(?,?,?,?,?,?,?)}";//
-		ArrayList<ActivePolicyModel> activePolicyArray = new ArrayList<ActivePolicyModel>();
+		ArrayList<MyQuoteModel> activePolicyArray = new ArrayList<MyQuoteModel>();
 
 		try
 		{
@@ -61,54 +60,51 @@ public class MyQuoteDao
 			
 			while (rs.next())
 			{
-				ActivePolicyModel activePolicyModel = new ActivePolicyModel();
-				activePolicyModel.setCountryId(rs.getBigDecimal(1));
-				activePolicyModel.setCompCd(rs.getBigDecimal(2));
-				activePolicyModel.setDocNumber(rs.getBigDecimal(3));
-				activePolicyModel.setDocDate(DateFormats.uiFormattedDate(rs.getDate(4)));
-				activePolicyModel.setFinance(rs.getBigDecimal(5));
-				activePolicyModel.setShowRoom(rs.getBigDecimal(6));
-				activePolicyModel.setSalesman(rs.getBigDecimal(7));
-				activePolicyModel.setUserAmibCustRef(rs.getBigDecimal(8));
-				activePolicyModel.setInsuredEnglishName(rs.getString(9));
-				activePolicyModel.setInsuredArabicName(rs.getString(10));
-				activePolicyModel.setIdNumber(rs.getBigDecimal(11));
-				activePolicyModel.setInsCompanyCode(rs.getBigDecimal(12));
-				activePolicyModel.setInsCompanyDesc(rs.getString(13));
-				activePolicyModel.setInsCompanyPrefix(rs.getString(14));
-				activePolicyModel.setDbcust(rs.getBigDecimal(15));
-				activePolicyModel.setMakeCode(rs.getString(16));
-				activePolicyModel.setMakeDesc(rs.getString(17));
-				activePolicyModel.setSubMakeCode(rs.getString(18));
-				activePolicyModel.setSubMakeDesc(rs.getString(19));
-				activePolicyModel.setModelYear(rs.getBigDecimal(20));
-				activePolicyModel.setShapeCode(rs.getString(21));
-				activePolicyModel.setShapeDesc(rs.getString(22));
-				activePolicyModel.setColourCode(rs.getString(23));
-				activePolicyModel.setColourDesc(rs.getString(24));
-				activePolicyModel.setNoPass(rs.getBigDecimal(25));
-				activePolicyModel.setChassis(rs.getBigDecimal(26));
-				activePolicyModel.setKtNumber(rs.getBigDecimal(27));
-				activePolicyModel.setVehicleConditionCode(rs.getString(28));
-				activePolicyModel.setVehicleConditionDesc(rs.getString(29));
-				activePolicyModel.setPurposeCode(rs.getString(30));
-				activePolicyModel.setPurposeDesc(rs.getString(31));
-				activePolicyModel.setVehicleSrNumber(rs.getBigDecimal(32));
-				activePolicyModel.setPolicyTypeCode(rs.getString(33));
-				activePolicyModel.setPolicyTypeDesc(rs.getString(34));
-				activePolicyModel.setPolicyNumber(rs.getString(35));
-				activePolicyModel.setMaxInsuredAmount(rs.getBigDecimal(36));
-				activePolicyModel.setStartDate(DateFormats.uiFormattedDate(rs.getDate(37)));
-				activePolicyModel.setEndDate(DateFormats.uiFormattedDate(rs.getDate(38)));
-				activePolicyModel.setSupervisionKey(rs.getBigDecimal(39));
-				activePolicyModel.setIssueFee(rs.getBigDecimal(40));
-				activePolicyModel.setPremium(rs.getBigDecimal(41));
-				activePolicyModel.setDiscount(rs.getBigDecimal(42));
-				activePolicyModel.setRenewalIndic(rs.getString(43));
-				activePolicyModel.setFuelCode(rs.getString(44));
-				activePolicyModel.setFuelDesc(rs.getString(45));
-				activePolicyArray.add(activePolicyModel);
-				logger.info(TAG + " getUserActivePolicy :: activePolicyModel :" + activePolicyModel.toString());
+				MyQuoteModel myQuoteModel = new MyQuoteModel();
+				myQuoteModel.setCountryId(rs.getBigDecimal(1));
+				myQuoteModel.setCompCd(rs.getBigDecimal(2));
+				myQuoteModel.setAppSeqNumber(rs.getBigDecimal(3));
+				myQuoteModel.setAppDate(DateFormats.uiFormattedDate(rs.getDate(4)));
+				myQuoteModel.setAppType(rs.getString(5));
+				myQuoteModel.setPolicyDuration(rs.getBigDecimal(6));
+				myQuoteModel.setAppStatus(rs.getString(7));
+				myQuoteModel.setStatus(rs.getString(8));
+				myQuoteModel.setQuoteDate(DateFormats.uiFormattedDate(rs.getDate(9)));
+				myQuoteModel.setQuoteSeqNumber(rs.getBigDecimal(10));
+				myQuoteModel.setVerNumber(rs.getBigDecimal(11));
+				myQuoteModel.setCompanyName(rs.getString(12));
+				myQuoteModel.setCompanyCode(rs.getBigDecimal(13));
+				myQuoteModel.setCompanyShortCode(rs.getString(14));
+				myQuoteModel.setMakeCode(rs.getString(15));
+				myQuoteModel.setMakeDesc(rs.getString(16));
+				myQuoteModel.setSubMakeCode(rs.getString(17));
+				myQuoteModel.setSubMakeDesc(rs.getString(18));
+				myQuoteModel.setModelYear(rs.getBigDecimal(19));
+				myQuoteModel.setShapeCode(rs.getString(20));
+				myQuoteModel.setShapeDesc(rs.getString(21));
+				myQuoteModel.setColourCode(rs.getString(22));
+				myQuoteModel.setColourDesc(rs.getString(23));
+				myQuoteModel.setNumberOfPassenger(rs.getBigDecimal(11));
+				myQuoteModel.setChassisNumber(rs.getBigDecimal(11));
+				myQuoteModel.setKtNumber(rs.getBigDecimal(11));
+				myQuoteModel.setVehicleConditionCode(rs.getString(23));
+				myQuoteModel.setVehicleConditionDesc(rs.getString(23));
+				myQuoteModel.setPurposeCode(rs.getString(23));
+				myQuoteModel.setPurposeDesc(rs.getString(23));
+				myQuoteModel.setFuelCode(rs.getString(23));
+				myQuoteModel.setFuelDesc(rs.getString(23));
+				myQuoteModel.setVehicleValue(rs.getBigDecimal(11));
+				myQuoteModel.setPremium(rs.getBigDecimal(11));
+				
+				myQuoteModel.setSupervisionFees(rs.getBigDecimal(11));
+				myQuoteModel.setIssueFee(rs.getBigDecimal(11));
+				myQuoteModel.setDiscount(rs.getBigDecimal(11));
+				myQuoteModel.setAddlPremium(rs.getBigDecimal(11));
+				myQuoteModel.setNetAmount(rs.getBigDecimal(11));
+				
+				
+				activePolicyArray.add(myQuoteModel);
+				logger.info(TAG + " getUserActivePolicy :: myQuoteModel :" + myQuoteModel.toString());
 			}
 		}
 		catch (Exception e)

@@ -337,12 +337,12 @@ public class RequestQuoteService
 		return resp;
 	}
 
-	public AmxApiResponse<?, Object> getRequestQuoteDetails(BigDecimal oldDocNumber)
+	public AmxApiResponse<?, Object> getRequestQuoteDetails()
 	{
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
 		RequestQuoteModel requestQuoteModel = new RequestQuoteModel();
 
-		if (null != oldDocNumber)
+		/*if (null != oldDocNumber)
 		{
 			try
 			{
@@ -356,7 +356,7 @@ public class RequestQuoteService
 			{
 				e.printStackTrace();
 			}
-		}
+		}*/
 
 		try
 		{

@@ -45,18 +45,6 @@ public class ActivePolicyDao
 
 		try
 		{
-			logger.info(TAG + " getUserActivePolicy :: Dao");
-			logger.info(TAG + " getUserActivePolicy :: Dao");
-			logger.info(TAG + " getUserActivePolicy :: Dao");
-			logger.info(TAG + " getUserActivePolicy :: Dao");
-			logger.info(TAG + " getUserActivePolicy :: Dao");
-			logger.info(TAG + " getUserActivePolicy :: Dao");
-			logger.info(TAG + " getUserActivePolicy :: Dao");
-			logger.info(TAG + " getUserActivePolicy :: Dao");
-			logger.info(TAG + " getUserActivePolicy :: Dao");
-			logger.info(TAG + " getUserActivePolicy :: Dao");
-			logger.info(TAG + " getUserActivePolicy :: Dao");
-			
 			callableStatement = connection.prepareCall(callProcedure);
 			
 			callableStatement.setBigDecimal(1, metaData.getCountryId());

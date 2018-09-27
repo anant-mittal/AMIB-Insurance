@@ -27,13 +27,13 @@ public class MyQuotesService
 	@Autowired
 	private MyQuoteDao myQuoteDao;
 
-	public AmxApiResponse<ActivePolicyModel, Object> getUserQuote()
+	public AmxApiResponse<?, Object> getUserQuote()
 	{
-		AmxApiResponse<ActivePolicyModel, Object> resp = new AmxApiResponse<ActivePolicyModel, Object>();
+		AmxApiResponse<?, Object> resp = new AmxApiResponse<ActivePolicyModel, Object>();
 		try
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
-			resp.setResults(myQuoteDao.getUserQuote());
+			//resp.setResults(myQuoteDao.getUserQuote());
 		}
 		catch (Exception e)
 		{

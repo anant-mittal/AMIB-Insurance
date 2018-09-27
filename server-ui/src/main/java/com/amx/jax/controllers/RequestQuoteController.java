@@ -86,14 +86,9 @@ public class RequestQuoteController
 	}
 
 	@RequestMapping(value = "/api/request-quote/get-requestquote-details", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> getRequestQuoteDetails(@RequestParam(name = "renewAppDocNumber", required = false) String renewAppDocNumber)
+	public AmxApiResponse<?, Object> getRequestQuoteDetails()
 	{
-		BigDecimal renewAppDocNumberDet = null;
-		if (null != renewAppDocNumber && !renewAppDocNumber.equals("") && !renewAppDocNumber.equalsIgnoreCase("null"))
-		{
-			renewAppDocNumberDet = ArgUtil.parseAsBigDecimal(renewAppDocNumber);
-		}
-		return requestQuoteService.getRequestQuoteDetails(renewAppDocNumberDet);
+		return requestQuoteService.getRequestQuoteDetails();
 	}
 
 	@RequestMapping(value = "/api/request-quote/set-vehicle-details", method = RequestMethod.POST, produces = "application/json")
