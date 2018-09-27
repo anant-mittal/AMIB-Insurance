@@ -32,6 +32,18 @@ public class ActivePolicyService
 		AmxApiResponse<ActivePolicyModel, Object> resp = new AmxApiResponse<ActivePolicyModel, Object>();
 		try
 		{
+			logger.info(TAG + " getUserActivePolicy :: service");
+			logger.info(TAG + " getUserActivePolicy :: service");
+			logger.info(TAG + " getUserActivePolicy :: service");
+			logger.info(TAG + " getUserActivePolicy :: service");
+			logger.info(TAG + " getUserActivePolicy :: service");
+			logger.info(TAG + " getUserActivePolicy :: service");
+			logger.info(TAG + " getUserActivePolicy :: service");
+			logger.info(TAG + " getUserActivePolicy :: service");
+			logger.info(TAG + " getUserActivePolicy :: service");
+			logger.info(TAG + " getUserActivePolicy :: service");
+			logger.info(TAG + " getUserActivePolicy :: service");
+			
 			resp.setStatusKey(ApiConstants.SUCCESS);
 			resp.setResults(activePolicyDao.getUserActivePolicy());
 		}

@@ -60,6 +60,18 @@ public class ActivePolicyDao
 			
 			while (rs.next())
 			{
+				logger.info(TAG + " getUserActivePolicy :: Dao");
+				logger.info(TAG + " getUserActivePolicy :: Dao");
+				logger.info(TAG + " getUserActivePolicy :: Dao");
+				logger.info(TAG + " getUserActivePolicy :: Dao");
+				logger.info(TAG + " getUserActivePolicy :: Dao");
+				logger.info(TAG + " getUserActivePolicy :: Dao");
+				logger.info(TAG + " getUserActivePolicy :: Dao");
+				logger.info(TAG + " getUserActivePolicy :: Dao");
+				logger.info(TAG + " getUserActivePolicy :: Dao");
+				logger.info(TAG + " getUserActivePolicy :: Dao");
+				logger.info(TAG + " getUserActivePolicy :: Dao");
+				
 				ActivePolicyModel activePolicyModel = new ActivePolicyModel();
 				activePolicyModel.setCountryId(rs.getBigDecimal(1));
 				activePolicyModel.setCompCd(rs.getBigDecimal(2));

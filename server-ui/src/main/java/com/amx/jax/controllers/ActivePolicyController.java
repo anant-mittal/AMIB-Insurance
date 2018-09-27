@@ -26,6 +26,18 @@ public class ActivePolicyController
 	@RequestMapping(value = "/api/mypolicy/get-activepolicy", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<ActivePolicyModel, Object> getUserActivePolicy()
 	{
+		logger.info(TAG + " getUserActivePolicy :: controller");
+		logger.info(TAG + " getUserActivePolicy :: controller");
+		logger.info(TAG + " getUserActivePolicy :: controller");
+		logger.info(TAG + " getUserActivePolicy :: controller");
+		logger.info(TAG + " getUserActivePolicy :: controller");
+		logger.info(TAG + " getUserActivePolicy :: controller");
+		logger.info(TAG + " getUserActivePolicy :: controller");
+		logger.info(TAG + " getUserActivePolicy :: controller");
+		logger.info(TAG + " getUserActivePolicy :: controller");
+		logger.info(TAG + " getUserActivePolicy :: controller");
+		logger.info(TAG + " getUserActivePolicy :: controller");
+		
 		return activePolicyService.getUserActivePolicy();
 	}
 }
