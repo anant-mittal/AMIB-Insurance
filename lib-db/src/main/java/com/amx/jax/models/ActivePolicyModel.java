@@ -94,6 +94,18 @@ public class ActivePolicyModel
 	
 	private String fuelDesc;
 	
+	private String renewableApplCheck;
+	
+	public String getRenewableApplCheck()
+	{
+		return renewableApplCheck;
+	}
+
+	public void setRenewableApplCheck(String renewableApplCheck)
+	{
+		this.renewableApplCheck = renewableApplCheck;
+	}
+
 	public BigDecimal getCountryId()
 	{
 		return countryId;

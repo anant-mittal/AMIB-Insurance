@@ -1,5 +1,6 @@
 package com.amx.jax.dao;
 
+import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -30,7 +31,7 @@ public class MyPolicyDao
 
 	@Autowired
 	MetaData metaData;
-	
+
 	@Autowired
 	VehicleSession vehicleSession;
 
@@ -40,13 +41,13 @@ public class MyPolicyDao
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
-		String callProcedure = "{call IRB_GET_ACTIVE_POLICIES(?,?,?,?,?,?,?)}";//
+		String callProcedure = "{call IRB_GET_ACTIVE_POLICIES(?,?,?,?,?,?,?)}";
 		ArrayList<ActivePolicyModel> activePolicyArray = new ArrayList<ActivePolicyModel>();
 
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			
+
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			callableStatement.setBigDecimal(3, metaData.getUserAmibCustRef());
@@ -55,29 +56,12 @@ public class MyPolicyDao
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
-			
+
 			ResultSet rs = (ResultSet) callableStatement.getObject(5);
-			
-			logger.info(TAG + " getUserActivePolicy :: Dao :: rs :"+rs.getRow());
-			logger.info(TAG + " getUserActivePolicy :: Dao :: rs :"+rs.getRow());
-			logger.info(TAG + " getUserActivePolicy :: Dao :: rs :"+rs.getRow());
-			logger.info(TAG + " getUserActivePolicy :: Dao :: rs :"+rs.getRow());
-			logger.info(TAG + " getUserActivePolicy :: Dao :: rs :"+rs.getRow());
-			logger.info(TAG + " getUserActivePolicy :: Dao :: rs :"+rs.getRow());
-			logger.info(TAG + " getUserActivePolicy :: Dao :: rs :"+rs.getRow());
-			logger.info(TAG + " getUserActivePolicy :: Dao :: rs :"+rs.getRow());
-			logger.info(TAG + " getUserActivePolicy :: Dao :: rs :"+rs.getRow());
-			logger.info(TAG + " getUserActivePolicy :: Dao :: rs :"+rs.getRow());
-			logger.info(TAG + " getUserActivePolicy :: Dao :: rs :"+rs.getRow());
-			logger.info(TAG + " getUserActivePolicy :: Dao :: rs :"+rs.getRow());
-			logger.info(TAG + " getUserActivePolicy :: Dao :: rs :"+rs.getRow());
-			
-			
-			
+
 			while (rs.next())
 			{
-				
-				
+
 				ActivePolicyModel activePolicyModel = new ActivePolicyModel();
 				activePolicyModel.setCountryId(rs.getBigDecimal(1));
 				activePolicyModel.setCompCd(rs.getBigDecimal(2));
@@ -124,6 +108,14 @@ public class MyPolicyDao
 				activePolicyModel.setRenewalIndic(rs.getString(43));
 				activePolicyModel.setFuelCode(rs.getString(44));
 				activePolicyModel.setFuelDesc(rs.getString(45));
+				if (null != rs.getString(43) && rs.getString(43).equalsIgnoreCase("N"))
+				{
+					activePolicyModel.setRenewableApplCheck("N");
+				}
+				else
+				{
+					activePolicyModel.setRenewableApplCheck(checkRenewableApplicable(rs.getBigDecimal(3)));
+				}
 				activePolicyArray.add(activePolicyModel);
 				logger.info(TAG + " getUserActivePolicy :: activePolicyModel :" + activePolicyModel.toString());
 			}
@@ -138,7 +130,43 @@ public class MyPolicyDao
 		}
 		return activePolicyArray;
 	}
-	
+
+	public String checkRenewableApplicable(BigDecimal oldDocNumber)
+	{
+		getConnection();
+		CallableStatement callableStatement = null;
+		String callProcedure = "{call IRB_CHECK_RENEW_APPLICABLE(?,?,?,?,?,?,?,?,?)}";
+		String renewableApplCheck = null;
+
+		try
+		{
+			callableStatement = connection.prepareCall(callProcedure);
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setString(3, metaData.getUserType());
+			callableStatement.setString(4, metaData.getCivilId());
+			callableStatement.setBigDecimal(5, metaData.getCustomerSequenceNumber());
+			callableStatement.setBigDecimal(6, oldDocNumber);
+			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(9, java.sql.Types.VARCHAR);
+			callableStatement.executeUpdate();
+			renewableApplCheck = callableStatement.getString(7);
+
+			logger.info(TAG + " checkRenewableApplicable :: oldDocNumber       :" + oldDocNumber);
+			logger.info(TAG + " checkRenewableApplicable :: renewableApplCheck :" + renewableApplCheck);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		return renewableApplCheck;
+	}
+
 	private Connection getConnection()
 	{
 		try
