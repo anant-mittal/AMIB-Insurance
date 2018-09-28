@@ -20,7 +20,7 @@ public class MyQuotesController
 	@Autowired
 	private MyQuotesService myQuotesService;
 
-	@RequestMapping(value = "/api/myquote/get-myquote", method = RequestMethod.POST, produces = "application/json")
+	@RequestMapping(value = "/api/myquote/get-myquotes", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> getUserQuote()
 	{
 		logger.info(TAG + " getUserQuote :: ");

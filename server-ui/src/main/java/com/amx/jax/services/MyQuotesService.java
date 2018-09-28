@@ -34,7 +34,7 @@ public class MyQuotesService
 		{
 			logger.info(TAG + " getUserQuote :: ");
 			resp.setStatusKey(ApiConstants.SUCCESS);
-			resp.setResults(myQuoteDao.getUserQuote());
+			resp.setData(myQuoteDao.getUserQuote());
 		}
 		catch (Exception e)
 		{

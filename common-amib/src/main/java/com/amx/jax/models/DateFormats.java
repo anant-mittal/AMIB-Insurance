@@ -118,6 +118,23 @@ public class DateFormats
 		}
 		return outDate;
 	}
+	
+	public static String formatType6(String inDate)
+	{
+		String outDate = "";
+		SimpleDateFormat inputDateFormat = new SimpleDateFormat("dd-MMM-yy");
+		SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd-MM-yyyy");
+		try
+		{
+			Date date = inputDateFormat.parse(inDate);
+			outDate = outputDateFormat.format(date);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return outDate;
+	}
 
 	public static boolean checkExpiryDate(String idExpiryDate)
 	{
@@ -144,8 +161,8 @@ public class DateFormats
 		{
 			try
 			{
-				String idExpDateStr = formatType4(idExpiryDate);
-				DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+				String idExpDateStr = formatType6(idExpiryDate);
+				DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
 				java.util.Date date = format.parse(idExpDateStr);
 				return new java.sql.Date(date.getTime());
 			}

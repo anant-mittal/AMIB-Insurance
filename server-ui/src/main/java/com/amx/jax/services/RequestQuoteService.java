@@ -139,6 +139,7 @@ public class RequestQuoteService
 			if (null == arrayResponseModel.getErrorCode())
 			{
 				resp.setStatusKey(ApiConstants.SUCCESS);
+				resp.setResults(arrayResponseModel.getDataArray());
 			}
 			else
 			{
@@ -146,7 +147,7 @@ public class RequestQuoteService
 			}
 			resp.setMessageKey(arrayResponseModel.getErrorCode());
 			resp.setMessage(arrayResponseModel.getErrorMessage());
-			resp.setResults(arrayResponseModel.getDataArray());
+			
 		}
 		catch (Exception e)
 		{
@@ -168,6 +169,7 @@ public class RequestQuoteService
 			if (null == arrayResponseModel.getErrorCode())
 			{
 				resp.setStatusKey(ApiConstants.SUCCESS);
+				resp.setResults(arrayResponseModel.getDataArray());
 			}
 			else
 			{
@@ -175,7 +177,7 @@ public class RequestQuoteService
 			}
 			resp.setMessageKey(arrayResponseModel.getErrorCode());
 			resp.setMessage(arrayResponseModel.getErrorMessage());
-			resp.setResults(arrayResponseModel.getDataArray());
+			
 
 		}
 		catch (Exception e)
@@ -197,6 +199,7 @@ public class RequestQuoteService
 			if (null == arrayResponseModel.getErrorCode())
 			{
 				resp.setStatusKey(ApiConstants.SUCCESS);
+				resp.setResults(arrayResponseModel.getDataArray());
 			}
 			else
 			{
@@ -204,7 +207,7 @@ public class RequestQuoteService
 			}
 			resp.setMessageKey(arrayResponseModel.getErrorCode());
 			resp.setMessage(arrayResponseModel.getErrorMessage());
-			resp.setResults(arrayResponseModel.getDataArray());
+			
 
 		}
 		catch (Exception e)
@@ -226,6 +229,7 @@ public class RequestQuoteService
 			if (null == arrayResponseModel.getErrorCode())
 			{
 				resp.setStatusKey(ApiConstants.SUCCESS);
+				resp.setResults(arrayResponseModel.getDataArray());
 			}
 			else
 			{
@@ -233,7 +237,7 @@ public class RequestQuoteService
 			}
 			resp.setMessageKey(arrayResponseModel.getErrorCode());
 			resp.setMessage(arrayResponseModel.getErrorMessage());
-			resp.setResults(arrayResponseModel.getDataArray());
+			
 
 		}
 		catch (Exception e)
@@ -255,6 +259,7 @@ public class RequestQuoteService
 			if (null == arrayResponseModel.getErrorCode())
 			{
 				resp.setStatusKey(ApiConstants.SUCCESS);
+				resp.setResults(arrayResponseModel.getDataArray());
 			}
 			else
 			{
@@ -262,7 +267,7 @@ public class RequestQuoteService
 			}
 			resp.setMessageKey(arrayResponseModel.getErrorCode());
 			resp.setMessage(arrayResponseModel.getErrorMessage());
-			resp.setResults(arrayResponseModel.getDataArray());
+			
 		}
 		catch (Exception e)
 		{
@@ -283,6 +288,7 @@ public class RequestQuoteService
 			if (null == arrayResponseModel.getErrorCode())
 			{
 				resp.setStatusKey(ApiConstants.SUCCESS);
+				resp.setResults(arrayResponseModel.getDataArray());
 			}
 			else
 			{
@@ -290,7 +296,7 @@ public class RequestQuoteService
 			}
 			resp.setMessageKey(arrayResponseModel.getErrorCode());
 			resp.setMessage(arrayResponseModel.getErrorMessage());
-			resp.setResults(arrayResponseModel.getDataArray());
+			
 		}
 		catch (Exception e)
 		{

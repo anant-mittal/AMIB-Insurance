@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 public class MyQuoteModel
 {
 	private BigDecimal countryId;
-	
+
 	private BigDecimal compCd;
 
 	private BigDecimal appSeqNumber;
@@ -39,9 +39,9 @@ public class MyQuoteModel
 	private String subMakeCode;
 
 	private String subMakeDesc;
-	
+
 	private BigDecimal modelYear;
-	
+
 	private String shapeCode;
 
 	private String shapeDesc;
@@ -52,7 +52,7 @@ public class MyQuoteModel
 
 	private BigDecimal numberOfPassenger;
 
-	private BigDecimal chassisNumber;
+	private String chassisNumber;
 
 	private BigDecimal ktNumber;
 
@@ -67,23 +67,23 @@ public class MyQuoteModel
 	private String fuelCode;
 
 	private String fuelDesc;
-	
+
 	private BigDecimal vehicleValue;
-	
-	private BigDecimal premium;
-	
+
+	private BigDecimal basicPremium;
+
 	private BigDecimal supervisionFees;
-	
+
 	private BigDecimal issueFee;
 
 	private BigDecimal discount;
-	
-	private BigDecimal addlPremium;
-	
+
+	private BigDecimal addCoveragePremium;
+
 	private BigDecimal netAmount;
-	
+
 	private String polCondition;
-	
+
 	private String vehicleType;
 
 	public BigDecimal getCountryId()
@@ -326,12 +326,12 @@ public class MyQuoteModel
 		this.numberOfPassenger = numberOfPassenger;
 	}
 
-	public BigDecimal getChassisNumber()
+	public String getChassisNumber()
 	{
 		return chassisNumber;
 	}
 
-	public void setChassisNumber(BigDecimal chassisNumber)
+	public void setChassisNumber(String chassisNumber)
 	{
 		this.chassisNumber = chassisNumber;
 	}
@@ -416,14 +416,14 @@ public class MyQuoteModel
 		this.vehicleValue = vehicleValue;
 	}
 
-	public BigDecimal getPremium()
+	public BigDecimal getBasicPremium()
 	{
-		return premium;
+		return basicPremium;
 	}
 
-	public void setPremium(BigDecimal premium)
+	public void setBasicPremium(BigDecimal basicPremium)
 	{
-		this.premium = premium;
+		this.basicPremium = basicPremium;
 	}
 
 	public BigDecimal getSupervisionFees()
@@ -456,14 +456,14 @@ public class MyQuoteModel
 		this.discount = discount;
 	}
 
-	public BigDecimal getAddlPremium()
+	public BigDecimal getAddCoveragePremium()
 	{
-		return addlPremium;
+		return addCoveragePremium;
 	}
 
-	public void setAddlPremium(BigDecimal addlPremium)
+	public void setAddCoveragePremium(BigDecimal addCoveragePremium)
 	{
-		this.addlPremium = addlPremium;
+		this.addCoveragePremium = addCoveragePremium;
 	}
 
 	public BigDecimal getNetAmount()
@@ -502,8 +502,8 @@ public class MyQuoteModel
 		return "MyQuoteModel [countryId=" + countryId + ", compCd=" + compCd + ", appSeqNumber=" + appSeqNumber + ", appDate=" + appDate + ", appType=" + appType + ", policyDuration=" + policyDuration + ", appStatus=" + appStatus + ", status=" + status + ", quoteDate=" + quoteDate
 				+ ", quoteSeqNumber=" + quoteSeqNumber + ", verNumber=" + verNumber + ", companyName=" + companyName + ", companyCode=" + companyCode + ", companyShortCode=" + companyShortCode + ", makeCode=" + makeCode + ", makeDesc=" + makeDesc + ", subMakeCode=" + subMakeCode + ", subMakeDesc="
 				+ subMakeDesc + ", modelYear=" + modelYear + ", shapeCode=" + shapeCode + ", shapeDesc=" + shapeDesc + ", colourCode=" + colourCode + ", colourDesc=" + colourDesc + ", numberOfPassenger=" + numberOfPassenger + ", chassisNumber=" + chassisNumber + ", ktNumber=" + ktNumber
-				+ ", vehicleConditionCode=" + vehicleConditionCode + ", vehicleConditionDesc=" + vehicleConditionDesc + ", purposeCode=" + purposeCode + ", purposeDesc=" + purposeDesc + ", fuelCode=" + fuelCode + ", fuelDesc=" + fuelDesc + ", vehicleValue=" + vehicleValue + ", premium=" + premium
-				+ ", supervisionFees=" + supervisionFees + ", issueFee=" + issueFee + ", discount=" + discount + ", addlPremium=" + addlPremium + ", netAmount=" + netAmount + ", polCondition=" + polCondition + ", vehicleType=" + vehicleType + "]";
+				+ ", vehicleConditionCode=" + vehicleConditionCode + ", vehicleConditionDesc=" + vehicleConditionDesc + ", purposeCode=" + purposeCode + ", purposeDesc=" + purposeDesc + ", fuelCode=" + fuelCode + ", fuelDesc=" + fuelDesc + ", vehicleValue=" + vehicleValue + ", basicPremium="
+				+ basicPremium + ", supervisionFees=" + supervisionFees + ", issueFee=" + issueFee + ", discount=" + discount + ", addCoveragePremium=" + addCoveragePremium + ", netAmount=" + netAmount + ", polCondition=" + polCondition + ", vehicleType=" + vehicleType + "]";
 	}
 
 }

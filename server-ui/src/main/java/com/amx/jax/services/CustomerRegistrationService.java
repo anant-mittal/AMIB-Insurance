@@ -498,6 +498,7 @@ public class CustomerRegistrationService
 			changePasswordOtpRequest.setCivilId(metaData.getCivilId());
 		}
 		regSession.setCivilId(changePasswordOtpRequest.getCivilId());
+		metaData.setCivilId(changePasswordOtpRequest.getCivilId());
 
 		AmxApiResponse<Validate, Object> validateCivilID = isValidCivilId(changePasswordOtpRequest.getCivilId());
 		if (validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
@@ -506,15 +507,20 @@ public class CustomerRegistrationService
 		}
 
 		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(changePasswordOtpRequest.getCivilId());
+		logger.info(TAG + " isCivilIdExist :: getStatusKey   :" + civilIdExistCheck.getStatusKey());
+		logger.info(TAG + " isCivilIdExist :: getMessage     :" + civilIdExistCheck.getMessage());
+		logger.info(TAG + " isCivilIdExist :: getMessageKey  :" + civilIdExistCheck.getMessageKey());
 		if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 		{
 			return civilIdExistCheck;
 		}
 
 		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(changePasswordOtpRequest.getCivilId());
-
 		if (null == customerDetailModel || customerDetailModel.getErrorCode() != null)
 		{
+			logger.info(TAG + " isCivilIdExist :: getStatusKey   :" + customerDetailModel.getErrorCode());
+			logger.info(TAG + " isCivilIdExist :: getMessage     :" + customerDetailModel.getErrorMessage());
+			
 			resp.setMessageKey(customerDetailModel.getErrorCode());
 			resp.setMessage(customerDetailModel.getErrorMessage());
 			resp.setStatusKey(ApiConstants.FAILURE);

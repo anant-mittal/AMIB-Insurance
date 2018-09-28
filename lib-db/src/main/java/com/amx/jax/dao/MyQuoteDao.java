@@ -74,8 +74,10 @@ public class MyQuoteDao
 				myQuoteModel.setQuoteDate(DateFormats.uiFormattedDate(rs.getDate(9)));
 				myQuoteModel.setQuoteSeqNumber(rs.getBigDecimal(10));
 				myQuoteModel.setVerNumber(rs.getBigDecimal(11));
-				myQuoteModel.setCompanyName(rs.getString(12));
-				myQuoteModel.setCompanyCode(rs.getBigDecimal(13));
+				logger.info(TAG + " getUserQuote :: rs.getString(12) :" + rs.getString(12));
+				myQuoteModel.setCompanyCode(rs.getBigDecimal(12));
+				logger.info(TAG + " getUserQuote :: rs.getString(13) :" + rs.getString(13));
+				myQuoteModel.setCompanyName(rs.getString(13));
 				myQuoteModel.setCompanyShortCode(rs.getString(14));
 				myQuoteModel.setMakeCode(rs.getString(15));
 				myQuoteModel.setMakeDesc(rs.getString(16));
@@ -87,7 +89,8 @@ public class MyQuoteDao
 				myQuoteModel.setColourCode(rs.getString(22));
 				myQuoteModel.setColourDesc(rs.getString(23));
 				myQuoteModel.setNumberOfPassenger(rs.getBigDecimal(24));
-				myQuoteModel.setChassisNumber(rs.getBigDecimal(25));
+				logger.info(TAG + " getUserQuote :: rs.getString(25) :" + rs.getString(25));
+				myQuoteModel.setChassisNumber(rs.getString(25));
 				myQuoteModel.setKtNumber(rs.getBigDecimal(26));
 				myQuoteModel.setVehicleConditionCode(rs.getString(27));
 				myQuoteModel.setVehicleConditionDesc(rs.getString(28));
@@ -96,11 +99,11 @@ public class MyQuoteDao
 				myQuoteModel.setFuelCode(rs.getString(31));
 				myQuoteModel.setFuelDesc(rs.getString(32));
 				myQuoteModel.setVehicleValue(rs.getBigDecimal(33));
-				myQuoteModel.setPremium(rs.getBigDecimal(34));
+				myQuoteModel.setBasicPremium(rs.getBigDecimal(34));
 				myQuoteModel.setSupervisionFees(rs.getBigDecimal(35));
 				myQuoteModel.setIssueFee(rs.getBigDecimal(36));
 				myQuoteModel.setDiscount(rs.getBigDecimal(37));
-				myQuoteModel.setAddlPremium(rs.getBigDecimal(38));
+				myQuoteModel.setAddCoveragePremium(rs.getBigDecimal(38));
 				myQuoteModel.setNetAmount(rs.getBigDecimal(39));
 				myQuoteModel.setPolCondition(rs.getString(40));
 				myQuoteModel.setVehicleType(rs.getString(41));
