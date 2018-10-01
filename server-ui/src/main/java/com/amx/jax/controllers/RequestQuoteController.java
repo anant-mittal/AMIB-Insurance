@@ -127,6 +127,9 @@ public class RequestQuoteController
 		{
 			docSeqNumberDet = ArgUtil.parseAsBigDecimal(docSeqNumber);
 		}
+		
+		logger.info(TAG + " uploadVehicleImage :: file :" + file.getSize());
+		
 		return requestQuoteService.uploadVehicleImage(file, appSeqNumberDet, docTypeCode, docSeqNumberDet);
 	}
 

@@ -1,7 +1,9 @@
 package com.amx.jax.dao;
 
+import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -13,9 +15,12 @@ import org.springframework.stereotype.Repository;
 import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.MyQuoteModel;
+import com.amx.jax.models.QuoteAddPolicyDetails;
+import com.amx.jax.models.ReplacementTypeList;
 import com.amx.jax.models.VehicleSession;
 
 import oracle.jdbc.OracleTypes;
+import scala.annotation.meta.setter;
 
 @Repository
 public class MyQuoteDao
@@ -35,7 +40,7 @@ public class MyQuoteDao
 
 	Connection connection;
 
-	public ArrayList getUserQuote()
+	public ArrayList<MyQuoteModel> getUserQuote()
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -44,7 +49,7 @@ public class MyQuoteDao
 
 		try
 		{
-			logger.info(TAG + " getUserQuote :: metaData :"+metaData.toString());
+			logger.info(TAG + " getUserQuote :: metaData :" + metaData.toString());
 			callableStatement = connection.prepareCall(callProcedure);
 
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
@@ -55,11 +60,8 @@ public class MyQuoteDao
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
-			
+
 			ResultSet rs = (ResultSet) callableStatement.getObject(5);
-			logger.info(TAG + " getUserQuote :: rs.getRow :" + rs.getRow());
-			
-			
 			while (rs.next())
 			{
 				MyQuoteModel myQuoteModel = new MyQuoteModel();
@@ -74,9 +76,7 @@ public class MyQuoteDao
 				myQuoteModel.setQuoteDate(DateFormats.uiFormattedDate(rs.getDate(9)));
 				myQuoteModel.setQuoteSeqNumber(rs.getBigDecimal(10));
 				myQuoteModel.setVerNumber(rs.getBigDecimal(11));
-				logger.info(TAG + " getUserQuote :: rs.getString(12) :" + rs.getString(12));
 				myQuoteModel.setCompanyCode(rs.getBigDecimal(12));
-				logger.info(TAG + " getUserQuote :: rs.getString(13) :" + rs.getString(13));
 				myQuoteModel.setCompanyName(rs.getString(13));
 				myQuoteModel.setCompanyShortCode(rs.getString(14));
 				myQuoteModel.setMakeCode(rs.getString(15));
@@ -89,7 +89,6 @@ public class MyQuoteDao
 				myQuoteModel.setColourCode(rs.getString(22));
 				myQuoteModel.setColourDesc(rs.getString(23));
 				myQuoteModel.setNumberOfPassenger(rs.getBigDecimal(24));
-				logger.info(TAG + " getUserQuote :: rs.getString(25) :" + rs.getString(25));
 				myQuoteModel.setChassisNumber(rs.getString(25));
 				myQuoteModel.setKtNumber(rs.getBigDecimal(26));
 				myQuoteModel.setVehicleConditionCode(rs.getString(27));
@@ -126,13 +125,16 @@ public class MyQuoteDao
 	{
 		try
 		{
-			connection = jdbcTemplate.getDataSource().getConnection();
+			if (null == connection || connection.isClosed())
+			{
+				connection = jdbcTemplate.getDataSource().getConnection();
+			}
+			return connection;
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-
 		return connection;
 	}
 

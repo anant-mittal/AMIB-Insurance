@@ -1205,7 +1205,6 @@ public class RequestQuoteDao
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			logger.info(TAG + " getConnection :: e.printStackTrace() :" + e);
 		}
 		return connection;
 	}

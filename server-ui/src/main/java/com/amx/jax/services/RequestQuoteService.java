@@ -613,7 +613,7 @@ public class RequestQuoteService
 		customerProfileDetailModel.setEnglishName(personalDetails.getEnglishName());
 		customerProfileDetailModel.setNativeArabicName(personalDetails.getNativeArabicName());
 		customerProfileDetailModel.setGenderCode(personalDetails.getGenderCode());
-		customerProfileDetailModel.setIdExpiryDate(DateFormats.setExpiryDateToDb(personalDetails.getIdExpiryDate().toString()));
+		customerProfileDetailModel.setIdExpiryDate(DateFormats.setDbSqlFormatDate(personalDetails.getIdExpiryDate().toString()));
 		customerProfileDetailModel.setBusinessCode(personalDetails.getBusinessCode());
 		customerProfileDetailModel.setNatyCode(personalDetails.getNatyCode());
 		customerProfileDetailModel.setGovCode(personalDetails.getGovCode());

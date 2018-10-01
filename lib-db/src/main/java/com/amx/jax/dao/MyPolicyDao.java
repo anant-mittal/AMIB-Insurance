@@ -171,13 +171,16 @@ public class MyPolicyDao
 	{
 		try
 		{
-			connection = jdbcTemplate.getDataSource().getConnection();
+			if (null == connection || connection.isClosed())
+			{
+				connection = jdbcTemplate.getDataSource().getConnection();
+			}
+			return connection;
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-
 		return connection;
 	}
 

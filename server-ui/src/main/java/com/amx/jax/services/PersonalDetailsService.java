@@ -216,7 +216,7 @@ public class PersonalDetailsService
 		customerProfileDetailModel.setEnglishName(customerProfileUpdateRequest.getEnglishName());
 		customerProfileDetailModel.setNativeArabicName(customerProfileUpdateRequest.getNativeArabicName());
 		customerProfileDetailModel.setGenderCode(customerProfileUpdateRequest.getGenderCode());
-		customerProfileDetailModel.setIdExpiryDate(DateFormats.setExpiryDateToDb(customerProfileUpdateRequest.getIdExpiryDate().toString()));
+		customerProfileDetailModel.setIdExpiryDate(DateFormats.setDbSqlFormatDate(customerProfileUpdateRequest.getIdExpiryDate().toString()));
 		customerProfileDetailModel.setBusinessCode(customerProfileUpdateRequest.getBusinessCode());
 		customerProfileDetailModel.setNatyCode(customerProfileUpdateRequest.getNatyCode());
 		customerProfileDetailModel.setGovCode(customerProfileUpdateRequest.getGovCode());

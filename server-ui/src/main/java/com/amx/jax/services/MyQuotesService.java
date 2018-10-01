@@ -1,5 +1,10 @@
 package com.amx.jax.services;
 
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +13,15 @@ import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.dao.MyQuoteDao;
 import com.amx.jax.models.ActivePolicyModel;
+import com.amx.jax.models.CustomizeQuoteModel;
+import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.MetaData;
+import com.amx.jax.models.MyQuoteModel;
+import com.amx.jax.models.QuotationDetails;
+import com.amx.jax.models.QuoteAddPolicyDetails;
 import com.amx.jax.models.RegSession;
+import com.amx.jax.models.ReplacementTypeList;
+import com.amx.jax.models.TotalPremium;
 
 @Service
 public class MyQuotesService
@@ -29,10 +41,9 @@ public class MyQuotesService
 
 	public AmxApiResponse<?, Object> getUserQuote()
 	{
-		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
+		AmxApiResponse<MyQuoteModel, Object> resp = new AmxApiResponse<MyQuoteModel, Object>();
 		try
 		{
-			logger.info(TAG + " getUserQuote :: ");
 			resp.setStatusKey(ApiConstants.SUCCESS);
 			resp.setResults(myQuoteDao.getUserQuote());
 		}
