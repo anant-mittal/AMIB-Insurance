@@ -1,7 +1,9 @@
 package com.amx.jax.services;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,11 +38,10 @@ public class CustomizeQuoteService
 
 	@Autowired
 	private CustomizeQuoteDao customizeQuoteDao;
-	
+
 	@Autowired
 	private MyQuoteDao myQuoteDao;
-	
-	
+
 	public AmxApiResponse<?, Object> getCustomizedQuoteDetails(BigDecimal appSeqNumber)
 	{
 		AmxApiResponse<CustomizeQuoteModel, Object> resp = new AmxApiResponse<CustomizeQuoteModel, Object>();
@@ -49,6 +50,8 @@ public class CustomizeQuoteService
 		ArrayList<QuoteAddPolicyDetails> quoteAddPolicyDetails = null;
 		QuotationDetails quotationDetails = new QuotationDetails();
 		TotalPremium totalPremium = new TotalPremium();
+		HashMap<String, ArrayList> repTypeMap = new HashMap<String, ArrayList>();
+
 		try
 		{
 			MyQuoteModel myQuoteModel = new MyQuoteModel();
@@ -86,11 +89,24 @@ public class CustomizeQuoteService
 			totalPremium.setTotalAmount(myQuoteModel.getNetAmount());
 			logger.info(TAG + " getCustomizedQuoteDetails :: totalPremium :" + totalPremium.toString());
 
+			//Replacement Type List Meta
+			for (int i = 0; i < quoteAddPolicyDetails.size(); i++)
+			{
+				String polType = quoteAddPolicyDetails.get(i).getAddPolicyTypeCode();
+				Date quoteDate = DateFormats.setDbSqlFormatDate(myQuoteModel.getQuoteDate());
+				ArrayList repTypeArray = customizeQuoteDao.getReplacementTypeList(polType, quoteDate);
+				if (null != repTypeArray)
+				{
+					repTypeMap.put(polType, repTypeArray);
+				}
+			}
+
 			customizeQuoteModel.setQuotationDetails(quotationDetails);
 			customizeQuoteModel.setQuoteAddPolicyDetails(quoteAddPolicyDetails);
 			customizeQuoteModel.setTotalPremium(totalPremium);
 
 			resp.setData(customizeQuoteModel);
+			resp.setMeta(repTypeMap);
 			resp.setStatusKey(ApiConstants.SUCCESS);
 
 		}
@@ -102,25 +118,19 @@ public class CustomizeQuoteService
 		}
 		return resp;
 	}
-
-	public AmxApiResponse<?, Object> getReplacementTypeList(BigDecimal appSeqNumber, String addPolicyTypeCode)
+	
+	
+	
+	public AmxApiResponse<?, Object> calculateCutomizeQuote(CustomizeQuoteModel customizeQuoteModel)
 	{
-		AmxApiResponse<?, Object> resp = new AmxApiResponse<Object, Object>();
-		MyQuoteModel myQuoteModel = new MyQuoteModel();
-
+		AmxApiResponse<CustomizeQuoteModel, Object> resp = new AmxApiResponse<CustomizeQuoteModel, Object>();
 		try
 		{
-			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote();
-			for (int i = 0; i < getUserQuote.size(); i++)
-			{
-				MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
-				if (null != myQuoteModelFromDb.getAppSeqNumber() && myQuoteModelFromDb.getAppSeqNumber().equals(appSeqNumber))
-				{
-					myQuoteModel = myQuoteModelFromDb;
-				}
-			}
-			resp.setResults(customizeQuoteDao.getReplacementTypeList(addPolicyTypeCode, DateFormats.setDbSqlFormatDate(myQuoteModel.getQuoteDate())));
+			
+			resp.setData(null);
+			resp.setMeta(null);
 			resp.setStatusKey(ApiConstants.SUCCESS);
+
 		}
 		catch (Exception e)
 		{
@@ -130,4 +140,11 @@ public class CustomizeQuoteService
 		}
 		return resp;
 	}
+	
+	
+	
+	
+	
+	
+	
 }

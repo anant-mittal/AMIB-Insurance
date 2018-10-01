@@ -124,6 +124,10 @@ public class CustomizeQuoteDao
 			while (rs.next())
 			{
 				ReplacementTypeList replacementTypeList = new ReplacementTypeList();
+				if(null == rs.getString(1) || rs.getString(1).equals(""))
+				{
+					return null;
+				}
 				replacementTypeList.setReplacementTypeCode(rs.getString(1));
 				replacementTypeList.setReplacementTypeDesc(rs.getString(2));
 				replacementTypeList.setYearlyPremium(rs.getBigDecimal(3));

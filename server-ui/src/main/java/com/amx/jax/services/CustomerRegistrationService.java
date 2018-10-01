@@ -31,7 +31,7 @@ import com.amx.jax.models.FailureException;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.RegSession;
 import com.amx.jax.models.Validate;
-import com.amx.jax.service.HttpService;
+import com.amx.jax.service.HttpService;//
 import com.insurance.model.RequestOtpModel;
 import com.insurance.model.ResponseOtpModel;
 import com.insurance.services.EmailService;
