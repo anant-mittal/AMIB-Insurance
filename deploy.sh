@@ -1,4 +1,4 @@
-mvn -T 4 clean package -pl server-ui -am -DskipTests
+mvn clean package -pl server-ui -am -DskipTests -U
 SD_USER=amibdev
 SD_HOST=10.28.42.12
 sshpass -p $SAD_PASS scp server-ui/target/server-ui-0.0.1-SNAPSHOT.jar $SAD_USER@$SAD_HOST:/var/opt/amib/server-ui
