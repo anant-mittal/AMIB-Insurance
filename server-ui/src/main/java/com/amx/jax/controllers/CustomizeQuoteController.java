@@ -29,7 +29,7 @@ public class CustomizeQuoteController
 	private CustomizeQuoteService customizeQuoteService;
 	
 	@RequestMapping(value = "/api/customize-quote/get-quote-details", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> getCustomizedQuoteDetails(@RequestParam(name = "appSeqNumber", required = false) String appSeqNumber)
+	public AmxApiResponse<?, Object> getCustomizedQuoteDetails(@RequestParam(name = "appSeqNumber") String appSeqNumber)
 	{
 		BigDecimal appSeqNumberDet = null;
 		if (null != appSeqNumber && !appSeqNumber.equals("") && !appSeqNumber.equalsIgnoreCase("null"))
@@ -39,7 +39,7 @@ public class CustomizeQuoteController
 		return customizeQuoteService.getCustomizedQuoteDetails(appSeqNumberDet);
 	}
 
-	@RequestMapping(value = "/api/customize-quote/calculate-quote", method = RequestMethod.GET, produces = "application/json")
+	@RequestMapping(value = "/api/customize-quote/calculate-quote", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> calculateCutomizeQuote(@RequestBody CustomizeQuoteModel customizeQuoteModel)
 	{
 		return customizeQuoteService.calculateCutomizeQuote(customizeQuoteModel);

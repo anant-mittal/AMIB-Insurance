@@ -22,6 +22,7 @@ import com.amx.jax.models.QuotationDetails;
 import com.amx.jax.models.QuoteAddPolicyDetails;
 import com.amx.jax.models.RegSession;
 import com.amx.jax.models.TotalPremium;
+import com.amx.jax.utility.CustomizeQuoteUtility;
 
 @Service
 public class CustomizeQuoteService
@@ -126,9 +127,7 @@ public class CustomizeQuoteService
 		AmxApiResponse<CustomizeQuoteModel, Object> resp = new AmxApiResponse<CustomizeQuoteModel, Object>();
 		try
 		{
-			
-			resp.setData(null);
-			resp.setMeta(null);
+			resp.setData(CustomizeQuoteUtility.calculateCustomizeQuote(customizeQuoteModel));
 			resp.setStatusKey(ApiConstants.SUCCESS);
 
 		}

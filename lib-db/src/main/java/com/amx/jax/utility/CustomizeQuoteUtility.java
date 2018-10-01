@@ -17,10 +17,10 @@ public class CustomizeQuoteUtility
 
 	public static CustomizeQuoteModel calculateCustomizeQuote(CustomizeQuoteModel customizeQuoteModel)
 	{
-		BigDecimal policyDuration;
-		BigDecimal yearlyAddCovPremium = null;
-		BigDecimal addCovPremium = null;
-		BigDecimal totalPremiumAmount = null;
+		BigDecimal policyDuration = new BigDecimal(0);
+		BigDecimal yearlyAddCovPremium = new BigDecimal(0);
+		BigDecimal addCovPremium = new BigDecimal(0);
+		BigDecimal totalPremiumAmount = new BigDecimal(0);
 
 		if (null != customizeQuoteModel)
 		{
@@ -38,6 +38,7 @@ public class CustomizeQuoteUtility
 				if (quoteAddPolicyDetails.getAddPolicyTypeEnable())
 				{
 					BigDecimal yearlyPremiumAmount = quoteAddPolicyDetails.getYearlyPremium();
+					logger.info(TAG + " calculateCustomizeQuote :: yearlyPremiumAmount :" + yearlyPremiumAmount);
 					yearlyAddCovPremium = yearlyAddCovPremium.add(yearlyPremiumAmount);
 					logger.info(TAG + " calculateCustomizeQuote :: yearlyAddCovPremium :" + yearlyAddCovPremium);
 				}
