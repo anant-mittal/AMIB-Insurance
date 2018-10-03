@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class QuoteAddPolicyDetails
 {
 	private String replacTypeVisibility;
-	
+
 	private String addPolicyTypeCode;
 
 	private String addPolicyTypeDesc;
@@ -67,8 +67,6 @@ public class QuoteAddPolicyDetails
 		this.yearlyPremium = yearlyPremium;
 	}
 
-	
-
 	public boolean getAddPolicyTypeEnable()
 	{
 		return addPolicyTypeEnable;
@@ -78,15 +76,13 @@ public class QuoteAddPolicyDetails
 	{
 		this.addPolicyTypeEnable = addPolicyTypeEnable;
 	}
-	
+
 	@Override
 	public String toString()
 	{
 		return "QuoteAddPolicyDetails [replacTypeVisibility=" + replacTypeVisibility + ", addPolicyTypeCode=" + addPolicyTypeCode + ", addPolicyTypeDesc=" + addPolicyTypeDesc + ", addPolicyTypeEnable=" + addPolicyTypeEnable + ", yearlyPremium=" + yearlyPremium + ", replacementTypeCode="
 				+ replacementTypeCode + "]";
 	}
-
-	
 
 	// A.ADDL_POLICY_TY = MotorPersonalAccident , Replacement Type, RoadAccident
 	// ADDL_POLTYP_DESC = MotorPersonalAccident , Replacement Type, RoadAccident

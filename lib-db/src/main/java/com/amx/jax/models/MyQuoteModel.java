@@ -54,7 +54,7 @@ public class MyQuoteModel
 
 	private String chassisNumber;
 
-	private BigDecimal ktNumber;
+	private String ktNumber;
 
 	private String vehicleConditionCode;
 
@@ -336,12 +336,12 @@ public class MyQuoteModel
 		this.chassisNumber = chassisNumber;
 	}
 
-	public BigDecimal getKtNumber()
+	public String getKtNumber()
 	{
 		return ktNumber;
 	}
 
-	public void setKtNumber(BigDecimal ktNumber)
+	public void setKtNumber(String ktNumber)
 	{
 		this.ktNumber = ktNumber;
 	}

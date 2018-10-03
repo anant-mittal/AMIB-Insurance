@@ -90,7 +90,7 @@ public class MyQuoteDao
 				myQuoteModel.setColourDesc(rs.getString(23));
 				myQuoteModel.setNumberOfPassenger(rs.getBigDecimal(24));
 				myQuoteModel.setChassisNumber(rs.getString(25));
-				myQuoteModel.setKtNumber(rs.getBigDecimal(26));
+				myQuoteModel.setKtNumber(rs.getString(26));
 				myQuoteModel.setVehicleConditionCode(rs.getString(27));
 				myQuoteModel.setVehicleConditionDesc(rs.getString(28));
 				myQuoteModel.setPurposeCode(rs.getString(29));

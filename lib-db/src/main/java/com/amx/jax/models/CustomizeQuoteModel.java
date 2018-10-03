@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 public class CustomizeQuoteModel
 {
+	private CustomizeQuoteInfo customizeQuoteInfo;
+
 	private QuotationDetails quotationDetails;
 
 	ArrayList<QuoteAddPolicyDetails> quoteAddPolicyDetails;
@@ -39,4 +41,15 @@ public class CustomizeQuoteModel
 	{
 		this.totalPremium = totalPremium;
 	}
+
+	public CustomizeQuoteInfo getCustomizeQuoteInfo()
+	{
+		return customizeQuoteInfo;
+	}
+
+	public void setCustomizeQuoteInfo(CustomizeQuoteInfo customizeQuoteInfo)
+	{
+		this.customizeQuoteInfo = customizeQuoteInfo;
+	}
+
 }

@@ -18,6 +18,8 @@ import com.amx.jax.models.CustomizeQuoteSave;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.QuoteAddPolicyDetails;
 import com.amx.jax.models.ReplacementTypeList;
+import com.amx.jax.models.Validate;
+
 import oracle.jdbc.OracleTypes;
 
 @Repository
@@ -176,10 +178,11 @@ public class CustomizeQuoteDao
 		return termsCondition;
 	}
 
-	public ArrayList<QuoteAddPolicyDetails> saveCustomizeQuote(CustomizeQuoteSave customizeQuoteSave)
+	public Validate saveCustomizeQuote(CustomizeQuoteSave customizeQuoteSave)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
+		Validate validate = new Validate();
 		String callProcedure = "{call IRB_PROCESS_QUOTE.IRB_SAVE_CUSTOMIZE_QUOTE(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
 		ArrayList<QuoteAddPolicyDetails> activePolicyArray = new ArrayList<QuoteAddPolicyDetails>();
 
@@ -190,12 +193,22 @@ public class CustomizeQuoteDao
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			callableStatement.setBigDecimal(3, customizeQuoteSave.getQuotSeqNumber());
 			callableStatement.setBigDecimal(4, customizeQuoteSave.getVerNumber());
-			callableStatement.setBigDecimal(5, metaData.getLanguageId());
-			callableStatement.registerOutParameter(6, OracleTypes.CURSOR);
-			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
-			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
+			callableStatement.setBigDecimal(5, customizeQuoteSave.getBasicPremium());
+			callableStatement.setBigDecimal(6, customizeQuoteSave.getSupervisionFees());
+			callableStatement.setBigDecimal(7, customizeQuoteSave.getIssueFee());
+			callableStatement.setBigDecimal(8, customizeQuoteSave.getDisscountAmt());
+			callableStatement.setBigDecimal(9, customizeQuoteSave.getAddCoveragePremium());
+			callableStatement.setBigDecimal(10, customizeQuoteSave.getTotalAmount());
+			callableStatement.setObject(11, customizeQuoteSave.getAdditionalPolicy());
+			callableStatement.setString(12, metaData.getDeviceType());
+			callableStatement.setString(13, metaData.getDeviceId());
+			callableStatement.setString(14, metaData.getCivilId());
+			callableStatement.registerOutParameter(15, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(16, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
-
+			validate.setErrorCode(callableStatement.getString(15));
+			validate.setErrorMessage(callableStatement.getString(16));
+			
 		}
 		catch (Exception e)
 		{
@@ -205,7 +218,7 @@ public class CustomizeQuoteDao
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return activePolicyArray;
+		return validate;
 	}
 
 	private Connection getConnection()

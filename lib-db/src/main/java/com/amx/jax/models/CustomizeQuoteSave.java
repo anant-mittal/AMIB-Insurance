@@ -2,6 +2,7 @@ package com.amx.jax.models;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 public class CustomizeQuoteSave
 {
@@ -21,7 +22,17 @@ public class CustomizeQuoteSave
 
 	private BigDecimal totalAmount;
 
-	private ArrayList<AdditionalPolicySave> additionalPolicySave;
+	List<Object> additionalPolicy;
+
+	public List<Object> getAdditionalPolicy()
+	{
+		return additionalPolicy;
+	}
+
+	public void setAdditionalPolicy(List<Object> additionalPolicy)
+	{
+		this.additionalPolicy = additionalPolicy;
+	}
 
 	public BigDecimal getQuotSeqNumber()
 	{
@@ -101,16 +112,6 @@ public class CustomizeQuoteSave
 	public void setTotalAmount(BigDecimal totalAmount)
 	{
 		this.totalAmount = totalAmount;
-	}
-
-	public ArrayList<AdditionalPolicySave> getAdditionalPolicySave()
-	{
-		return additionalPolicySave;
-	}
-
-	public void setAdditionalPolicySave(ArrayList<AdditionalPolicySave> additionalPolicySave)
-	{
-		this.additionalPolicySave = additionalPolicySave;
 	}
 
 }
