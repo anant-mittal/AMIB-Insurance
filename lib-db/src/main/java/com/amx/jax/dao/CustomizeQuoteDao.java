@@ -12,6 +12,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import com.amx.jax.models.AdditionalPolicySave;
+import com.amx.jax.models.CustomizeQuoteSave;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.QuoteAddPolicyDetails;
 import com.amx.jax.models.ReplacementTypeList;
@@ -31,18 +34,16 @@ public class CustomizeQuoteDao
 	MetaData metaData;
 
 	Connection connection;
-	
-	
+
 	public ArrayList<QuoteAddPolicyDetails> getQuoteAdditionalPolicy(BigDecimal quotSeqNumber, BigDecimal verNumber)
 	{
 		logger.info(TAG + " getQuoteAdditionalPolicy :: quotSeqNumber :" + quotSeqNumber);
 		logger.info(TAG + " getQuoteAdditionalPolicy :: verNumber     :" + verNumber);
-		
+
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_QUOTE_ADDLPOL(?,?,?,?,?,?,?,?)}";
 		ArrayList<QuoteAddPolicyDetails> activePolicyArray = new ArrayList<QuoteAddPolicyDetails>();
-
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -55,7 +56,6 @@ public class CustomizeQuoteDao
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
-
 			ResultSet rs = (ResultSet) callableStatement.getObject(6);
 			while (rs.next())
 			{
@@ -65,11 +65,11 @@ public class CustomizeQuoteDao
 
 				if (null != rs.getBigDecimal(5) && rs.getBigDecimal(5).equals(new BigDecimal(1)))
 				{
-					quoteAddPolicyDetails.setReplacTypeVisibility(true);
+					quoteAddPolicyDetails.setReplacTypeVisibility("select");
 				}
 				else
 				{
-					quoteAddPolicyDetails.setReplacTypeVisibility(false);
+					quoteAddPolicyDetails.setReplacTypeVisibility("text");
 				}
 
 				if (null != rs.getString(7) && !rs.getString(7).equals("") && rs.getString(7).equalsIgnoreCase("Y"))
@@ -81,7 +81,7 @@ public class CustomizeQuoteDao
 					quoteAddPolicyDetails.setAddPolicyTypeEnable(false);
 				}
 				quoteAddPolicyDetails.setYearlyPremium(rs.getBigDecimal(6));
-				quoteAddPolicyDetails.setReplacementType(rs.getString(9));
+				quoteAddPolicyDetails.setReplacementTypeCode(rs.getString(9));
 				activePolicyArray.add(quoteAddPolicyDetails);
 				logger.info(TAG + " getQuoteAdditionalPolicy :: QuoteAddPolicyDetails :" + quoteAddPolicyDetails.toString());
 			}
@@ -124,7 +124,7 @@ public class CustomizeQuoteDao
 			while (rs.next())
 			{
 				ReplacementTypeList replacementTypeList = new ReplacementTypeList();
-				if(null == rs.getString(1) || rs.getString(1).equals(""))
+				if (null == rs.getString(1) || rs.getString(1).equals(""))
 				{
 					return null;
 				}
@@ -144,6 +144,68 @@ public class CustomizeQuoteDao
 			CloseConnection(callableStatement, connection);
 		}
 		return repTypeListArray;
+	}
+
+	public String getTermsAndCondition()
+	{
+		getConnection();
+		String termsCondition = "";
+		CallableStatement callableStatement = null;
+		String callProcedure = "{call IRB_GET_TERMSCON(?,?,?,?,?,?,?)}";
+		try
+		{
+			callableStatement = connection.prepareCall(callProcedure);
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setString(3, "PAY");
+			callableStatement.setBigDecimal(4, metaData.getLanguageId());
+			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
+			callableStatement.executeUpdate();
+			termsCondition = callableStatement.getString(5);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		return termsCondition;
+	}
+
+	public ArrayList<QuoteAddPolicyDetails> saveCustomizeQuote(CustomizeQuoteSave customizeQuoteSave)
+	{
+		getConnection();
+		CallableStatement callableStatement = null;
+		String callProcedure = "{call IRB_PROCESS_QUOTE.IRB_SAVE_CUSTOMIZE_QUOTE(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+		ArrayList<QuoteAddPolicyDetails> activePolicyArray = new ArrayList<QuoteAddPolicyDetails>();
+
+		try
+		{
+			callableStatement = connection.prepareCall(callProcedure);
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(3, customizeQuoteSave.getQuotSeqNumber());
+			callableStatement.setBigDecimal(4, customizeQuoteSave.getVerNumber());
+			callableStatement.setBigDecimal(5, metaData.getLanguageId());
+			callableStatement.registerOutParameter(6, OracleTypes.CURSOR);
+			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
+			callableStatement.executeUpdate();
+
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		return activePolicyArray;
 	}
 
 	private Connection getConnection()

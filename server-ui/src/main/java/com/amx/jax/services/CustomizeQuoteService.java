@@ -90,7 +90,7 @@ public class CustomizeQuoteService
 			totalPremium.setTotalAmount(myQuoteModel.getNetAmount());
 			logger.info(TAG + " getCustomizedQuoteDetails :: totalPremium :" + totalPremium.toString());
 
-			//Replacement Type List Meta
+			// SET Replacement Type List Meta
 			for (int i = 0; i < quoteAddPolicyDetails.size(); i++)
 			{
 				String polType = quoteAddPolicyDetails.get(i).getAddPolicyTypeCode();
@@ -119,9 +119,7 @@ public class CustomizeQuoteService
 		}
 		return resp;
 	}
-	
-	
-	
+
 	public AmxApiResponse<?, Object> calculateCutomizeQuote(CustomizeQuoteModel customizeQuoteModel)
 	{
 		AmxApiResponse<CustomizeQuoteModel, Object> resp = new AmxApiResponse<CustomizeQuoteModel, Object>();
@@ -139,11 +137,22 @@ public class CustomizeQuoteService
 		}
 		return resp;
 	}
-	
-	
-	
-	
-	
-	
-	
+
+	public AmxApiResponse<?, Object> getTermsAndCondition()
+	{
+		AmxApiResponse<String, Object> resp = new AmxApiResponse<String, Object>();
+		try
+		{
+			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setData(customizeQuoteDao.getTermsAndCondition());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
+		return resp;
+	}
+
 }

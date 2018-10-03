@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class QuoteAddPolicyDetails
 {
-	private boolean replacTypeVisibility;
+	private String replacTypeVisibility;
 	
 	private String addPolicyTypeCode;
 
@@ -15,7 +15,17 @@ public class QuoteAddPolicyDetails
 
 	private BigDecimal yearlyPremium;
 
-	private String replacementType;
+	private String replacementTypeCode;
+
+	public String getReplacementTypeCode()
+	{
+		return replacementTypeCode;
+	}
+
+	public void setReplacementTypeCode(String replacementTypeCode)
+	{
+		this.replacementTypeCode = replacementTypeCode;
+	}
 
 	public String getAddPolicyTypeCode()
 	{
@@ -37,12 +47,12 @@ public class QuoteAddPolicyDetails
 		this.addPolicyTypeDesc = addPolicyTypeDesc;
 	}
 
-	public boolean getReplacTypeVisibility()
+	public String getReplacTypeVisibility()
 	{
 		return replacTypeVisibility;
 	}
 
-	public void setReplacTypeVisibility(boolean replacTypeVisibility)
+	public void setReplacTypeVisibility(String replacTypeVisibility)
 	{
 		this.replacTypeVisibility = replacTypeVisibility;
 	}
@@ -57,15 +67,7 @@ public class QuoteAddPolicyDetails
 		this.yearlyPremium = yearlyPremium;
 	}
 
-	public String getReplacementType()
-	{
-		return replacementType;
-	}
-
-	public void setReplacementType(String replacementType)
-	{
-		this.replacementType = replacementType;
-	}
+	
 
 	public boolean getAddPolicyTypeEnable()
 	{
@@ -80,9 +82,11 @@ public class QuoteAddPolicyDetails
 	@Override
 	public String toString()
 	{
-		return "QuoteAddPolicyDetails [addPolicyTypeCode=" + addPolicyTypeCode + ", addPolicyTypeDesc=" + addPolicyTypeDesc + ", replacTypeVisibility=" + replacTypeVisibility + ", addPolicyTypeEnable=" + addPolicyTypeEnable + ", yearlyPremium=" + yearlyPremium + ", replacementType="
-				+ replacementType + "]";
+		return "QuoteAddPolicyDetails [replacTypeVisibility=" + replacTypeVisibility + ", addPolicyTypeCode=" + addPolicyTypeCode + ", addPolicyTypeDesc=" + addPolicyTypeDesc + ", addPolicyTypeEnable=" + addPolicyTypeEnable + ", yearlyPremium=" + yearlyPremium + ", replacementTypeCode="
+				+ replacementTypeCode + "]";
 	}
+
+	
 
 	// A.ADDL_POLICY_TY = MotorPersonalAccident , Replacement Type, RoadAccident
 	// ADDL_POLTYP_DESC = MotorPersonalAccident , Replacement Type, RoadAccident

@@ -24,10 +24,10 @@ public class CustomizeQuoteController
 	String TAG = "com.amx.jax.controllers :: CustomizeQuoteController :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(CustomizeQuoteController.class);
-	
+
 	@Autowired
 	private CustomizeQuoteService customizeQuoteService;
-	
+
 	@RequestMapping(value = "/api/customize-quote/get-quote-details", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> getCustomizedQuoteDetails(@RequestParam(name = "appSeqNumber") String appSeqNumber)
 	{
@@ -43,5 +43,11 @@ public class CustomizeQuoteController
 	public AmxApiResponse<?, Object> calculateCutomizeQuote(@RequestBody CustomizeQuoteModel customizeQuoteModel)
 	{
 		return customizeQuoteService.calculateCutomizeQuote(customizeQuoteModel);
+	}
+
+	@RequestMapping(value = "/api/customize-quote/terms-condition", method = RequestMethod.POST, produces = "application/json")
+	public AmxApiResponse<?, Object> getTermsAndCondition()
+	{
+		return customizeQuoteService.getTermsAndCondition();
 	}
 }
