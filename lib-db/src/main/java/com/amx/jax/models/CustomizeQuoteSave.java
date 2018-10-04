@@ -101,4 +101,11 @@ public class CustomizeQuoteSave
 	{
 		this.totalAmount = totalAmount;
 	}
+
+	@Override
+	public String toString()
+	{
+		return "CustomizeQuoteSave [quotSeqNumber=" + quotSeqNumber + ", verNumber=" + verNumber + ", basicPremium=" + basicPremium + ", supervisionFees=" + supervisionFees + ", issueFee=" + issueFee + ", disscountAmt=" + disscountAmt + ", addCoveragePremium=" + addCoveragePremium + ", totalAmount="
+				+ totalAmount + "]";
+	}
 }

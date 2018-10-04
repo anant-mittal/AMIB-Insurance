@@ -27,7 +27,6 @@ public class CustomizeQuoteController
 	@RequestMapping(value = "/api/customize-quote/get-quote-details", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> getCustomizedQuoteDetails(@RequestParam(name = "quoteSeqNumber", required = false) String quoteSeqNumber)
 	{
-
 		BigDecimal quoteSeqNumberDet = null;
 		if (null != quoteSeqNumber && !quoteSeqNumber.equals("") && !quoteSeqNumber.equalsIgnoreCase("null"))
 		{

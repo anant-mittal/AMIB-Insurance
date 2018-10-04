@@ -184,9 +184,7 @@ public class CustomizeQuoteDao
 		getConnection();
 		CallableStatement callableStatement = null;
 		Validate validate = new Validate();
-		String callProcedure = "{call IRB_SAVE_QUOTE_SUMMARY(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
-		ArrayList<QuoteAddPolicyDetails> activePolicyArray = new ArrayList<QuoteAddPolicyDetails>();
-
+		String callProcedure = "{call IRB_SAVE_QUOTE_SUMMARY(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
