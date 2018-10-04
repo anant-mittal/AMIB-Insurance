@@ -198,14 +198,14 @@ public class CustomizeQuoteDao
 			callableStatement.setBigDecimal(8, customizeQuoteSave.getDisscountAmt());
 			callableStatement.setBigDecimal(9, customizeQuoteSave.getAddCoveragePremium());
 			callableStatement.setBigDecimal(10, customizeQuoteSave.getTotalAmount());
-			callableStatement.setString(12, metaData.getDeviceType());
-			callableStatement.setString(13, metaData.getDeviceId());
-			callableStatement.setString(14, metaData.getCivilId());
+			callableStatement.setString(11, metaData.getDeviceType());
+			callableStatement.setString(12, metaData.getDeviceId());
+			callableStatement.setString(13, metaData.getCivilId());
+			callableStatement.registerOutParameter(14, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(15, java.sql.Types.VARCHAR);
-			callableStatement.registerOutParameter(16, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
-			validate.setErrorCode(callableStatement.getString(15));
-			validate.setErrorMessage(callableStatement.getString(16));
+			validate.setErrorCode(callableStatement.getString(14));
+			validate.setErrorMessage(callableStatement.getString(15));
 			
 		}
 		catch (Exception e)
@@ -245,8 +245,8 @@ public class CustomizeQuoteDao
 			callableStatement.registerOutParameter(13, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(14, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
-			validate.setErrorCode(callableStatement.getString(15));
-			validate.setErrorMessage(callableStatement.getString(16));
+			validate.setErrorCode(callableStatement.getString(13));
+			validate.setErrorMessage(callableStatement.getString(14));
 		}
 		catch (Exception e)
 		{
