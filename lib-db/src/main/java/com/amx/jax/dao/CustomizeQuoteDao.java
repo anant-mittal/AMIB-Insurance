@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.amx.jax.models.AdditionalPolicySave;
+import com.amx.jax.models.CustomizeQuoteAddPol;
 import com.amx.jax.models.CustomizeQuoteSave;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.QuoteAddPolicyDetails;
@@ -183,7 +184,7 @@ public class CustomizeQuoteDao
 		getConnection();
 		CallableStatement callableStatement = null;
 		Validate validate = new Validate();
-		String callProcedure = "{call IRB_PROCESS_QUOTE.IRB_SAVE_CUSTOMIZE_QUOTE(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+		String callProcedure = "{call IRB_SAVE_QUOTE_SUMMARY(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
 		ArrayList<QuoteAddPolicyDetails> activePolicyArray = new ArrayList<QuoteAddPolicyDetails>();
 
 		try
@@ -199,7 +200,6 @@ public class CustomizeQuoteDao
 			callableStatement.setBigDecimal(8, customizeQuoteSave.getDisscountAmt());
 			callableStatement.setBigDecimal(9, customizeQuoteSave.getAddCoveragePremium());
 			callableStatement.setBigDecimal(10, customizeQuoteSave.getTotalAmount());
-			callableStatement.setObject(11, customizeQuoteSave.getAdditionalPolicy());
 			callableStatement.setString(12, metaData.getDeviceType());
 			callableStatement.setString(13, metaData.getDeviceId());
 			callableStatement.setString(14, metaData.getCivilId());
@@ -220,6 +220,50 @@ public class CustomizeQuoteDao
 		}
 		return validate;
 	}
+	
+	
+	
+	public Validate saveCustomizeQuoteAddPol(CustomizeQuoteAddPol customizeQuoteAddPol)
+	{
+		getConnection();
+		CallableStatement callableStatement = null;
+		Validate validate = new Validate();
+		String callProcedure = "{call IRB_CUSTOMIZE_QUOTE_ADDLPOL(?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+		try
+		{
+			callableStatement = connection.prepareCall(callProcedure);
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(3, customizeQuoteAddPol.getQuoteSeqNumber());
+			callableStatement.setBigDecimal(4, customizeQuoteAddPol.getVerNumber());
+			callableStatement.setString(5, customizeQuoteAddPol.getAddPolicyTypeCode());
+			callableStatement.setBigDecimal(6, customizeQuoteAddPol.getYearlyPremium());
+			callableStatement.setString(7, customizeQuoteAddPol.getOptIndex());
+			callableStatement.setBigDecimal(8, customizeQuoteAddPol.getYearMultiplePremium());
+			callableStatement.setString(9, customizeQuoteAddPol.getReplacementTypeCode());
+			callableStatement.setString(10, metaData.getDeviceType());
+			callableStatement.setString(11, metaData.getDeviceId());
+			callableStatement.setString(12, metaData.getCivilId());
+			callableStatement.registerOutParameter(13, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(14, java.sql.Types.VARCHAR);
+			callableStatement.executeUpdate();
+			validate.setErrorCode(callableStatement.getString(15));
+			validate.setErrorMessage(callableStatement.getString(16));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		return validate;
+	}
+	
+	
+	
+	
 
 	private Connection getConnection()
 	{

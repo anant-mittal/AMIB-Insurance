@@ -1,7 +1,6 @@
 package com.amx.jax.controllers;
 
 import java.math.BigDecimal;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,22 +25,16 @@ public class CustomizeQuoteController
 	private CustomizeQuoteService customizeQuoteService;
 
 	@RequestMapping(value = "/api/customize-quote/get-quote-details", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> getCustomizedQuoteDetails(@RequestParam(name = "appSeqNumber" , required = false) String appSeqNumber , @RequestParam(name = "quoteSeqNumber" , required = false) String quoteSeqNumber)
+	public AmxApiResponse<?, Object> getCustomizedQuoteDetails(@RequestParam(name = "quoteSeqNumber", required = false) String quoteSeqNumber)
 	{
-		
-		BigDecimal appSeqNumberDet = null;
-		if (null != appSeqNumber && !appSeqNumber.equals("") && !appSeqNumber.equalsIgnoreCase("null"))
-		{
-			appSeqNumberDet = ArgUtil.parseAsBigDecimal(appSeqNumber);
-		}
-		
+
 		BigDecimal quoteSeqNumberDet = null;
 		if (null != quoteSeqNumber && !quoteSeqNumber.equals("") && !quoteSeqNumber.equalsIgnoreCase("null"))
 		{
 			quoteSeqNumberDet = ArgUtil.parseAsBigDecimal(quoteSeqNumber);
 		}
-		
-		return customizeQuoteService.getCustomizedQuoteDetails(appSeqNumberDet , quoteSeqNumberDet);
+
+		return customizeQuoteService.getCustomizedQuoteDetails(quoteSeqNumberDet);
 	}
 
 	@RequestMapping(value = "/api/customize-quote/calculate-quote", method = RequestMethod.POST, produces = "application/json")
@@ -55,21 +48,16 @@ public class CustomizeQuoteController
 	{
 		return customizeQuoteService.getQuoteSeqList();
 	}
-	
+
 	@RequestMapping(value = "/api/customize-quote/terms-condition", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getTermsAndCondition()
 	{
 		return customizeQuoteService.getTermsAndCondition();
 	}
-	
+
 	@RequestMapping(value = "/api/customize-quote/submit-quote", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> saveCustomizeQuote(@RequestParam(name = "appSeqNumber") String appSeqNumber ,@RequestBody CustomizeQuoteModel customizeQuoteModel)
+	public AmxApiResponse<?, Object> saveCustomizeQuote(@RequestBody CustomizeQuoteModel customizeQuoteModel)
 	{
-		BigDecimal appSeqNumberDet = null;
-		if (null != appSeqNumber && !appSeqNumber.equals("") && !appSeqNumber.equalsIgnoreCase("null"))
-		{
-			appSeqNumberDet = ArgUtil.parseAsBigDecimal(appSeqNumber);
-		}
-		return customizeQuoteService.saveCustomizeQuote(appSeqNumberDet,customizeQuoteModel);
+		return customizeQuoteService.saveCustomizeQuote(customizeQuoteModel);
 	}
 }

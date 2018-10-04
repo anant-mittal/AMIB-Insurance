@@ -16,6 +16,7 @@ import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.dao.CustomizeQuoteDao;
 import com.amx.jax.dao.MyQuoteDao;
+import com.amx.jax.models.CustomizeQuoteAddPol;
 import com.amx.jax.models.CustomizeQuoteInfo;
 import com.amx.jax.models.CustomizeQuoteModel;
 import com.amx.jax.models.CustomizeQuoteSave;
@@ -48,14 +49,10 @@ public class CustomizeQuoteService
 	@Autowired
 	private MyQuoteDao myQuoteDao;
 
-	public AmxApiResponse<?, Object> getCustomizedQuoteDetails(BigDecimal appSeqNumber, BigDecimal quoteSeqNumber)
+	public AmxApiResponse<?, Object> getCustomizedQuoteDetails(BigDecimal quoteSeqNumber)
 	{
-
-		logger.info(TAG + " getCustomizedQuoteDetails :: appSeqNumber   :" + appSeqNumber);
 		logger.info(TAG + " getCustomizedQuoteDetails :: quoteSeqNumber :" + quoteSeqNumber);
-
 		AmxApiResponse<CustomizeQuoteModel, Object> resp = new AmxApiResponse<CustomizeQuoteModel, Object>();
-
 		CustomizeQuoteModel customizeQuoteModel = new CustomizeQuoteModel();
 		CustomizeQuoteInfo customizeQuoteInfo = new CustomizeQuoteInfo();
 		ArrayList<QuoteAddPolicyDetails> quoteAddPolicyDetails = null;
@@ -71,16 +68,7 @@ public class CustomizeQuoteService
 			{
 				MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
 
-				if (null != appSeqNumber && !appSeqNumber.toString().equals(""))
-				{
-					if (null != myQuoteModelFromDb.getAppSeqNumber() && myQuoteModelFromDb.getAppSeqNumber().equals(appSeqNumber))
-					{
-						myQuoteModel = myQuoteModelFromDb;
-						customizeQuoteInfo.setAppSeqNumber(appSeqNumber);
-						customizeQuoteInfo.setQuoteSeqNumber(myQuoteModel.getQuoteSeqNumber());
-					}
-				}
-				else if(null != quoteSeqNumber && !quoteSeqNumber.toString().equals(""))
+				if (null != quoteSeqNumber && !quoteSeqNumber.toString().equals(""))
 				{
 					if (null != myQuoteModelFromDb.getQuoteSeqNumber() && myQuoteModelFromDb.getQuoteSeqNumber().equals(quoteSeqNumber))
 					{
@@ -210,23 +198,18 @@ public class CustomizeQuoteService
 		return resp;
 	}
 
-	public AmxApiResponse<?, Object> saveCustomizeQuote(BigDecimal appSeqNumber, CustomizeQuoteModel customizeQuoteModel)
+	public AmxApiResponse<?, Object> saveCustomizeQuote(CustomizeQuoteModel customizeQuoteModel)
 	{
-		AmxApiResponse<CustomizeQuoteModel, Object> resp = new AmxApiResponse<CustomizeQuoteModel, Object>();
+		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
 		try
 		{
-			CustomizeQuoteSave customizeQuoteSave = getustomizeQuoteDataToSave(appSeqNumber, customizeQuoteModel);
-			Validate validate = customizeQuoteDao.saveCustomizeQuote(customizeQuoteSave);
-			if (null == validate.getErrorCode())
+
+			AmxApiResponse<?, Object> respQuoteAddModel = saveCustomizeQuoteAddPol(customizeQuoteModel);
+			if (respQuoteAddModel.getStatus().equals(ApiConstants.FAILURE))
 			{
-				resp.setStatusKey(ApiConstants.SUCCESS);
+				return respQuoteAddModel;
 			}
-			else
-			{
-				resp.setStatusKey(ApiConstants.FAILURE);
-			}
-			resp.setMessageKey(validate.getErrorCode());
-			resp.setMessage(validate.getErrorMessage());
+
 		}
 		catch (Exception e)
 		{
@@ -237,11 +220,67 @@ public class CustomizeQuoteService
 		return resp;
 	}
 
-	public CustomizeQuoteSave getustomizeQuoteDataToSave(BigDecimal appSeqNumber, CustomizeQuoteModel customizeQuoteModel)
+	public AmxApiResponse<?, Object> getustomizeQuoteDataToSave(CustomizeQuoteModel customizeQuoteModel)
 	{
+		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
 		try
 		{
-			// GET MY QUOTE FIRST
+			if (null != customizeQuoteModel)
+			{
+				CustomizeQuoteInfo customizeQuoteInfo = customizeQuoteModel.getCustomizeQuoteInfo();
+				BigDecimal appSeqNumber = customizeQuoteInfo.getAppSeqNumber();
+				MyQuoteModel myQuoteModel = new MyQuoteModel();
+
+				ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote();
+
+				for (int i = 0; i < getUserQuote.size(); i++)
+				{
+					MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
+					if (null != myQuoteModelFromDb.getAppSeqNumber() && myQuoteModelFromDb.getAppSeqNumber().equals(appSeqNumber))
+					{
+						myQuoteModel = myQuoteModelFromDb;
+					}
+				}
+
+				TotalPremium totalPremium = customizeQuoteModel.getTotalPremium();
+				CustomizeQuoteSave customizeQuoteSave = new CustomizeQuoteSave();
+				customizeQuoteSave.setQuotSeqNumber(myQuoteModel.getQuoteSeqNumber());
+				customizeQuoteSave.setVerNumber(myQuoteModel.getVerNumber());
+				customizeQuoteSave.setBasicPremium(totalPremium.getBasicPremium());
+				customizeQuoteSave.setSupervisionFees(totalPremium.getSupervisionFees());
+				customizeQuoteSave.setIssueFee(totalPremium.getIssueFee());
+				customizeQuoteSave.setDisscountAmt(new BigDecimal(0));
+				customizeQuoteSave.setAddCoveragePremium(totalPremium.getAddCoveragePremium());
+				customizeQuoteSave.setTotalAmount(totalPremium.getTotalAmount());
+				Validate validate = customizeQuoteDao.saveCustomizeQuote(customizeQuoteSave);
+				if (validate.getErrorCode() == null)
+				{
+					resp.setStatusKey(ApiConstants.SUCCESS);
+				}
+				else
+				{
+					resp.setStatusKey(ApiConstants.FAILURE);
+				}
+				resp.setMessageKey(validate.getErrorCode());
+				return resp;
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private AmxApiResponse<?, Object> saveCustomizeQuoteAddPol(CustomizeQuoteModel customizeQuoteModel)
+	{
+		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
+
+		if (null != customizeQuoteModel)
+		{
+			CustomizeQuoteInfo customizeQuoteInfo = customizeQuoteModel.getCustomizeQuoteInfo();
+			BigDecimal appSeqNumber = customizeQuoteInfo.getAppSeqNumber();
+
 			MyQuoteModel myQuoteModel = new MyQuoteModel();
 			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote();
 			for (int i = 0; i < getUserQuote.size(); i++)
@@ -255,55 +294,43 @@ public class CustomizeQuoteService
 
 			ArrayList<QuoteAddPolicyDetails> quoteAddPolicyDetailsArray = customizeQuoteModel.getQuoteAddPolicyDetails();
 			QuotationDetails quotationDetails = customizeQuoteModel.getQuotationDetails();
-			TotalPremium totalPremium = customizeQuoteModel.getTotalPremium();
-			List<Object> additionalPolicy = new ArrayList<Object>();
-			CustomizeQuoteSave customizeQuoteSave = new CustomizeQuoteSave();
-			Object data = null;
 
 			for (int i = 0; i < quoteAddPolicyDetailsArray.size(); i++)
 			{
-				String addPolicyTypeCode = quoteAddPolicyDetailsArray.get(i).getAddPolicyTypeCode();
-				BigDecimal yearlyPremium = quoteAddPolicyDetailsArray.get(i).getYearlyPremium();
-				String replacementTypeCode = quoteAddPolicyDetailsArray.get(i).getReplacementTypeCode();
-				String addPolicyTypeEnable = "";
 				BigDecimal yearMultiplePremium = new BigDecimal(0);
-				if (quoteAddPolicyDetailsArray.get(i).getAddPolicyTypeEnable())
+				CustomizeQuoteAddPol customizeQuoteAddPol = new CustomizeQuoteAddPol();
+				QuoteAddPolicyDetails quoteAddPolicyDetails = quoteAddPolicyDetailsArray.get(i);
+
+				customizeQuoteAddPol.setQuoteSeqNumber(myQuoteModel.getQuoteSeqNumber());
+				customizeQuoteAddPol.setVerNumber(myQuoteModel.getVerNumber());
+				customizeQuoteAddPol.setAddPolicyTypeCode(quoteAddPolicyDetails.getAddPolicyTypeCode());
+				customizeQuoteAddPol.setYearlyPremium(quoteAddPolicyDetails.getYearlyPremium());
+				if (quoteAddPolicyDetails.getAddPolicyTypeEnable())
 				{
-					addPolicyTypeEnable = "Y";
-					yearMultiplePremium = yearlyPremium.multiply(quotationDetails.getPolicyDuration());
-					data = Arrays.asList(addPolicyTypeCode, yearlyPremium, replacementTypeCode, addPolicyTypeEnable, yearMultiplePremium);
+					yearMultiplePremium = quoteAddPolicyDetails.getYearlyPremium().multiply(quotationDetails.getPolicyDuration());
+					customizeQuoteAddPol.setOptIndex("Y");
+					customizeQuoteAddPol.setYearMultiplePremium(yearMultiplePremium);
+
 				}
 				else
 				{
-					addPolicyTypeEnable = "N";
+					customizeQuoteAddPol.setOptIndex("N");
+					customizeQuoteAddPol.setYearMultiplePremium(yearMultiplePremium);
 				}
-				additionalPolicy.add(data);
+				customizeQuoteAddPol.setReplacementTypeCode(quoteAddPolicyDetails.getReplacementTypeCode());
+				logger.info(TAG + " saveCustomizeQuoteAddPol :: customizeQuoteAddPol :" + customizeQuoteAddPol.toString());
+
+				Validate validate = customizeQuoteDao.saveCustomizeQuoteAddPol(customizeQuoteAddPol);
+				logger.info(TAG + " saveCustomizeQuoteAddPol :: getErrorCode() :" + validate.getErrorCode());
+				if (validate.getErrorCode() != null)
+				{
+					resp.setMessageKey(validate.getErrorCode());
+					resp.setStatusKey(ApiConstants.FAILURE);
+					return resp;
+				}
 			}
-
-			customizeQuoteSave.setQuotSeqNumber(myQuoteModel.getQuoteSeqNumber());
-			logger.info(TAG + " getustomizeQuoteDataToSave :: getQuoteSeqNumber      :" + myQuoteModel.getQuoteSeqNumber());
-			customizeQuoteSave.setVerNumber(myQuoteModel.getVerNumber());
-			logger.info(TAG + " getustomizeQuoteDataToSave :: getVerNumber           :" + myQuoteModel.getVerNumber());
-			customizeQuoteSave.setBasicPremium(totalPremium.getBasicPremium());
-			logger.info(TAG + " getustomizeQuoteDataToSave :: getBasicPremium        :" + totalPremium.getBasicPremium());
-			customizeQuoteSave.setSupervisionFees(totalPremium.getSupervisionFees());
-			logger.info(TAG + " getustomizeQuoteDataToSave :: getSupervisionFees     :" + totalPremium.getSupervisionFees());
-			customizeQuoteSave.setIssueFee(totalPremium.getIssueFee());
-			logger.info(TAG + " getustomizeQuoteDataToSave :: getIssueFee            :" + totalPremium.getIssueFee());
-			customizeQuoteSave.setDisscountAmt(new BigDecimal(0));
-			logger.info(TAG + " getustomizeQuoteDataToSave :: getDisscountAmt        :" + new BigDecimal(0));
-			customizeQuoteSave.setAddCoveragePremium(totalPremium.getAddCoveragePremium());
-			logger.info(TAG + " getustomizeQuoteDataToSave :: getAddCoveragePremium  :" + totalPremium.getAddCoveragePremium());
-			customizeQuoteSave.setTotalAmount(totalPremium.getTotalAmount());
-			logger.info(TAG + " getustomizeQuoteDataToSave :: getTotalAmount         :" + totalPremium.getTotalAmount());
-			customizeQuoteSave.setAdditionalPolicy(additionalPolicy);
-			logger.info(TAG + " getustomizeQuoteDataToSave :: additionalPolicy       :" + additionalPolicy);
-			return customizeQuoteSave;
-
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
+			resp.setStatusKey(ApiConstants.SUCCESS);
+			return resp;
 		}
 		return null;
 	}

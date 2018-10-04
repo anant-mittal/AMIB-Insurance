@@ -22,18 +22,6 @@ public class CustomizeQuoteSave
 
 	private BigDecimal totalAmount;
 
-	List<Object> additionalPolicy;
-
-	public List<Object> getAdditionalPolicy()
-	{
-		return additionalPolicy;
-	}
-
-	public void setAdditionalPolicy(List<Object> additionalPolicy)
-	{
-		this.additionalPolicy = additionalPolicy;
-	}
-
 	public BigDecimal getQuotSeqNumber()
 	{
 		return quotSeqNumber;
@@ -113,5 +101,4 @@ public class CustomizeQuoteSave
 	{
 		this.totalAmount = totalAmount;
 	}
-
 }
