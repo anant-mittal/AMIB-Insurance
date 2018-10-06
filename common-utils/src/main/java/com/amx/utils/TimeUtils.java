@@ -1,11 +1,10 @@
 package com.amx.utils;
 
-
 /**
  * The Class TimeUtils.
  */
 public class TimeUtils {
-	
+
 	/**
 	 * Time since.
 	 *

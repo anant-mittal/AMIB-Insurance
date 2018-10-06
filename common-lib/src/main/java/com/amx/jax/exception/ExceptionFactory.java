@@ -50,11 +50,10 @@ public class ExceptionFactory {
 				}
 			} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException
 					| IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-				LOGGER.error("No Default Constructor {}(AmxApiError apiError)", component.getBeanClassName(),e);
+				LOGGER.error("No Default Constructor {}(AmxApiError apiError)", component.getBeanClassName(), e);
 			}
 		}
 
 	}
 
 }
-

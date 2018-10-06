@@ -18,7 +18,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
-
 /**
  * The Class JsonUtil.
  */
@@ -78,6 +77,19 @@ public final class JsonUtil {
 			}
 			try {
 				return getMapper().readValue(json, type);
+			} catch (IOException e) {
+				LOG.warn("error converting from json=" + json, e);
+			}
+			return null;
+		}
+
+		@SuppressWarnings("rawtypes")
+		public <E> E fromJson(String json, TypeReference valueTypeRef) {
+			if (json == null || "".equals(json.trim()) || "\"\"".equals(json.trim())) {
+				return null;
+			}
+			try {
+				return getMapper().readValue(json, valueTypeRef);
 			} catch (IOException e) {
 				LOG.warn("error converting from json=" + json, e);
 			}
@@ -162,6 +174,11 @@ public final class JsonUtil {
 	 */
 	public static <E> E fromJson(String json, Class<E> type) {
 		return instance.fromJson(json, type);
+	}
+
+	@SuppressWarnings("rawtypes")
+	public static <E> E fromJson(String json, TypeReference valueTypeRef) {
+		return instance.fromJson(json, valueTypeRef);
 	}
 
 	/**
@@ -265,7 +282,6 @@ public final class JsonUtil {
 	public static Map<String, Object> getMapFromJsonString(String jsonString) throws IOException {
 		return ((Map<String, Object>) instance.getMapper().readValue(jsonString, Map.class));
 	}
-	
 
 	/**
 	 * Gets the generic object list from json string.
@@ -293,5 +309,3 @@ class EnumByIdSerializer extends JsonSerializer<EnumById> {
 		gen.writeString(value.getId());
 	}
 }
-
-

@@ -3,7 +3,6 @@ package com.amx.utils;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
  * The Class ContextUtil.
  */
