@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<artifactId>lib-ext-jar</artifactId>
-	<packaging>jar</packaging>
+	<packaging>pom</packaging>
 	<name>lib-ext-jar</name>
 	<description>Common lib for  db</description>
 	<url>http://maven.apache.org</url>
@@ -18,9 +18,13 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	
+
 	<dependencies>
 	</dependencies>
+
+<!-- 	<modules>
+		<module>masking</module>
+	</modules> -->
 
 	<build>
 		<plugins>
@@ -37,12 +41,254 @@
 						<configuration>
 							<groupId>com.oracle</groupId>
 							<artifactId>ojdbc6</artifactId>
-							<version>11.1.0.7.0</version>
+							<version>11.2.4</version>
 							<packaging>jar</packaging>
-							<file>${project.basedir}/lib/ojdbc6.jar</file>
+							<file>${basedir}/lib/ojdbc6.jar</file>
 							<generatePom>true</generatePom>
 						</configuration>
 					</execution>
+
+					<execution>
+						<id>KNET_WinEPTS_API</id>
+						<phase>package</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<groupId>com.knet</groupId>
+							<artifactId>KNET_WinEPTS_API</artifactId>
+							<version>1.0</version>
+							<packaging>jar</packaging>
+							<file>${basedir}/lib/KNET_WinEPTS_API.jar</file>
+							<generatePom>true</generatePom>
+						</configuration>
+					</execution>
+
+
+					<execution>
+						<id>knet</id>
+						<phase>package</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<groupId>com.knet</groupId>
+							<artifactId>knet</artifactId>
+							<version>1.0</version>
+							<packaging>jar</packaging>
+							<file>${basedir}/lib/knet.jar</file>
+							<generatePom>true</generatePom>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>e24Pipe</id>
+						<phase>package</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<groupId>com.e24Pipe</groupId>
+							<artifactId>e24Pipe</artifactId>
+							<version>1.0</version>
+							<packaging>jar</packaging>
+							<file>${basedir}/lib/e24Pipe.jar</file>
+							<generatePom>true</generatePom>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>knet_test</id>
+						<phase>package</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<groupId>com.knet.test</groupId>
+							<artifactId>knet_test</artifactId>
+							<version>1.0</version>
+							<packaging>jar</packaging>
+							<file>${basedir}/lib/knet_test.jar</file>
+							<generatePom>true</generatePom>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>bhr-benefit</id>
+						<phase>package</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<groupId>bhr.com.benefit</groupId>
+							<artifactId>bhr-benefit</artifactId>
+							<version>1.0.shaded</version>
+							<packaging>jar</packaging>
+							<file>${basedir}/lib/bhr-benefit.jar</file>
+							<generatePom>true</generatePom>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>bouncycastle</id>
+						<phase>package</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<groupId>bouncycastle-1.20</groupId>
+							<artifactId>bouncycastle-1.20</artifactId>
+							<version>1.0</version>
+							<packaging>jar</packaging>
+							<file>${basedir}/lib/bouncycastle-1.20.jar</file>
+							<generatePom>true</generatePom>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>bcpkix-jdk15on-1-48</id>
+						<phase>package</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<groupId>org.bouncycastle</groupId>
+							<artifactId>bcpkix-jdk15on</artifactId>
+							<version>1.48</version>
+							<packaging>jar</packaging>
+							<file>${basedir}/lib/itext-2.3/bcpkix-jdk15on-1.48.jar</file>
+							<generatePom>true</generatePom>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>bcprov-jdk15-145</id>
+						<phase>package</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<groupId>bcprov-jdk15-145</groupId>
+							<artifactId>bcprov-jdk15-145</artifactId>
+							<version>1.0</version>
+							<packaging>jar</packaging>
+							<file>${basedir}/lib/bcprov-jdk15-145.jar</file>
+							<generatePom>true</generatePom>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>htmlcomponent</id>
+						<phase>package</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<groupId>jasperreports</groupId>
+							<artifactId>htmlcomponent</artifactId>
+							<version>5.0.1</version>
+							<packaging>jar</packaging>
+							<file>${basedir}/lib/jasperreports-htmlcomponent-5.0.1.jar</file>
+							<generatePom>true</generatePom>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>olap4j</id>
+						<phase>package</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<groupId>org.olap4j</groupId>
+							<artifactId>olap4j</artifactId>
+							<version>0.9.7.309-JS-3</version>
+							<packaging>jar</packaging>
+							<file>${basedir}/lib/olap4j-0.9.7.309-JS-3.jar</file>
+							<generatePom>true</generatePom>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>itext218</id>
+						<phase>package</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<groupId>com.lowagie</groupId>
+							<artifactId>itext</artifactId>
+							<version>2.1.8</version>
+							<packaging>jar</packaging>
+							<file>${basedir}/lib/itext-4.2.0.jar</file>
+							<generatePom>true</generatePom>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>itext-asian</id>
+						<phase>package</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<groupId>com.lowagie</groupId>
+							<artifactId>itext-asian</artifactId>
+							<version>2.3</version>
+							<packaging>jar</packaging>
+							<file>${basedir}/lib/itext-2.3/itext-asian.jar</file>
+							<generatePom>true</generatePom>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>itext-hyph-xml</id>
+						<phase>package</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<groupId>com.lowagie</groupId>
+							<artifactId>itext-hyph-xml</artifactId>
+							<version>2.3</version>
+							<packaging>jar</packaging>
+							<file>${basedir}/lib/itext-2.3/itext-hyph-xml.jar</file>
+							<generatePom>true</generatePom>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>ipayPipe</id>
+						<phase>package</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<groupId>ipayPipe</groupId>
+							<artifactId>ipayPipe</artifactId>
+							<version>1.0</version>
+							<packaging>jar</packaging>
+							<file>${basedir}/lib/ipayPipe.jar</file>
+							<generatePom>true</generatePom>
+						</configuration>
+					</execution>
+
+					<execution>
+						<id>cryptix32</id>
+						<phase>package</phase>
+						<goals>
+							<goal>install-file</goal>
+						</goals>
+						<configuration>
+							<groupId>cryptix32</groupId>
+							<artifactId>cryptix32</artifactId>
+							<version>1.0</version>
+							<packaging>jar</packaging>
+							<file>${basedir}/lib/cryptix32.jar</file>
+							<generatePom>true</generatePom>
+						</configuration>
+					</execution>
+
 				</executions>
 			</plugin>
 		</plugins>
