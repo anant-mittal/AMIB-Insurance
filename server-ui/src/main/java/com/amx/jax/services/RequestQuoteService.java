@@ -818,15 +818,15 @@ public class RequestQuoteService
 			// QUOTE SUBITTED SUCCESFULLY MAIL TO AMIB
 			String emailIdFrom = metaData.getEmailFromConfigured();
 			String emailITo = metaData.getContactUsEmail();
-			String Subject = "Al Mulla Insurance Policy Submit Confirmation";
-			String mailData = "Al Mulla Insurance Policy Submited Successfully.";
+			String Subject = "AL Mulla Insurance Quotation Request : "+appSeqNumber;
+			String mailData = "AL Mulla Insurance Application Request "+ appSeqNumber +" for Quotation has Submited Successfully.";
 			emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
 
 			// QUOTE SUBITTED SUCCESFULLY MAIL TO USER
 			String emailIdFrom1 = metaData.getEmailFromConfigured();
 			String emailITo1 = metaData.getEmailId();
-			String Subject1 = "Al Mulla Insurance Policy Submit Confirmation";
-			String mailData1 = "Al Mulla Insurance Policy Submited Successfully.";
+			String Subject1 = "AL Mulla Insurance Quotation Request : "+appSeqNumber;
+			String mailData1 = "AL Mulla Insurance Application Request "+ appSeqNumber +" for Quotation has Submited Successfully.";
 			emailNotification.sendEmail(emailIdFrom1, emailITo1, Subject1, mailData1);
 
 			resp.setStatusKey(ApiConstants.SUCCESS);
