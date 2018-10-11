@@ -487,7 +487,6 @@ public class CustomerRegistrationService
 	public void onSuccessLogin(CustomerLoginRequest customerLoginRequest, CustomerLoginModel customerLoginModel)
 	{
 		metaData.setCivilId(customerLoginRequest.getCivilId());
-		metaData.setEmailId(customerLoginRequest);
 		metaData.setUserSequenceNumber(customerLoginModel.getUserSeqNum());
 		metaData.setUserAmibCustRef(customerLoginModel.getAmibRef());
 		metaData.setCountryId(regSession.getCountryId());
