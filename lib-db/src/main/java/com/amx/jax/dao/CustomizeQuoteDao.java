@@ -19,6 +19,7 @@ import com.amx.jax.models.CustomizeQuoteSave;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.QuoteAddPolicyDetails;
 import com.amx.jax.models.ReplacementTypeList;
+import com.amx.jax.models.TermsCondition;
 import com.amx.jax.models.Validate;
 
 import oracle.jdbc.OracleTypes;
@@ -40,9 +41,6 @@ public class CustomizeQuoteDao
 
 	public ArrayList<QuoteAddPolicyDetails> getQuoteAdditionalPolicy(BigDecimal quotSeqNumber, BigDecimal verNumber)
 	{
-		logger.info(TAG + " getQuoteAdditionalPolicy :: quotSeqNumber :" + quotSeqNumber);
-		logger.info(TAG + " getQuoteAdditionalPolicy :: verNumber     :" + verNumber);
-
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_QUOTE_ADDLPOL(?,?,?,?,?,?,?,?)}";
@@ -102,9 +100,6 @@ public class CustomizeQuoteDao
 
 	public ArrayList getReplacementTypeList(String policyTypeCode, Date policyDate)// V10,28-09-2018
 	{
-		logger.info(TAG + " getReplacementTypeList :: policyTypeCode     :" + policyTypeCode);
-		logger.info(TAG + " getReplacementTypeList :: policyDate         :" + policyDate);
-
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_REPLPOLTYPE_LIST(?,?,?,?,?,?,?,?)}";
@@ -149,12 +144,12 @@ public class CustomizeQuoteDao
 		return repTypeListArray;
 	}
 
-	public String getTermsAndCondition()
+	public ArrayList getTermsAndCondition()
 	{
 		getConnection();
-		String termsCondition = "";
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_TERMSCON(?,?,?,?,?,?,?)}";
+		ArrayList<TermsCondition> termsConditionArray = new ArrayList<TermsCondition>();
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -162,11 +157,19 @@ public class CustomizeQuoteDao
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			callableStatement.setString(3, "PAY");
 			callableStatement.setBigDecimal(4, metaData.getLanguageId());
-			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
-			termsCondition = callableStatement.getString(5);
+			ResultSet rs = (ResultSet) callableStatement.getObject(5);
+
+			while (rs.next())
+			{
+				TermsCondition termsCondition = new TermsCondition();
+				termsCondition.setTermsAndCondition(rs.getString(1));
+				termsCondition.setId(rs.getBigDecimal(2));
+				termsConditionArray.add(termsCondition);
+			}
 		}
 		catch (Exception e)
 		{
@@ -176,7 +179,8 @@ public class CustomizeQuoteDao
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return termsCondition;
+		
+		return termsConditionArray;
 	}
 
 	public Validate saveCustomizeQuote(CustomizeQuoteSave customizeQuoteSave)
@@ -206,7 +210,7 @@ public class CustomizeQuoteDao
 			callableStatement.executeUpdate();
 			validate.setErrorCode(callableStatement.getString(14));
 			validate.setErrorMessage(callableStatement.getString(15));
-			
+
 		}
 		catch (Exception e)
 		{
@@ -218,9 +222,7 @@ public class CustomizeQuoteDao
 		}
 		return validate;
 	}
-	
-	
-	
+
 	public Validate saveCustomizeQuoteAddPol(CustomizeQuoteAddPol customizeQuoteAddPol)
 	{
 		getConnection();
@@ -258,10 +260,6 @@ public class CustomizeQuoteDao
 		}
 		return validate;
 	}
-	
-	
-	
-	
 
 	private Connection getConnection()
 	{

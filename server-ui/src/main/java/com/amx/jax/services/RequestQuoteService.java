@@ -147,7 +147,7 @@ public class RequestQuoteService
 			}
 			resp.setMessageKey(arrayResponseModel.getErrorCode());
 			resp.setMessage(arrayResponseModel.getErrorMessage());
-			
+
 		}
 		catch (Exception e)
 		{
@@ -177,7 +177,6 @@ public class RequestQuoteService
 			}
 			resp.setMessageKey(arrayResponseModel.getErrorCode());
 			resp.setMessage(arrayResponseModel.getErrorMessage());
-			
 
 		}
 		catch (Exception e)
@@ -207,7 +206,6 @@ public class RequestQuoteService
 			}
 			resp.setMessageKey(arrayResponseModel.getErrorCode());
 			resp.setMessage(arrayResponseModel.getErrorMessage());
-			
 
 		}
 		catch (Exception e)
@@ -237,7 +235,6 @@ public class RequestQuoteService
 			}
 			resp.setMessageKey(arrayResponseModel.getErrorCode());
 			resp.setMessage(arrayResponseModel.getErrorMessage());
-			
 
 		}
 		catch (Exception e)
@@ -267,7 +264,7 @@ public class RequestQuoteService
 			}
 			resp.setMessageKey(arrayResponseModel.getErrorCode());
 			resp.setMessage(arrayResponseModel.getErrorMessage());
-			
+
 		}
 		catch (Exception e)
 		{
@@ -296,7 +293,7 @@ public class RequestQuoteService
 			}
 			resp.setMessageKey(arrayResponseModel.getErrorCode());
 			resp.setMessage(arrayResponseModel.getErrorMessage());
-			
+
 		}
 		catch (Exception e)
 		{
@@ -347,22 +344,6 @@ public class RequestQuoteService
 	{
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
 		RequestQuoteModel requestQuoteModel = new RequestQuoteModel();
-
-		/*if (null != oldDocNumber)
-		{
-			try
-			{
-				AmxApiResponse<?, Object> renewPolicy = getRenewPolicyDetails(oldDocNumber);
-				if (renewPolicy.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-				{
-					return renewPolicy;
-				}
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-		}*/
 
 		try
 		{
@@ -1014,3 +995,7 @@ public class RequestQuoteService
 		return resp;
 	}
 }
+
+
+
+

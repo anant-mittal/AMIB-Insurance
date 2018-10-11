@@ -48,16 +48,16 @@ public class CustomerRegistrationService
 	private static final Logger logger = LoggerFactory.getLogger(CustomerRegistrationService.class);
 
 	@Autowired
-	CustomerRegistrationDao customerRegistrationDao;
+	private CustomerRegistrationDao customerRegistrationDao;
 
 	@Autowired
-	EmailService emailNotification;
+	private EmailService emailNotification;
 
 	@Autowired
-	RegSession regSession;
+	private RegSession regSession;
 
 	@Autowired
-	MetaData metaData;
+	private MetaData metaData;
 
 	@Autowired
 	private WebConfig webConfig;
@@ -67,7 +67,6 @@ public class CustomerRegistrationService
 
 	@Autowired
 	HttpService httpService;
-	
 
 	public AmxApiResponse<CompanySetUp, Object> getCompanySetUp()
 	{
@@ -91,7 +90,7 @@ public class CustomerRegistrationService
 			regSession.setContactUsEmail(getCompanySetUp.get(0).getEmail());
 			regSession.setContactUsHelpLineNumber(getCompanySetUp.get(0).getHelpLineNumber());
 			regSession.setUserType("D");
-			regSession.setDeviceId("12345678");
+			regSession.setDeviceId(httpService.getDeviceId());
 			regSession.setDeviceType("ONLINE");
 			regSession.setEmailFromConfigured(webConfig.getConfigEmail());
 
@@ -375,6 +374,9 @@ public class CustomerRegistrationService
 			String Subject = "Al Mulla Insurance Registartion Confirmation";
 			String mailData = "Al Mulla Insurance Registration Completed Successfully.";
 			emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
+			
+			
+			
 		}
 		else
 		{
@@ -508,9 +510,6 @@ public class CustomerRegistrationService
 		}
 
 		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(changePasswordOtpRequest.getCivilId());
-		logger.info(TAG + " isCivilIdExist :: getStatusKey   :" + civilIdExistCheck.getStatusKey());
-		logger.info(TAG + " isCivilIdExist :: getMessage     :" + civilIdExistCheck.getMessage());
-		logger.info(TAG + " isCivilIdExist :: getMessageKey  :" + civilIdExistCheck.getMessageKey());
 		if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 		{
 			return civilIdExistCheck;
@@ -519,9 +518,6 @@ public class CustomerRegistrationService
 		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(changePasswordOtpRequest.getCivilId());
 		if (null == customerDetailModel || customerDetailModel.getErrorCode() != null)
 		{
-			logger.info(TAG + " isCivilIdExist :: getStatusKey   :" + customerDetailModel.getErrorCode());
-			logger.info(TAG + " isCivilIdExist :: getMessage     :" + customerDetailModel.getErrorMessage());
-			
 			resp.setMessageKey(customerDetailModel.getErrorCode());
 			resp.setMessage(customerDetailModel.getErrorMessage());
 			resp.setStatusKey(ApiConstants.FAILURE);
@@ -537,9 +533,7 @@ public class CustomerRegistrationService
 				{
 					return validateDOTP;
 				}
-
 				resp.setStatusKey(ApiConstants.SUCCESS);
-
 			}
 			catch (Exception e)
 			{
@@ -628,7 +622,7 @@ public class CustomerRegistrationService
 	public void sendFailedRegistration(String type, RequestOtpModel requestOtpModel, String exceptionMessage)
 	{
 		String emailIdFrom = webConfig.getConfigEmail();
-		String emailITo = requestOtpModel.getEmailId();
+		String emailITo = regSession.getContactUsEmail();
 		String Subject = "User Registration Failure";
 		String mailData = "";
 		StringBuffer sb = new StringBuffer();
@@ -780,5 +774,4 @@ public class CustomerRegistrationService
 			getCompanySetUp();
 		}
 	}
-
 }

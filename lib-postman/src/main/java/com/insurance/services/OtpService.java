@@ -40,6 +40,10 @@ public class OtpService
 
 	public String sendEmailOtp(String emailId, String data)
 	{
+		//Customer Name
+		//Otp :-
+		//Customer Care Email :-
+		
 		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 		String emailOtpPrefix = Random.randomAlpha(3);
 		String emailOtp = Random.randomNumeric(6);

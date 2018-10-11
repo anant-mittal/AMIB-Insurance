@@ -105,14 +105,7 @@ public class PersonalDetailsService
 		CustomerProfileDetailModel customerProfileDetailModel = new CustomerProfileDetailModel();
 		CustomerProfileDetailModel customerProfileDetailModelCheck = new CustomerProfileDetailModel();
 		CustomerProfileUpdateResponse customerProfileUpdateResponse = new CustomerProfileUpdateResponse();
-
 		customerProfileDetailModelCheck = personalDetailsDao.getProfileDetails();
-
-		logger.info(TAG + " updateProfileDetails :: getMobile 1 :" + customerProfileDetailModelCheck.getMobile());
-		logger.info(TAG + " updateProfileDetails :: getEmail  2 :" + customerProfileDetailModelCheck.getEmail());
-		logger.info(TAG + " updateProfileDetails :: getMobile 3 :" + customerProfileUpdateRequest.getMobile());
-		logger.info(TAG + " updateProfileDetails :: getEmail  4 :" + customerProfileUpdateRequest.getEmail());
-
 		if (null != customerProfileUpdateRequest.getIdExpiryDate())
 		{
 			String dateFromDb = customerProfileUpdateRequest.getIdExpiryDate();

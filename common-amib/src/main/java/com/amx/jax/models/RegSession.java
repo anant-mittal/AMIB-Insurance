@@ -44,23 +44,18 @@ public class RegSession implements Serializable
 
 	private BigDecimal languageId;
 
-	
-	
 	private String userType;
-	
+
 	private BigDecimal userSequenceNumber;
 
-	
-	
-	
 	private String contactUsEmail;
 
 	private String contactUsHelpLineNumber;
-	
+
 	private int otpCount;
-	
+
 	private String emailFromConfigured;
-	
+
 	public String getEmailFromConfigured()
 	{
 		return emailFromConfigured;
@@ -70,7 +65,7 @@ public class RegSession implements Serializable
 	{
 		this.emailFromConfigured = emailFromConfigured;
 	}
-	
+
 	public int getOtpCount()
 	{
 		return otpCount;
@@ -80,7 +75,7 @@ public class RegSession implements Serializable
 	{
 		this.otpCount = otpCount;
 	}
-	
+
 	public String getContactUsEmail()
 	{
 		return contactUsEmail;

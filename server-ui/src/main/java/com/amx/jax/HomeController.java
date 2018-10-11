@@ -36,7 +36,7 @@ public class HomeController
 	/** The web app config. */
 	@Autowired
 	private WebConfig webConfig;
-
+	
 	@Autowired
 	private AppConfig appConfig;
 
@@ -64,9 +64,7 @@ public class HomeController
 	 *
 	 * @return the version
 	 */
-	
-	
-	
+
 	public String getVersion()
 	{
 
@@ -86,8 +84,8 @@ public class HomeController
 	}
 
 	/**
-	 * Login ping.
-	 *
+	 * Login ping
+	 * 
 	 * @param request
 	 *            the request
 	 * @return the string
@@ -96,6 +94,7 @@ public class HomeController
 	@ResponseBody
 	public String loginPing(HttpServletRequest request)
 	{
+		System.out.println("HomeController :: defaultPage :: getLanguage : " + httpService.getLanguage());
 		AmxApiResponse<Object, Object> wrapper = new AmxApiResponse<Object, Object>();
 		return JsonUtil.toJson(wrapper);
 	}
@@ -110,6 +109,7 @@ public class HomeController
 	@RequestMapping(value = "/login/**", method = { RequestMethod.GET })
 	public String loginJPage(Model model)
 	{
+		System.out.println("HomeController :: defaultPage :: getLanguage : " + httpService.getLanguage());
 		model.addAttribute("lang", httpService.getLanguage());
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
 		model.addAttribute("cdnUrl", webConfig.getCdnURL());
@@ -126,6 +126,7 @@ public class HomeController
 	@ResponseBody
 	public String loginPJson()
 	{
+		System.out.println("HomeController :: defaultPage :: getLanguage : " + httpService.getLanguage());
 		AmxApiResponse<Object, Object> wrapper = new AmxApiResponse<Object, Object>();
 		// wrapper.setMessage(WebResponseStatus.UNAUTHORIZED,
 		// ResponseMessage.UNAUTHORIZED);
@@ -139,10 +140,14 @@ public class HomeController
 	 *            the model
 	 * @return the string
 	 */
-	@RequestMapping(value = {"/","/register/**", "/app/**", "/home/**", "/" }, method = { RequestMethod.GET })
+	@RequestMapping(value = { "/", "/register/**", "/app/**", "/home/**", "/" }, method = { RequestMethod.GET })
 	public String defaultPage(Model model)
 	{
-		System.out.println("Page Landed");
+		System.out.println("HomeController :: defaultPage :: getLanguage       : " + httpService.getLanguage());
+		System.out.println("HomeController :: defaultPage :: getDeviceId       : " + httpService.getDeviceId());
+		System.out.println("HomeController :: defaultPage :: getIPAddress      : " + httpService.getIPAddress());
+		System.out.println("HomeController :: defaultPage :: getCurrentDevice  : " + httpService.getCurrentDevice());
+
 		
 		model.addAttribute("lang", httpService.getLanguage());
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
@@ -152,9 +157,9 @@ public class HomeController
 		if (httpService.getLanguage().toString().equalsIgnoreCase("EN"))
 		{
 			regSession.setLanguageId(new BigDecimal(0));
-			customerRegistrationService.getCompanySetUp();
-		}
 
+		}
+		customerRegistrationService.getCompanySetUp();
 		return "app";
 	}
 }

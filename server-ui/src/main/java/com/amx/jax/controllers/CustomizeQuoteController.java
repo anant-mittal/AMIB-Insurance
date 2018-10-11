@@ -32,7 +32,6 @@ public class CustomizeQuoteController
 		{
 			quoteSeqNumberDet = ArgUtil.parseAsBigDecimal(quoteSeqNumber);
 		}
-
 		return customizeQuoteService.getCustomizedQuoteDetails(quoteSeqNumberDet);
 	}
 
