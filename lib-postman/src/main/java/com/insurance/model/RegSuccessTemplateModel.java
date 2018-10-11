@@ -1,6 +1,6 @@
 package com.insurance.model;
 
-public class RegSuccessTempletModel
+public class RegSuccessTemplateModel
 {
 	private String customerName;
 

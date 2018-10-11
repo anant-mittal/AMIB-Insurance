@@ -551,6 +551,7 @@ public class RequestQuoteService
 		personalDetails.setAreaCode(customerProfileDetailModel.getAreaCode());
 		personalDetails.setBusinessCode(customerProfileDetailModel.getBusinessCode());
 		personalDetails.setEmail(customerProfileDetailModel.getEmail());
+		metaData.setEmailId(customerProfileDetailModel.getEmail());
 		personalDetails.setEnglishName(customerProfileDetailModel.getEnglishName());
 		personalDetails.setGenderCode(customerProfileDetailModel.getGenderCode());
 		personalDetails.setGovCode(customerProfileDetailModel.getGovCode());
@@ -823,7 +824,7 @@ public class RequestQuoteService
 
 			// QUOTE SUBITTED SUCCESFULLY MAIL TO USER
 			String emailIdFrom1 = metaData.getEmailFromConfigured();
-			String emailITo1 = regSession.getEmailId();
+			String emailITo1 = metaData.getEmailId();
 			String Subject1 = "Al Mulla Insurance Policy Submit Confirmation";
 			String mailData1 = "Al Mulla Insurance Policy Submited Successfully.";
 			emailNotification.sendEmail(emailIdFrom1, emailITo1, Subject1, mailData1);
