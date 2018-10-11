@@ -81,6 +81,11 @@
 	</pluginRepositories>
 
 	<modules>
+		<module>common-utils</module>
+		<module>common-lib</module>
+ 		<module>lib-postman</module>
+ 		<module>ms-postman</module>
+
 		<module>common-amib</module>
 		<module>lib-ext-jar</module>
 		<module>lib-db</module>
