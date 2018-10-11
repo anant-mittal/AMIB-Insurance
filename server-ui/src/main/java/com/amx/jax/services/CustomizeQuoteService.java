@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -228,6 +229,12 @@ public class CustomizeQuoteService
 			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
+	}
+	
+	
+	public TreeMap<Integer,String> getTermsAndConditionTest()
+	{
+		return customizeQuoteDao.getTermsAndConditionTest();
 	}
 
 	public AmxApiResponse<?, Object> saveCustomizeQuote(CustomizeQuoteModel customizeQuoteModel)

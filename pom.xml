@@ -84,7 +84,7 @@
 		<module>common-amib</module>
 		<module>lib-ext-jar</module>
 		<module>lib-db</module>
-		<module>lib-postman</module>
+		<module>lib-postman2</module>
 		<module>server-ui</module>
 	</modules>
 </project>

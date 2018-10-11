@@ -2,6 +2,11 @@
 package com.amx.jax;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +23,7 @@ import com.amx.jax.models.RegSession;
 import com.amx.jax.rest.RestService;
 import com.amx.jax.service.HttpService;
 import com.amx.jax.services.CustomerRegistrationService;
+import com.amx.jax.services.CustomizeQuoteService;
 import com.amx.utils.JsonUtil;
 import io.swagger.annotations.Api;
 
@@ -58,6 +64,9 @@ public class HomeController
 
 	@Autowired
 	private CustomerRegistrationService customerRegistrationService;
+	
+	@Autowired
+	private CustomizeQuoteService customizeQuoteService;
 
 	/**
 	 * Gets the version.
@@ -162,4 +171,25 @@ public class HomeController
 		customerRegistrationService.getCompanySetUp();
 		return "app";
 	}
+	
+	
+	@RequestMapping(value = {"/app/terms" }, method = { RequestMethod.GET })
+	public String termsAndCondition(Model model)
+	{
+		TreeMap<Integer,String> data =  customizeQuoteService.getTermsAndConditionTest();
+		
+		for (Entry<Integer, String> entry : data.entrySet())
+		{
+			Integer key = entry.getKey();
+			String value = entry.getValue();
+			System.out.println("HomeController :: termsAndCondition :: value  : " + value);
+			model.addAttribute("name", value);
+		}
+		
+		
+		
+		return "terms";
+	}
+	
+	
 }
