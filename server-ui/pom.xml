@@ -25,11 +25,11 @@
 
 	<dependencies>
 
-		<dependency>
+		<!-- <dependency>
 			<groupId>com.amx.jax</groupId>
 			<artifactId>common-amib</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
+		</dependency> -->
 
 		<dependency>
 			<groupId>com.amx.jax</groupId>
