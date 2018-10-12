@@ -5,47 +5,47 @@ import java.math.BigDecimal;
 
 public class CompanySetUp
 {
-	BigDecimal cntryCd;
+	private BigDecimal cntryCd;
 
-	BigDecimal compCd;
+	private BigDecimal compCd;
 
-	String companyName;
+	private String companyName;
 
-	String cbox;
+	private String cbox;
 
-	String cpo;
+	private String cpo;
 
-	String teli;//
+	private String teli;//
 
-	String teli2;
+	private String teli2;
 
-	String fax;
+	private String fax;
 
-	String email;
+	private String email;
 
-	String regNumber;
+	private String regNumber;
 
-	BigDecimal mainAct;
+	private BigDecimal mainAct;
 
-	BigDecimal mainActCenter;
+	private BigDecimal mainActCenter;
 
-	String heading;
+	private String heading;
 
-	BigDecimal decplc;
+	private BigDecimal decplc;
 
-	String currency;
+	private String currency;
 
-	BigDecimal langId;
+	private BigDecimal langId;
 
-	String appName;
+	private String appName;
 
-	String smsSenderId;
+	private String smsSenderId;
 
-	String helpLineNumber;
+	private String helpLineNumber;
 
-	String webSite;
+	private String webSite;
 
-	String emailSenderId;
+	private String emailSenderId;
 
 	public String getHelpLineNumber()
 	{

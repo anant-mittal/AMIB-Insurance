@@ -1,6 +1,6 @@
 package com.insurance.model;
 
-public class RegEmailOtpTempletModel
+public class RegEmailOtpTemplateModel
 {
 	private String customerName;
 

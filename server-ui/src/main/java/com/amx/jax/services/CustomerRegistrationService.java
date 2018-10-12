@@ -32,6 +32,7 @@ import com.amx.jax.models.MetaData;
 import com.amx.jax.models.RegSession;
 import com.amx.jax.models.Validate;
 import com.amx.jax.service.HttpService;
+import com.insurance.model.RegSuccessTemplateModel;
 import com.insurance.model.RequestOtpModel;
 import com.insurance.model.ResponseOtpModel;
 import com.insurance.services.EmailService;
@@ -264,6 +265,7 @@ public class CustomerRegistrationService
 		customerDetailResponse.setMobile(customerDetailModel.getMobile());
 		customerDetailResponse.setMobileVerify(customerDetailModel.getMobileVerify());
 		customerDetailResponse.setUserName(customerDetailModel.getUserName());
+		metaData.setEmailId(customerDetailModel.getEmail());
 		metaData.setCustomerSequenceNumber(customerDetailModel.getCustSequenceNumber());
 
 		resp.setData(customerDetailResponse);
@@ -375,8 +377,13 @@ public class CustomerRegistrationService
 			String mailData = "Al Mulla Insurance Registration Completed Successfully.";
 			emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
 			
+			RegSuccessTemplateModel regSuccessTemplateModel = new RegSuccessTemplateModel();
+			regSuccessTemplateModel.setCustomerName("Customer");
+			regSuccessTemplateModel.setCustomerCareEmail(regSession.getContactUsEmail());
+			regSuccessTemplateModel.setBrokerageWebsite("");
 			
 			
+			//Postman 
 		}
 		else
 		{
