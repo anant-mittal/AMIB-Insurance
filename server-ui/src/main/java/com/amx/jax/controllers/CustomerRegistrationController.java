@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.amx.jax.api.AmxApiResponse;
+import com.amx.jax.model.RequestOtpModel;
 import com.amx.jax.models.ChangePasswordOtpRequest;
 import com.amx.jax.models.ChangePasswordRequest;
 import com.amx.jax.models.ChangePasswordResponse;
@@ -31,7 +32,6 @@ import com.amx.jax.models.RegSession;
 import com.amx.jax.models.Validate;
 import com.amx.jax.services.CustomerRegistrationService;
 import com.amx.utils.ArgUtil;
-import com.insurance.model.RequestOtpModel;
 
 @RestController
 public class CustomerRegistrationController

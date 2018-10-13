@@ -32,4 +32,25 @@ public class DetailsConstants
 	public static String REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL = "DPEMAIL";
 
 	public static String REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE = "DPMOBILE";
+
+	public static String CUSTOMER_NAME = "customerName";
+
+	public static String CONTACT_US_EMAIL = "contactUsEmail";
+
+	public static String AMIB_WEBSITE_LINK = "amibWebLink";
+
+	public static String REG_OTP_EMAIL_SUBJECT = "One Time Password (OTP)";
+	
+	public static String REG_SUCCESS_EMAIL = "Registration Success";
+	
+	public static String FAILURE_REG_EMAIL_SUBJECT = "New Customer Incomplete Registration";
+	
+	public static String CUSTOMER_CIVIL_ID = "Customer Civil Id";
+	
+	public static String CUSTOMER_EMAIL_ID = "Customer Email Id";
+	
+	public static String CUSTOMER_MOBILE_NO = "Customer Mobile No";
+	
+	public static String EMAIL_OTP = "eOtp";
+
 }

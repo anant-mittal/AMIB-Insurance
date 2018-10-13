@@ -22,5 +22,4 @@ public class PostManApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(PostManApplication.class, args);
 	}
-
 }

@@ -31,9 +31,7 @@ import com.amx.jax.models.MetaData;
 import com.amx.jax.models.PersonalDetailsOtpRequest;
 import com.amx.jax.models.RegSession;
 import com.amx.jax.models.Validate;
-import com.insurance.model.RequestOtpModel;
-import com.insurance.model.ResponseOtpModel;
-import com.insurance.services.OtpService;
+import com.amx.jax.postman.client.OtpService;
 
 @Service
 public class PersonalDetailsService
@@ -58,7 +56,7 @@ public class PersonalDetailsService
 	MetaData metaData;
 
 	@Autowired
-	private OtpService otpService;
+	private EmailSmsService otpService;
 
 	public AmxApiResponse<CustomerProfileDetailResponse, Object> getProfileDetails()
 	{
@@ -174,7 +172,7 @@ public class PersonalDetailsService
 			}
 			
 			logger.info(TAG + " updateProfileDetails :: Email "+customerProfileDetailModelCheck.getEmail());
-			AmxApiResponse<?, Object> validateEOTP = otpService.validateEOTP(eOtp, customerProfileDetailModelCheck.getEmail());
+			AmxApiResponse<?, Object> validateEOTP = otpService.validateEotp(eOtp, customerProfileDetailModelCheck.getEmail());
 			if (null != validateEOTP)
 			{
 				return validateEOTP;
@@ -199,7 +197,7 @@ public class PersonalDetailsService
 				return mobileNumberExists;
 			}
 
-			AmxApiResponse<?, Object> validateMOTP = otpService.validateMOTP(mOtp, customerProfileDetailModelCheck.getMobile());
+			AmxApiResponse<?, Object> validateMOTP = otpService.validateMotp(mOtp, customerProfileDetailModelCheck.getMobile());
 			if (null != validateMOTP)
 			{
 				return validateMOTP;

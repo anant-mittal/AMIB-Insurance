@@ -63,7 +63,7 @@ public class MetaData implements Serializable
 
 	String emailFromConfigured;
 	
-	
+	private String amibWebsiteLink;
 	
 	/**************************ASK************************/
 
@@ -76,7 +76,15 @@ public class MetaData implements Serializable
 	/**************************ASK************************/
 	
 	
-	
+	public String getAmibWebsiteLink()
+	{
+		return amibWebsiteLink;
+	}
+
+	public void setAmibWebsiteLink(String amibWebsiteLink)
+	{
+		this.amibWebsiteLink = amibWebsiteLink;
+	}
 
 	public String getEmailFromConfigured()
 	{

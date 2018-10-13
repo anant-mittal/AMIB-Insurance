@@ -143,7 +143,7 @@ public class PostManControllerTest {
 		Message msg = new Message();
 		final String ENG_TO_DEV = "Latin-Devanagari";
 		Transliterator toDevnagiri = Transliterator.getInstance(ENG_TO_DEV);
-		String devnagiri = toDevnagiri.transliterate("lalit");
+		//String devnagiri = toDevnagiri.transliterate("lalit");
 
 		return msg;
 	}

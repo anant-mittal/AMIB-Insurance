@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class Message implements Serializable {
 
 	private static final long serialVersionUID = 1363933600245334964L;
+
 	private static final String DATA_KEY = "data";
 
 	public static enum Status {
@@ -21,13 +22,21 @@ public class Message implements Serializable {
 	}
 
 	protected long timestamp;
+
 	protected Language lang = null;
+
 	protected String subject;
+
 	protected String message = null;
+
 	protected List<String> to = null;
+
 	private String template = null;
+
 	private Map<String, Object> model = new HashMap<String, Object>();
+
 	private MessageType messageType = null;
+
 	private Status status = null;
 
 	private List<String> lines = new ArrayList<String>();

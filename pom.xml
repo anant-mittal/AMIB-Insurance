@@ -97,14 +97,6 @@
 		</plugins>
 	</build>
 
-	<pluginRepositories>
-		<pluginRepository>
-			<id>sonatype-snapshots</id>
-			<name>Sonatype Snapshots</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-		</pluginRepository>
-	</pluginRepositories>
-
 	<modules>
 	<!-- Common Libs -->
 		<module>common-utils</module>
@@ -116,14 +108,14 @@
 		
 		<!-- Common Servers -->
 		<module>ms-postman</module>
-		<module>server-payg</module>
-		<module>server-monitor</module>
+		<!-- <module>ms-broker</module> -->
+	<!-- 	<module>server-payg</module> -->
+		<!-- <module>server-monitor</module> -->
 
 
 		<module>common-amib</module>
-		<module>lib-ext-jar</module>
 		<module>lib-db</module>
-		<module>lib-postman2</module>
+		<!-- <module>lib-postman2</module> -->
 		<module>server-ui</module>
 	</modules>
 </project>

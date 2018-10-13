@@ -53,6 +53,8 @@ public class RegSession implements Serializable
 	private String contactUsHelpLineNumber;
 
 	private int otpCount;
+	
+	private String amibWebsiteLink;
 
 	private String emailFromConfigured;
 
@@ -251,4 +253,13 @@ public class RegSession implements Serializable
 		this.userSequenceNumber = userSequenceNumber;
 	}
 
+	public String getAmibWebsiteLink()
+	{
+		return amibWebsiteLink;
+	}
+
+	public void setAmibWebsiteLink(String amibWebsiteLink)
+	{
+		this.amibWebsiteLink = amibWebsiteLink;
+	}
 }
