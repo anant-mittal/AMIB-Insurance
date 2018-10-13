@@ -117,7 +117,26 @@ public class EmailSmsService
 		metaData.setMotpPrefix(mobileOtpPrefix);
 		metaData.setMotp(mobileOtp);
 		
-		postManClient.sendSMS(null);
+		//postManClient.sendSMS(null);
+		
+		String emailFrom = regSession.getEmailFromConfigured();
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put(DetailsConstants.CUSTOMER_NAME, "Customer");
+		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
+		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaData.getAmibWebsiteLink());
+		model.put(DetailsConstants.EMAIL_OTP, mobileOtpToSend);
+
+		ArrayList<String> emailTo = new ArrayList<String>();
+		emailTo.add("almulla.insurance.1427@gmail.com");
+
+		Email email = new Email();
+		email.setFrom(emailFrom);
+		email.setTo(emailTo);
+		email.setSubject(DetailsConstants.REG_OTP_EMAIL_SUBJECT);
+		email.setModel(model);
+		email.setTemplate(TemplatesMX.REGISTRATION_OTP.toString());
+		email.setHtml(true);
+		postManClient.sendEmail(email);
 		
 		return mobileOtpPrefix;
 	}
@@ -474,49 +493,6 @@ public class EmailSmsService
 		email.setHtml(true);
 		postManClient.sendEmail(email);
 
-	}
-
-	/*
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 */
-	/************* TEMP E OTP **********/
-	public ResponseOtpModel sendMobileOtpToEmail(String emailId)
-	{
-		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
-		
-		String mobileOtpPrefix = Random.randomAlpha(3);
-		String mobileOtp = Random.randomNumeric(6);
-		String mobileOtpToSend = mobileOtpPrefix + "-" + mobileOtp;
-		
-		responseOtpModel.setEotpPrefix(null);
-		responseOtpModel.setMotpPrefix(mobileOtpPrefix);
-		regSession.setMotpPrefix(mobileOtpPrefix);
-		regSession.setMotp(mobileOtp);
-		regSession.setEotpPrefix(null);
-		regSession.setEotp(null);
-		
-		metaData.setMotpPrefix(mobileOtpPrefix);
-		metaData.setMotp(mobileOtp);
-		metaData.setEotpPrefix(null);
-		metaData.setEotp(null);
-		
-		
-		String emailIdFrom = regSession.getEmailFromConfigured();
-		String emailITo = emailId;
-		String Subject = "OTP Verification";
-		String mailData = "Your Email OTP Generated From Al Mulla Insurance is : " + mobileOtpToSend + "          And Mobile Otp is :" + mobileOtpToSend + "";
-
-		// emailNotification.sendEmail(emailIdFrom, emailITo, Subject,
-		// mailData);
-
-		return responseOtpModel;
 	}
 
 	/*

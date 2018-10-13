@@ -5,7 +5,7 @@ import com.amx.jax.postman.model.ITemplates.ITemplate;
 
 public enum TemplatesMX implements ITemplate {
 
-	CONTACT_US("ContactForm"), REGISTRATION_OTP(""), FAILED_REGISTRATION("");
+	CIVILID_EXPIRY("") ,CONTACT_US("ContactForm"), REGISTRATION_OTP(""), FAILED_REGISTRATION("") , ;
 
 	String fileName;
 
