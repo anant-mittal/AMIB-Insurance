@@ -21,15 +21,14 @@ import javax.crypto.Mac;
  *
  * @author <a href="https://github.com/jchambers">Jon Chambers</a>
  */
-public class TimeBasedOneTimePasswordGenerator extends HmacOneTimePasswordGenerator
-{
-
+public class TimeBasedOneTimePasswordGenerator extends HmacOneTimePasswordGenerator {
+	
 	/** The time step millis. */
 	private final long timeStepMillis;
 
 	/**
-	 * A string identifier for the HMAC-SHA1 algorithm (required by HOTP and
-	 * allowed by TOTP). HMAC-SHA1 is the default algorithm for TOTP.
+	 * A string identifier for the HMAC-SHA1 algorithm (required by HOTP and allowed
+	 * by TOTP). HMAC-SHA1 is the default algorithm for TOTP.
 	 */
 	public static final String TOTP_ALGORITHM_HMAC_SHA1 = "HmacSHA1";
 
@@ -53,11 +52,10 @@ public class TimeBasedOneTimePasswordGenerator extends HmacOneTimePasswordGenera
 	 * @throws NoSuchAlgorithmException
 	 *             if the underlying JRE doesn't support the
 	 *             {@value com.eatthepath.otp.HmacOneTimePasswordGenerator#HOTP_HMAC_ALGORITHM}
-	 *             algorithm, which should never happen except in cases of
-	 *             serious misconfiguration
+	 *             algorithm, which should never happen except in cases of serious
+	 *             misconfiguration
 	 */
-	public TimeBasedOneTimePasswordGenerator() throws NoSuchAlgorithmException
-	{
+	public TimeBasedOneTimePasswordGenerator() throws NoSuchAlgorithmException {
 		this(30, TimeUnit.SECONDS);
 	}
 
@@ -76,11 +74,11 @@ public class TimeBasedOneTimePasswordGenerator extends HmacOneTimePasswordGenera
 	 * @throws NoSuchAlgorithmException
 	 *             if the underlying JRE doesn't support the
 	 *             {@value com.eatthepath.otp.HmacOneTimePasswordGenerator#HOTP_HMAC_ALGORITHM}
-	 *             algorithm, which should never happen except in cases of
-	 *             serious misconfiguration
+	 *             algorithm, which should never happen except in cases of serious
+	 *             misconfiguration
 	 */
-	public TimeBasedOneTimePasswordGenerator(final long timeStep, final TimeUnit timeStepUnit) throws NoSuchAlgorithmException
-	{
+	public TimeBasedOneTimePasswordGenerator(final long timeStep, final TimeUnit timeStepUnit)
+			throws NoSuchAlgorithmException {
 		this(timeStep, timeStepUnit, HmacOneTimePasswordGenerator.DEFAULT_PASSWORD_LENGTH);
 	}
 
@@ -100,11 +98,11 @@ public class TimeBasedOneTimePasswordGenerator extends HmacOneTimePasswordGenera
 	 * @throws NoSuchAlgorithmException
 	 *             if the underlying JRE doesn't support the
 	 *             {@value com.eatthepath.otp.HmacOneTimePasswordGenerator#HOTP_HMAC_ALGORITHM}
-	 *             algorithm, which should never happen except in cases of
-	 *             serious misconfiguration
+	 *             algorithm, which should never happen except in cases of serious
+	 *             misconfiguration
 	 */
-	public TimeBasedOneTimePasswordGenerator(final long timeStep, final TimeUnit timeStepUnit, final int passwordLength) throws NoSuchAlgorithmException
-	{
+	public TimeBasedOneTimePasswordGenerator(final long timeStep, final TimeUnit timeStepUnit, final int passwordLength)
+			throws NoSuchAlgorithmException {
 		this(timeStep, timeStepUnit, passwordLength, HmacOneTimePasswordGenerator.HOTP_HMAC_ALGORITHM);
 	}
 
@@ -135,8 +133,8 @@ public class TimeBasedOneTimePasswordGenerator extends HmacOneTimePasswordGenera
 	 * @see com.eatthepath.otp.TimeBasedOneTimePasswordGenerator#TOTP_ALGORITHM_HMAC_SHA256
 	 * @see com.eatthepath.otp.TimeBasedOneTimePasswordGenerator#TOTP_ALGORITHM_HMAC_SHA512
 	 */
-	public TimeBasedOneTimePasswordGenerator(final long timeStep, final TimeUnit timeStepUnit, final int passwordLength, final String algorithm) throws NoSuchAlgorithmException
-	{
+	public TimeBasedOneTimePasswordGenerator(final long timeStep, final TimeUnit timeStepUnit, final int passwordLength,
+			final String algorithm) throws NoSuchAlgorithmException {
 		super(passwordLength, algorithm);
 
 		this.timeStepMillis = timeStepUnit.toMillis(timeStep);
@@ -150,15 +148,14 @@ public class TimeBasedOneTimePasswordGenerator extends HmacOneTimePasswordGenera
 	 * @param timestamp
 	 *            the timestamp for which to generate the password
 	 *
-	 * @return an integer representation of a one-time password; callers will
-	 *         need to format the password for display on their own
+	 * @return an integer representation of a one-time password; callers will need
+	 *         to format the password for display on their own
 	 *
 	 * @throws InvalidKeyException
 	 *             if the given key is inappropriate for initializing the
 	 *             {@link Mac} for this generator
 	 */
-	public int generateOneTimePassword(final Key key, final Date timestamp) throws InvalidKeyException
-	{
+	public int generateOneTimePassword(final Key key, final Date timestamp) throws InvalidKeyException {
 		return this.generateOneTimePassword(key, timestamp.getTime() / this.timeStepMillis);
 	}
 
@@ -170,8 +167,7 @@ public class TimeBasedOneTimePasswordGenerator extends HmacOneTimePasswordGenera
 	 *
 	 * @return the time step used by this generator in the given units of time
 	 */
-	public long getTimeStep(final TimeUnit timeUnit)
-	{
+	public long getTimeStep(final TimeUnit timeUnit) {
 		return timeUnit.convert(this.timeStepMillis, TimeUnit.MILLISECONDS);
 	}
 }
