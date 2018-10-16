@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.transform.Templates;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,9 +90,8 @@ public class EmailSmsService
 		email.setTo(emailTo);
 		email.setSubject(DetailsConstants.REG_OTP_EMAIL_SUBJECT);
 		email.setModel(model);
-		email.setMessage("Hello Message");
-		//email.setTemplate(TemplatesIB.REGISTRATION_OTP);
-		email.setHtml(false);
+		email.setITemplate(TemplatesIB.REG_EMAIL_OTP);
+		email.setHtml(true);
 		postManClient.sendEmail(email);
 
 		return emailOtpPrefix;
@@ -111,7 +112,7 @@ public class EmailSmsService
 	{
 		
 		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
-		String mobileWithCode = "965" + mobileNumber;
+		String mobileWithCode = mobileNumber;
 		String mobileOtpPrefix = Random.randomAlpha(3);
 		String mobileOtp = Random.randomNumeric(6);
 		String mobileOtpToSend = mobileOtpPrefix + "-" + mobileOtp;
@@ -127,36 +128,131 @@ public class EmailSmsService
 			SMS sms = new SMS();
 			sms.addTo(mobileWithCode);
 			sms.getModel().put(DetailsConstants.MOBILE_OTP, mobileOtpToSend);
-			//sms.setTemplate(Templates.RESET_OTP_SMS);
+			sms.setITemplate(TemplatesIB.REG_MOBILE_OTP);
 			postManClient.sendSMS(sms);
 		} 
 		catch (Exception e) 
 		{
+			e.printStackTrace();
 			logger.error("error in sendOtpSms", e);
 		}
-		
-		/*String emailFrom = regSession.getEmailFromConfigured();
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put(DetailsConstants.CUSTOMER_NAME, "Customer");
-		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
-		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaData.getAmibWebsiteLink());
-		model.put(DetailsConstants.EMAIL_OTP, mobileOtpToSend);
-
-		ArrayList<String> emailTo = new ArrayList<String>();
-		emailTo.add("almulla.insurance.1427@gmail.com");
-
-		Email email = new Email();
-		email.setFrom(emailFrom);
-		email.setTo(emailTo);
-		email.setSubject(DetailsConstants.REG_OTP_EMAIL_SUBJECT);
-		email.setModel(model);
-		email.setITemplate(TemplatesIB.REGISTRATION_OTP);
-		email.setHtml(true);
-		postManClient.sendEmail(email);*/
 		
 		return mobileOtpPrefix;
 	}
 
+	/*
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	/************* EMAIL TO CUSTOMER FOR SUCCESS FULL REGISTARTION **********/
+	public void emailTosuccessFullUserRegistration()
+	{
+
+		String emailIdTo = regSession.getCustomerEmailId().toString();
+		String emailIdFrom = regSession.getEmailFromConfigured();
+
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put(DetailsConstants.CUSTOMER_NAME, "Customer");
+		model.put(DetailsConstants.CONTACT_US_EMAIL, regSession.getContactUsEmail());
+		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaData.getAmibWebsiteLink());
+
+		ArrayList<String> emailTo = new ArrayList<String>();
+		emailTo.add(emailIdTo);
+
+		Email email = new Email();
+		email.setFrom(emailIdFrom);
+		email.setTo(emailTo);
+		email.setSubject(DetailsConstants.REG_SUCCESS_EMAIL);
+		email.setModel(model);
+		email.setITemplate(TemplatesIB.REG_SUCCESS_MAIL);
+		email.setHtml(true);
+		postManClient.sendEmail(email);
+
+	}
+
+	/*
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	/************* USER REG FAILED EMAIL TO AMIB **********/
+	public void sendFailedRegEmail(RequestOtpModel requestOtpModel)
+	{
+		String emailIdTo = regSession.getContactUsEmail();
+		String emailIdFrom = regSession.getEmailFromConfigured();
+
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put(DetailsConstants.CUSTOMER_CIVIL_ID, requestOtpModel.getCivilId());
+		model.put(DetailsConstants.CUSTOMER_EMAIL_ID, requestOtpModel.getEmailId());
+		model.put(DetailsConstants.CUSTOMER_MOBILE_NO, requestOtpModel.getMobileNumber());
+
+		ArrayList<String> emailTo = new ArrayList<String>();
+		emailTo.add(emailIdTo);
+
+		Email email = new Email();
+		email.setFrom(emailIdFrom);
+		email.setTo(emailTo);
+		email.setSubject(DetailsConstants.FAILURE_REG_EMAIL_SUBJECT);
+		email.setModel(model);
+		email.setITemplate(TemplatesIB.REG_FAILED_EMAIL);
+		email.setHtml(true);
+		postManClient.sendEmail(email);
+
+	}
+
+	/*
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	/*********
+	 * REQUEST QUOTE SUBMIT SUCCESS MAIL TO USER AND AMIB
+	 ********/
+	public void emailToCustomerAndAmib()
+	{
+		String emailIdFrom = metaData.getEmailFromConfigured();
+		String customerEmailId = metaData.getCustomerEmailId();
+		String customerMobileNumber = metaData.getCustomerMobileNumber();
+		String amibEmailId = metaData.getContactUsEmail();
+		String civilId = metaData.getCivilId();
+
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put(DetailsConstants.CUSTOMER_CIVIL_ID, civilId);
+		model.put(DetailsConstants.CUSTOMER_EMAIL_ID, customerEmailId);
+		model.put(DetailsConstants.CUSTOMER_MOBILE_NO, customerMobileNumber);
+
+		ArrayList<String> emailTo = new ArrayList<String>();
+		emailTo.add(customerEmailId);
+		emailTo.add(amibEmailId);
+
+		Email email = new Email();
+		email.setFrom(emailIdFrom);
+		email.setTo(emailTo);
+		email.setSubject(DetailsConstants.FAILURE_REG_EMAIL_SUBJECT);
+		email.setModel(model);
+		email.setITemplate(TemplatesIB.REQ_QUOTE_SUBMITTED);
+		email.setHtml(true);
+		postManClient.sendEmail(email);
+
+	}
+	
+	
 	/*
 	 * 
 	 * 
@@ -397,117 +493,7 @@ public class EmailSmsService
 		return null;
 	}
 
-	/*
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 */
-	/************* EMAIL TO CUSTOMER FOR SUCCESS FULL REGISTARTION **********/
-	public void emailTosuccessFullUserRegistration()
-	{
-
-		String emailIdTo = regSession.getCustomerEmailId().toString();
-		String emailIdFrom = regSession.getEmailFromConfigured();
-
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put(DetailsConstants.CUSTOMER_NAME, "Customer");
-		model.put(DetailsConstants.CONTACT_US_EMAIL, regSession.getContactUsEmail());
-		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaData.getAmibWebsiteLink());
-
-		ArrayList<String> emailTo = new ArrayList<String>();
-		emailTo.add(emailIdTo);
-
-		Email email = new Email();
-		email.setFrom(emailIdFrom);
-		email.setTo(emailTo);
-		email.setSubject(DetailsConstants.REG_SUCCESS_EMAIL);
-		email.setModel(model);
-		email.setITemplate(TemplatesIB.REGISTRATION_OTP);
-		email.setHtml(true);
-		postManClient.sendEmail(email);
-
-	}
-
-	/*
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 */
-	/************* USER REG FAILED EMAIL TO AMIB **********/
-	public void sendFailedRegEmail(RequestOtpModel requestOtpModel)
-	{
-		String emailIdTo = regSession.getContactUsEmail();
-		String emailIdFrom = regSession.getEmailFromConfigured();
-
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put(DetailsConstants.CUSTOMER_CIVIL_ID, requestOtpModel.getCivilId());
-		model.put(DetailsConstants.CUSTOMER_EMAIL_ID, requestOtpModel.getEmailId());
-		model.put(DetailsConstants.CUSTOMER_MOBILE_NO, requestOtpModel.getMobileNumber());
-
-		ArrayList<String> emailTo = new ArrayList<String>();
-		emailTo.add(emailIdTo);
-
-		Email email = new Email();
-		email.setFrom(emailIdFrom);
-		email.setTo(emailTo);
-		email.setSubject(DetailsConstants.FAILURE_REG_EMAIL_SUBJECT);
-		email.setModel(model);
-		email.setTemplate(TemplatesIB.FAILED_REGISTRATION.toString());
-		email.setHtml(true);
-		postManClient.sendEmail(email);
-
-	}
-
-	/*
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 */
-	/*********
-	 * REQUEST QUOTE SUBMIT SUCCESS MAIL TO USER AND AMIB
-	 ********/
-	public void emailToCustomerAndAmib()
-	{
-		String emailIdFrom = metaData.getEmailFromConfigured();
-		String customerEmailId = metaData.getCustomerEmailId();
-		String customerMobileNumber = metaData.getCustomerMobileNumber();
-		String amibEmailId = metaData.getContactUsEmail();
-		String civilId = metaData.getCivilId();
-
-		Map<String, Object> model = new HashMap<String, Object>();
-		model.put(DetailsConstants.CUSTOMER_CIVIL_ID, civilId);
-		model.put(DetailsConstants.CUSTOMER_EMAIL_ID, customerEmailId);
-		model.put(DetailsConstants.CUSTOMER_MOBILE_NO, customerMobileNumber);
-
-		ArrayList<String> emailTo = new ArrayList<String>();
-		emailTo.add(customerEmailId);
-		emailTo.add(amibEmailId);
-
-		Email email = new Email();
-		email.setFrom(emailIdFrom);
-		email.setTo(emailTo);
-		email.setSubject(DetailsConstants.FAILURE_REG_EMAIL_SUBJECT);
-		email.setModel(model);
-		email.setITemplate(TemplatesIB.FAILED_REGISTRATION);
-		email.setHtml(true);
-		postManClient.sendEmail(email);
-
-	}
+	
 
 	/*
 	 * 

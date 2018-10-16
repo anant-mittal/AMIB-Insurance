@@ -5,7 +5,7 @@ import com.amx.jax.postman.model.ITemplates.ITemplate;
 
 public enum TemplatesIB implements ITemplate {
 
-	CONTACT_US("ContactForm"), SERVER_PING("server-ping-ib"), REGISTRATION_OTP, FAILED_REGISTRATION;
+	CONTACT_US("ContactForm"), SERVER_PING("server-ping-ib"), REG_EMAIL_OTP, REG_MOBILE_OTP , REG_SUCCESS_MAIL , REG_FAILED_EMAIL , REQ_QUOTE_SUBMITTED;
 
 	String fileName;
 	PDFConverter converter;
