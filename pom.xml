@@ -24,61 +24,10 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<groupId>com.amx.jax</groupId>
-				<artifactId>common-utils</artifactId>
-				<version>${amx.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.amx.jax</groupId>
-				<artifactId>common-lib</artifactId>
-				<version>${amx.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>com.amx.jax</groupId>
-				<artifactId>lib-ext-jar</artifactId>
-				<version>${amx.version}</version>
-				<type>pom</type>
-			</dependency>
-			<dependency>
-				<groupId>com.amx.jax</groupId>
-				<artifactId>lib-mcq</artifactId>
-				<version>${amx.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.amx.jax</groupId>
-				<artifactId>lib-postman</artifactId>
-				<version>${amx.version}</version>
-			</dependency>
-
-			<dependency>
-				<groupId>com.amx.jax</groupId>
-				<artifactId>lib-monitor</artifactId>
-				<version>${amx.version}</version>
-			</dependency>
-
-
-
-
 		</dependencies>
 	</dependencyManagement>
 
 	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
-			<scope>test</scope>
-		</dependency>
 
 	</dependencies>
 
@@ -98,24 +47,9 @@
 	</build>
 
 	<modules>
-	<!-- Common Libs -->
-		<module>common-utils</module>
-		<module>common-lib</module>
-		<module>lib-ext-jar</module>
-		<module>lib-mcq</module>
-		<module>lib-monitor</module>
-		<module>lib-postman</module>
-		
-		<!-- Common Servers -->
-		<module>ms-postman</module>
-		<!-- <module>ms-broker</module> -->
-	<!-- 	<module>server-payg</module> -->
-		<!-- <module>server-monitor</module> -->
-
-
+		<module>amxeco-parent</module>
 		<module>common-amib</module>
 		<module>lib-db</module>
-		<!-- <module>lib-postman2</module> -->
 		<module>server-ui</module>
 	</modules>
 </project>
