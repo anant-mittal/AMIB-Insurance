@@ -121,7 +121,7 @@ public class HomeController
 		System.out.println("HomeController :: defaultPage :: getLanguage : " + httpService.getLanguage());
 		model.addAttribute("lang", httpService.getLanguage());
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
-		model.addAttribute("cdnUrl", webConfig.getCdnURL());
+		model.addAttribute("cdnUrl", appConfig.getCdnURL());
 		model.addAttribute("cdnVerion", getVersion());
 		return "app";
 	}
@@ -160,7 +160,7 @@ public class HomeController
 		
 		model.addAttribute("lang", httpService.getLanguage());
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
-		model.addAttribute("cdnUrl", webConfig.getCdnURL());
+		model.addAttribute("cdnUrl", appConfig.getCdnURL());
 		model.addAttribute("cdnVerion", getVersion());
 
 		if (httpService.getLanguage().toString().equalsIgnoreCase("EN"))

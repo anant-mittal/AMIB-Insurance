@@ -21,7 +21,7 @@ public class WhatsAppService {
 
 	public static String WHATS_MESSAGES = "WHATS_MESSAGES";
 
-	@Autowired
+	@Autowired(required=false)
 	RedissonClient redisson;
 
 	private RBlockingQueue<WAMessage> getQueue(BigDecimal queueId) {

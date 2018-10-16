@@ -5,7 +5,7 @@ import com.amx.jax.postman.model.ITemplates.ITemplate;
 
 public enum TemplatesIB implements ITemplate {
 
-	CONTACT_US("ContactForm"), SERVER_PING("server-ping-ib");
+	CONTACT_US("ContactForm"), SERVER_PING("server-ping-ib"), REGISTRATION_OTP, FAILED_REGISTRATION;
 
 	String fileName;
 	PDFConverter converter;
@@ -36,6 +36,8 @@ public enum TemplatesIB implements ITemplate {
 
 	TemplatesIB(String fileName) {
 		this(fileName, null, null);
+	}
+	TemplatesIB(){
 	}
 
 	@Override

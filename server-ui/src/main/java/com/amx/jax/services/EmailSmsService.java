@@ -20,6 +20,8 @@ import com.amx.jax.models.ResponseOtpModel;
 import com.amx.jax.models.Validate;
 import com.amx.jax.postman.client.PostManClient;
 import com.amx.jax.postman.model.Email;
+import com.amx.jax.postman.model.SMS;
+import com.amx.jax.postman.model.TemplatesIB;
 import com.amx.jax.postman.model.TemplatesMX;
 import com.amx.utils.Random;
 import org.springframework.stereotype.Service;
@@ -70,6 +72,7 @@ public class EmailSmsService
 		regSession.setEotp(emailOtp);
 		metaData.setEotpPrefix(emailOtpPrefix);
 		metaData.setEotp(emailOtp);
+		
 
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put(DetailsConstants.CUSTOMER_NAME, "Customer");
@@ -85,8 +88,9 @@ public class EmailSmsService
 		email.setTo(emailTo);
 		email.setSubject(DetailsConstants.REG_OTP_EMAIL_SUBJECT);
 		email.setModel(model);
-		email.setTemplate(TemplatesMX.REGISTRATION_OTP.toString());
-		email.setHtml(true);
+		email.setMessage("Hello Message");
+		//email.setTemplate(TemplatesIB.REGISTRATION_OTP);
+		email.setHtml(false);
 		postManClient.sendEmail(email);
 
 		return emailOtpPrefix;
@@ -103,8 +107,9 @@ public class EmailSmsService
 	 * 
 	 */
 	/************* MOBILE OTP **********/
-	public String sendMobileOtp(String mobileNumber, String data)
+	public String sendMobileOtp(String mobileNumber)
 	{
+		
 		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 		String mobileWithCode = "965" + mobileNumber;
 		String mobileOtpPrefix = Random.randomAlpha(3);
@@ -117,9 +122,20 @@ public class EmailSmsService
 		metaData.setMotpPrefix(mobileOtpPrefix);
 		metaData.setMotp(mobileOtp);
 		
-		//postManClient.sendSMS(null);
+		try 
+		{
+			SMS sms = new SMS();
+			sms.addTo(mobileWithCode);
+			sms.getModel().put(DetailsConstants.MOBILE_OTP, mobileOtpToSend);
+			//sms.setTemplate(Templates.RESET_OTP_SMS);
+			postManClient.sendSMS(sms);
+		} 
+		catch (Exception e) 
+		{
+			logger.error("error in sendOtpSms", e);
+		}
 		
-		String emailFrom = regSession.getEmailFromConfigured();
+		/*String emailFrom = regSession.getEmailFromConfigured();
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put(DetailsConstants.CUSTOMER_NAME, "Customer");
 		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
@@ -134,9 +150,9 @@ public class EmailSmsService
 		email.setTo(emailTo);
 		email.setSubject(DetailsConstants.REG_OTP_EMAIL_SUBJECT);
 		email.setModel(model);
-		email.setTemplate(TemplatesMX.REGISTRATION_OTP.toString());
+		email.setITemplate(TemplatesIB.REGISTRATION_OTP);
 		email.setHtml(true);
-		postManClient.sendEmail(email);
+		postManClient.sendEmail(email);*/
 		
 		return mobileOtpPrefix;
 	}
@@ -170,7 +186,7 @@ public class EmailSmsService
 		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 
 		String eOtpPrefix = sendEmailOtp(emailId);
-		String mOtpPrefix = sendMobileOtp(mobileNumber, "");
+		String mOtpPrefix = sendMobileOtp(mobileNumber);
 
 		responseOtpModel.setEotpPrefix(eOtpPrefix);
 		responseOtpModel.setMotpPrefix(mOtpPrefix);
@@ -330,7 +346,7 @@ public class EmailSmsService
 
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
 		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
-		String mOtpPrefix = sendMobileOtp(mobileNumber, "");
+		String mOtpPrefix = sendMobileOtp(mobileNumber);
 		responseOtpModel.setMotpPrefix(mOtpPrefix);
 		responseOtpModel.setEotpPrefix(null);
 		metaData.setmOtpMobileNumber(mobileNumber);
@@ -395,7 +411,7 @@ public class EmailSmsService
 	public void emailTosuccessFullUserRegistration()
 	{
 
-		String emailIdTo = regSession.getEmailId().toString();
+		String emailIdTo = regSession.getCustomerEmailId().toString();
 		String emailIdFrom = regSession.getEmailFromConfigured();
 
 		Map<String, Object> model = new HashMap<String, Object>();
@@ -411,7 +427,7 @@ public class EmailSmsService
 		email.setTo(emailTo);
 		email.setSubject(DetailsConstants.REG_SUCCESS_EMAIL);
 		email.setModel(model);
-		email.setTemplate(TemplatesMX.REGISTRATION_OTP.toString());
+		email.setITemplate(TemplatesIB.REGISTRATION_OTP);
 		email.setHtml(true);
 		postManClient.sendEmail(email);
 
@@ -446,7 +462,7 @@ public class EmailSmsService
 		email.setTo(emailTo);
 		email.setSubject(DetailsConstants.FAILURE_REG_EMAIL_SUBJECT);
 		email.setModel(model);
-		email.setTemplate(TemplatesMX.FAILED_REGISTRATION.toString());
+		email.setTemplate(TemplatesIB.FAILED_REGISTRATION.toString());
 		email.setHtml(true);
 		postManClient.sendEmail(email);
 
@@ -462,23 +478,21 @@ public class EmailSmsService
 	 * 
 	 * 
 	 */
-	/*************
+	/*********
 	 * REQUEST QUOTE SUBMIT SUCCESS MAIL TO USER AND AMIB
-	 **********/
+	 ********/
 	public void emailToCustomerAndAmib()
 	{
-
 		String emailIdFrom = metaData.getEmailFromConfigured();
-		String customerEmailId = metaData.getEmailId();
+		String customerEmailId = metaData.getCustomerEmailId();
+		String customerMobileNumber = metaData.getCustomerMobileNumber();
 		String amibEmailId = metaData.getContactUsEmail();
+		String civilId = metaData.getCivilId();
 
 		Map<String, Object> model = new HashMap<String, Object>();
-		// model.put(DetailsConstants.CUSTOMER_CIVIL_ID,
-		// requestOtpModel.getCivilId());
-		// model.put(DetailsConstants.CUSTOMER_EMAIL_ID,
-		// requestOtpModel.getEmailId());
-		// model.put(DetailsConstants.CUSTOMER_MOBILE_NO,
-		// requestOtpModel.getMobileNumber());
+		model.put(DetailsConstants.CUSTOMER_CIVIL_ID, civilId);
+		model.put(DetailsConstants.CUSTOMER_EMAIL_ID, customerEmailId);
+		model.put(DetailsConstants.CUSTOMER_MOBILE_NO, customerMobileNumber);
 
 		ArrayList<String> emailTo = new ArrayList<String>();
 		emailTo.add(customerEmailId);
@@ -489,7 +503,7 @@ public class EmailSmsService
 		email.setTo(emailTo);
 		email.setSubject(DetailsConstants.FAILURE_REG_EMAIL_SUBJECT);
 		email.setModel(model);
-		email.setTemplate(TemplatesMX.FAILED_REGISTRATION.toString());
+		email.setITemplate(TemplatesIB.FAILED_REGISTRATION);
 		email.setHtml(true);
 		postManClient.sendEmail(email);
 
@@ -542,7 +556,7 @@ public class EmailSmsService
 	 * 
 	 * 
 	 */
-	/************* MAINTAIN COUNT OF OTP SENT MY USRE IN A DAY **********/
+	/************* MAINTAIN COUNT OF OTP SENT BY USRE IN A DAY **********/
 	public AmxApiResponse<Validate, Object> setOtpCount(String civilId)
 	{
 		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();

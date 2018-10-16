@@ -2,8 +2,8 @@
 package com.amx.jax.controllers;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.math.MathContext;
+import java.math.RoundingMode;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +31,8 @@ import com.amx.jax.models.RegSession;
 import com.amx.jax.models.RequestOtpModel;
 import com.amx.jax.models.Validate;
 import com.amx.jax.services.CustomerRegistrationService;
+import com.amx.jax.services.EmailSmsService;
+import com.amx.jax.utility.CustomizeQuoteUtility;
 import com.amx.utils.ArgUtil;
 
 @RestController
@@ -42,10 +44,20 @@ public class CustomerRegistrationController
 
 	@Autowired
 	private CustomerRegistrationService customerRegistrationService;
-
+	
 	@Autowired
 	RegSession regSession;
+	
+	@Autowired
+	EmailSmsService emailSmsService;
 
+	@RequestMapping(value = "/pub/reg/emial-test", method = RequestMethod.POST, produces = "application/json")
+	public String testEmailPostman()
+	{
+		emailSmsService.sendEmailOtp("abhishektiwaribecse@gmail.com");
+		return "Done";
+	}
+	
 	@RequestMapping(value = "/pub/reg/companysetup", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> getCompanySetUp()
 	{
@@ -127,7 +139,7 @@ public class CustomerRegistrationController
 	@RequestMapping(value = "/pub/reg/userdetails", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<CustomerDetailResponse, Object> getUserDetails()
 	{
-		return customerRegistrationService.getUserDetails();
+		return customerRegistrationService.getCustomerDetails();
 	}
 
 	@RequestMapping(value = "/pub/login/changepass-loggedin", method = RequestMethod.POST)
@@ -138,4 +150,6 @@ public class CustomerRegistrationController
 		eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
 		return customerRegistrationService.changePasswordLogedInUser(eOtp, mOtp, changePasswordRequest);
 	}
+	
+	
 }

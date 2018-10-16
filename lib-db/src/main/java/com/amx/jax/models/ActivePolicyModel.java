@@ -56,7 +56,7 @@ public class ActivePolicyModel
 
 	private BigDecimal chassis;
 
-	private BigDecimal ktNumber;
+	private String ktNumber;
 
 	private String vehicleConditionCode;
 
@@ -346,12 +346,12 @@ public class ActivePolicyModel
 		this.chassis = chassis;
 	}
 
-	public BigDecimal getKtNumber()
+	public String getKtNumber()
 	{
 		return ktNumber;
 	}
 
-	public void setKtNumber(BigDecimal ktNumber)
+	public void setKtNumber(String ktNumber)
 	{
 		this.ktNumber = ktNumber;
 	}

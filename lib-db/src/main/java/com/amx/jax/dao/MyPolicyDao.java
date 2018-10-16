@@ -89,7 +89,7 @@ public class MyPolicyDao
 				activePolicyModel.setColourDesc(rs.getString(24));
 				activePolicyModel.setNoPass(rs.getBigDecimal(25));
 				activePolicyModel.setChassis(rs.getBigDecimal(26));
-				activePolicyModel.setKtNumber(rs.getBigDecimal(27));
+				activePolicyModel.setKtNumber(rs.getString(27));
 				activePolicyModel.setVehicleConditionCode(rs.getString(28));
 				activePolicyModel.setVehicleConditionDesc(rs.getString(29));
 				activePolicyModel.setPurposeCode(rs.getString(30));

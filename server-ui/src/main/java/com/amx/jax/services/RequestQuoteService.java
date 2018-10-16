@@ -549,7 +549,7 @@ public class RequestQuoteService
 		personalDetails.setAreaCode(customerProfileDetailModel.getAreaCode());
 		personalDetails.setBusinessCode(customerProfileDetailModel.getBusinessCode());
 		personalDetails.setEmail(customerProfileDetailModel.getEmail());
-		metaData.setEmailId(customerProfileDetailModel.getEmail());
+		metaData.setCustomerEmailId(customerProfileDetailModel.getEmail());
 		personalDetails.setEnglishName(customerProfileDetailModel.getEnglishName());
 		personalDetails.setGenderCode(customerProfileDetailModel.getGenderCode());
 		personalDetails.setGovCode(customerProfileDetailModel.getGovCode());

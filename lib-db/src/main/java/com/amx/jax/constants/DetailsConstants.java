@@ -53,4 +53,6 @@ public class DetailsConstants
 	
 	public static String EMAIL_OTP = "eOtp";
 
+	public static String MOBILE_OTP = "mOtp";
+	
 }

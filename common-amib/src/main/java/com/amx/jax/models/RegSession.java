@@ -28,9 +28,9 @@ public class RegSession implements Serializable
 
 	private String civilId;
 
-	private String mobileNumber;
+	private String customerMobileNumber;
 
-	private String emailId;
+	private String customerEmailId;
 
 	private String changePasswordOtp;
 
@@ -58,6 +58,18 @@ public class RegSession implements Serializable
 
 	private String emailFromConfigured;
 
+	private BigDecimal decplc;
+	
+	public BigDecimal getDecplc()
+	{
+		return decplc;
+	}
+
+	public void setDecplc(BigDecimal decplc)
+	{
+		this.decplc = decplc;
+	}
+	
 	public String getEmailFromConfigured()
 	{
 		return emailFromConfigured;
@@ -163,24 +175,24 @@ public class RegSession implements Serializable
 		this.civilId = civilId;
 	}
 
-	public String getMobileNumber()
+	public String getCustomerMobileNumber()
 	{
-		return mobileNumber;
+		return customerMobileNumber;
 	}
 
-	public void setMobileNumber(String mobileNumber)
+	public void setCustomerMobileNumber(String customerMobileNumber)
 	{
-		this.mobileNumber = mobileNumber;
+		this.customerMobileNumber = customerMobileNumber;
 	}
 
-	public String getEmailId()
+	public String getCustomerEmailId()
 	{
-		return emailId;
+		return customerEmailId;
 	}
 
-	public void setEmailId(String emailId)
+	public void setCustomerEmailId(String customerEmailId)
 	{
-		this.emailId = emailId;
+		this.customerEmailId = customerEmailId;
 	}
 
 	public BigDecimal getCountryId()
