@@ -34,7 +34,7 @@ import com.amx.jax.models.RequestOtpModel;
 import com.amx.jax.models.ResponseOtpModel;
 import com.amx.jax.models.Validate;
 import com.amx.jax.service.HttpService;
-import com.amx.jax.utility.CalculateUtil;
+import com.amx.jax.utility.Calc;
 
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -23,6 +23,7 @@ import com.amx.jax.models.QuoteAddPolicyDetails;
 import com.amx.jax.models.ReplacementTypeList;
 import com.amx.jax.models.TermsCondition;
 import com.amx.jax.models.Validate;
+import com.amx.jax.utility.Calc;
 
 import oracle.jdbc.OracleTypes;
 
@@ -171,7 +172,7 @@ public class CustomizeQuoteDao
 				termsCondition.setTermsAndCondition(rs.getString(1));
 				termsCondition.setId(rs.getBigDecimal(2));
 				termsConditionArray.add(termsCondition);
-				
+
 			}
 		}
 		catch (Exception e)
@@ -182,17 +183,16 @@ public class CustomizeQuoteDao
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		
+
 		return termsConditionArray;
 	}
-	
-	
-	public TreeMap<Integer,String> getTermsAndConditionTest()
+
+	public TreeMap<Integer, String> getTermsAndConditionTest()
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_TERMSCON(?,?,?,?,?,?,?)}";
-		TreeMap<Integer,String> data = new TreeMap<Integer,String>();
+		TreeMap<Integer, String> data = new TreeMap<Integer, String>();
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -205,13 +205,13 @@ public class CustomizeQuoteDao
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
 			ResultSet rs = (ResultSet) callableStatement.getObject(5);
-			
+
 			while (rs.next())
 			{
 				logger.info(TAG + " getTermsAndConditionTest :: rs.getInt(2)    :" + rs.getInt(2));
 				logger.info(TAG + " getTermsAndConditionTest :: rs.getString(1) :" + rs.getString(1));
 				data.put(rs.getInt(2), rs.getString(1));
-				
+
 			}
 		}
 		catch (Exception e)
@@ -222,11 +222,9 @@ public class CustomizeQuoteDao
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		
+
 		return data;
 	}
-	
-	
 
 	public Validate saveCustomizeQuote(CustomizeQuoteSave customizeQuoteSave)
 	{
@@ -241,12 +239,12 @@ public class CustomizeQuoteDao
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			callableStatement.setBigDecimal(3, customizeQuoteSave.getQuotSeqNumber());
 			callableStatement.setBigDecimal(4, customizeQuoteSave.getVerNumber());
-			callableStatement.setBigDecimal(5, customizeQuoteSave.getBasicPremium());
-			callableStatement.setBigDecimal(6, customizeQuoteSave.getSupervisionFees());
-			callableStatement.setBigDecimal(7, customizeQuoteSave.getIssueFee());
-			callableStatement.setBigDecimal(8, customizeQuoteSave.getDisscountAmt());
-			callableStatement.setBigDecimal(9, customizeQuoteSave.getAddCoveragePremium());
-			callableStatement.setBigDecimal(10, customizeQuoteSave.getTotalAmount());
+			callableStatement.setBigDecimal(5, Calc.round(customizeQuoteSave.getBasicPremium(), metaData.getDecplc()));
+			callableStatement.setBigDecimal(6, Calc.round(customizeQuoteSave.getSupervisionFees(), metaData.getDecplc()));
+			callableStatement.setBigDecimal(7, Calc.round(customizeQuoteSave.getIssueFee(), metaData.getDecplc()));
+			callableStatement.setBigDecimal(8, Calc.round(customizeQuoteSave.getDisscountAmt(), metaData.getDecplc()));
+			callableStatement.setBigDecimal(9, Calc.round(customizeQuoteSave.getAddCoveragePremium(), metaData.getDecplc()));
+			callableStatement.setBigDecimal(10, Calc.round(customizeQuoteSave.getTotalAmount(), metaData.getDecplc()));
 			callableStatement.setString(11, metaData.getDeviceType());
 			callableStatement.setString(12, metaData.getDeviceId());
 			callableStatement.setString(13, metaData.getCivilId());
@@ -284,7 +282,7 @@ public class CustomizeQuoteDao
 			callableStatement.setString(5, customizeQuoteAddPol.getAddPolicyTypeCode());
 			callableStatement.setBigDecimal(6, customizeQuoteAddPol.getYearlyPremium());
 			callableStatement.setString(7, customizeQuoteAddPol.getOptIndex());
-			callableStatement.setBigDecimal(8, customizeQuoteAddPol.getYearMultiplePremium());
+			callableStatement.setBigDecimal(8, Calc.round(customizeQuoteAddPol.getYearMultiplePremium(), metaData.getDecplc()));
 			callableStatement.setString(9, customizeQuoteAddPol.getReplacementTypeCode());
 			callableStatement.setString(10, metaData.getDeviceType());
 			callableStatement.setString(11, metaData.getDeviceId());

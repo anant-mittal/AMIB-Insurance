@@ -42,7 +42,7 @@ import com.amx.jax.models.VehicleDetailsGetModel;
 import com.amx.jax.models.VehicleDetailsHeaderModel;
 import com.amx.jax.models.VehicleDetailsUpdateModel;
 import com.amx.jax.models.VehicleSession;
-import com.amx.jax.utility.CalculateUtil;
+import com.amx.jax.utility.Calc;
 
 import oracle.jdbc.OracleTypes;
 
@@ -499,10 +499,6 @@ public class RequestQuoteDao
 		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		try
 		{
-
-			logger.info(TAG + " getAppVehicleDetails :: appSeqNumber    :" + appSeqNumber);
-			logger.info(TAG + " getAppVehicleDetails :: metaData        :" + metaData.toString());
-
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
@@ -551,7 +547,7 @@ public class RequestQuoteDao
 				vehicleDetailsModel.setNoPass(rs.getBigDecimal(32));
 				vehicleDetailsModel.setReplacementType(rs.getString(33));
 				vehicleDetailsModel.setReplacementTypeDesc(rs.getString(34));
-				vehicleDetailsModel.setMaxInsmat(rs.getBigDecimal(35));
+				vehicleDetailsModel.setMaxInsmat(Calc.round(rs.getBigDecimal(35), metaData.getDecplc()));
 				vehicleDetailsModel.setVehicleTypeDesc(rs.getString(36));
 				logger.info(TAG + " getAppVehicleDetails :: vehicleDetailsModel :" + vehicleDetailsModel.toString());
 				vehicleDetailsArray.add(vehicleDetailsModel);
@@ -573,9 +569,6 @@ public class RequestQuoteDao
 
 	public VehicleDetailsHeaderModel setVehicleDetailsHeader(BigDecimal appSeqNumber, VehicleDetails vehicleDetails, BigDecimal oldDocNumber)
 	{
-		logger.info(TAG + " setAppVehicleDetails :: appSeqNumber1 :" + appSeqNumber);
-		logger.info(TAG + " setAppVehicleDetails :: oldDocNumber  :" + oldDocNumber);
-
 		getConnection();
 		CallableStatement callableStatement = null;
 		VehicleDetailsHeaderModel vehicleDetailsHeaderModel = new VehicleDetailsHeaderModel();
@@ -613,7 +606,6 @@ public class RequestQuoteDao
 			vehicleDetailsHeaderModel.setErrorMessage(callableStatement.getString(15));
 			if (callableStatement.getString(3) != null)
 			{
-				logger.info(TAG + " getAppVehicleDetails :: callableStatement.getBigDecimal(3) :" + callableStatement.getBigDecimal(3));
 				vehicleDetailsHeaderModel.setAppSeqNumber(callableStatement.getBigDecimal(3));
 			}
 		}
@@ -637,8 +629,6 @@ public class RequestQuoteDao
 		logger.info(TAG + " insUpdateVehicleDetails :: metaData :" + metaData.toString());
 		try
 		{
-			logger.info(TAG + " getAppVehicleDetails :: appSeqNumber :" + appSeqNumber);
-			logger.info(TAG + " insUpdateVehicleDetails :: vehicleDetails :" + vehicleDetails.toString());
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
@@ -658,7 +648,7 @@ public class RequestQuoteDao
 			callableStatement.setBigDecimal(16, null);// As Per AshokSir
 			callableStatement.setBigDecimal(17, null);// As Per AshokSir
 			callableStatement.setString(18, null);// Hard Coded As Per Ashok Sir
-			callableStatement.setBigDecimal(19, vehicleDetails.getVehicleValue());
+			callableStatement.setBigDecimal(19, Calc.round(vehicleDetails.getVehicleValue(), metaData.getDecplc()));
 			callableStatement.setString(20, metaData.getDeviceType());
 			callableStatement.setString(21, metaData.getDeviceId());
 			callableStatement.setString(22, metaData.getCivilId());
@@ -792,9 +782,6 @@ public class RequestQuoteDao
 			callableStatement.registerOutParameter(5, java.sql.Types.NUMERIC);
 			callableStatement.registerOutParameter(6, java.sql.Types.TIMESTAMP);
 			callableStatement.executeUpdate();
-
-			logger.info(TAG + " setUploadImage :: DocSeqNum)  :" + callableStatement.getBigDecimal(5));
-			logger.info(TAG + " setUploadImage :: DocSeqNum)  :" + callableStatement.getTimestamp(6));
 			if (null != callableStatement.getTimestamp(6))
 			{
 				epochDate = DateFormats.convertTimeStampToEpoc(callableStatement.getTimestamp(6).toString());
@@ -898,10 +885,6 @@ public class RequestQuoteDao
 			callableStatement.registerOutParameter(12, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(5, java.sql.Types.NUMERIC);
 			callableStatement.executeUpdate();
-
-			logger.info(TAG + " setUploadImage :: callableStatement.getBigDecimal(5)  :" + callableStatement.getBigDecimal(5));
-			logger.info(TAG + " setUploadImage :: callableStatement.getBigDecimal(10)  :" + callableStatement.getString(11));
-			logger.info(TAG + " setUploadImage :: callableStatement.getBigDecimal(11)  :" + callableStatement.getString(12));
 
 			imageModel.setDocSeqNumber(callableStatement.getBigDecimal(5));
 			imageModel.setErrorCode(callableStatement.getString(11));
@@ -1016,10 +999,6 @@ public class RequestQuoteDao
 
 	public ArrayResponseModel updateInsuranceProvider(BigDecimal appSeqNumber, BigDecimal insuranceCompCode, String prefIndic)
 	{
-		logger.info(TAG + " updateInsuranceProvider :: appSeqNumber       :" + appSeqNumber);
-		logger.info(TAG + " updateInsuranceProvider :: insuranceCompCode  :" + insuranceCompCode);
-		logger.info(TAG + " updateInsuranceProvider :: prefIndic          :" + prefIndic);
-
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_INSUPD_PREFERRED_PROVIDER(?,?,?,?,?,?,?,?,?,?)}";
@@ -1039,8 +1018,6 @@ public class RequestQuoteDao
 			callableStatement.registerOutParameter(9, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(10, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
-
-			logger.info(TAG + " updateInsuranceProvider :: errorCode        :" + callableStatement.getString(9));
 			arrayResponseModel.setErrorCode(callableStatement.getString(9));
 			arrayResponseModel.setErrorMessage(callableStatement.getString(10));
 		}
@@ -1111,7 +1088,6 @@ public class RequestQuoteDao
 			callableStatement.executeUpdate();
 
 			customerProfileDetailModel.setErrorCode(callableStatement.getString(8));
-			logger.info(TAG + " updateCustomerSequenceNumber :: callableStatement.getString(8) :" + callableStatement.getString(8));
 			customerProfileDetailModel.setErrorMessage(callableStatement.getString(9));
 
 		}
@@ -1137,9 +1113,6 @@ public class RequestQuoteDao
 
 		try
 		{
-			logger.info(TAG + " getRenewPolicyVehicleDetails :: appDocNumberDet    :" + appDocNumberDet);
-			logger.info(TAG + " getRenewPolicyVehicleDetails :: metaData        :" + metaData.toString());
-
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
@@ -1171,8 +1144,6 @@ public class RequestQuoteDao
 				vehicleDetails.setVehicleTypeDesc(rs.getString(27));
 				vehicleDetails.setPolicyDuration(rs.getBigDecimal(28));
 				vehicleDetailsArray.add(vehicleDetails);
-				logger.info(TAG + " getRenewPolicyVehicleDetails :: vehicleDetails :" + vehicleDetails.toString());
-				logger.info(TAG + " getRenewPolicyVehicleDetails :: companyCode    :" + companyCode);
 			}
 
 			arrayResponseModel.setDataArray(vehicleDetailsArray);
@@ -1227,7 +1198,6 @@ public class RequestQuoteDao
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			logger.info(TAG + " CloseConnection1 :: e.printStackTrace() :" + e);
 		}
 	}
 
@@ -1248,7 +1218,6 @@ public class RequestQuoteDao
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			logger.info(TAG + " CloseConnection2 :: e.printStackTrace() :" + e);
 		}
 	}
 }

@@ -18,6 +18,7 @@ import com.amx.jax.models.MyQuoteModel;
 import com.amx.jax.models.QuoteAddPolicyDetails;
 import com.amx.jax.models.ReplacementTypeList;
 import com.amx.jax.models.VehicleSession;
+import com.amx.jax.utility.Calc;
 
 import oracle.jdbc.OracleTypes;
 import scala.annotation.meta.setter;
@@ -100,10 +101,10 @@ public class MyQuoteDao
 				myQuoteModel.setVehicleValue(rs.getBigDecimal(33));
 				myQuoteModel.setBasicPremium(rs.getBigDecimal(34));
 				myQuoteModel.setSupervisionFees(rs.getBigDecimal(35));
-				myQuoteModel.setIssueFee(rs.getBigDecimal(36));
-				myQuoteModel.setDiscount(rs.getBigDecimal(37));
+				myQuoteModel.setIssueFee(Calc.round(rs.getBigDecimal(36), metaData.getDecplc()));
+				myQuoteModel.setDiscount(Calc.round(rs.getBigDecimal(37), metaData.getDecplc()));
 				myQuoteModel.setAddCoveragePremium(rs.getBigDecimal(38));
-				myQuoteModel.setNetAmount(rs.getBigDecimal(39));
+				myQuoteModel.setNetAmount(Calc.round(rs.getBigDecimal(39), metaData.getDecplc()));
 				myQuoteModel.setPolCondition(rs.getString(40));
 				myQuoteModel.setVehicleType(rs.getString(41));
 				activePolicyArray.add(myQuoteModel);

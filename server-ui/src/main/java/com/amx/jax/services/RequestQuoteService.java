@@ -34,7 +34,7 @@ import com.amx.jax.models.VehicleDetails;
 import com.amx.jax.models.VehicleDetailsGetModel;
 import com.amx.jax.models.VehicleDetailsHeaderModel;
 import com.amx.jax.models.VehicleDetailsUpdateModel;
-import com.amx.jax.utility.CalculateUtil;
+import com.amx.jax.utility.Calc;
 
 @Service
 public class RequestQuoteService
@@ -349,7 +349,7 @@ public class RequestQuoteService
 			IncompleteApplModel incompleteApplModel = requestQuoteDao.getIncompleteApplication();
 			BigDecimal appSeqNumber = incompleteApplModel.getAppSeqNumber();
 			logger.info(TAG + " getRequestQuoteDetails :: appSeqNumber :" + appSeqNumber);
-			
+
 			AmxApiResponse<?, Object> respInfoDetails = getIncompleteApplication();
 			if (respInfoDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 			{
@@ -446,7 +446,7 @@ public class RequestQuoteService
 					vehicleDetails.setChasis(vehicleDetailsGetModel.getChasis());
 					vehicleDetails.setVehicleConditionCode(vehicleDetailsGetModel.getVehicleConditionCode());
 					vehicleDetails.setKtNumber(vehicleDetailsGetModel.getKtNumber());
-					if(null != vehicleDetailsGetModel.getApplicationType())
+					if (null != vehicleDetailsGetModel.getApplicationType())
 					{
 						vehicleDetails.setApplicationType(vehicleDetailsGetModel.getApplicationType().toUpperCase());
 					}
@@ -991,7 +991,3 @@ public class RequestQuoteService
 		return resp;
 	}
 }
-
-
-
-
