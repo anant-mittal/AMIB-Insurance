@@ -22,7 +22,7 @@ import oracle.jdbc.OracleTypes;
 @Repository
 public class MyPolicyDao
 {
-	String TAG = "com.amx.jax.dao.MyPolicyDao :: ";
+	String TAG = "com.amx.jax.dao.ActivePolicyDao :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(MyPolicyDao.class);
 
@@ -62,8 +62,6 @@ public class MyPolicyDao
 			while (rs.next())
 			{
 
-				logger.info(TAG + " getUserActivePolicy :: rs :" + rs.getRow());
-				
 				ActivePolicyModel activePolicyModel = new ActivePolicyModel();
 				activePolicyModel.setCountryId(rs.getBigDecimal(1));
 				activePolicyModel.setCompCd(rs.getBigDecimal(2));
@@ -110,7 +108,6 @@ public class MyPolicyDao
 				activePolicyModel.setRenewalIndic(rs.getString(43));
 				activePolicyModel.setFuelCode(rs.getString(44));
 				activePolicyModel.setFuelDesc(rs.getString(45));
-				logger.info(TAG + " getUserActivePolicy :: rs.getString(43) :" + rs.getString(43));
 				if (null != rs.getString(43) && rs.getString(43).equalsIgnoreCase("N"))
 				{
 					activePolicyModel.setRenewableApplCheck("N");

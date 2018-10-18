@@ -7,6 +7,8 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.TreeMap;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,6 +171,7 @@ public class CustomizeQuoteDao
 				termsCondition.setTermsAndCondition(rs.getString(1));
 				termsCondition.setId(rs.getBigDecimal(2));
 				termsConditionArray.add(termsCondition);
+				
 			}
 		}
 		catch (Exception e)
@@ -182,6 +185,48 @@ public class CustomizeQuoteDao
 		
 		return termsConditionArray;
 	}
+	
+	
+	public TreeMap<Integer,String> getTermsAndConditionTest()
+	{
+		getConnection();
+		CallableStatement callableStatement = null;
+		String callProcedure = "{call IRB_GET_TERMSCON(?,?,?,?,?,?,?)}";
+		TreeMap<Integer,String> data = new TreeMap<Integer,String>();
+		try
+		{
+			callableStatement = connection.prepareCall(callProcedure);
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setString(3, "PAY");
+			callableStatement.setBigDecimal(4, metaData.getLanguageId());
+			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
+			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
+			callableStatement.executeUpdate();
+			ResultSet rs = (ResultSet) callableStatement.getObject(5);
+			
+			while (rs.next())
+			{
+				logger.info(TAG + " getTermsAndConditionTest :: rs.getInt(2)    :" + rs.getInt(2));
+				logger.info(TAG + " getTermsAndConditionTest :: rs.getString(1) :" + rs.getString(1));
+				data.put(rs.getInt(2), rs.getString(1));
+				
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		
+		return data;
+	}
+	
+	
 
 	public Validate saveCustomizeQuote(CustomizeQuoteSave customizeQuoteSave)
 	{

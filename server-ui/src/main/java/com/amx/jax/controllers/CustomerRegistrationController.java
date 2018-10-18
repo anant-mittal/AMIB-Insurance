@@ -2,14 +2,21 @@
 package com.amx.jax.controllers;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.models.ChangePasswordOtpRequest;
@@ -19,11 +26,14 @@ import com.amx.jax.models.CustomerDetailResponse;
 import com.amx.jax.models.CustomerLoginRequest;
 import com.amx.jax.models.CustomerRegistrationRequest;
 import com.amx.jax.models.CustomerRegistrationResponse;
+import com.amx.jax.models.Person;
 import com.amx.jax.models.RegSession;
+import com.amx.jax.models.RequestOtpModel;
 import com.amx.jax.models.Validate;
 import com.amx.jax.services.CustomerRegistrationService;
+import com.amx.jax.services.EmailSmsService;
+import com.amx.jax.utility.CustomizeQuoteUtility;
 import com.amx.utils.ArgUtil;
-import com.insurance.model.RequestOtpModel;
 
 @RestController
 public class CustomerRegistrationController
@@ -34,10 +44,38 @@ public class CustomerRegistrationController
 
 	@Autowired
 	private CustomerRegistrationService customerRegistrationService;
-
+	
 	@Autowired
 	RegSession regSession;
+	
+	@Autowired
+	EmailSmsService emailSmsService;
 
+	@RequestMapping(value = "/pub/reg/sms-email-test", method = RequestMethod.POST, produces = "application/json")
+	public String testEmailPostman()
+	{
+		CustomerLoginRequest c = new CustomerLoginRequest();
+		c.setCivilId("282071300105");
+		c.setPassword("Amx@1234");
+		customerRegistrationService.validateUserLogin(c);
+		
+		emailSmsService.sendEmailOtp("abhishektiwaribecse@gmail.com");
+		
+		//emailSmsService.sendMobileOtp("8796589233");
+		
+		//emailSmsService.emailTosuccessFullUserRegistration();
+		
+		//RequestOtpModel r = new RequestOtpModel();
+		//r.setCivilId("282071300105");
+		//r.setEmailId("abhishektiwaribecse@gmail.com");
+		//r.setMobileNumber("8796589233");
+		//emailSmsService.sendFailedRegEmail(r);
+		
+		//emailSmsService.emailToCustomerAndAmib();
+		
+		return "Done";
+	}
+	
 	@RequestMapping(value = "/pub/reg/companysetup", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> getCompanySetUp()
 	{
@@ -119,7 +157,7 @@ public class CustomerRegistrationController
 	@RequestMapping(value = "/pub/reg/userdetails", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<CustomerDetailResponse, Object> getUserDetails()
 	{
-		return customerRegistrationService.getUserDetails();
+		return customerRegistrationService.getCustomerDetails();
 	}
 
 	@RequestMapping(value = "/pub/login/changepass-loggedin", method = RequestMethod.POST)
@@ -130,4 +168,6 @@ public class CustomerRegistrationController
 		eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
 		return customerRegistrationService.changePasswordLogedInUser(eOtp, mOtp, changePasswordRequest);
 	}
+	
+	
 }

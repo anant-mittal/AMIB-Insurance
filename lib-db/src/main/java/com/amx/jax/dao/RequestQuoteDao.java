@@ -42,6 +42,8 @@ import com.amx.jax.models.VehicleDetailsGetModel;
 import com.amx.jax.models.VehicleDetailsHeaderModel;
 import com.amx.jax.models.VehicleDetailsUpdateModel;
 import com.amx.jax.models.VehicleSession;
+import com.amx.jax.utility.CalculateUtil;
+
 import oracle.jdbc.OracleTypes;
 
 @Component
