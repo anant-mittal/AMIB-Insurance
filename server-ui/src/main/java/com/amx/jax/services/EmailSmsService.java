@@ -140,7 +140,7 @@ public class EmailSmsService
 			SMS sms = new SMS();
 			sms.addTo(mobileWithCode);
 			sms.getModel().put(DetailsConstants.MOBILE_OTP, mobileOtpToSend);
-			sms.setITemplate(TemplatesIB.REG_MOBILE_OTP);
+			
 
 			System.out.println(TAG + " sendMobileOtp :: !appConfig.isProdMode()        :" + !appConfig.isProdMode());
 
@@ -151,6 +151,7 @@ public class EmailSmsService
 			}
 			else
 			{
+				sms.setITemplate(TemplatesIB.REG_MOBILE_OTP);
 				postManClient.sendSMS(sms);
 			}
 		}

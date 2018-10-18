@@ -104,7 +104,7 @@ public class CustomerRegistrationService
 			metaData.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
 			metaData.setEmailFromConfigured(webConfig.getConfigEmail());
 			metaData.setAmibWebsiteLink(regSession.getAmibWebsiteLink());
-			metaData.setDecplc(regSession.getDecplc());
+			metaData.setDecplc(getCompanySetUp.get(0).getDecplc());
 			
 			resp.setResults(getCompanySetUp);
 			resp.setStatusKey(ApiConstants.SUCCESS);

@@ -34,6 +34,7 @@ import com.amx.jax.models.VehicleDetails;
 import com.amx.jax.models.VehicleDetailsGetModel;
 import com.amx.jax.models.VehicleDetailsHeaderModel;
 import com.amx.jax.models.VehicleDetailsUpdateModel;
+import com.amx.jax.utility.CalculateUtil;
 
 @Service
 public class RequestQuoteService
