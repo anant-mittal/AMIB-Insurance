@@ -60,8 +60,6 @@ public class CustomerRegistrationController
 		customerRegistrationService.validateUserLogin(c);
 		
 		
-		
-		
 		emailSmsService.sendEmailOtp("abhishektiwaribecse@gmail.com");
 		
 		
