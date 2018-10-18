@@ -60,11 +60,11 @@ public class CustomerRegistrationController
 		customerRegistrationService.validateUserLogin(c);
 		
 		
-		emailSmsService.sendEmailOtp("abhishektiwaribecse@gmail.com");
+		//emailSmsService.sendEmailOtp("abhishektiwaribecse@gmail.com");
 		
 		
 		
-		//emailSmsService.sendMobileOtp("8796589233");
+		emailSmsService.sendMobileOtp("8796589233");
 		
 		
 		

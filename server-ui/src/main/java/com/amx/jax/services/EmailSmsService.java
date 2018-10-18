@@ -9,6 +9,7 @@ import javax.xml.transform.Templates;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.amx.jax.AppConfig;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.DetailsConstants;
@@ -22,6 +23,8 @@ import com.amx.jax.models.ResponseOtpModel;
 import com.amx.jax.models.Validate;
 import com.amx.jax.postman.client.PostManClient;
 import com.amx.jax.postman.model.Email;
+import com.amx.jax.postman.model.Notipy;
+import com.amx.jax.postman.model.Notipy.Channel;
 import com.amx.jax.postman.model.SMS;
 import com.amx.jax.postman.model.TemplatesIB;
 import com.amx.jax.postman.model.TemplatesMX;
@@ -32,7 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Service
 public class EmailSmsService
 {
-	String TAG = "com.insurance.services :: OtpService :: ";
+	String TAG = "com.insurance.services :: EmailSmsService :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(EmailSmsService.class);
 
@@ -44,6 +47,9 @@ public class EmailSmsService
 
 	@Autowired
 	private PostManClient postManClient;
+
+	@Autowired
+	private AppConfig appConfig;
 
 	@Autowired
 	CustomerRegistrationDao customerRegistrationDao;
@@ -74,12 +80,10 @@ public class EmailSmsService
 		regSession.setEotp(emailOtp);
 		metaData.setEotpPrefix(emailOtpPrefix);
 		metaData.setEotp(emailOtp);
-		
 
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put(DetailsConstants.CUSTOMER_NAME, "Customer");
 		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
-		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaData.getAmibWebsiteLink());
 		model.put(DetailsConstants.EMAIL_OTP, emailOtpToSend);
 
 		ArrayList<String> emailTo = new ArrayList<String>();
@@ -90,8 +94,13 @@ public class EmailSmsService
 		email.setTo(emailTo);
 		email.setSubject(DetailsConstants.REG_OTP_EMAIL_SUBJECT);
 		email.setModel(model);
-		email.setITemplate(TemplatesIB.REG_EMAIL_OTP);
-		email.setHtml(true);
+
+		email.setMessage("Al Mulla Insurance One Time OTP : " + emailOtpToSend);
+		email.setHtml(false);
+
+		// email.setITemplate(TemplatesIB.REG_EMAIL_OTP);
+		// email.setHtml(true);
+
 		postManClient.sendEmail(email);
 
 		return emailOtpPrefix;
@@ -110,7 +119,7 @@ public class EmailSmsService
 	/************* MOBILE OTP **********/
 	public String sendMobileOtp(String mobileNumber)
 	{
-		
+
 		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 		String mobileWithCode = mobileNumber;
 		String mobileOtpPrefix = Random.randomAlpha(3);
@@ -122,21 +131,35 @@ public class EmailSmsService
 		regSession.setMotp(mobileOtp);
 		metaData.setMotpPrefix(mobileOtpPrefix);
 		metaData.setMotp(mobileOtp);
-		
-		try 
+
+		System.out.println(TAG + " sendMobileOtp :: mobileOtpPrefix  :" + mobileOtpPrefix);
+		System.out.println(TAG + " sendMobileOtp :: mobileOtp        :" + mobileOtp);
+
+		try
 		{
 			SMS sms = new SMS();
 			sms.addTo(mobileWithCode);
 			sms.getModel().put(DetailsConstants.MOBILE_OTP, mobileOtpToSend);
 			sms.setITemplate(TemplatesIB.REG_MOBILE_OTP);
-			postManClient.sendSMS(sms);
-		} 
-		catch (Exception e) 
+
+			System.out.println(TAG + " sendMobileOtp :: !appConfig.isProdMode()        :" + !appConfig.isProdMode());
+
+			if (!appConfig.isProdMode())
+			{
+				System.out.println(TAG + " sendMobileOtp :: To Slack ");
+				sendToSlack("mobile", sms.getTo().get(0), mobileOtpPrefix, mobileOtp);
+			}
+			else
+			{
+				postManClient.sendSMS(sms);
+			}
+		}
+		catch (Exception e)
 		{
 			e.printStackTrace();
 			logger.error("error in sendOtpSms", e);
 		}
-		
+
 		return mobileOtpPrefix;
 	}
 
@@ -161,6 +184,7 @@ public class EmailSmsService
 		model.put(DetailsConstants.CUSTOMER_NAME, "Customer");
 		model.put(DetailsConstants.CONTACT_US_EMAIL, regSession.getContactUsEmail());
 		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaData.getAmibWebsiteLink());
+		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
 
 		ArrayList<String> emailTo = new ArrayList<String>();
 		emailTo.add(emailIdTo);
@@ -170,8 +194,13 @@ public class EmailSmsService
 		email.setTo(emailTo);
 		email.setSubject(DetailsConstants.REG_SUCCESS_EMAIL);
 		email.setModel(model);
-		email.setITemplate(TemplatesIB.REG_SUCCESS_MAIL);
-		email.setHtml(true);
+
+		email.setMessage("Al Mulla Insurance Registration Completed Successfully.");
+		email.setHtml(false);
+
+		// email.setITemplate(TemplatesIB.REG_SUCCESS_MAIL);
+		// email.setHtml(true);
+
 		postManClient.sendEmail(email);
 
 	}
@@ -205,8 +234,27 @@ public class EmailSmsService
 		email.setTo(emailTo);
 		email.setSubject(DetailsConstants.FAILURE_REG_EMAIL_SUBJECT);
 		email.setModel(model);
-		email.setITemplate(TemplatesIB.REG_FAILED_EMAIL);
-		email.setHtml(true);
+
+		StringBuffer sb = new StringBuffer();
+		sb.append("\n");
+		sb.append("\n USER REGISTRTATION FAILED INFO :");
+		sb.append("\n");
+		sb.append("\n CIVIL ID   ::  " + requestOtpModel.getCivilId());
+		sb.append("\n");
+		sb.append("\n EMAIL ID  ::  " + requestOtpModel.getEmailId());
+		sb.append("\n");
+		sb.append("\n MOBILE    ::  " + requestOtpModel.getMobileNumber());
+		sb.append("\n");
+		sb.append("\n ISSUE       ::  Duplicate Email Id and Mobile Number");
+		sb.append("\n");
+		sb.append("\n");
+		
+		email.setHtml(false);
+		email.setMessage(sb.toString());
+
+		//email.setITemplate(TemplatesIB.REG_FAILED_EMAIL);
+		//email.setHtml(true);
+
 		postManClient.sendEmail(email);
 
 	}
@@ -246,13 +294,18 @@ public class EmailSmsService
 		email.setTo(emailTo);
 		email.setSubject(DetailsConstants.FAILURE_REG_EMAIL_SUBJECT);
 		email.setModel(model);
-		email.setITemplate(TemplatesIB.REQ_QUOTE_SUBMITTED);
-		email.setHtml(true);
+		
+		email.setSubject("AL Mulla Insurance Quotation Request : ");
+		email.setHtml(false);
+		email.setMessage("AL Mulla Insurance Application Request Quotation has Submited Successfully.");
+		
+		//email.setITemplate(TemplatesIB.REQ_QUOTE_SUBMITTED);
+		//email.setHtml(true);
+		
 		postManClient.sendEmail(email);
 
 	}
-	
-	
+
 	/*
 	 * 
 	 * 
@@ -493,8 +546,6 @@ public class EmailSmsService
 		return null;
 	}
 
-	
-
 	/*
 	 * 
 	 * 
@@ -592,5 +643,24 @@ public class EmailSmsService
 			resp.setMessageKey(MessageKey.KEY_CIVIL_ID_NOT_REGISTERED);// Commit
 		}
 		return resp;
+	}
+
+	public void sendToSlack(String channel, String to, String prefix, String otp)
+	{
+		System.out.println(TAG + " sendToSlack :: prefix :" + prefix);
+		System.out.println(TAG + " sendToSlack :: otp    :" + otp);
+
+		Notipy msg = new Notipy();
+		msg.setMessage(String.format("%s = %s", channel, to));
+		msg.addLine(String.format("OTP = %s-%s", prefix, otp));
+		msg.setChannel(Channel.NOTIPY);
+		try
+		{
+			postManClient.notifySlack(msg);
+		}
+		catch (Exception e)
+		{
+			logger.error("error in SlackNotify", e);
+		}
 	}
 }

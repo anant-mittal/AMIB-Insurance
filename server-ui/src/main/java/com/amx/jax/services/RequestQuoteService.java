@@ -348,6 +348,7 @@ public class RequestQuoteService
 			IncompleteApplModel incompleteApplModel = requestQuoteDao.getIncompleteApplication();
 			BigDecimal appSeqNumber = incompleteApplModel.getAppSeqNumber();
 			logger.info(TAG + " getRequestQuoteDetails :: appSeqNumber :" + appSeqNumber);
+			
 			AmxApiResponse<?, Object> respInfoDetails = getIncompleteApplication();
 			if (respInfoDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 			{
@@ -444,6 +445,14 @@ public class RequestQuoteService
 					vehicleDetails.setChasis(vehicleDetailsGetModel.getChasis());
 					vehicleDetails.setVehicleConditionCode(vehicleDetailsGetModel.getVehicleConditionCode());
 					vehicleDetails.setKtNumber(vehicleDetailsGetModel.getKtNumber());
+					if(null != vehicleDetailsGetModel.getApplicationType())
+					{
+						vehicleDetails.setApplicationType(vehicleDetailsGetModel.getApplicationType().toUpperCase());
+					}
+					else
+					{
+						vehicleDetails.setApplicationType(null);
+					}
 				}
 				resp.setStatusKey(ApiConstants.SUCCESS);
 			}

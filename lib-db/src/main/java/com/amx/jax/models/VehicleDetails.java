@@ -31,6 +31,18 @@ public class VehicleDetails
 	private String vehicleConditionCode;
 
 	private String ktNumber;
+	
+	private String applicationType;
+
+	public String getApplicationType()
+	{
+		return applicationType;
+	}
+
+	public void setApplicationType(String applicationType)
+	{
+		this.applicationType = applicationType;
+	}
 
 	public String getMakeCode()
 	{

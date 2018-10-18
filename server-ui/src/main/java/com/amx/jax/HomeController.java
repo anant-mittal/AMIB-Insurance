@@ -3,6 +3,7 @@ package com.amx.jax;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -173,22 +174,29 @@ public class HomeController
 	}
 	
 	
-	@RequestMapping(value = {"/app/terms" }, method = { RequestMethod.GET })
+	@RequestMapping(value = {"/app/terms-condition" }, method = { RequestMethod.GET })
 	public String termsAndCondition(Model model)
 	{
+		ArrayList<String> termsInfo = new ArrayList<String>();
 		TreeMap<Integer,String> data =  customizeQuoteService.getTermsAndConditionTest();
+
+		Iterator it = data.entrySet().iterator();
+	    while (it.hasNext()) 
+	    {
+	        Map.Entry pair = (Map.Entry)it.next();
+	        System.out.println(pair.getKey() + " = " + pair.getValue());
+	        termsInfo.add(pair.getValue().toString());
+	        it.remove();
+	    }
 		
-		for (Entry<Integer, String> entry : data.entrySet())
+		for(int i = 0; i < termsInfo.size() ; i++)
 		{
-			Integer key = entry.getKey();
-			String value = entry.getValue();
-			System.out.println("HomeController :: termsAndCondition :: value  : " + value);
-			model.addAttribute("name", value);
+			System.out.println("HomeController :: termsAndCondition :: termsInfo  : " + termsInfo.get(i));
 		}
 		
+		model.addAllAttributes(termsInfo);
 		
-		
-		return "terms";
+		return "terms-condition";
 	}
 	
 	
