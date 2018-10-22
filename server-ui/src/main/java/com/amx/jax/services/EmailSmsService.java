@@ -16,6 +16,8 @@ import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.constants.Message;
 import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.CustomerRegistrationDao;
+import com.amx.jax.dict.Language;
+import com.amx.jax.models.CustomerDetailModel;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.RegSession;
 import com.amx.jax.models.RequestOtpModel;
@@ -81,12 +83,15 @@ public class EmailSmsService
 		metaData.setEotpPrefix(emailOtpPrefix);
 		metaData.setEotp(emailOtp);
 
+		Map<String, Object> wrapper = new HashMap<String, Object>();
 		Map<String, Object> model = new HashMap<String, Object>();
-		model.put(DetailsConstants.CUSTOMER_NAME, "Customer");
+		model.put(DetailsConstants.CUSTOMER_NAME, customerName());
 		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
+		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaData.getAmibWebsiteLink());
 		model.put(DetailsConstants.EMAIL_OTP, emailOtpToSend);
-		System.out.println(TAG + " sendEmailOtp :: model  :" + model);
-		
+		model.put(DetailsConstants.COMPANY_NAME, metaData.getCompanyName());
+		model.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
+		wrapper.put("data", model);
 		
 		ArrayList<String> emailTo = new ArrayList<String>();
 		emailTo.add(EmailTo);
@@ -95,16 +100,12 @@ public class EmailSmsService
 		email.setFrom(emailFrom);
 		email.setTo(emailTo);
 		email.setSubject(DetailsConstants.REG_OTP_EMAIL_SUBJECT);
-		email.setModel(model);
-
-		email.setMessage("Al Mulla Insurance One Time OTP : " + emailOtpToSend);
-		email.setHtml(false);
-
-		// email.setITemplate(TemplatesIB.REG_EMAIL_OTP);
-		// email.setHtml(true);
-
+		email.setModel(wrapper);
+		email.setITemplate(TemplatesIB.OTP_EMAIL);
+		email.setHtml(true);
+		email.setLang(Language.EN);
 		
-		
+
 		postManClient.sendEmail(email);
 
 		return emailOtpPrefix;
@@ -142,12 +143,11 @@ public class EmailSmsService
 			sms.getModel().put(DetailsConstants.MOBILE_OTP, mobileOtpToSend);
 			if (!appConfig.isProdMode())
 			{
-				System.out.println(TAG + " sendMobileOtp :: To Slack ");
 				sendToSlack("mobile", sms.getTo().get(0), mobileOtpPrefix, mobileOtp);
 			}
 			else
 			{
-				sms.setITemplate(TemplatesIB.REG_MOBILE_OTP);
+				sms.setITemplate(TemplatesIB.OTP_SMS);
 				postManClient.sendSMS(sms);
 			}
 		}
@@ -177,12 +177,15 @@ public class EmailSmsService
 		String emailIdTo = metaData.getCustomerEmailId().toString();
 		String emailIdFrom = metaData.getEmailFromConfigured();
 
+		Map<String, Object> wrapper = new HashMap<String, Object>();
 		Map<String, Object> model = new HashMap<String, Object>();
-		model.put(DetailsConstants.CUSTOMER_NAME, "Customer");
+		model.put(DetailsConstants.CUSTOMER_NAME, customerName());
 		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
 		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaData.getAmibWebsiteLink());
 		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
-		System.out.println(TAG + " emailTosuccessFullUserRegistration :: model  :" + model);
+		model.put(DetailsConstants.COMPANY_NAME, metaData.getCompanyName());
+		model.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
+		wrapper.put("data", model);
 		
 		ArrayList<String> emailTo = new ArrayList<String>();
 		emailTo.add(emailIdTo);
@@ -191,13 +194,11 @@ public class EmailSmsService
 		email.setFrom(emailIdFrom);
 		email.setTo(emailTo);
 		email.setSubject(DetailsConstants.REG_SUCCESS_EMAIL);
-		email.setModel(model);
-
+		email.setModel(wrapper);
 		email.setMessage("Al Mulla Insurance Registration Completed Successfully.");
-		email.setHtml(false);
-
-		// email.setITemplate(TemplatesIB.REG_SUCCESS_MAIL);
-		// email.setHtml(true);
+		email.setITemplate(TemplatesIB.REG_SUCCESS_EMAIL);
+		email.setHtml(true);
+		email.setLang(Language.EN);
 		postManClient.sendEmail(email);
 
 	}
@@ -218,11 +219,18 @@ public class EmailSmsService
 		String emailIdTo = regSession.getContactUsEmail();
 		String emailIdFrom = regSession.getEmailFromConfigured();
 
+		Map<String, Object> wrapper = new HashMap<String, Object>();
 		Map<String, Object> model = new HashMap<String, Object>();
+		model.put(DetailsConstants.CUSTOMER_NAME, customerName());
 		model.put(DetailsConstants.CUSTOMER_CIVIL_ID, requestOtpModel.getCivilId());
 		model.put(DetailsConstants.CUSTOMER_EMAIL_ID, requestOtpModel.getEmailId());
 		model.put(DetailsConstants.CUSTOMER_MOBILE_NO, requestOtpModel.getMobileNumber());
-
+		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
+		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaData.getAmibWebsiteLink());
+		model.put(DetailsConstants.COMPANY_NAME, metaData.getCompanyName());
+		model.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
+		wrapper.put("data", model);
+		
 		ArrayList<String> emailTo = new ArrayList<String>();
 		emailTo.add(emailIdTo);
 
@@ -230,29 +238,10 @@ public class EmailSmsService
 		email.setFrom(emailIdFrom);
 		email.setTo(emailTo);
 		email.setSubject(DetailsConstants.FAILURE_REG_EMAIL_SUBJECT);
-		email.setModel(model);
-		System.out.println(TAG + " sendFailedRegEmail :: model  :" + model);
-		
-		StringBuffer sb = new StringBuffer();
-		sb.append("\n");
-		sb.append("\n USER REGISTRTATION FAILED INFO :");
-		sb.append("\n");
-		sb.append("\n CIVIL ID   ::  " + requestOtpModel.getCivilId());
-		sb.append("\n");
-		sb.append("\n EMAIL ID  ::  " + requestOtpModel.getEmailId());
-		sb.append("\n");
-		sb.append("\n MOBILE    ::  " + requestOtpModel.getMobileNumber());
-		sb.append("\n");
-		sb.append("\n ISSUE       ::  Duplicate Email Id and Mobile Number");
-		sb.append("\n");
-		sb.append("\n");
-		
-		email.setHtml(false);
-		email.setMessage(sb.toString());
-
-		//email.setITemplate(TemplatesIB.REG_FAILED_EMAIL);
-		//email.setHtml(true);
-
+		email.setModel(wrapper);
+		email.setITemplate(TemplatesIB.REG_INCOMPLETE_EMAIL);
+		email.setHtml(true);
+		email.setLang(Language.EN);
 		postManClient.sendEmail(email);
 
 	}
@@ -270,7 +259,7 @@ public class EmailSmsService
 	/*********
 	 * REQUEST QUOTE SUBMIT SUCCESS MAIL TO USER AND AMIB
 	 ********/
-	public void emailToCustomerAndAmib()
+	public void emailToCustomerAndAmib(String makeDesc, String subMakeDesc, String urlDetails)
 	{
 		String emailIdFrom = metaData.getEmailFromConfigured();
 		String customerEmailId = metaData.getCustomerEmailId();
@@ -278,11 +267,22 @@ public class EmailSmsService
 		String amibEmailId = metaData.getContactUsEmail();
 		String civilId = metaData.getCivilId();
 
+		Map<String, Object> wrapper = new HashMap<String, Object>();
 		Map<String, Object> model = new HashMap<String, Object>();
+		model.put(DetailsConstants.CUSTOMER_NAME, customerName());
 		model.put(DetailsConstants.CUSTOMER_CIVIL_ID, civilId);
 		model.put(DetailsConstants.CUSTOMER_EMAIL_ID, customerEmailId);
 		model.put(DetailsConstants.CUSTOMER_MOBILE_NO, customerMobileNumber);
-
+		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
+		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaData.getAmibWebsiteLink());
+		model.put(DetailsConstants.COMPANY_NAME, metaData.getCompanyName());
+		model.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
+		model.put(DetailsConstants.MAKE_DESC, makeDesc);
+		model.put(DetailsConstants.SUB_MAKE_DESC, subMakeDesc);
+		model.put(DetailsConstants.URL_DETAILS, urlDetails);
+		
+		wrapper.put("data", model);
+		
 		ArrayList<String> emailTo = new ArrayList<String>();
 		emailTo.add(customerEmailId);
 		emailTo.add(amibEmailId);
@@ -291,15 +291,11 @@ public class EmailSmsService
 		email.setFrom(emailIdFrom);
 		email.setTo(emailTo);
 		email.setSubject(DetailsConstants.FAILURE_REG_EMAIL_SUBJECT);
-		email.setModel(model);
-		System.out.println(TAG + " emailToCustomerAndAmib :: model  :" + model);
-		
+		email.setModel(wrapper);
 		email.setSubject("AL Mulla Insurance Quotation Request : ");
-		email.setHtml(false);
-		email.setMessage("AL Mulla Insurance Application Request Quotation has Submited Successfully.");
-		
-		//email.setITemplate(TemplatesIB.REQ_QUOTE_SUBMITTED);
-		//email.setHtml(true);
+		email.setITemplate(TemplatesIB.QUOTE_SUBMIT_EMAIL);
+		email.setHtml(true);
+		email.setLang(Language.EN);
 		
 		postManClient.sendEmail(email);
 
@@ -558,11 +554,8 @@ public class EmailSmsService
 	/************* CHECK IF OTP IS ENABLED FOR THIS PERTICULAR USER **********/
 	public AmxApiResponse<Validate, Object> isOtpEnabled(String civilId)
 	{
-		logger.info(TAG + " isOtpEnabled :: civilId :" + civilId);
 		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
 		boolean isOtpEnable = customerRegistrationDao.isOtpEnabled(civilId);
-		logger.info(TAG + " isOtpEnabled :: isOtpEnable :" + isOtpEnable);
-
 		if (isOtpEnable)
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
@@ -627,7 +620,6 @@ public class EmailSmsService
 	public AmxApiResponse<Validate, Object> isCivilIdExist(String civilid)
 	{
 		boolean civilIdExistCheck = customerRegistrationDao.isCivilIdExist(civilid);
-		logger.info(TAG + " isCivilIdExist :: civilIdExistCheck :" + civilIdExistCheck);
 		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
 		if (civilIdExistCheck)
 		{
@@ -644,11 +636,19 @@ public class EmailSmsService
 		return resp;
 	}
 
+	/*
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	/************* SEND SMS TO SLACK **********/
 	public void sendToSlack(String channel, String to, String prefix, String otp)
 	{
-		System.out.println(TAG + " sendToSlack :: prefix :" + prefix);
-		System.out.println(TAG + " sendToSlack :: otp    :" + otp);
-
 		Notipy msg = new Notipy();
 		msg.setMessage(String.format("%s = %s", channel, to));
 		msg.addLine(String.format("OTP = %s-%s", prefix, otp));
@@ -659,7 +659,33 @@ public class EmailSmsService
 		}
 		catch (Exception e)
 		{
-			logger.error("error in SlackNotify", e);
+			e.printStackTrace();
 		}
+	}
+	
+	/*
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	/************* GET CUSTOMER NAME FROM CIVIL ID **********/
+	
+	public String customerName()
+	{
+		String civilId = regSession.getCivilId();
+		if (null != civilId && !civilId.equals(""))
+		{
+			CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(metaData.getCivilId());
+			if (null != customerDetailModel.getUserName() && !customerDetailModel.getUserName().equals(""))
+			{
+				return customerDetailModel.getUserName();
+			}
+		}
+		return "Customer";
 	}
 }

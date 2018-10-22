@@ -14,7 +14,7 @@ public class MetaData implements Serializable
 {
 
 	private static final long serialVersionUID = 4265567700694960490L;
-	
+
 	private MetaData metaData;
 
 	private String motpPrefix;
@@ -54,21 +54,29 @@ public class MetaData implements Serializable
 	private String eOtpEmailId = "";
 
 	String emailFromConfigured;
-	
+
 	private String amibWebsiteLink;
+
+	private BigDecimal customerSequenceNumber; 
+
+	private BigDecimal userSequenceNumber; 
 	
-	/**************************ASK************************/
-
-	private BigDecimal customerSequenceNumber; //[Get:- Update Profile Details and getUser Details] , [USED :- veh_headre_dtl, get_prof_dtls , set_veh_dtls] 
-
-	private BigDecimal userSequenceNumber; //[Get:- On User Login] , [USED :- get_user_dtls, set_veh_dtls]  
-
-	private BigDecimal userAmibCustRef; // [Get:- On User Login] , [USED :- set_veh_dtls]  
-	
-	/**************************ASK************************/
+	private BigDecimal userAmibCustRef; 
 	
 	private BigDecimal decplc;
-	
+
+	private String companyName;
+
+	public String getCompanyName()
+	{
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName)
+	{
+		this.companyName = companyName;
+	}
+
 	public BigDecimal getDecplc()
 	{
 		return decplc;
@@ -78,7 +86,7 @@ public class MetaData implements Serializable
 	{
 		this.decplc = decplc;
 	}
-	
+
 	public String getAmibWebsiteLink()
 	{
 		return amibWebsiteLink;

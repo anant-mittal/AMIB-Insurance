@@ -59,19 +59,19 @@ public class CustomerRegistrationController
 		c.setPassword("Amx@1234");
 		customerRegistrationService.validateUserLogin(c);
 		
-		emailSmsService.sendEmailOtp("abhishektiwaribecse@gmail.com");
+		//emailSmsService.sendEmailOtp("abhishektiwaribecse@gmail.com");
 		
 		//emailSmsService.sendMobileOtp("8796589233");
 		
-		emailSmsService.emailTosuccessFullUserRegistration();
+		//emailSmsService.emailTosuccessFullUserRegistration();
 		
-		RequestOtpModel r = new RequestOtpModel();
+		/*RequestOtpModel r = new RequestOtpModel();
 		r.setCivilId("282071300105");
 		r.setEmailId("abhishektiwaribecse@gmail.com");
 		r.setMobileNumber("8796589233");
-		emailSmsService.sendFailedRegEmail(r);
+		emailSmsService.sendFailedRegEmail(r);*/
 		
-		emailSmsService.emailToCustomerAndAmib();
+		emailSmsService.emailToCustomerAndAmib("Make - Hona", "Submake - kawasaki","https://www.cricbuzz.com/");
 		
 		return "Done";
 	}
@@ -168,6 +168,5 @@ public class CustomerRegistrationController
 		eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
 		return customerRegistrationService.changePasswordLogedInUser(eOtp, mOtp, changePasswordRequest);
 	}
-	
 	
 }

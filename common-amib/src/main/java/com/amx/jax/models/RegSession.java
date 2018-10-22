@@ -60,6 +60,18 @@ public class RegSession implements Serializable
 
 	private BigDecimal decplc;
 	
+	private String companyName;
+	
+	public String getCompanyName()
+	{
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName)
+	{
+		this.companyName = companyName;
+	}
+	
 	public BigDecimal getDecplc()
 	{
 		return decplc;

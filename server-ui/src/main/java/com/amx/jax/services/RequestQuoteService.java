@@ -809,8 +809,10 @@ public class RequestQuoteService
 
 	public AmxApiResponse<?, Object> submitRequestQuote(BigDecimal appSeqNumber, BigDecimal insuranceCompCode)
 	{
-		logger.info(TAG + " submitRequestQuote :: appSeqNumber      :" + appSeqNumber);
-		logger.info(TAG + " submitRequestQuote :: insuranceCompCode :" + insuranceCompCode);
+		String makeDesc = "";
+		String subMakeDesc = "";
+		String urlDetails = "";
+		
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
 
 		AmxApiResponse<?, Object> updateInsuranceProvider = updateInsuranceProvider(appSeqNumber, insuranceCompCode);
@@ -820,10 +822,22 @@ public class RequestQuoteService
 		}
 
 		ArrayResponseModel arrayResponseModel = requestQuoteDao.submitRequestQuote(appSeqNumber);
-		logger.info(TAG + " submitRequestQuote :: arrayResponseModel.getErrorCode() :" + arrayResponseModel.getErrorCode());
 		if (null == arrayResponseModel.getErrorCode())
 		{
-			emailSmsService.emailToCustomerAndAmib();
+			ArrayResponseModel getVehicleDetailsArray = requestQuoteDao.getAppVehicleDetails(appSeqNumber);
+			if (null == getVehicleDetailsArray.getErrorCode())
+			{
+				ArrayList<VehicleDetailsGetModel> vehicleDetailsArray = getVehicleDetailsArray.getDataArray();
+				if (vehicleDetailsArray.size() >= 1)
+				{
+					VehicleDetailsGetModel vehicleDetailsGetModel = vehicleDetailsArray.get(0);
+					makeDesc = vehicleDetailsGetModel.getMakeDesc();
+					subMakeDesc = vehicleDetailsGetModel.getSubMakeDesc();
+				}
+				resp.setStatusKey(ApiConstants.SUCCESS);
+			}
+
+			emailSmsService.emailToCustomerAndAmib(makeDesc,subMakeDesc,urlDetails);
 			resp.setStatusKey(ApiConstants.SUCCESS);
 		}
 		else

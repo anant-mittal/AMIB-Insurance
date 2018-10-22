@@ -73,8 +73,6 @@ public class RequestQuoteDao
 
 		try
 		{
-			logger.info(TAG + " getIncompleteApplication :: metaData :" + metaData.toString());
-
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
@@ -782,6 +780,9 @@ public class RequestQuoteDao
 			callableStatement.registerOutParameter(5, java.sql.Types.NUMERIC);
 			callableStatement.registerOutParameter(6, java.sql.Types.TIMESTAMP);
 			callableStatement.executeUpdate();
+
+			logger.info(TAG + " setUploadImage :: DocSeqNum)  :" + callableStatement.getBigDecimal(5));
+			logger.info(TAG + " setUploadImage :: DocSeqNum)  :" + callableStatement.getTimestamp(6));
 			if (null != callableStatement.getTimestamp(6))
 			{
 				epochDate = DateFormats.convertTimeStampToEpoc(callableStatement.getTimestamp(6).toString());
@@ -867,9 +868,7 @@ public class RequestQuoteDao
 
 		try
 		{
-			logger.info(TAG + " setUploadImage :: metaData  :" + metaData.toString());
 			InputStream inputStream = file.getInputStream();
-			logger.info(TAG + " getContentType :: " + file.getContentType());
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());

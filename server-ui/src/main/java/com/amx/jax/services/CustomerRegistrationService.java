@@ -21,6 +21,7 @@ import com.amx.jax.models.ChangePasswordResponse;
 import com.amx.jax.models.CompanySetUp;
 import com.amx.jax.models.CustomerDetailModel;
 import com.amx.jax.models.CustomerDetailResponse;
+import com.amx.jax.models.CustomerDetails;
 import com.amx.jax.models.CustomerLoginModel;
 import com.amx.jax.models.CustomerLoginRequest;
 import com.amx.jax.models.CustomerLoginResponse;
@@ -90,8 +91,8 @@ public class CustomerRegistrationService
 			regSession.setDeviceId(httpService.getDeviceId());
 			regSession.setDeviceType("ONLINE");
 			regSession.setEmailFromConfigured(webConfig.getConfigEmail());
-			logger.info(TAG + " getCompanySetUp :: getDecplc :" + getCompanySetUp.get(0).getDecplc());
-			regSession.setDecplc(getCompanySetUp.get(0).getDecplc());
+			regSession.setDecplc(getCompanySetUp.get(0).getDecimalPlaceUpTo());
+			regSession.setCompanyName(getCompanySetUp.get(0).getCompanyName());
 			
 			
 			metaData.setCountryId(regSession.getCountryId());
@@ -104,7 +105,8 @@ public class CustomerRegistrationService
 			metaData.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
 			metaData.setEmailFromConfigured(webConfig.getConfigEmail());
 			metaData.setAmibWebsiteLink(regSession.getAmibWebsiteLink());
-			metaData.setDecplc(getCompanySetUp.get(0).getDecplc());
+			metaData.setDecplc(regSession.getDecplc());
+			metaData.setCompanyName(regSession.getCompanyName());
 			
 			resp.setResults(getCompanySetUp);
 			resp.setStatusKey(ApiConstants.SUCCESS);
@@ -253,28 +255,30 @@ public class CustomerRegistrationService
 	{
 		AmxApiResponse<CustomerDetailResponse, Object> resp = new AmxApiResponse<CustomerDetailResponse, Object>();
 		CustomerDetailResponse customerDetailResponse = new CustomerDetailResponse();
-
+		CustomerDetails customerDetails = new CustomerDetails();
+		
 		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(metaData.getCivilId());
-		customerDetailResponse.setCivilId(metaData.getCivilId());
-		customerDetailResponse.setCustSeqNumber(customerDetailModel.getCustSequenceNumber());
-		customerDetailResponse.setDeviceId(customerDetailModel.getDeviceId());
-		customerDetailResponse.setDeviceType(customerDetailModel.getDeviceType());
-		customerDetailResponse.setEmail(customerDetailModel.getEmail());
-		customerDetailResponse.setLanguageId(customerDetailModel.getLanguageId());
-		customerDetailResponse.setLastLogin(customerDetailModel.getLastLogin());
-		customerDetailResponse.setMailVerify(customerDetailModel.getMailVerify());
-		customerDetailResponse.setMobile(customerDetailModel.getMobile());
-		customerDetailResponse.setMobileVerify(customerDetailModel.getMobileVerify());
-		customerDetailResponse.setUserName(customerDetailModel.getUserName());
+		customerDetails.setCivilId(metaData.getCivilId());
+		customerDetails.setCustSeqNumber(customerDetailModel.getCustSequenceNumber());
+		customerDetails.setDeviceId(customerDetailModel.getDeviceId());
+		customerDetails.setDeviceType(customerDetailModel.getDeviceType());
+		customerDetails.setEmail(customerDetailModel.getEmail());
+		customerDetails.setLanguageId(customerDetailModel.getLanguageId());
+		customerDetails.setLastLogin(customerDetailModel.getLastLogin());
+		customerDetails.setMailVerify(customerDetailModel.getMailVerify());
+		customerDetails.setMobile(customerDetailModel.getMobile());
+		customerDetails.setMobileVerify(customerDetailModel.getMobileVerify());
+		customerDetails.setUserName(customerDetailModel.getUserName());
 		metaData.setCustomerEmailId(customerDetailModel.getEmail());
 		metaData.setCustomerSequenceNumber(customerDetailModel.getCustSequenceNumber());
 		metaData.setCustomerMobileNumber(customerDetailModel.getMobile());
 		
 		ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao.getCompanySetUp(regSession.getLanguageId());
+		CompanySetUp companySetUp = getCompanySetUp.get(0);
 		
+		customerDetailResponse.setCustomerDetails(customerDetails);
+		customerDetailResponse.setCompanySetUp(companySetUp);
 		
-		
-
 		if (customerDetailModel.getStatus())
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);

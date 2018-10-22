@@ -82,7 +82,7 @@ public class CustomerRegistrationDao
 				companySetUp.setMainAct(rs.getBigDecimal(11));
 				companySetUp.setMainActCenter(rs.getBigDecimal(12));
 				companySetUp.setHeading(rs.getString(13));
-				companySetUp.setDecplc(rs.getBigDecimal(14));
+				companySetUp.setDecimalPlaceUpTo(rs.getBigDecimal(14));
 				companySetUp.setCurrency(rs.getString(15));
 				companySetUp.setLangId(rs.getBigDecimal(16));
 				companySetUp.setAppName(rs.getString(17));
