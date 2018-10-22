@@ -65,7 +65,18 @@ public class UserClient {
 	 *
 	 */
 	public enum AppType {
-		WEB, ANDROID, IOS, KIOSK, UNKNOWN;
+		WEB, ANDROID, IOS, UNKNOWN;
+	}
+
+	public enum ClientType {
+		// branch cleints
+		BRANCH_WEB, SIGNATURE_PAD, BRANCH_ADAPTER,
+
+		// Other Channels
+		OFFSITE_PAD, KIOSK,
+
+		// Customer Facing interfaces
+		ONLINE_WEB, ONLINE_ANDROID, ONLINE_IOS;
 	}
 
 }
