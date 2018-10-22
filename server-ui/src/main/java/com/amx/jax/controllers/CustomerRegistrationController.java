@@ -63,15 +63,15 @@ public class CustomerRegistrationController
 		
 		//emailSmsService.sendMobileOtp("8796589233");
 		
-		//emailSmsService.emailTosuccessFullUserRegistration();
+		emailSmsService.emailTosuccessFullUserRegistration();
 		
-		//RequestOtpModel r = new RequestOtpModel();
-		//r.setCivilId("282071300105");
-		//r.setEmailId("abhishektiwaribecse@gmail.com");
-		//r.setMobileNumber("8796589233");
-		//emailSmsService.sendFailedRegEmail(r);
+		RequestOtpModel r = new RequestOtpModel();
+		r.setCivilId("282071300105");
+		r.setEmailId("abhishektiwaribecse@gmail.com");
+		r.setMobileNumber("8796589233");
+		emailSmsService.sendFailedRegEmail(r);
 		
-		//emailSmsService.emailToCustomerAndAmib();
+		emailSmsService.emailToCustomerAndAmib();
 		
 		return "Done";
 	}

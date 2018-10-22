@@ -208,10 +208,7 @@ public class CustomizeQuoteDao
 
 			while (rs.next())
 			{
-				logger.info(TAG + " getTermsAndConditionTest :: rs.getInt(2)    :" + rs.getInt(2));
-				logger.info(TAG + " getTermsAndConditionTest :: rs.getString(1) :" + rs.getString(1));
 				data.put(rs.getInt(2), rs.getString(1));
-
 			}
 		}
 		catch (Exception e)
@@ -244,7 +241,7 @@ public class CustomizeQuoteDao
 			callableStatement.setBigDecimal(7, Calc.round(customizeQuoteSave.getIssueFee(), metaData.getDecplc()));
 			callableStatement.setBigDecimal(8, Calc.round(customizeQuoteSave.getDisscountAmt(), metaData.getDecplc()));
 			callableStatement.setBigDecimal(9, Calc.round(customizeQuoteSave.getAddCoveragePremium(), metaData.getDecplc()));
-			callableStatement.setBigDecimal(10, Calc.round(customizeQuoteSave.getTotalAmount(), metaData.getDecplc()));
+			callableStatement.setBigDecimal(10,Calc.round(customizeQuoteSave.getTotalAmount(), metaData.getDecplc()));
 			callableStatement.setString(11, metaData.getDeviceType());
 			callableStatement.setString(12, metaData.getDeviceId());
 			callableStatement.setString(13, metaData.getCivilId());

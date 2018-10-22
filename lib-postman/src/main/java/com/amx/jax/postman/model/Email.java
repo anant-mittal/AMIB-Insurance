@@ -10,9 +10,7 @@ public class Email extends Message {
 	private String from = null;
 	private String replyTo = null;
 	private List<String> cc = null;
-
 	private boolean isHtml;
-
 	private List<File> files = null;
 
 	public String getReplyTo() {
@@ -118,6 +116,12 @@ public class Email extends Message {
 
 	public void addAllTo(String toMultiple) {
 		this.to.addAll(Arrays.asList(splitByComma(toMultiple)));
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "Email [from=" + from + ", replyTo=" + replyTo + ", cc=" + cc + ", isHtml=" + isHtml + ", files=" + files + "]";
 	}
 
 }

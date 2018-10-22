@@ -85,7 +85,9 @@ public class EmailSmsService
 		model.put(DetailsConstants.CUSTOMER_NAME, "Customer");
 		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
 		model.put(DetailsConstants.EMAIL_OTP, emailOtpToSend);
-
+		System.out.println(TAG + " sendEmailOtp :: model  :" + model);
+		
+		
 		ArrayList<String> emailTo = new ArrayList<String>();
 		emailTo.add(EmailTo);
 
@@ -101,6 +103,8 @@ public class EmailSmsService
 		// email.setITemplate(TemplatesIB.REG_EMAIL_OTP);
 		// email.setHtml(true);
 
+		
+		
 		postManClient.sendEmail(email);
 
 		return emailOtpPrefix;
@@ -131,19 +135,11 @@ public class EmailSmsService
 		regSession.setMotp(mobileOtp);
 		metaData.setMotpPrefix(mobileOtpPrefix);
 		metaData.setMotp(mobileOtp);
-
-		System.out.println(TAG + " sendMobileOtp :: mobileOtpPrefix  :" + mobileOtpPrefix);
-		System.out.println(TAG + " sendMobileOtp :: mobileOtp        :" + mobileOtp);
-
 		try
 		{
 			SMS sms = new SMS();
 			sms.addTo(mobileWithCode);
 			sms.getModel().put(DetailsConstants.MOBILE_OTP, mobileOtpToSend);
-			
-
-			System.out.println(TAG + " sendMobileOtp :: !appConfig.isProdMode()        :" + !appConfig.isProdMode());
-
 			if (!appConfig.isProdMode())
 			{
 				System.out.println(TAG + " sendMobileOtp :: To Slack ");
@@ -178,15 +174,16 @@ public class EmailSmsService
 	public void emailTosuccessFullUserRegistration()
 	{
 
-		String emailIdTo = regSession.getCustomerEmailId().toString();
-		String emailIdFrom = regSession.getEmailFromConfigured();
+		String emailIdTo = metaData.getCustomerEmailId().toString();
+		String emailIdFrom = metaData.getEmailFromConfigured();
 
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put(DetailsConstants.CUSTOMER_NAME, "Customer");
-		model.put(DetailsConstants.CONTACT_US_EMAIL, regSession.getContactUsEmail());
+		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
 		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaData.getAmibWebsiteLink());
 		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
-
+		System.out.println(TAG + " emailTosuccessFullUserRegistration :: model  :" + model);
+		
 		ArrayList<String> emailTo = new ArrayList<String>();
 		emailTo.add(emailIdTo);
 
@@ -201,7 +198,6 @@ public class EmailSmsService
 
 		// email.setITemplate(TemplatesIB.REG_SUCCESS_MAIL);
 		// email.setHtml(true);
-
 		postManClient.sendEmail(email);
 
 	}
@@ -235,7 +231,8 @@ public class EmailSmsService
 		email.setTo(emailTo);
 		email.setSubject(DetailsConstants.FAILURE_REG_EMAIL_SUBJECT);
 		email.setModel(model);
-
+		System.out.println(TAG + " sendFailedRegEmail :: model  :" + model);
+		
 		StringBuffer sb = new StringBuffer();
 		sb.append("\n");
 		sb.append("\n USER REGISTRTATION FAILED INFO :");
@@ -295,6 +292,7 @@ public class EmailSmsService
 		email.setTo(emailTo);
 		email.setSubject(DetailsConstants.FAILURE_REG_EMAIL_SUBJECT);
 		email.setModel(model);
+		System.out.println(TAG + " emailToCustomerAndAmib :: model  :" + model);
 		
 		email.setSubject("AL Mulla Insurance Quotation Request : ");
 		email.setHtml(false);

@@ -80,7 +80,7 @@ public class CustomerRegistrationService
 			}
 
 			ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao.getCompanySetUp(languageId);
-
+			
 			regSession.setCountryId(getCompanySetUp.get(0).getCntryCd());
 			regSession.setCompCd(getCompanySetUp.get(0).getCompCd());
 			regSession.setContactUsEmail(getCompanySetUp.get(0).getEmail());
@@ -269,6 +269,10 @@ public class CustomerRegistrationService
 		metaData.setCustomerEmailId(customerDetailModel.getEmail());
 		metaData.setCustomerSequenceNumber(customerDetailModel.getCustSequenceNumber());
 		metaData.setCustomerMobileNumber(customerDetailModel.getMobile());
+		
+		ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao.getCompanySetUp(regSession.getLanguageId());
+		
+		
 		
 
 		if (customerDetailModel.getStatus())

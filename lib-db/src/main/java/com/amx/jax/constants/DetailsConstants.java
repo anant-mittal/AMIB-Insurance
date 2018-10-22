@@ -45,11 +45,11 @@ public class DetailsConstants
 	
 	public static String FAILURE_REG_EMAIL_SUBJECT = "New Customer Incomplete Registration";
 	
-	public static String CUSTOMER_CIVIL_ID = "Customer Civil Id";
+	public static String CUSTOMER_CIVIL_ID = "customerCivilId";
 	
-	public static String CUSTOMER_EMAIL_ID = "Customer Email Id";
+	public static String CUSTOMER_EMAIL_ID = "customerEmailId";
 	
-	public static String CUSTOMER_MOBILE_NO = "Customer Mobile No";
+	public static String CUSTOMER_MOBILE_NO = "customerMobileNo";
 	
 	public static String EMAIL_OTP = "eOtp";
 
