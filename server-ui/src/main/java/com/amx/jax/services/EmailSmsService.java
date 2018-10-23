@@ -299,12 +299,15 @@ public class EmailSmsService
 		Email email = new Email();
 		email.setFrom(emailIdFrom);
 		email.setTo(emailTo);
-		email.setSubject(DetailsConstants.FAILURE_REG_EMAIL_SUBJECT);
-		email.setModel(wrapper);
-		email.setSubject("AL Mulla Insurance Quotation Request : ");
-		email.setITemplate(TemplatesIB.QUOTE_SUBMIT_EMAIL);
-		email.setHtml(true);
-		email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
+		email.setSubject("Al Mulla Insurance Brokerage Quote for your Motor Policy Application");
+		//email.setModel(wrapper);
+		//email.setITemplate(TemplatesIB.QUOTE_SUBMIT_EMAIL);
+		//email.setHtml(true);
+		//email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
+		//
+		
+		email.setHtml(false);
+		email.setMessage("Al Mulla Insurance Brokerage Quote for your Motor Policy Application MAKE :"+ makeDesc + " SUB MAKE :"+ subMakeDesc);
 		
 		postManClient.sendEmail(email);
 
