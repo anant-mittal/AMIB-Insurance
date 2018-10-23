@@ -811,7 +811,7 @@ public class RequestQuoteService
 	{
 		String makeDesc = "";
 		String subMakeDesc = "";
-		String urlDetails = "";
+		String urlDetails = "https://www.javatpoint.com/spring-security-login-logout";
 		
 		logger.info(TAG + " submitRequestQuote :: appSeqNumber :" + appSeqNumber);
 		logger.info(TAG + " submitRequestQuote :: insuranceCompCode :" + insuranceCompCode);
