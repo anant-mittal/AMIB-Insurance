@@ -1,8 +1,10 @@
 {
 	"data": {
+		"eOtp":"LDL-532133", 
 		"customerName" : "Customer",
 		"contactUsEmail" : "amibmotor@almullagroup.com",
 		"amibWebLink" : "www.almullainsurancebrokerage.com",
-		"companyName" : "AL MULLA INSURANCE AND BROKERAGE COMPANY W.L.L"
+		"companyName" : "AL MULLA INSURANCE AND BROKERAGE COMPANY W.L.L",
+		"country" : "KUWAIT"
 	}
 }

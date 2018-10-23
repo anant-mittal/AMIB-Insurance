@@ -130,7 +130,6 @@ public class EmailService {
 			System.out.println("EmailService :: sendEmail :: getModel    :: "+email.getModel());
 			System.out.println("EmailService :: sendEmail :: getLang     :: "+email.getLang());
 			
-
 			to = email.getTo() != null ? email.getTo().get(0) : null;
 
 			if (email.getTemplate() != null) {

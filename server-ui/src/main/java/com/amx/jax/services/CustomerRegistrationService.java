@@ -46,7 +46,7 @@ public class CustomerRegistrationService
 	String TAG = "com.amx.jax.services :: CustomerRegistrationService :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(CustomerRegistrationService.class);
-	
+
 	@Autowired
 	private RegSession regSession;
 
@@ -61,10 +61,10 @@ public class CustomerRegistrationService
 
 	@Autowired
 	HttpService httpService;
-	
+
 	@Autowired
 	private CustomerRegistrationDao customerRegistrationDao;
-	
+
 	public AmxApiResponse<CompanySetUp, Object> getCompanySetUp()
 	{
 		AmxApiResponse<CompanySetUp, Object> resp = new AmxApiResponse<CompanySetUp, Object>();
@@ -81,7 +81,7 @@ public class CustomerRegistrationService
 			}
 
 			ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao.getCompanySetUp(languageId);
-			
+
 			regSession.setCountryId(getCompanySetUp.get(0).getCntryCd());
 			regSession.setCompCd(getCompanySetUp.get(0).getCompCd());
 			regSession.setContactUsEmail(getCompanySetUp.get(0).getEmail());
@@ -93,8 +93,7 @@ public class CustomerRegistrationService
 			regSession.setEmailFromConfigured(webConfig.getConfigEmail());
 			regSession.setDecplc(getCompanySetUp.get(0).getDecimalPlaceUpTo());
 			regSession.setCompanyName(getCompanySetUp.get(0).getCompanyName());
-			
-			
+
 			metaData.setCountryId(regSession.getCountryId());
 			metaData.setCompCd(regSession.getCompCd());
 			metaData.setUserType(regSession.getUserType());
@@ -107,7 +106,7 @@ public class CustomerRegistrationService
 			metaData.setAmibWebsiteLink(regSession.getAmibWebsiteLink());
 			metaData.setDecplc(regSession.getDecplc());
 			metaData.setCompanyName(regSession.getCompanyName());
-			
+
 			resp.setResults(getCompanySetUp);
 			resp.setStatusKey(ApiConstants.SUCCESS);
 		}
@@ -256,38 +255,39 @@ public class CustomerRegistrationService
 		AmxApiResponse<CustomerDetailResponse, Object> resp = new AmxApiResponse<CustomerDetailResponse, Object>();
 		CustomerDetailResponse customerDetailResponse = new CustomerDetailResponse();
 		CustomerDetails customerDetails = new CustomerDetails();
-		
-		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(metaData.getCivilId());
-		customerDetails.setCivilId(metaData.getCivilId());
-		customerDetails.setCustSeqNumber(customerDetailModel.getCustSequenceNumber());
-		customerDetails.setDeviceId(customerDetailModel.getDeviceId());
-		customerDetails.setDeviceType(customerDetailModel.getDeviceType());
-		customerDetails.setEmail(customerDetailModel.getEmail());
-		customerDetails.setLanguageId(customerDetailModel.getLanguageId());
-		customerDetails.setLastLogin(customerDetailModel.getLastLogin());
-		customerDetails.setMailVerify(customerDetailModel.getMailVerify());
-		customerDetails.setMobile(customerDetailModel.getMobile());
-		customerDetails.setMobileVerify(customerDetailModel.getMobileVerify());
-		customerDetails.setUserName(customerDetailModel.getUserName());
-		metaData.setCustomerEmailId(customerDetailModel.getEmail());
-		metaData.setCustomerSequenceNumber(customerDetailModel.getCustSequenceNumber());
-		metaData.setCustomerMobileNumber(customerDetailModel.getMobile());
-		
-		ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao.getCompanySetUp(regSession.getLanguageId());
-		CompanySetUp companySetUp = getCompanySetUp.get(0);
-		
-		customerDetailResponse.setCustomerDetails(customerDetails);
-		customerDetailResponse.setCompanySetUp(companySetUp);
-		
-		if (customerDetailModel.getStatus())
+
+		if (null != metaData.getCivilId() && !metaData.getCivilId().equals(""))
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			resp.setData(customerDetailResponse);
+			CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(metaData.getCivilId());
+			customerDetails.setCivilId(metaData.getCivilId());
+			customerDetails.setCustSeqNumber(customerDetailModel.getCustSequenceNumber());
+			customerDetails.setDeviceId(customerDetailModel.getDeviceId());
+			customerDetails.setDeviceType(customerDetailModel.getDeviceType());
+			customerDetails.setEmail(customerDetailModel.getEmail());
+			customerDetails.setLanguageId(customerDetailModel.getLanguageId());
+			customerDetails.setLastLogin(customerDetailModel.getLastLogin());
+			customerDetails.setMailVerify(customerDetailModel.getMailVerify());
+			customerDetails.setMobile(customerDetailModel.getMobile());
+			customerDetails.setMobileVerify(customerDetailModel.getMobileVerify());
+			customerDetails.setUserName(customerDetailModel.getUserName());
+
+			metaData.setCustomerEmailId(customerDetailModel.getEmail());
+			metaData.setCustomerSequenceNumber(customerDetailModel.getCustSequenceNumber());
+			metaData.setCustomerMobileNumber(customerDetailModel.getMobile());
+
+			customerDetailResponse.setCustomerDetails(customerDetails);
 		}
 		else
 		{
-			resp.setStatusKey(ApiConstants.FAILURE);
+			customerDetailResponse.setCustomerDetails(null);
 		}
+
+		ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao.getCompanySetUp(regSession.getLanguageId());
+		CompanySetUp companySetUp = getCompanySetUp.get(0);
+
+		customerDetailResponse.setCompanySetUp(companySetUp);
+
+		resp.setData(customerDetailResponse);
 		return resp;
 	}
 
@@ -339,7 +339,7 @@ public class CustomerRegistrationService
 			regSession.setCivilId(requestOtpModel.getCivilId());
 			regSession.setCustomerEmailId(requestOtpModel.getEmailId());
 			regSession.setCustomerMobileNumber(requestOtpModel.getMobileNumber());
-			
+
 			metaData.setCivilId(requestOtpModel.getCivilId());
 			metaData.setCustomerEmailId(requestOtpModel.getEmailId());
 			metaData.setCustomerMobileNumber(requestOtpModel.getMobileNumber());
@@ -383,7 +383,7 @@ public class CustomerRegistrationService
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
 			emailSmsService.emailTosuccessFullUserRegistration();
-				
+
 		}
 		else
 		{
@@ -628,60 +628,43 @@ public class CustomerRegistrationService
 
 	public void sendFailedRegistration(String type, RequestOtpModel requestOtpModel, String exceptionMessage)
 	{
-		/*String emailIdFrom = webConfig.getConfigEmail();
-		String emailITo = regSession.getContactUsEmail();
-		String Subject = "User Registration Failure";
-		String mailData = "";
-		StringBuffer sb = new StringBuffer();
-
-		if (type.equalsIgnoreCase(DetailsConstants.REG_INCOMPLETE_TYPE_MOBE_MAIL))
-		{
-			sb.append("\n");
-			sb.append("\n USER REGISTRTATION FAILED INFO :");
-			sb.append("\n");
-			sb.append("\n CIVIL ID   ::  " + requestOtpModel.getCivilId());
-			sb.append("\n");
-			sb.append("\n EMAIL ID  ::  " + requestOtpModel.getEmailId());
-			sb.append("\n");
-			sb.append("\n MOBILE    ::  " + requestOtpModel.getMobileNumber());
-			sb.append("\n");
-			sb.append("\n ISSUE       ::  Duplicate Email Id and Mobile Number");
-			sb.append("\n");
-			sb.append("\n");
-			mailData = sb.toString();
-		}
-		else if (type.equalsIgnoreCase(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL))
-		{
-			sb.append("\n");
-			sb.append("\n USER REGISTRTATION FAILED INFO :");
-			sb.append("\n");
-			sb.append("\n CIVIL ID    ::  " + requestOtpModel.getCivilId());
-			sb.append("\n");
-			sb.append("\n EMAIL ID  ::  " + requestOtpModel.getEmailId());
-			sb.append("\n");
-			sb.append("\n MOBILE    ::  " + requestOtpModel.getMobileNumber());
-			sb.append("\n");
-			sb.append("\n ISSUE       ::  Duplicate Email Id");
-			sb.append("\n");
-			sb.append("\n");
-			mailData = sb.toString();
-		}
-		else if (type.equalsIgnoreCase(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE))
-		{
-			sb.append("\n");
-			sb.append("\n USER REGISTRTATION FAILED INFO :");
-			sb.append("\n");
-			sb.append("\n CIVIL ID   ::  " + requestOtpModel.getCivilId());
-			sb.append("\n");
-			sb.append("\n EMAIL ID  ::  " + requestOtpModel.getEmailId());
-			sb.append("\n");
-			sb.append("\n MOBILE    ::  " + requestOtpModel.getMobileNumber());
-			sb.append("\n");
-			sb.append("\n ISSUE       ::  Duplicate Mobile Number");
-			sb.append("\n");
-			sb.append("\n");
-			mailData = sb.toString();
-		}*/
+		/*
+		 * String emailIdFrom = webConfig.getConfigEmail(); String emailITo =
+		 * regSession.getContactUsEmail(); String Subject =
+		 * "User Registration Failure"; String mailData = ""; StringBuffer sb =
+		 * new StringBuffer();
+		 * 
+		 * if
+		 * (type.equalsIgnoreCase(DetailsConstants.REG_INCOMPLETE_TYPE_MOBE_MAIL
+		 * )) { sb.append("\n");
+		 * sb.append("\n USER REGISTRTATION FAILED INFO :"); sb.append("\n");
+		 * sb.append("\n CIVIL ID   ::  " + requestOtpModel.getCivilId());
+		 * sb.append("\n"); sb.append("\n EMAIL ID  ::  " +
+		 * requestOtpModel.getEmailId()); sb.append("\n");
+		 * sb.append("\n MOBILE    ::  " + requestOtpModel.getMobileNumber());
+		 * sb.append("\n");
+		 * sb.append("\n ISSUE       ::  Duplicate Email Id and Mobile Number");
+		 * sb.append("\n"); sb.append("\n"); mailData = sb.toString(); } else if
+		 * (type.equalsIgnoreCase(DetailsConstants.
+		 * REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL)) { sb.append("\n");
+		 * sb.append("\n USER REGISTRTATION FAILED INFO :"); sb.append("\n");
+		 * sb.append("\n CIVIL ID    ::  " + requestOtpModel.getCivilId());
+		 * sb.append("\n"); sb.append("\n EMAIL ID  ::  " +
+		 * requestOtpModel.getEmailId()); sb.append("\n");
+		 * sb.append("\n MOBILE    ::  " + requestOtpModel.getMobileNumber());
+		 * sb.append("\n"); sb.append("\n ISSUE       ::  Duplicate Email Id");
+		 * sb.append("\n"); sb.append("\n"); mailData = sb.toString(); } else if
+		 * (type.equalsIgnoreCase(DetailsConstants.
+		 * REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE)) { sb.append("\n");
+		 * sb.append("\n USER REGISTRTATION FAILED INFO :"); sb.append("\n");
+		 * sb.append("\n CIVIL ID   ::  " + requestOtpModel.getCivilId());
+		 * sb.append("\n"); sb.append("\n EMAIL ID  ::  " +
+		 * requestOtpModel.getEmailId()); sb.append("\n");
+		 * sb.append("\n MOBILE    ::  " + requestOtpModel.getMobileNumber());
+		 * sb.append("\n");
+		 * sb.append("\n ISSUE       ::  Duplicate Mobile Number");
+		 * sb.append("\n"); sb.append("\n"); mailData = sb.toString(); }
+		 */
 
 		FailureException failureException = new FailureException();
 		failureException.setCivilId(requestOtpModel.getCivilId());
@@ -695,9 +678,9 @@ public class CustomerRegistrationService
 		failureException.setUserType(regSession.getUserType());
 		failureException.setExceptionType("REGISTER");
 		failureException.setExceptionMsg(exceptionMessage);
-		
+
 		emailSmsService.sendFailedRegEmail(requestOtpModel);
-		
+
 		customerRegistrationDao.setFailedException(type, failureException);
 
 	}

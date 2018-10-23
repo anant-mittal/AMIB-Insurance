@@ -34,6 +34,8 @@ import com.amx.jax.postman.model.Email;
 import com.amx.jax.postman.model.ExceptionReport;
 import com.amx.jax.postman.model.File;
 import com.amx.jax.postman.model.GeoLocation;
+import com.amx.jax.postman.model.ITemplates;
+import com.amx.jax.postman.model.ITemplates.ITemplate;
 import com.amx.jax.postman.model.Message;
 import com.amx.jax.postman.model.PushMessage;
 import com.amx.jax.postman.model.TemplatesMX;
@@ -212,12 +214,13 @@ public class PostManControllerTest {
 	 *             the post man exception
 	 */
 	@RequestMapping(value = PostManUrls.PROCESS_TEMPLATE + "/{template}.{ext}", method = RequestMethod.GET)
-	public String processTemplate(@PathVariable("template") TemplatesMX template, @PathVariable("ext") String ext,
+	public String processTemplate(@PathVariable("template") String templateStr, @PathVariable("ext") String ext,
 			@RequestParam(name = "email", required = false) String email,
 			@RequestBody(required = false) Map<String, Object> data, @RequestParam(required = false) Tenant tnt,
 			@RequestParam(required = false) File.PDFConverter lib)
 			throws IOException, /* DocumentException, */ PostManException {
 
+		ITemplate template = ITemplates.getTemplate(templateStr);
 		Map<String, Object> map = readJsonWithObjectMapper("templates/dummy/" + template.getSampleJSON());
 
 		// LOGGER.info("====={}", messageSource.getMessage("sender.details", null,
