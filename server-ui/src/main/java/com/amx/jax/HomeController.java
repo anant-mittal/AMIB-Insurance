@@ -153,12 +153,6 @@ public class HomeController
 	@RequestMapping(value = { "/", "/register/**", "/app/**", "/home/**", "/" }, method = { RequestMethod.GET })
 	public String defaultPage(Model model)
 	{
-		System.out.println("HomeController :: defaultPage :: getLanguage       : " + httpService.getLanguage());
-		System.out.println("HomeController :: defaultPage :: getDeviceId       : " + httpService.getDeviceId());
-		System.out.println("HomeController :: defaultPage :: getIPAddress      : " + httpService.getIPAddress());
-		System.out.println("HomeController :: defaultPage :: getCurrentDevice  : " + httpService.getCurrentDevice());
-
-		
 		model.addAttribute("lang", httpService.getLanguage());
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
 		model.addAttribute("cdnUrl", appConfig.getCdnURL());
@@ -167,8 +161,8 @@ public class HomeController
 		if (httpService.getLanguage().toString().equalsIgnoreCase("EN"))
 		{
 			regSession.setLanguageId(new BigDecimal(0));
-
 		}
+		
 		customerRegistrationService.getCompanySetUp();
 		return "app";
 	}

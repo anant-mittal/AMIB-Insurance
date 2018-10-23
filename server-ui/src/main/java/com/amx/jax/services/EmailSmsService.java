@@ -103,9 +103,8 @@ public class EmailSmsService
 		email.setModel(wrapper);
 		email.setITemplate(TemplatesIB.OTP_EMAIL);
 		email.setHtml(true);
-		email.setLang(Language.EN);
+		email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
 		
-
 		postManClient.sendEmail(email);
 
 		return emailOtpPrefix;
@@ -126,7 +125,6 @@ public class EmailSmsService
 	{
 
 		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
-		String mobileWithCode = mobileNumber;
 		String mobileOtpPrefix = Random.randomAlpha(3);
 		String mobileOtp = Random.randomNumeric(6);
 		String mobileOtpToSend = mobileOtpPrefix + "-" + mobileOtp;
@@ -138,16 +136,22 @@ public class EmailSmsService
 		metaData.setMotp(mobileOtp);
 		try
 		{
+			Map<String, Object> wrapper = new HashMap<String, Object>();
+			Map<String, Object> model = new HashMap<String, Object>();
+			
 			SMS sms = new SMS();
-			sms.addTo(mobileWithCode);
-			sms.getModel().put(DetailsConstants.MOBILE_OTP, mobileOtpToSend);
+			sms.addTo(mobileNumber);
 			if (!appConfig.isProdMode())
 			{
 				sendToSlack("mobile", sms.getTo().get(0), mobileOtpPrefix, mobileOtp);
 			}
 			else
 			{
+				model.put(DetailsConstants.MOBILE_OTP, mobileOtpToSend);
+				wrapper.put("data", model);
+				sms.setModel(wrapper);
 				sms.setITemplate(TemplatesIB.OTP_SMS);
+				sms.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
 				postManClient.sendSMS(sms);
 			}
 		}
@@ -175,6 +179,7 @@ public class EmailSmsService
 	{
 
 		String emailIdTo = metaData.getCustomerEmailId().toString();
+		emailIdTo = "abhishektiwaribecse@gmail.com";
 		String emailIdFrom = metaData.getEmailFromConfigured();
 
 		Map<String, Object> wrapper = new HashMap<String, Object>();
@@ -198,7 +203,7 @@ public class EmailSmsService
 		email.setMessage("Al Mulla Insurance Registration Completed Successfully.");
 		email.setITemplate(TemplatesIB.REG_SUCCESS_EMAIL);
 		email.setHtml(true);
-		email.setLang(Language.EN);
+		email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
 		postManClient.sendEmail(email);
 
 	}
@@ -217,6 +222,7 @@ public class EmailSmsService
 	public void sendFailedRegEmail(RequestOtpModel requestOtpModel)
 	{
 		String emailIdTo = regSession.getContactUsEmail();
+		emailIdTo = "abhishektiwaribecse@gmail.com";
 		String emailIdFrom = regSession.getEmailFromConfigured();
 
 		Map<String, Object> wrapper = new HashMap<String, Object>();
@@ -241,7 +247,7 @@ public class EmailSmsService
 		email.setModel(wrapper);
 		email.setITemplate(TemplatesIB.REG_INCOMPLETE_EMAIL);
 		email.setHtml(true);
-		email.setLang(Language.EN);
+		email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
 		postManClient.sendEmail(email);
 
 	}
@@ -262,7 +268,8 @@ public class EmailSmsService
 	public void emailToCustomerAndAmib(String makeDesc, String subMakeDesc, String urlDetails)
 	{
 		String emailIdFrom = metaData.getEmailFromConfigured();
-		String customerEmailId = metaData.getCustomerEmailId();
+		String emailIdTo = metaData.getCustomerEmailId();
+		emailIdTo = "abhishektiwaribecse@gmail.com";
 		String customerMobileNumber = metaData.getCustomerMobileNumber();
 		String amibEmailId = metaData.getContactUsEmail();
 		String civilId = metaData.getCivilId();
@@ -271,7 +278,7 @@ public class EmailSmsService
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put(DetailsConstants.CUSTOMER_NAME, customerName());
 		model.put(DetailsConstants.CUSTOMER_CIVIL_ID, civilId);
-		model.put(DetailsConstants.CUSTOMER_EMAIL_ID, customerEmailId);
+		model.put(DetailsConstants.CUSTOMER_EMAIL_ID, emailIdTo);
 		model.put(DetailsConstants.CUSTOMER_MOBILE_NO, customerMobileNumber);
 		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
 		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaData.getAmibWebsiteLink());
@@ -284,7 +291,7 @@ public class EmailSmsService
 		wrapper.put("data", model);
 		
 		ArrayList<String> emailTo = new ArrayList<String>();
-		emailTo.add(customerEmailId);
+		emailTo.add(emailIdTo);
 		emailTo.add(amibEmailId);
 
 		Email email = new Email();
@@ -295,7 +302,7 @@ public class EmailSmsService
 		email.setSubject("AL Mulla Insurance Quotation Request : ");
 		email.setITemplate(TemplatesIB.QUOTE_SUBMIT_EMAIL);
 		email.setHtml(true);
-		email.setLang(Language.EN);
+		email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
 		
 		postManClient.sendEmail(email);
 
