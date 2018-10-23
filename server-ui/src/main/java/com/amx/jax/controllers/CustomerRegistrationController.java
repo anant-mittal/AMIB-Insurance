@@ -147,19 +147,21 @@ public class CustomerRegistrationController
 	@RequestMapping(value = "/pub/reg/sms-email-test", method = RequestMethod.POST, produces = "application/json")
 	public String testEmailPostman()
 	{
-		/*CustomerLoginRequest c = new CustomerLoginRequest();
+		CustomerLoginRequest c = new CustomerLoginRequest();
 		c.setCivilId("282071300105");
 		c.setPassword("Amx@1234");
 		customerRegistrationService.validateUserLogin(c);
-		emailSmsService.sendEmailOtp("abhishektiwaribecse@gmail.com");
+		
+		/*emailSmsService.sendEmailOtp("abhishektiwaribecse@gmail.com");
 		emailSmsService.sendMobileOtp("8796589233");
 		emailSmsService.emailTosuccessFullUserRegistration();
 		RequestOtpModel r = new RequestOtpModel();
 		r.setCivilId("282071300105");
 		r.setEmailId("abhishektiwaribecse@gmail.com");
 		r.setMobileNumber("8796589233");
-		emailSmsService.sendFailedRegEmail(r);
-		emailSmsService.emailToCustomerAndAmib("Make - Hona", "Submake - kawasaki","https://www.cricbuzz.com/");*/
+		emailSmsService.sendFailedRegEmail(r);*/
+		
+		emailSmsService.emailToCustomerAndAmib("Make - Hona", "Submake - kawasaki","https://www.cricbuzz.com/");
 		
 		return "Done";
 	}

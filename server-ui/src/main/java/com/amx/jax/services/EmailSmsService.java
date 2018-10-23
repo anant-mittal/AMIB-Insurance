@@ -300,15 +300,10 @@ public class EmailSmsService
 		email.setFrom(emailIdFrom);
 		email.setTo(emailTo);
 		email.setSubject("Al Mulla Insurance Brokerage Quote for your Motor Policy Application");
-		//email.setModel(wrapper);
-		//email.setITemplate(TemplatesIB.QUOTE_SUBMIT_EMAIL);
-		//email.setHtml(true);
-		//email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
-		//
-		
-		email.setHtml(false);
-		email.setMessage("Al Mulla Insurance Brokerage Quote for your Motor Policy Application MAKE :"+ makeDesc + " SUB MAKE :"+ subMakeDesc);
-		
+		email.setModel(wrapper);
+		email.setITemplate(TemplatesIB.QUOTE_SUBMIT_EMAIL);
+		email.setHtml(true);
+		email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
 		postManClient.sendEmail(email);
 
 	}
