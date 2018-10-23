@@ -813,6 +813,10 @@ public class RequestQuoteService
 		String subMakeDesc = "";
 		String urlDetails = "";
 		
+		logger.info(TAG + " submitRequestQuote :: appSeqNumber :" + appSeqNumber);
+		logger.info(TAG + " submitRequestQuote :: insuranceCompCode :" + insuranceCompCode);
+		
+		
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
 
 		AmxApiResponse<?, Object> updateInsuranceProvider = updateInsuranceProvider(appSeqNumber, insuranceCompCode);
@@ -824,21 +828,32 @@ public class RequestQuoteService
 		ArrayResponseModel arrayResponseModel = requestQuoteDao.submitRequestQuote(appSeqNumber);
 		if (null == arrayResponseModel.getErrorCode())
 		{
+			logger.info(TAG + " submitRequestQuote :: arrayResponseModel.getErrorCode() :" + arrayResponseModel.getErrorCode());
+			
 			ArrayResponseModel getVehicleDetailsArray = requestQuoteDao.getAppVehicleDetails(appSeqNumber);
 			if (null == getVehicleDetailsArray.getErrorCode())
 			{
+				logger.info(TAG + " submitRequestQuote :: getVehicleDetailsArray.getErrorCode() :" + getVehicleDetailsArray.getErrorCode());
+				
 				ArrayList<VehicleDetailsGetModel> vehicleDetailsArray = getVehicleDetailsArray.getDataArray();
 				if (vehicleDetailsArray.size() >= 1)
 				{
 					VehicleDetailsGetModel vehicleDetailsGetModel = vehicleDetailsArray.get(0);
 					makeDesc = vehicleDetailsGetModel.getMakeDesc();
+					logger.info(TAG + " submitRequestQuote :: makeDesc:" + makeDesc);
 					subMakeDesc = vehicleDetailsGetModel.getSubMakeDesc();
+					logger.info(TAG + " submitRequestQuote :: subMakeDesc :" + subMakeDesc);
 				}
 				resp.setStatusKey(ApiConstants.SUCCESS);
 			}
 
+			logger.info(TAG + " submitRequestQuote :: makeDesc :" + makeDesc);
+			logger.info(TAG + " submitRequestQuote :: subMakeDesc :" + subMakeDesc);
+			logger.info(TAG + " submitRequestQuote :: urlDetails :" + urlDetails);
+			
 			emailSmsService.emailToCustomerAndAmib(makeDesc,subMakeDesc,urlDetails);
 			resp.setStatusKey(ApiConstants.SUCCESS);
+			logger.info(TAG + " submitRequestQuote :: resp :" + resp.toString());
 		}
 		else
 		{

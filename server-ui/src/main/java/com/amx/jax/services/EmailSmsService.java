@@ -179,7 +179,6 @@ public class EmailSmsService
 	{
 
 		String emailIdTo = metaData.getCustomerEmailId().toString();
-		emailIdTo = "abhishektiwaribecse@gmail.com";
 		String emailIdFrom = metaData.getEmailFromConfigured();
 
 		Map<String, Object> wrapper = new HashMap<String, Object>();
@@ -222,7 +221,6 @@ public class EmailSmsService
 	public void sendFailedRegEmail(RequestOtpModel requestOtpModel)
 	{
 		String emailIdTo = regSession.getContactUsEmail();
-		emailIdTo = "abhishektiwaribecse@gmail.com";
 		String emailIdFrom = regSession.getEmailFromConfigured();
 
 		Map<String, Object> wrapper = new HashMap<String, Object>();
@@ -267,9 +265,13 @@ public class EmailSmsService
 	 ********/
 	public void emailToCustomerAndAmib(String makeDesc, String subMakeDesc, String urlDetails)
 	{
+		
+		logger.info(TAG + " emailToCustomerAndAmib :: makeDesc :" + makeDesc);
+		logger.info(TAG + " emailToCustomerAndAmib :: subMakeDesc :" + subMakeDesc);
+		logger.info(TAG + " emailToCustomerAndAmib :: urlDetails :" + urlDetails);
+		
 		String emailIdFrom = metaData.getEmailFromConfigured();
 		String emailIdTo = metaData.getCustomerEmailId();
-		emailIdTo = "abhishektiwaribecse@gmail.com";
 		String customerMobileNumber = metaData.getCustomerMobileNumber();
 		String amibEmailId = metaData.getContactUsEmail();
 		String civilId = metaData.getCivilId();
