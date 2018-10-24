@@ -31,7 +31,7 @@ public class CompanySetUp
 
 	private String heading;
 
-	private BigDecimal decplc;
+	private BigDecimal decimalPlaceUpTo;
 
 	private String currency;
 
@@ -207,14 +207,14 @@ public class CompanySetUp
 		this.heading = heading;
 	}
 
-	public BigDecimal getDecplc()
+	public BigDecimal getDecimalPlaceUpTo()
 	{
-		return decplc;
+		return decimalPlaceUpTo;
 	}
 
-	public void setDecplc(BigDecimal decplc)
+	public void setDecimalPlaceUpTo(BigDecimal decimalPlaceUpTo)
 	{
-		this.decplc = decplc;
+		this.decimalPlaceUpTo = decimalPlaceUpTo;
 	}
 
 	public String getCurrency()
@@ -261,6 +261,6 @@ public class CompanySetUp
 	public String toString()
 	{
 		return "CompanySetUp [cntryCd=" + cntryCd + ", compCd=" + compCd + ", companyName=" + companyName + ", cbox=" + cbox + ", cpo=" + cpo + ", teli=" + teli + ", teli2=" + teli2 + ", fax=" + fax + ", email=" + email + ", regNumber=" + regNumber + ", mainAct=" + mainAct + ", mainActCenter="
-				+ mainActCenter + ", heading=" + heading + ", decplc=" + decplc + ", currency=" + currency + ", langId=" + langId + ", appName=" + appName + ", smsSenderId=" + smsSenderId + "]";
+				+ mainActCenter + ", heading=" + heading + ", decimalPlaceUpTo=" + decimalPlaceUpTo + ", currency=" + currency + ", langId=" + langId + ", appName=" + appName + ", smsSenderId=" + smsSenderId + "]";
 	}
 }

@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.crypto.Mac;
 
-
 /**
  * <p>
  * Generates time-based one-time passwords (TOTP) as specified in

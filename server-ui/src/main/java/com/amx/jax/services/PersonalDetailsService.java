@@ -1,39 +1,23 @@
 
 package com.amx.jax.services;
 
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
-import com.amx.jax.constants.DetailsConstants;
-import com.amx.jax.constants.Message;
 import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.dao.PersonalDetailsDao;
-import com.amx.jax.models.CustomerDetailModel;
-import com.amx.jax.models.CustomerDetailRequest;
-import com.amx.jax.models.CustomerDetailResponse;
 import com.amx.jax.models.CustomerProfileDetailModel;
-import com.amx.jax.models.CustomerProfileDetailRequest;
 import com.amx.jax.models.CustomerProfileDetailResponse;
 import com.amx.jax.models.CustomerProfileUpdateRequest;
 import com.amx.jax.models.CustomerProfileUpdateResponse;
 import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.MetaData;
-import com.amx.jax.models.PersonalDetailsOtpRequest;
 import com.amx.jax.models.RegSession;
 import com.amx.jax.models.Validate;
-import com.insurance.model.RequestOtpModel;
-import com.insurance.model.ResponseOtpModel;
-import com.insurance.services.OtpService;
 
 @Service
 public class PersonalDetailsService
@@ -58,7 +42,7 @@ public class PersonalDetailsService
 	MetaData metaData;
 
 	@Autowired
-	private OtpService otpService;
+	private EmailSmsService otpService;
 
 	public AmxApiResponse<CustomerProfileDetailResponse, Object> getProfileDetails()
 	{
@@ -174,7 +158,7 @@ public class PersonalDetailsService
 			}
 			
 			logger.info(TAG + " updateProfileDetails :: Email "+customerProfileDetailModelCheck.getEmail());
-			AmxApiResponse<?, Object> validateEOTP = otpService.validateEOTP(eOtp, customerProfileDetailModelCheck.getEmail());
+			AmxApiResponse<?, Object> validateEOTP = otpService.validateEotp(eOtp, customerProfileDetailModelCheck.getEmail());
 			if (null != validateEOTP)
 			{
 				return validateEOTP;
@@ -199,7 +183,7 @@ public class PersonalDetailsService
 				return mobileNumberExists;
 			}
 
-			AmxApiResponse<?, Object> validateMOTP = otpService.validateMOTP(mOtp, customerProfileDetailModelCheck.getMobile());
+			AmxApiResponse<?, Object> validateMOTP = otpService.validateMotp(mOtp, customerProfileDetailModelCheck.getMobile());
 			if (null != validateMOTP)
 			{
 				return validateMOTP;

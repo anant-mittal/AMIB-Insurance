@@ -21,6 +21,7 @@ import com.amx.jax.models.ChangePasswordResponse;
 import com.amx.jax.models.CompanySetUp;
 import com.amx.jax.models.CustomerDetailModel;
 import com.amx.jax.models.CustomerDetailResponse;
+import com.amx.jax.models.CustomerDetails;
 import com.amx.jax.models.CustomerLoginModel;
 import com.amx.jax.models.CustomerLoginRequest;
 import com.amx.jax.models.CustomerLoginResponse;
@@ -30,14 +31,12 @@ import com.amx.jax.models.CustomerRegistrationResponse;
 import com.amx.jax.models.FailureException;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.RegSession;
+import com.amx.jax.models.RequestOtpModel;
+import com.amx.jax.models.ResponseOtpModel;
 import com.amx.jax.models.Validate;
 import com.amx.jax.service.HttpService;
-import com.insurance.model.RegSuccessTemplateModel;
-import com.insurance.model.RequestOtpModel;
-import com.insurance.model.ResponseOtpModel;
-import com.insurance.services.EmailService;
-import com.insurance.services.OtpService;
-import com.insurance.services.SMService;
+import com.amx.jax.utility.Calc;
+
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -49,12 +48,6 @@ public class CustomerRegistrationService
 	private static final Logger logger = LoggerFactory.getLogger(CustomerRegistrationService.class);
 
 	@Autowired
-	private CustomerRegistrationDao customerRegistrationDao;
-
-	@Autowired
-	private EmailService emailNotification;
-
-	@Autowired
 	private RegSession regSession;
 
 	@Autowired
@@ -64,10 +57,13 @@ public class CustomerRegistrationService
 	private WebConfig webConfig;
 
 	@Autowired
-	private OtpService otpService;
+	private EmailSmsService emailSmsService;
 
 	@Autowired
 	HttpService httpService;
+
+	@Autowired
+	private CustomerRegistrationDao customerRegistrationDao;
 
 	public AmxApiResponse<CompanySetUp, Object> getCompanySetUp()
 	{
@@ -90,10 +86,13 @@ public class CustomerRegistrationService
 			regSession.setCompCd(getCompanySetUp.get(0).getCompCd());
 			regSession.setContactUsEmail(getCompanySetUp.get(0).getEmail());
 			regSession.setContactUsHelpLineNumber(getCompanySetUp.get(0).getHelpLineNumber());
+			regSession.setAmibWebsiteLink(getCompanySetUp.get(0).getWebSite());
 			regSession.setUserType("D");
 			regSession.setDeviceId(httpService.getDeviceId());
 			regSession.setDeviceType("ONLINE");
 			regSession.setEmailFromConfigured(webConfig.getConfigEmail());
+			regSession.setDecplc(getCompanySetUp.get(0).getDecimalPlaceUpTo());
+			regSession.setCompanyName(getCompanySetUp.get(0).getCompanyName());
 
 			metaData.setCountryId(regSession.getCountryId());
 			metaData.setCompCd(regSession.getCompCd());
@@ -104,6 +103,9 @@ public class CustomerRegistrationService
 			metaData.setContactUsEmail(regSession.getContactUsEmail());
 			metaData.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
 			metaData.setEmailFromConfigured(webConfig.getConfigEmail());
+			metaData.setAmibWebsiteLink(regSession.getAmibWebsiteLink());
+			metaData.setDecplc(regSession.getDecplc());
+			metaData.setCompanyName(regSession.getCompanyName());
 
 			resp.setResults(getCompanySetUp);
 			resp.setStatusKey(ApiConstants.SUCCESS);
@@ -248,36 +250,44 @@ public class CustomerRegistrationService
 		return resp;
 	}
 
-	public AmxApiResponse<CustomerDetailResponse, Object> getUserDetails()
+	public AmxApiResponse<CustomerDetailResponse, Object> getCustomerDetails()
 	{
 		AmxApiResponse<CustomerDetailResponse, Object> resp = new AmxApiResponse<CustomerDetailResponse, Object>();
 		CustomerDetailResponse customerDetailResponse = new CustomerDetailResponse();
+		CustomerDetails customerDetails = new CustomerDetails();
 
-		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(metaData.getCivilId());
-		customerDetailResponse.setCivilId(metaData.getCivilId());
-		customerDetailResponse.setCustSeqNumber(customerDetailModel.getCustSequenceNumber());
-		customerDetailResponse.setDeviceId(customerDetailModel.getDeviceId());
-		customerDetailResponse.setDeviceType(customerDetailModel.getDeviceType());
-		customerDetailResponse.setEmail(customerDetailModel.getEmail());
-		customerDetailResponse.setLanguageId(customerDetailModel.getLanguageId());
-		customerDetailResponse.setLastLogin(customerDetailModel.getLastLogin());
-		customerDetailResponse.setMailVerify(customerDetailModel.getMailVerify());
-		customerDetailResponse.setMobile(customerDetailModel.getMobile());
-		customerDetailResponse.setMobileVerify(customerDetailModel.getMobileVerify());
-		customerDetailResponse.setUserName(customerDetailModel.getUserName());
-		metaData.setEmailId(customerDetailModel.getEmail());
-		metaData.setCustomerSequenceNumber(customerDetailModel.getCustSequenceNumber());
-
-		resp.setData(customerDetailResponse);
-
-		if (customerDetailModel.getStatus())
+		if (null != metaData.getCivilId() && !metaData.getCivilId().equals(""))
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
+			CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(metaData.getCivilId());
+			customerDetails.setCivilId(metaData.getCivilId());
+			customerDetails.setCustSeqNumber(customerDetailModel.getCustSequenceNumber());
+			customerDetails.setDeviceId(customerDetailModel.getDeviceId());
+			customerDetails.setDeviceType(customerDetailModel.getDeviceType());
+			customerDetails.setEmail(customerDetailModel.getEmail());
+			customerDetails.setLanguageId(customerDetailModel.getLanguageId());
+			customerDetails.setLastLogin(customerDetailModel.getLastLogin());
+			customerDetails.setMailVerify(customerDetailModel.getMailVerify());
+			customerDetails.setMobile(customerDetailModel.getMobile());
+			customerDetails.setMobileVerify(customerDetailModel.getMobileVerify());
+			customerDetails.setUserName(customerDetailModel.getUserName());
+
+			metaData.setCustomerEmailId(customerDetailModel.getEmail());
+			metaData.setCustomerSequenceNumber(customerDetailModel.getCustSequenceNumber());
+			metaData.setCustomerMobileNumber(customerDetailModel.getMobile());
+
+			customerDetailResponse.setCustomerDetails(customerDetails);
 		}
 		else
 		{
-			resp.setStatusKey(ApiConstants.FAILURE);
+			customerDetailResponse.setCustomerDetails(null);
 		}
+
+		ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao.getCompanySetUp(regSession.getLanguageId());
+		CompanySetUp companySetUp = getCompanySetUp.get(0);
+
+		customerDetailResponse.setCompanySetUp(companySetUp);
+
+		resp.setData(customerDetailResponse);
 		return resp;
 	}
 
@@ -327,13 +337,14 @@ public class CustomerRegistrationService
 			}
 
 			regSession.setCivilId(requestOtpModel.getCivilId());
-			regSession.setEmailId(requestOtpModel.getEmailId());
-			regSession.setMobileNumber(requestOtpModel.getMobileNumber());
-			metaData.setCivilId(requestOtpModel.getCivilId());
-			metaData.setEmailId(requestOtpModel.getEmailId());
-			metaData.setMobileNumber(requestOtpModel.getMobileNumber());
+			regSession.setCustomerEmailId(requestOtpModel.getEmailId());
+			regSession.setCustomerMobileNumber(requestOtpModel.getMobileNumber());
 
-			AmxApiResponse<?, Object> validateDOTP = otpService.validateDOTP(eOtp, mOtp, requestOtpModel.getEmailId(), requestOtpModel.getMobileNumber());
+			metaData.setCivilId(requestOtpModel.getCivilId());
+			metaData.setCustomerEmailId(requestOtpModel.getEmailId());
+			metaData.setCustomerMobileNumber(requestOtpModel.getMobileNumber());
+
+			AmxApiResponse<?, Object> validateDOTP = emailSmsService.validateDOTP(eOtp, mOtp, requestOtpModel.getEmailId(), requestOtpModel.getMobileNumber());
 			if (null != validateDOTP)
 			{
 				return validateDOTP;
@@ -360,30 +371,19 @@ public class CustomerRegistrationService
 		customerRegistrationModel.setCountryId(regSession.getCountryId());
 		customerRegistrationModel.setCompCd(regSession.getCompCd());
 		customerRegistrationModel.setUserType(regSession.getUserType());
-		customerRegistrationModel.setMobile(regSession.getMobileNumber());
-		customerRegistrationModel.setEmail(regSession.getEmailId());
+		customerRegistrationModel.setMobile(regSession.getCustomerMobileNumber());
+		customerRegistrationModel.setEmail(regSession.getCustomerEmailId());
 		customerRegistrationModel.setLanguageId(regSession.getLanguageId());
 		customerRegistrationModel.setCivilId(regSession.getCivilId());
 		customerRegistrationModel.setCreatedDeviceId(regSession.getDeviceId());
 		customerRegistrationModel.setDeviceType(regSession.getDeviceType());
-
 		customerRegistrationModel = customerRegistrationDao.addNewCustomer(customerRegistrationModel);
+
 		if (customerRegistrationModel.getStatus())
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
-			String emailIdFrom = webConfig.getConfigEmail();
-			String emailITo = regSession.getEmailId();
-			String Subject = "Al Mulla Insurance Registartion Confirmation";
-			String mailData = "Al Mulla Insurance Registration Completed Successfully.";
-			emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
-			
-			RegSuccessTemplateModel regSuccessTemplateModel = new RegSuccessTemplateModel();
-			regSuccessTemplateModel.setCustomerName("Customer");
-			regSuccessTemplateModel.setCustomerCareEmail(regSession.getContactUsEmail());
-			regSuccessTemplateModel.setBrokerageWebsite("");
-			
-			
-			//Postman 
+			emailSmsService.emailTosuccessFullUserRegistration();
+
 		}
 		else
 		{
@@ -436,7 +436,7 @@ public class CustomerRegistrationService
 		if (customerLoginModel.getStatus())
 		{
 			onSuccessLogin(customerLoginRequest, customerLoginModel);
-			getUserDetails();
+			getCustomerDetails();
 			resp.setStatusKey(ApiConstants.SUCCESS);
 		}
 		else
@@ -535,7 +535,7 @@ public class CustomerRegistrationService
 			try
 			{
 
-				AmxApiResponse<?, Object> validateDOTP = otpService.validateDOTP(eOtp, mOtp, customerDetailModel.getEmail(), customerDetailModel.getMobile());
+				AmxApiResponse<?, Object> validateDOTP = emailSmsService.validateDOTP(eOtp, mOtp, customerDetailModel.getEmail(), customerDetailModel.getMobile());
 				if (null != validateDOTP)
 				{
 					return validateDOTP;
@@ -567,7 +567,7 @@ public class CustomerRegistrationService
 		}
 		else
 		{
-			AmxApiResponse<?, Object> validateDOTP = otpService.validateDOTP(eOtp, mOtp, customerDetailModel.getEmail(), customerDetailModel.getMobile());
+			AmxApiResponse<?, Object> validateDOTP = emailSmsService.validateDOTP(eOtp, mOtp, customerDetailModel.getEmail(), customerDetailModel.getMobile());
 			if (null != validateDOTP)
 			{
 				return validateDOTP;
@@ -628,60 +628,43 @@ public class CustomerRegistrationService
 
 	public void sendFailedRegistration(String type, RequestOtpModel requestOtpModel, String exceptionMessage)
 	{
-		String emailIdFrom = webConfig.getConfigEmail();
-		String emailITo = regSession.getContactUsEmail();
-		String Subject = "User Registration Failure";
-		String mailData = "";
-		StringBuffer sb = new StringBuffer();
-
-		if (type.equalsIgnoreCase(DetailsConstants.REG_INCOMPLETE_TYPE_MOBE_MAIL))
-		{
-			sb.append("\n");
-			sb.append("\n USER REGISTRTATION FAILED INFO :");
-			sb.append("\n");
-			sb.append("\n CIVIL ID   ::  " + requestOtpModel.getCivilId());
-			sb.append("\n");
-			sb.append("\n EMAIL ID  ::  " + requestOtpModel.getEmailId());
-			sb.append("\n");
-			sb.append("\n MOBILE    ::  " + requestOtpModel.getMobileNumber());
-			sb.append("\n");
-			sb.append("\n ISSUE       ::  Duplicate Email Id and Mobile Number");
-			sb.append("\n");
-			sb.append("\n");
-			mailData = sb.toString();
-		}
-		else if (type.equalsIgnoreCase(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL))
-		{
-			sb.append("\n");
-			sb.append("\n USER REGISTRTATION FAILED INFO :");
-			sb.append("\n");
-			sb.append("\n CIVIL ID    ::  " + requestOtpModel.getCivilId());
-			sb.append("\n");
-			sb.append("\n EMAIL ID  ::  " + requestOtpModel.getEmailId());
-			sb.append("\n");
-			sb.append("\n MOBILE    ::  " + requestOtpModel.getMobileNumber());
-			sb.append("\n");
-			sb.append("\n ISSUE       ::  Duplicate Email Id");
-			sb.append("\n");
-			sb.append("\n");
-			mailData = sb.toString();
-		}
-		else if (type.equalsIgnoreCase(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE))
-		{
-			sb.append("\n");
-			sb.append("\n USER REGISTRTATION FAILED INFO :");
-			sb.append("\n");
-			sb.append("\n CIVIL ID   ::  " + requestOtpModel.getCivilId());
-			sb.append("\n");
-			sb.append("\n EMAIL ID  ::  " + requestOtpModel.getEmailId());
-			sb.append("\n");
-			sb.append("\n MOBILE    ::  " + requestOtpModel.getMobileNumber());
-			sb.append("\n");
-			sb.append("\n ISSUE       ::  Duplicate Mobile Number");
-			sb.append("\n");
-			sb.append("\n");
-			mailData = sb.toString();
-		}
+		/*
+		 * String emailIdFrom = webConfig.getConfigEmail(); String emailITo =
+		 * regSession.getContactUsEmail(); String Subject =
+		 * "User Registration Failure"; String mailData = ""; StringBuffer sb =
+		 * new StringBuffer();
+		 * 
+		 * if
+		 * (type.equalsIgnoreCase(DetailsConstants.REG_INCOMPLETE_TYPE_MOBE_MAIL
+		 * )) { sb.append("\n");
+		 * sb.append("\n USER REGISTRTATION FAILED INFO :"); sb.append("\n");
+		 * sb.append("\n CIVIL ID   ::  " + requestOtpModel.getCivilId());
+		 * sb.append("\n"); sb.append("\n EMAIL ID  ::  " +
+		 * requestOtpModel.getEmailId()); sb.append("\n");
+		 * sb.append("\n MOBILE    ::  " + requestOtpModel.getMobileNumber());
+		 * sb.append("\n");
+		 * sb.append("\n ISSUE       ::  Duplicate Email Id and Mobile Number");
+		 * sb.append("\n"); sb.append("\n"); mailData = sb.toString(); } else if
+		 * (type.equalsIgnoreCase(DetailsConstants.
+		 * REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL)) { sb.append("\n");
+		 * sb.append("\n USER REGISTRTATION FAILED INFO :"); sb.append("\n");
+		 * sb.append("\n CIVIL ID    ::  " + requestOtpModel.getCivilId());
+		 * sb.append("\n"); sb.append("\n EMAIL ID  ::  " +
+		 * requestOtpModel.getEmailId()); sb.append("\n");
+		 * sb.append("\n MOBILE    ::  " + requestOtpModel.getMobileNumber());
+		 * sb.append("\n"); sb.append("\n ISSUE       ::  Duplicate Email Id");
+		 * sb.append("\n"); sb.append("\n"); mailData = sb.toString(); } else if
+		 * (type.equalsIgnoreCase(DetailsConstants.
+		 * REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE)) { sb.append("\n");
+		 * sb.append("\n USER REGISTRTATION FAILED INFO :"); sb.append("\n");
+		 * sb.append("\n CIVIL ID   ::  " + requestOtpModel.getCivilId());
+		 * sb.append("\n"); sb.append("\n EMAIL ID  ::  " +
+		 * requestOtpModel.getEmailId()); sb.append("\n");
+		 * sb.append("\n MOBILE    ::  " + requestOtpModel.getMobileNumber());
+		 * sb.append("\n");
+		 * sb.append("\n ISSUE       ::  Duplicate Mobile Number");
+		 * sb.append("\n"); sb.append("\n"); mailData = sb.toString(); }
+		 */
 
 		FailureException failureException = new FailureException();
 		failureException.setCivilId(requestOtpModel.getCivilId());
@@ -696,7 +679,8 @@ public class CustomerRegistrationService
 		failureException.setExceptionType("REGISTER");
 		failureException.setExceptionMsg(exceptionMessage);
 
-		emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
+		emailSmsService.sendFailedRegEmail(requestOtpModel);
+
 		customerRegistrationDao.setFailedException(type, failureException);
 
 	}

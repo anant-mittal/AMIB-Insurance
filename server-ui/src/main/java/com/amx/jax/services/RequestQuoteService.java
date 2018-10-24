@@ -34,8 +34,7 @@ import com.amx.jax.models.VehicleDetails;
 import com.amx.jax.models.VehicleDetailsGetModel;
 import com.amx.jax.models.VehicleDetailsHeaderModel;
 import com.amx.jax.models.VehicleDetailsUpdateModel;
-import com.insurance.services.EmailService;
-import com.insurance.services.OtpService;
+import com.amx.jax.utility.Calc;
 
 @Service
 public class RequestQuoteService
@@ -55,7 +54,7 @@ public class RequestQuoteService
 	private CustomerRegistrationService customerRegistrationService;
 
 	@Autowired
-	EmailService emailNotification;
+	private EmailSmsService emailSmsService;
 
 	@Autowired
 	RegSession regSession;
@@ -350,6 +349,7 @@ public class RequestQuoteService
 			IncompleteApplModel incompleteApplModel = requestQuoteDao.getIncompleteApplication();
 			BigDecimal appSeqNumber = incompleteApplModel.getAppSeqNumber();
 			logger.info(TAG + " getRequestQuoteDetails :: appSeqNumber :" + appSeqNumber);
+
 			AmxApiResponse<?, Object> respInfoDetails = getIncompleteApplication();
 			if (respInfoDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 			{
@@ -446,6 +446,14 @@ public class RequestQuoteService
 					vehicleDetails.setChasis(vehicleDetailsGetModel.getChasis());
 					vehicleDetails.setVehicleConditionCode(vehicleDetailsGetModel.getVehicleConditionCode());
 					vehicleDetails.setKtNumber(vehicleDetailsGetModel.getKtNumber());
+					if (null != vehicleDetailsGetModel.getApplicationType())
+					{
+						vehicleDetails.setApplicationType(vehicleDetailsGetModel.getApplicationType().toUpperCase());
+					}
+					else
+					{
+						vehicleDetails.setApplicationType(null);
+					}
 				}
 				resp.setStatusKey(ApiConstants.SUCCESS);
 			}
@@ -551,7 +559,7 @@ public class RequestQuoteService
 		personalDetails.setAreaCode(customerProfileDetailModel.getAreaCode());
 		personalDetails.setBusinessCode(customerProfileDetailModel.getBusinessCode());
 		personalDetails.setEmail(customerProfileDetailModel.getEmail());
-		metaData.setEmailId(customerProfileDetailModel.getEmail());
+		metaData.setCustomerEmailId(customerProfileDetailModel.getEmail());
 		personalDetails.setEnglishName(customerProfileDetailModel.getEnglishName());
 		personalDetails.setGenderCode(customerProfileDetailModel.getGenderCode());
 		personalDetails.setGovCode(customerProfileDetailModel.getGovCode());
@@ -801,8 +809,14 @@ public class RequestQuoteService
 
 	public AmxApiResponse<?, Object> submitRequestQuote(BigDecimal appSeqNumber, BigDecimal insuranceCompCode)
 	{
-		logger.info(TAG + " submitRequestQuote :: appSeqNumber      :" + appSeqNumber);
+		String makeDesc = "";
+		String subMakeDesc = "";
+		String urlDetails = "https://www.javatpoint.com/spring-security-login-logout";
+		
+		logger.info(TAG + " submitRequestQuote :: appSeqNumber :" + appSeqNumber);
 		logger.info(TAG + " submitRequestQuote :: insuranceCompCode :" + insuranceCompCode);
+		
+		
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
 
 		AmxApiResponse<?, Object> updateInsuranceProvider = updateInsuranceProvider(appSeqNumber, insuranceCompCode);
@@ -812,24 +826,34 @@ public class RequestQuoteService
 		}
 
 		ArrayResponseModel arrayResponseModel = requestQuoteDao.submitRequestQuote(appSeqNumber);
-		logger.info(TAG + " submitRequestQuote :: arrayResponseModel.getErrorCode() :" + arrayResponseModel.getErrorCode());
 		if (null == arrayResponseModel.getErrorCode())
 		{
-			// QUOTE SUBITTED SUCCESFULLY MAIL TO AMIB
-			String emailIdFrom = metaData.getEmailFromConfigured();
-			String emailITo = metaData.getContactUsEmail();
-			String Subject = "AL Mulla Insurance Quotation Request : "+appSeqNumber;
-			String mailData = "AL Mulla Insurance Application Request "+ appSeqNumber +" for Quotation has Submited Successfully.";
-			emailNotification.sendEmail(emailIdFrom, emailITo, Subject, mailData);
+			logger.info(TAG + " submitRequestQuote :: arrayResponseModel.getErrorCode() :" + arrayResponseModel.getErrorCode());
+			
+			ArrayResponseModel getVehicleDetailsArray = requestQuoteDao.getAppVehicleDetails(appSeqNumber);
+			if (null == getVehicleDetailsArray.getErrorCode())
+			{
+				logger.info(TAG + " submitRequestQuote :: getVehicleDetailsArray.getErrorCode() :" + getVehicleDetailsArray.getErrorCode());
+				
+				ArrayList<VehicleDetailsGetModel> vehicleDetailsArray = getVehicleDetailsArray.getDataArray();
+				if (vehicleDetailsArray.size() >= 1)
+				{
+					VehicleDetailsGetModel vehicleDetailsGetModel = vehicleDetailsArray.get(0);
+					makeDesc = vehicleDetailsGetModel.getMakeDesc();
+					logger.info(TAG + " submitRequestQuote :: makeDesc:" + makeDesc);
+					subMakeDesc = vehicleDetailsGetModel.getSubMakeDesc();
+					logger.info(TAG + " submitRequestQuote :: subMakeDesc :" + subMakeDesc);
+				}
+				resp.setStatusKey(ApiConstants.SUCCESS);
+			}
 
-			// QUOTE SUBITTED SUCCESFULLY MAIL TO USER
-			String emailIdFrom1 = metaData.getEmailFromConfigured();
-			String emailITo1 = metaData.getEmailId();
-			String Subject1 = "AL Mulla Insurance Quotation Request : "+appSeqNumber;
-			String mailData1 = "AL Mulla Insurance Application Request "+ appSeqNumber +" for Quotation has Submited Successfully.";
-			emailNotification.sendEmail(emailIdFrom1, emailITo1, Subject1, mailData1);
-
+			logger.info(TAG + " submitRequestQuote :: makeDesc :" + makeDesc);
+			logger.info(TAG + " submitRequestQuote :: subMakeDesc :" + subMakeDesc);
+			logger.info(TAG + " submitRequestQuote :: urlDetails :" + urlDetails);
+			
+			emailSmsService.emailToCustomerAndAmib(makeDesc,subMakeDesc,urlDetails);
 			resp.setStatusKey(ApiConstants.SUCCESS);
+			logger.info(TAG + " submitRequestQuote :: resp :" + resp.toString());
 		}
 		else
 		{
@@ -996,7 +1020,3 @@ public class RequestQuoteService
 		return resp;
 	}
 }
-
-
-
-

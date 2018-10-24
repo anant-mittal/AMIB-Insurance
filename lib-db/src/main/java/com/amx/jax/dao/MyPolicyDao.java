@@ -15,6 +15,7 @@ import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.IncompleteApplModel;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.VehicleSession;
+import com.amx.jax.utility.Calc;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import oracle.jdbc.OracleTypes;
@@ -22,7 +23,7 @@ import oracle.jdbc.OracleTypes;
 @Repository
 public class MyPolicyDao
 {
-	String TAG = "com.amx.jax.dao.MyPolicyDao :: ";
+	String TAG = "com.amx.jax.dao.ActivePolicyDao :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(MyPolicyDao.class);
 
@@ -62,8 +63,6 @@ public class MyPolicyDao
 			while (rs.next())
 			{
 
-				logger.info(TAG + " getUserActivePolicy :: rs :" + rs.getRow());
-				
 				ActivePolicyModel activePolicyModel = new ActivePolicyModel();
 				activePolicyModel.setCountryId(rs.getBigDecimal(1));
 				activePolicyModel.setCompCd(rs.getBigDecimal(2));
@@ -100,17 +99,16 @@ public class MyPolicyDao
 				activePolicyModel.setPolicyTypeCode(rs.getString(33));
 				activePolicyModel.setPolicyTypeDesc(rs.getString(34));
 				activePolicyModel.setPolicyNumber(rs.getString(35));
-				activePolicyModel.setMaxInsuredAmount(rs.getBigDecimal(36));
+				activePolicyModel.setMaxInsuredAmount(Calc.round(rs.getBigDecimal(36), metaData.getDecplc()));
 				activePolicyModel.setStartDate(DateFormats.uiFormattedDate(rs.getDate(37)));
 				activePolicyModel.setEndDate(DateFormats.uiFormattedDate(rs.getDate(38)));
 				activePolicyModel.setSupervisionKey(rs.getBigDecimal(39));
-				activePolicyModel.setIssueFee(rs.getBigDecimal(40));
-				activePolicyModel.setPremium(rs.getBigDecimal(41));
+				activePolicyModel.setIssueFee(Calc.round(rs.getBigDecimal(40), metaData.getDecplc()));
+				activePolicyModel.setPremium(Calc.round(rs.getBigDecimal(41), metaData.getDecplc()));
 				activePolicyModel.setDiscount(rs.getBigDecimal(42));
 				activePolicyModel.setRenewalIndic(rs.getString(43));
 				activePolicyModel.setFuelCode(rs.getString(44));
 				activePolicyModel.setFuelDesc(rs.getString(45));
-				logger.info(TAG + " getUserActivePolicy :: rs.getString(43) :" + rs.getString(43));
 				if (null != rs.getString(43) && rs.getString(43).equalsIgnoreCase("N"))
 				{
 					activePolicyModel.setRenewableApplCheck("N");

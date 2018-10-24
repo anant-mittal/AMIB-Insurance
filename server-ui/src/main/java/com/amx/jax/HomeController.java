@@ -2,6 +2,12 @@
 package com.amx.jax;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+
 import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +24,7 @@ import com.amx.jax.models.RegSession;
 import com.amx.jax.rest.RestService;
 import com.amx.jax.service.HttpService;
 import com.amx.jax.services.CustomerRegistrationService;
+import com.amx.jax.services.CustomizeQuoteService;
 import com.amx.utils.JsonUtil;
 import io.swagger.annotations.Api;
 
@@ -58,6 +65,9 @@ public class HomeController
 
 	@Autowired
 	private CustomerRegistrationService customerRegistrationService;
+	
+	@Autowired
+	private CustomizeQuoteService customizeQuoteService;
 
 	/**
 	 * Gets the version.
@@ -112,7 +122,7 @@ public class HomeController
 		System.out.println("HomeController :: defaultPage :: getLanguage : " + httpService.getLanguage());
 		model.addAttribute("lang", httpService.getLanguage());
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
-		model.addAttribute("cdnUrl", webConfig.getCdnURL());
+		model.addAttribute("cdnUrl", appConfig.getCdnURL());
 		model.addAttribute("cdnVerion", getVersion());
 		return "app";
 	}
@@ -143,23 +153,45 @@ public class HomeController
 	@RequestMapping(value = { "/", "/register/**", "/app/**", "/home/**", "/" }, method = { RequestMethod.GET })
 	public String defaultPage(Model model)
 	{
-		System.out.println("HomeController :: defaultPage :: getLanguage       : " + httpService.getLanguage());
-		System.out.println("HomeController :: defaultPage :: getDeviceId       : " + httpService.getDeviceId());
-		System.out.println("HomeController :: defaultPage :: getIPAddress      : " + httpService.getIPAddress());
-		System.out.println("HomeController :: defaultPage :: getCurrentDevice  : " + httpService.getCurrentDevice());
-
-		
 		model.addAttribute("lang", httpService.getLanguage());
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
-		model.addAttribute("cdnUrl", webConfig.getCdnURL());
+		model.addAttribute("cdnUrl", appConfig.getCdnURL());
 		model.addAttribute("cdnVerion", getVersion());
 
 		if (httpService.getLanguage().toString().equalsIgnoreCase("EN"))
 		{
 			regSession.setLanguageId(new BigDecimal(0));
-
 		}
+		
 		customerRegistrationService.getCompanySetUp();
 		return "app";
 	}
+	
+	
+	@RequestMapping(value = {"/app/terms-condition" }, method = { RequestMethod.GET })
+	public String termsAndCondition(Model model)
+	{
+		ArrayList<String> termsInfo = new ArrayList<String>();
+		TreeMap<Integer,String> data =  customizeQuoteService.getTermsAndConditionTest();
+
+		Iterator it = data.entrySet().iterator();
+	    while (it.hasNext()) 
+	    {
+	        Map.Entry pair = (Map.Entry)it.next();
+	        System.out.println(pair.getKey() + " = " + pair.getValue());
+	        termsInfo.add(pair.getValue().toString());
+	        it.remove();
+	    }
+		
+		for(int i = 0; i < termsInfo.size() ; i++)
+		{
+			System.out.println("HomeController :: termsAndCondition :: termsInfo  : " + termsInfo.get(i));
+		}
+		
+		model.addAllAttributes(termsInfo);
+		
+		return "terms-condition";
+	}
+	
+	
 }

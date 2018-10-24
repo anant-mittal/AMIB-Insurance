@@ -556,3 +556,4 @@ public class ActivePolicyModel
 		this.fuelDesc = fuelDesc;
 	}
 }
+

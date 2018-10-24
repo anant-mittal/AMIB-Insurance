@@ -15,14 +15,6 @@ public class MetaData implements Serializable
 
 	private static final long serialVersionUID = 4265567700694960490L;
 
-	@Override
-	public String toString()
-	{
-		return "MetaData [metaData=" + metaData + ", motpPrefix=" + motpPrefix + ", eotpPrefix=" + eotpPrefix + ", motp=" + motp + ", eotp=" + eotp + ", civilId=" + civilId + ", mobileNumber=" + mobileNumber + ", emailId=" + emailId + ", changePasswordOtp=" + changePasswordOtp + ", countryId="
-				+ countryId + ", compCd=" + compCd + ", userType=" + userType + ", deviceType=" + deviceType + ", deviceId=" + deviceId + ", languageId=" + languageId + ", contactUsEmail=" + contactUsEmail + ", contactUsHelpLineNumber=" + contactUsHelpLineNumber + ", mOtpMobileNumber="
-				+ mOtpMobileNumber + ", eOtpEmailId=" + eOtpEmailId + ", emailFromConfigured=" + emailFromConfigured + ", customerSequenceNumber=" + customerSequenceNumber + ", userSequenceNumber=" + userSequenceNumber + ", userAmibCustRef=" + userAmibCustRef + "]";
-	}
-	
 	private MetaData metaData;
 
 	private String motpPrefix;
@@ -35,9 +27,9 @@ public class MetaData implements Serializable
 
 	private String civilId;
 
-	private String mobileNumber;
+	private String customerMobileNumber;
 
-	private String emailId;
+	private String customerEmailId;
 
 	private String changePasswordOtp;
 
@@ -62,21 +54,48 @@ public class MetaData implements Serializable
 	private String eOtpEmailId = "";
 
 	String emailFromConfigured;
-	
-	
-	
-	/**************************ASK************************/
 
-	private BigDecimal customerSequenceNumber; //[Get:- Update Profile Details and getUser Details] , [USED :- veh_headre_dtl, get_prof_dtls , set_veh_dtls] 
+	private String amibWebsiteLink;
 
-	private BigDecimal userSequenceNumber; //[Get:- On User Login] , [USED :- get_user_dtls, set_veh_dtls]  
+	private BigDecimal customerSequenceNumber; 
 
-	private BigDecimal userAmibCustRef; // [Get:- On User Login] , [USED :- set_veh_dtls]  
+	private BigDecimal userSequenceNumber; 
 	
-	/**************************ASK************************/
+	private BigDecimal userAmibCustRef; 
 	
-	
-	
+	private BigDecimal decplc;
+
+	private String companyName;
+
+	public String getCompanyName()
+	{
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName)
+	{
+		this.companyName = companyName;
+	}
+
+	public BigDecimal getDecplc()
+	{
+		return decplc;
+	}
+
+	public void setDecplc(BigDecimal decplc)
+	{
+		this.decplc = decplc;
+	}
+
+	public String getAmibWebsiteLink()
+	{
+		return amibWebsiteLink;
+	}
+
+	public void setAmibWebsiteLink(String amibWebsiteLink)
+	{
+		this.amibWebsiteLink = amibWebsiteLink;
+	}
 
 	public String getEmailFromConfigured()
 	{
@@ -183,24 +202,24 @@ public class MetaData implements Serializable
 		this.civilId = civilId;
 	}
 
-	public String getMobileNumber()
+	public String getCustomerMobileNumber()
 	{
-		return mobileNumber;
+		return customerMobileNumber;
 	}
 
-	public void setMobileNumber(String mobileNumber)
+	public void setCustomerMobileNumber(String customerMobileNumber)
 	{
-		this.mobileNumber = mobileNumber;
+		this.customerMobileNumber = customerMobileNumber;
 	}
 
-	public String getEmailId()
+	public String getCustomerEmailId()
 	{
-		return emailId;
+		return customerEmailId;
 	}
 
-	public void setEmailId(String emailId)
+	public void setCustomerEmailId(String customerEmailId)
 	{
-		this.emailId = emailId;
+		this.customerEmailId = customerEmailId;
 	}
 
 	public BigDecimal getCountryId()
