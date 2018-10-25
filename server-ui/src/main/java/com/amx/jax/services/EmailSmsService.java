@@ -175,10 +175,8 @@ public class EmailSmsService
 	 * 
 	 */
 	/************* EMAIL TO CUSTOMER FOR SUCCESS FULL REGISTARTION **********/
-	public void emailTosuccessFullUserRegistration()
+	public void emailTosuccessFullUserRegistration(String emailIdTo)
 	{
-
-		String emailIdTo = metaData.getCustomerEmailId().toString();
 		String emailIdFrom = metaData.getEmailFromConfigured();
 
 		Map<String, Object> wrapper = new HashMap<String, Object>();

@@ -168,7 +168,7 @@ public class HomeController
 	}
 	
 	
-	@RequestMapping(value = {"/app/terms-condition" }, method = { RequestMethod.GET })
+	@RequestMapping(value = {"/app/terms" }, method = { RequestMethod.GET })
 	public String termsAndCondition(Model model)
 	{
 		ArrayList<String> termsInfo = new ArrayList<String>();
@@ -190,7 +190,7 @@ public class HomeController
 		
 		model.addAllAttributes(termsInfo);
 		
-		return "terms-condition";
+		return "terms";
 	}
 	
 	
