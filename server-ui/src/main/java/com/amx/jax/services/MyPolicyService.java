@@ -62,8 +62,24 @@ public class MyPolicyService
 		logger.info(TAG + " getRenewPolicyDetails :: oldDocNumber :" + oldDocNumber);
 
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
+		
 		try
 		{
+			
+			AmxApiResponse<?, Object> respPersonalDetails = requestQuoteService.getProfileDetails();
+			if (respPersonalDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			{
+				return respPersonalDetails;
+			}
+			else
+			{
+				AmxApiResponse<?, Object> setPersonalDetails = requestQuoteService.setProfileDetails(appSeqNumber, (PersonalDetails) respPersonalDetails.getData());
+				if (setPersonalDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+				{
+					return setPersonalDetails;
+				}
+			}
+			
 			AmxApiResponse<?, Object> getVehicleDetails = requestQuoteService.getRenewPolicyVehicleDetails(oldDocNumber);
 			if (getVehicleDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 			{
@@ -88,20 +104,6 @@ public class MyPolicyService
 					RequestQuoteInfo requestQuoteInfo = requestQuoteModel.getRequestQuoteInfo();
 					appSeqNumber = requestQuoteInfo.getAppSeqNumber();
 					logger.info(TAG + " getRenewPolicyDetails :: appSeqNumber1 :" + appSeqNumber);
-				}
-
-				AmxApiResponse<?, Object> respPersonalDetails = requestQuoteService.getProfileDetails();
-				if (respPersonalDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-				{
-					return respPersonalDetails;
-				}
-				else
-				{
-					AmxApiResponse<?, Object> setPersonalDetails = requestQuoteService.setProfileDetails(appSeqNumber, (PersonalDetails) respPersonalDetails.getData());
-					if (setPersonalDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-					{
-						return setPersonalDetails;
-					}
 				}
 
 				AmxApiResponse<?, Object> updateInsuranceProvider = requestQuoteService.updateInsuranceProvider(appSeqNumber, insuranceCompCode);

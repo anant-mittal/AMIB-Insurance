@@ -382,7 +382,7 @@ public class CustomerRegistrationService
 		if (customerRegistrationModel.getStatus())
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
-			emailSmsService.emailTosuccessFullUserRegistration();
+			emailSmsService.emailTosuccessFullUserRegistration(regSession.getCivilId());
 
 		}
 		else

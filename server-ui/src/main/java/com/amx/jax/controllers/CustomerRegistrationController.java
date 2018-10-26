@@ -26,6 +26,7 @@ import com.amx.jax.models.CustomerDetailResponse;
 import com.amx.jax.models.CustomerLoginRequest;
 import com.amx.jax.models.CustomerRegistrationRequest;
 import com.amx.jax.models.CustomerRegistrationResponse;
+import com.amx.jax.models.MetaData;
 import com.amx.jax.models.Person;
 import com.amx.jax.models.RegSession;
 import com.amx.jax.models.RequestOtpModel;
@@ -41,6 +42,9 @@ public class CustomerRegistrationController
 	String TAG = "com.amx.jax.userregistration.controller :: CustomerRegistrationController :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(CustomerRegistrationController.class);
+	
+	@Autowired
+	MetaData metaData;
 
 	@Autowired
 	private CustomerRegistrationService customerRegistrationService;
@@ -147,21 +151,22 @@ public class CustomerRegistrationController
 	@RequestMapping(value = "/pub/reg/sms-email-test", method = RequestMethod.POST, produces = "application/json")
 	public String testEmailPostman()
 	{
-		CustomerLoginRequest c = new CustomerLoginRequest();
-		c.setCivilId("282071300105");
-		c.setPassword("Amx@1234");
-		customerRegistrationService.validateUserLogin(c);
+			CustomerLoginRequest c = new CustomerLoginRequest();
+			c.setCivilId("282071300105");
+			c.setPassword("Amx@1234");
+			customerRegistrationService.validateUserLogin(c);
 
-		emailSmsService.sendEmailOtp("abhishektiwaribecse@gmail.com");
-		emailSmsService.sendMobileOtp("8796589233");
-		emailSmsService.emailTosuccessFullUserRegistration();
-		RequestOtpModel r = new RequestOtpModel();
-		r.setCivilId("282071300105");
-		r.setEmailId("abhishektiwaribecse@gmail.com");
-		r.setMobileNumber("8796589233");
-		emailSmsService.sendFailedRegEmail(r);
+			emailSmsService.sendEmailOtp("abhishektiwaribecse@gmail.com");
+			emailSmsService.sendMobileOtp("8796589233");
+			emailSmsService.emailTosuccessFullUserRegistration("abhishektiwaribecse@gmail.com");
+			RequestOtpModel r = new RequestOtpModel();
+			r.setCivilId("282071300105");
+			r.setEmailId("abhishektiwaribecse@gmail.com");
+			r.setMobileNumber("8796589233");
+			emailSmsService.sendFailedRegEmail(r);
 
-		emailSmsService.emailToCustomerAndAmib("Make - Hona", "Submake - kawasaki", "https://www.cricbuzz.com/");
+			emailSmsService.emailToCustomerAndAmib("Make - Hona", "Submake - kawasaki", "https://www.cricbuzz.com/");
+		
 
 		return "Done";
 	}
