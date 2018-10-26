@@ -168,7 +168,7 @@ public class HomeController
 	}
 	
 	
-	@RequestMapping(value = {"/app/terms" }, method = { RequestMethod.GET })
+	@RequestMapping(value = {"/pub/terms" }, method = { RequestMethod.GET })
 	public String termsAndCondition(Model model)
 	{
 		ArrayList<String> termsInfo = new ArrayList<String>();
