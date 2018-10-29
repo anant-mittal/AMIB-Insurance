@@ -358,7 +358,6 @@ public class CustomerRegistrationService
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
 			emailSmsService.emailTosuccessFullUserRegistration(userSession.getCivilId());
-
 		}
 		else
 		{

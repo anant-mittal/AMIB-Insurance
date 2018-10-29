@@ -69,7 +69,7 @@ public class CustomizeQuoteDao
 
 				if (null != rs.getBigDecimal(5) && rs.getBigDecimal(5).equals(new BigDecimal(1)))
 				{
-					quoteAddPolicyDetails.setReplacTypeVisibility("radio");
+					quoteAddPolicyDetails.setReplacTypeVisibility("select");
 				}
 				else
 				{
