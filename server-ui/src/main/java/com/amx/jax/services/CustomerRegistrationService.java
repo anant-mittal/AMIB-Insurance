@@ -63,15 +63,6 @@ public class CustomerRegistrationService
 	@Autowired
 	private CustomerRegistrationDao customerRegistrationDao;
 	
-	
-	public CustomerRegistrationService()
-	{
-		if(null == metaData.getCountryId())
-		{
-			handleSession();
-		}
-	}
-
 	public AmxApiResponse<CompanySetUp, Object> getCompanySetUp()
 	{
 		logger.info(TAG + " getCompanySetUp ::");
@@ -346,8 +337,6 @@ public class CustomerRegistrationService
 
 	public AmxApiResponse<CustomerRegistrationResponse, Object> addNewCustomer(CustomerRegistrationRequest userRegistartionRequest)
 	{
-		handleSession();
-
 		AmxApiResponse<CustomerRegistrationResponse, Object> resp = new AmxApiResponse<CustomerRegistrationResponse, Object>();
 		CustomerRegistrationResponse customerRegistrationResponse = new CustomerRegistrationResponse();
 		CustomerRegistrationModel customerRegistrationModel = new CustomerRegistrationModel();
@@ -384,7 +373,6 @@ public class CustomerRegistrationService
 
 	public AmxApiResponse<?, Object> validateUserLogin(CustomerLoginRequest customerLoginRequest)
 	{
-		handleSession();
 		CustomerLoginResponse customerLoginResponse = new CustomerLoginResponse();
 		CustomerLoginModel customerLoginModel = new CustomerLoginModel();
 		AmxApiResponse<CustomerLoginResponse, Object> resp = new AmxApiResponse<CustomerLoginResponse, Object>();
@@ -693,14 +681,5 @@ public class CustomerRegistrationService
 			return resp;
 		}
 		return null;
-	}
-
-	private void handleSession()
-	{
-		if (httpService.getLanguage().toString().equalsIgnoreCase("EN"))
-		{
-			metaData.setLanguageId(new BigDecimal(0));
-		}
-		getCompanySetUp();
 	}
 }
