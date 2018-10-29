@@ -161,10 +161,12 @@ public class CustomerRegistrationController
 			r.setEmailId("abhishektiwaribecse@gmail.com");
 			r.setMobileNumber("8796589233");
 			emailSmsService.sendFailedRegEmail(r);
-			emailSmsService.emailToCustomerAndAmib("Make - Hona", "Submake - kawasaki", "https://www.cricbuzz.com/");
+			//emailSmsService.emailToCustomerAndAmib("Make - Hona", "Submake - kawasaki", "https://www.cricbuzz.com/");
 		
 
 		return "Done";
 	}
 
+	
+	
 }

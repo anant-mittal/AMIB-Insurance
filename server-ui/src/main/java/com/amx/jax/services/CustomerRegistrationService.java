@@ -62,6 +62,15 @@ public class CustomerRegistrationService
 	
 	@Autowired
 	private CustomerRegistrationDao customerRegistrationDao;
+	
+	
+	public CustomerRegistrationService()
+	{
+		if(null == metaData.getCountryId())
+		{
+			handleSession();
+		}
+	}
 
 	public AmxApiResponse<CompanySetUp, Object> getCompanySetUp()
 	{
@@ -471,8 +480,11 @@ public class CustomerRegistrationService
 	public AmxApiResponse<?, Object> changePasswordOtpInitiate(String eOtp, String mOtp, ChangePasswordOtpRequest changePasswordOtpRequest)
 	{
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
+		
+		logger.info(TAG + " changePasswordOtpInitiate :: getCivilId :"+changePasswordOtpRequest.getCivilId());
 		userSession.setCivilId(changePasswordOtpRequest.getCivilId());
-
+		
+		
 		AmxApiResponse<Validate, Object> validateCivilID = isValidCivilId(changePasswordOtpRequest.getCivilId());
 		if (validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 		{
@@ -480,6 +492,7 @@ public class CustomerRegistrationService
 		}
 
 		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(changePasswordOtpRequest.getCivilId());
+		logger.info(TAG + " changePasswordOtpInitiate :: civilIdExistCheck :"+civilIdExistCheck.getStatus());
 		if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 		{
 			return civilIdExistCheck;
@@ -687,7 +700,7 @@ public class CustomerRegistrationService
 		if (httpService.getLanguage().toString().equalsIgnoreCase("EN"))
 		{
 			metaData.setLanguageId(new BigDecimal(0));
-			getCompanySetUp();
 		}
+		getCompanySetUp();
 	}
 }

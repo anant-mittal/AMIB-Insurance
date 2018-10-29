@@ -149,9 +149,9 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callFunction);
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
-			logger.info(TAG + " isCivilIdExist :: regSession.getCivilId    :" + metaData.getCountryId());
+			logger.info(TAG + " isCivilIdExist :: metaData.getCivilId    :" + metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCountryId());
-			logger.info(TAG + " isCivilIdExist :: regSession.getCivilId    :" + metaData.getCompCd());
+			logger.info(TAG + " isCivilIdExist :: metaData.getCivilId    :" + metaData.getCompCd());
 			callableStatement.setBigDecimal(3, metaData.getCompCd());
 			logger.info(TAG + " isCivilIdExist :: userType    :" + userType);
 			callableStatement.setString(4, userType);
