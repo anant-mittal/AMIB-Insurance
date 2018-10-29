@@ -43,7 +43,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
 				// Login Formas
 				.and().formLogin().loginPage("/login").permitAll().failureUrl("/login?error").permitAll()
 				// LogOut Pages
-				.and().logout().permitAll().logoutSuccessUrl("/logout/").deleteCookies("JSESSIONID")
+				.and().logout().permitAll().logoutSuccessUrl("/login?logout").deleteCookies("JSESSIONID")
 				.invalidateHttpSession(true).permitAll().and().exceptionHandling().accessDeniedPage("/403").and().csrf()
 				.disable().headers().disable();
 		

@@ -33,6 +33,9 @@ import com.amx.jax.models.Validate;
 import com.amx.jax.service.HttpService;
 import com.amx.jax.services.CustomerRegistrationService;
 import com.amx.jax.services.EmailSmsService;
+import com.amx.jax.ui.response.ResponseWrapper;
+import com.amx.jax.ui.response.WebResponseStatus;
+import com.amx.jax.ui.session.UserSession;
 import com.amx.jax.utility.CustomizeQuoteUtility;
 import com.amx.utils.ArgUtil;
 
@@ -48,6 +51,9 @@ public class CustomerRegistrationController
 	
 	@Autowired
 	MetaData metaData;
+	
+	@Autowired
+	UserSession userSession;
 
 	@Autowired
 	private CustomerRegistrationService customerRegistrationService;

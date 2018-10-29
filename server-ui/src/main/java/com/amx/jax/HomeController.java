@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.test.annotation.Timed;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,6 +29,10 @@ import com.amx.jax.rest.RestService;
 import com.amx.jax.service.HttpService;
 import com.amx.jax.services.CustomerRegistrationService;
 import com.amx.jax.services.CustomizeQuoteService;
+import com.amx.jax.ui.response.ResponseMessage;
+import com.amx.jax.ui.response.ResponseWrapper;
+import com.amx.jax.ui.response.WebResponseStatus;
+import com.amx.jax.ui.session.UIConstants;
 import com.amx.jax.ui.session.UserSession;
 import com.amx.utils.JsonUtil;
 import io.swagger.annotations.Api;
@@ -116,74 +121,32 @@ public class HomeController
 		return JsonUtil.toJson(wrapper);
 	}
 
-	/**
-	 * Login J page.
-	 *
-	 * @param model
-	 *            the model
-	 * @return the string
-	 */
-	/*
-	 * @RequestMapping(value = "/login/**", method = { RequestMethod.GET })
-	 * public String loginJPage(Model model) {
-	 * System.out.println("HomeController :: loginJPage :: getLanguage : " +
-	 * httpService.getLanguage()); model.addAttribute("lang",
-	 * httpService.getLanguage()); model.addAttribute("applicationTitle",
-	 * webConfig.getAppTitle()); model.addAttribute("cdnUrl",
-	 * appConfig.getCdnURL()); model.addAttribute("cdnVerion", getVersion());
-	 * return "app"; }
-	 */
-
-	/**
-	 * Login P json.
-	 *
-	 * @return the string
-	 */
-
-	@RequestMapping(value = "/login/**")
-	@ResponseBody
-	public AmxApiResponse<Object, Object> UnAuthorizedAccess()
+	//@Timed
+	@RequestMapping(value = "/login/**", method = { RequestMethod.GET })
+	public String loginJPage(Model model)
 	{
-		System.out.println("HomeController :: UnAuthorizedAccess :: getLanguage :" + httpService.getLanguage());
-
-		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
-		try
-		{
-			userSession = null;
-			laguageSetUp();
-			resp.setStatusKey(ApiConstants.AUTHORIZATION_FAILURE);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.AUTHORIZATION_FAILURE);
-		}
-		return resp;
+		System.out.println("HomeController :: loginJPage 1 :: getLanguage : " + httpService.getLanguage());
+		model.addAttribute("lang", httpService.getLanguage());
+		model.addAttribute("applicationTitle", webConfig.getAppTitle());
+		model.addAttribute("cdnUrl", appConfig.getCdnURL());
+		model.addAttribute("cdnVerion", getVersion());
+		//model.addAttribute(AppConstants.DEVICE_ID_KEY, userDevice.getFingerprint());
+		//model.addAttribute("fcmSenderId", fcmSenderId);
+		return "app";
 	}
 
-	@RequestMapping(value = "/logout/**", method = { RequestMethod.GET })
+	@RequestMapping(value = "/login/**", method = { RequestMethod.GET, RequestMethod.POST }, headers = { "Accept=application/json", "Accept=application/v0+json" })
 	@ResponseBody
-	public AmxApiResponse<Object, Object> logOut()
+	public String loginPJson()
 	{
-		System.out.println("HomeController :: logOut :: getLanguage :" + httpService.getLanguage());
-
-		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
-		try
-		{
-			userSession = null;
-			laguageSetUp();
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			resp.setMessage(Message.LOGOUT_MESSAGE);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
-		}
-		return resp;
+		System.out.println("HomeController :: loginJPage 2 :: getLanguage : " + httpService.getLanguage());
+		ResponseWrapper<Object> wrapper = new ResponseWrapper<Object>(null);
+		wrapper.setMessage(WebResponseStatus.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED);
+		System.out.println("HomeController :: loginJPage 2 :: JsonUtil.toJson(wrapper): " + JsonUtil.toJson(wrapper));
+		
+		return JsonUtil.toJson(wrapper);
 	}
+		
 
 	/**
 	 * Default page.
