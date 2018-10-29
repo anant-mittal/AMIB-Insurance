@@ -17,7 +17,6 @@ import com.amx.jax.models.MetaData;
 import com.amx.jax.models.MyQuoteModel;
 import com.amx.jax.models.QuoteAddPolicyDetails;
 import com.amx.jax.models.ReplacementTypeList;
-import com.amx.jax.models.VehicleSession;
 import com.amx.jax.utility.Calc;
 
 import oracle.jdbc.OracleTypes;
@@ -36,12 +35,9 @@ public class MyQuoteDao
 	@Autowired
 	MetaData metaData;
 
-	@Autowired
-	VehicleSession vehicleSession;
-
 	Connection connection;
 
-	public ArrayList<MyQuoteModel> getUserQuote()
+	public ArrayList<MyQuoteModel> getUserQuote(BigDecimal customerSeqNum)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -55,7 +51,7 @@ public class MyQuoteDao
 
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
-			callableStatement.setBigDecimal(3, metaData.getCustomerSequenceNumber());
+			callableStatement.setBigDecimal(3, customerSeqNum);
 			callableStatement.setBigDecimal(4, metaData.getLanguageId());
 			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);

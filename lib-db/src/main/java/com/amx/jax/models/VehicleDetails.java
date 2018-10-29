@@ -188,8 +188,10 @@ public class VehicleDetails
 	public String toString()
 	{
 		return "VehicleDetails [makeCode=" + makeCode + ", subMakeCode=" + subMakeCode + ", vehicleTypeDesc=" + vehicleTypeDesc + ", modelYear=" + modelYear + ", vehicleValue=" + vehicleValue + ", policyDuration=" + policyDuration + ", purposeCode=" + purposeCode + ", colourCode=" + colourCode
-				+ ", shapeCode=" + shapeCode + ", seatingCapacity=" + seatingCapacity + ", fuelCode=" + fuelCode + ", chasis=" + chasis + ", vehicleConditionCode=" + vehicleConditionCode + ", ktNumber=" + ktNumber + "]";
+				+ ", shapeCode=" + shapeCode + ", seatingCapacity=" + seatingCapacity + ", fuelCode=" + fuelCode + ", chasis=" + chasis + ", vehicleConditionCode=" + vehicleConditionCode + ", ktNumber=" + ktNumber + ", applicationType=" + applicationType + "]";
 	}
 
+	
+	
 
 }

@@ -20,11 +20,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.amx.jax.AppConfig;
 import com.amx.jax.WebConfig;
 import com.amx.jax.api.AmxApiResponse;
-import com.amx.jax.models.RegSession;
+import com.amx.jax.constants.ApiConstants;
+import com.amx.jax.constants.Message;
+import com.amx.jax.models.ActivePolicyModel;
+import com.amx.jax.models.MetaData;
 import com.amx.jax.rest.RestService;
 import com.amx.jax.service.HttpService;
 import com.amx.jax.services.CustomerRegistrationService;
 import com.amx.jax.services.CustomizeQuoteService;
+import com.amx.jax.ui.session.UserSession;
 import com.amx.utils.JsonUtil;
 import io.swagger.annotations.Api;
 
@@ -43,7 +47,7 @@ public class HomeController
 	/** The web app config. */
 	@Autowired
 	private WebConfig webConfig;
-	
+
 	@Autowired
 	private AppConfig appConfig;
 
@@ -55,7 +59,7 @@ public class HomeController
 	RestService restService;
 
 	@Autowired
-	RegSession regSession;
+	private MetaData metaData;
 
 	/** The check time. */
 	private long checkTime = 0L;
@@ -65,9 +69,12 @@ public class HomeController
 
 	@Autowired
 	private CustomerRegistrationService customerRegistrationService;
-	
+
 	@Autowired
 	private CustomizeQuoteService customizeQuoteService;
+
+	@Autowired
+	UserSession userSession;
 
 	/**
 	 * Gets the version.
@@ -104,7 +111,7 @@ public class HomeController
 	@ResponseBody
 	public String loginPing(HttpServletRequest request)
 	{
-		System.out.println("HomeController :: defaultPage :: getLanguage : " + httpService.getLanguage());
+		System.out.println("HomeController :: loginPing :: getLanguage : " + httpService.getLanguage());
 		AmxApiResponse<Object, Object> wrapper = new AmxApiResponse<Object, Object>();
 		return JsonUtil.toJson(wrapper);
 	}
@@ -116,31 +123,66 @@ public class HomeController
 	 *            the model
 	 * @return the string
 	 */
-	@RequestMapping(value = "/login/**", method = { RequestMethod.GET })
-	public String loginJPage(Model model)
-	{
-		System.out.println("HomeController :: defaultPage :: getLanguage : " + httpService.getLanguage());
-		model.addAttribute("lang", httpService.getLanguage());
-		model.addAttribute("applicationTitle", webConfig.getAppTitle());
-		model.addAttribute("cdnUrl", appConfig.getCdnURL());
-		model.addAttribute("cdnVerion", getVersion());
-		return "app";
-	}
+	/*
+	 * @RequestMapping(value = "/login/**", method = { RequestMethod.GET })
+	 * public String loginJPage(Model model) {
+	 * System.out.println("HomeController :: loginJPage :: getLanguage : " +
+	 * httpService.getLanguage()); model.addAttribute("lang",
+	 * httpService.getLanguage()); model.addAttribute("applicationTitle",
+	 * webConfig.getAppTitle()); model.addAttribute("cdnUrl",
+	 * appConfig.getCdnURL()); model.addAttribute("cdnVerion", getVersion());
+	 * return "app"; }
+	 */
 
 	/**
 	 * Login P json.
 	 *
 	 * @return the string
 	 */
-	@RequestMapping(value = "/login/**", method = { RequestMethod.GET, RequestMethod.POST }, headers = { "Accept=application/json", "Accept=application/v0+json" })
+
+	@RequestMapping(value = "/login/**")
 	@ResponseBody
-	public String loginPJson()
+	public AmxApiResponse<Object, Object> UnAuthorizedAccess()
 	{
-		System.out.println("HomeController :: defaultPage :: getLanguage : " + httpService.getLanguage());
-		AmxApiResponse<Object, Object> wrapper = new AmxApiResponse<Object, Object>();
-		// wrapper.setMessage(WebResponseStatus.UNAUTHORIZED,
-		// ResponseMessage.UNAUTHORIZED);
-		return JsonUtil.toJson(wrapper);
+		System.out.println("HomeController :: UnAuthorizedAccess :: getLanguage :" + httpService.getLanguage());
+
+		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
+		try
+		{
+			userSession = null;
+			laguageSetUp();
+			resp.setStatusKey(ApiConstants.AUTHORIZATION_FAILURE);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.AUTHORIZATION_FAILURE);
+		}
+		return resp;
+	}
+
+	@RequestMapping(value = "/logout/**", method = { RequestMethod.GET })
+	@ResponseBody
+	public AmxApiResponse<Object, Object> logOut()
+	{
+		System.out.println("HomeController :: logOut :: getLanguage :" + httpService.getLanguage());
+
+		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
+		try
+		{
+			userSession = null;
+			laguageSetUp();
+			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setMessage(Message.LOGOUT_MESSAGE);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
+		return resp;
 	}
 
 	/**
@@ -158,40 +200,42 @@ public class HomeController
 		model.addAttribute("cdnUrl", appConfig.getCdnURL());
 		model.addAttribute("cdnVerion", getVersion());
 
-		if (httpService.getLanguage().toString().equalsIgnoreCase("EN"))
-		{
-			regSession.setLanguageId(new BigDecimal(0));
-		}
-		
-		customerRegistrationService.getCompanySetUp();
+		laguageSetUp();
 		return "app";
 	}
-	
-	
-	@RequestMapping(value = {"/app/terms-condition" }, method = { RequestMethod.GET })
+
+	@RequestMapping(value = { "/pub/terms" }, method = { RequestMethod.GET })
 	public String termsAndCondition(Model model)
 	{
 		ArrayList<String> termsInfo = new ArrayList<String>();
-		TreeMap<Integer,String> data =  customizeQuoteService.getTermsAndConditionTest();
+		TreeMap<Integer, String> data = customizeQuoteService.getTermsAndConditionTest();
 
 		Iterator it = data.entrySet().iterator();
-	    while (it.hasNext()) 
-	    {
-	        Map.Entry pair = (Map.Entry)it.next();
-	        System.out.println(pair.getKey() + " = " + pair.getValue());
-	        termsInfo.add(pair.getValue().toString());
-	        it.remove();
-	    }
-		
-		for(int i = 0; i < termsInfo.size() ; i++)
+		while (it.hasNext())
+		{
+			Map.Entry pair = (Map.Entry) it.next();
+			System.out.println(pair.getKey() + " = " + pair.getValue());
+			termsInfo.add(pair.getValue().toString());
+			it.remove();
+		}
+
+		for (int i = 0; i < termsInfo.size(); i++)
 		{
 			System.out.println("HomeController :: termsAndCondition :: termsInfo  : " + termsInfo.get(i));
 		}
-		
+
 		model.addAllAttributes(termsInfo);
-		
-		return "terms-condition";
+
+		return "terms";
 	}
-	
-	
+
+	public void laguageSetUp()
+	{
+		if (httpService.getLanguage().toString().equalsIgnoreCase("EN"))
+		{
+			metaData.setLanguageId(new BigDecimal(0));
+			customerRegistrationService.getCompanySetUp();
+		}
+	}
+
 }

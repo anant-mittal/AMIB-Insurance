@@ -19,7 +19,6 @@ import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.dict.Language;
 import com.amx.jax.models.CustomerDetailModel;
 import com.amx.jax.models.MetaData;
-import com.amx.jax.models.RegSession;
 import com.amx.jax.models.RequestOtpModel;
 import com.amx.jax.models.ResponseOtpModel;
 import com.amx.jax.models.Validate;
@@ -27,6 +26,7 @@ import com.amx.jax.postman.client.PostManClient;
 import com.amx.jax.postman.model.Email;
 import com.amx.jax.postman.model.Notipy;
 import com.amx.jax.postman.model.Notipy.Channel;
+import com.amx.jax.ui.session.UserSession;
 import com.amx.jax.postman.model.SMS;
 import com.amx.jax.postman.model.TemplatesIB;
 import com.amx.jax.postman.model.TemplatesMX;
@@ -42,10 +42,10 @@ public class EmailSmsService
 	private static final Logger logger = LoggerFactory.getLogger(EmailSmsService.class);
 
 	@Autowired
-	RegSession regSession;
-
-	@Autowired
 	MetaData metaData;
+	
+	@Autowired
+	UserSession userSession;
 
 	@Autowired
 	private PostManClient postManClient;
@@ -70,7 +70,7 @@ public class EmailSmsService
 	/************* EMAIL OTP **********/
 	public String sendEmailOtp(String EmailTo)
 	{
-		String emailFrom = regSession.getEmailFromConfigured();
+		String emailFrom = metaData.getEmailFromConfigured();
 
 		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 		String emailOtpPrefix = Random.randomAlpha(3);
@@ -78,10 +78,8 @@ public class EmailSmsService
 		String emailOtpToSend = emailOtpPrefix + "-" + emailOtp;
 		responseOtpModel.setEotpPrefix(emailOtpPrefix);
 		responseOtpModel.setMotpPrefix(null);
-		regSession.setEotpPrefix(emailOtpPrefix);
-		regSession.setEotp(emailOtp);
-		metaData.setEotpPrefix(emailOtpPrefix);
-		metaData.setEotp(emailOtp);
+		userSession.setEotpPrefix(emailOtpPrefix);
+		userSession.setEotp(emailOtp);
 
 		Map<String, Object> wrapper = new HashMap<String, Object>();
 		Map<String, Object> model = new HashMap<String, Object>();
@@ -130,10 +128,8 @@ public class EmailSmsService
 		String mobileOtpToSend = mobileOtpPrefix + "-" + mobileOtp;
 		responseOtpModel.setEotpPrefix(null);
 		responseOtpModel.setMotpPrefix(mobileOtpPrefix);
-		regSession.setMotpPrefix(mobileOtpPrefix);
-		regSession.setMotp(mobileOtp);
-		metaData.setMotpPrefix(mobileOtpPrefix);
-		metaData.setMotp(mobileOtp);
+		userSession.setMotpPrefix(mobileOtpPrefix);
+		userSession.setMotp(mobileOtp);
 		try
 		{
 			Map<String, Object> wrapper = new HashMap<String, Object>();
@@ -175,10 +171,9 @@ public class EmailSmsService
 	 * 
 	 */
 	/************* EMAIL TO CUSTOMER FOR SUCCESS FULL REGISTARTION **********/
-	public void emailTosuccessFullUserRegistration()
+	public void emailTosuccessFullUserRegistration(String emailIdTo)
 	{
 
-		String emailIdTo = metaData.getCustomerEmailId().toString();
 		String emailIdFrom = metaData.getEmailFromConfigured();
 
 		Map<String, Object> wrapper = new HashMap<String, Object>();
@@ -220,8 +215,8 @@ public class EmailSmsService
 	/************* USER REG FAILED EMAIL TO AMIB **********/
 	public void sendFailedRegEmail(RequestOtpModel requestOtpModel)
 	{
-		String emailIdTo = regSession.getContactUsEmail();
-		String emailIdFrom = regSession.getEmailFromConfigured();
+		String emailIdTo = metaData.getContactUsEmail();
+		String emailIdFrom = metaData.getEmailFromConfigured();
 
 		Map<String, Object> wrapper = new HashMap<String, Object>();
 		Map<String, Object> model = new HashMap<String, Object>();
@@ -265,16 +260,15 @@ public class EmailSmsService
 	 ********/
 	public void emailToCustomerAndAmib(String makeDesc, String subMakeDesc, String urlDetails)
 	{
-		
 		logger.info(TAG + " emailToCustomerAndAmib :: makeDesc :" + makeDesc);
 		logger.info(TAG + " emailToCustomerAndAmib :: subMakeDesc :" + subMakeDesc);
 		logger.info(TAG + " emailToCustomerAndAmib :: urlDetails :" + urlDetails);
 		
 		String emailIdFrom = metaData.getEmailFromConfigured();
-		String emailIdTo = metaData.getCustomerEmailId();
-		String customerMobileNumber = metaData.getCustomerMobileNumber();
+		String emailIdTo = userSession.getCustomerEmailId();
+		String customerMobileNumber = userSession.getCustomerMobileNumber();
 		String amibEmailId = metaData.getContactUsEmail();
-		String civilId = metaData.getCivilId();
+		String civilId = userSession.getCivilId();
 
 		Map<String, Object> wrapper = new HashMap<String, Object>();
 		Map<String, Object> model = new HashMap<String, Object>();
@@ -321,13 +315,13 @@ public class EmailSmsService
 	/************* INITIATE D OTP **********/
 	public AmxApiResponse<?, Object> initiateDotp(String emailId, String mobileNumber)
 	{
-		metaData.setEotp("");
-		metaData.setMotp("");
-		metaData.setmOtpMobileNumber("");
-		metaData.seteOtpEmailId("");
+		userSession.setEotp("");
+		userSession.setMotp("");
+		userSession.setmOtpMobileNumber("");
+		userSession.seteOtpEmailId("");
 
-		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(regSession.getCivilId());
-		AmxApiResponse<Validate, Object> isOtpEnabled = isOtpEnabled(regSession.getCivilId());
+		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(userSession.getCivilId());
+		AmxApiResponse<Validate, Object> isOtpEnabled = isOtpEnabled(userSession.getCivilId());
 		if (isOtpEnabled.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return isOtpEnabled;
@@ -341,13 +335,13 @@ public class EmailSmsService
 
 		responseOtpModel.setEotpPrefix(eOtpPrefix);
 		responseOtpModel.setMotpPrefix(mOtpPrefix);
-		metaData.setmOtpMobileNumber(mobileNumber);
-		metaData.seteOtpEmailId(emailId);
+		userSession.setmOtpMobileNumber(mobileNumber);
+		userSession.seteOtpEmailId(emailId);
 		resp.setMeta(responseOtpModel);
 		resp.setStatusKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
 		resp.setMessageKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
 
-		AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(regSession.getCivilId());
+		AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(userSession.getCivilId());
 		if (setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return setOtpCount;
@@ -372,12 +366,12 @@ public class EmailSmsService
 
 		if (null != mOtp && !mOtp.equals("") && null != eOtp && !eOtp.equals(""))
 		{
-			if (!metaData.geteOtpEmailId().equals(emailId) || !metaData.getmOtpMobileNumber().equals(mobileNumber))
+			if (!userSession.geteOtpEmailId().equals(emailId) || !userSession.getmOtpMobileNumber().equals(mobileNumber))
 			{
 				return initiateDotp(emailId, mobileNumber);
 			}
 
-			if (!metaData.getMotp().equals(mOtp) || !metaData.getEotp().equals(eOtp))
+			if (!userSession.getMotp().equals(mOtp) || !userSession.getEotp().equals(eOtp))
 			{
 				resp.setError(Message.REG_INVALID_OTP);
 				resp.setStatusKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED_INVALID);
@@ -405,13 +399,13 @@ public class EmailSmsService
 	/************* INITIATE E OTP **********/
 	public AmxApiResponse<?, Object> initiateEotp(String emailId)
 	{
-		metaData.setEotp("");
-		metaData.setMotp("");
-		metaData.setmOtpMobileNumber("");
-		metaData.seteOtpEmailId("");
+		userSession.setEotp("");
+		userSession.setMotp("");
+		userSession.setmOtpMobileNumber("");
+		userSession.seteOtpEmailId("");
 
-		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(regSession.getCivilId());
-		AmxApiResponse<Validate, Object> isOtpEnabled = isOtpEnabled(regSession.getCivilId());
+		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(userSession.getCivilId());
+		AmxApiResponse<Validate, Object> isOtpEnabled = isOtpEnabled(userSession.getCivilId());
 		if (isOtpEnabled.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return isOtpEnabled;
@@ -422,12 +416,12 @@ public class EmailSmsService
 		String eOtpPrefix = sendEmailOtp(emailId);
 		responseOtpModel.setEotpPrefix(eOtpPrefix);
 		responseOtpModel.setMotpPrefix(null);
-		metaData.seteOtpEmailId(emailId);
+		userSession.seteOtpEmailId(emailId);
 		resp.setMeta(responseOtpModel);
 		resp.setStatusKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
 		resp.setMessageKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
 
-		AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(regSession.getCivilId());
+		AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(userSession.getCivilId());
 		if (setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return setOtpCount;
@@ -451,11 +445,11 @@ public class EmailSmsService
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
 		if (null != eOtp && !eOtp.equals(""))
 		{
-			if (!metaData.geteOtpEmailId().equals(emailId))
+			if (!userSession.geteOtpEmailId().equals(emailId))
 			{
 				return initiateEotp(emailId);
 			}
-			if (!metaData.getEotp().equals(eOtp))
+			if (!userSession.getEotp().equals(eOtp))
 			{
 				resp.setError(Message.REG_INVALID_OTP);
 				resp.setStatusKey(MessageKey.KEY_EMAIL_OTP_REQUIRED_INVALID);
@@ -483,13 +477,13 @@ public class EmailSmsService
 	/************* INITIATE M OTP **********/
 	public AmxApiResponse<?, Object> initiateMotp(String mobileNumber)
 	{
-		metaData.setEotp("");
-		metaData.setMotp("");
-		metaData.setmOtpMobileNumber("");
-		metaData.seteOtpEmailId("");
+		userSession.setEotp("");
+		userSession.setMotp("");
+		userSession.setmOtpMobileNumber("");
+		userSession.seteOtpEmailId("");
 
-		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(regSession.getCivilId());
-		AmxApiResponse<Validate, Object> isOtpEnabled = isOtpEnabled(regSession.getCivilId());
+		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(userSession.getCivilId());
+		AmxApiResponse<Validate, Object> isOtpEnabled = isOtpEnabled(userSession.getCivilId());
 		if (isOtpEnabled.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return isOtpEnabled;
@@ -500,12 +494,12 @@ public class EmailSmsService
 		String mOtpPrefix = sendMobileOtp(mobileNumber);
 		responseOtpModel.setMotpPrefix(mOtpPrefix);
 		responseOtpModel.setEotpPrefix(null);
-		metaData.setmOtpMobileNumber(mobileNumber);
+		userSession.setmOtpMobileNumber(mobileNumber);
 		resp.setMeta(responseOtpModel);
 		resp.setStatusKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
 		resp.setMessageKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
 
-		AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(regSession.getCivilId());
+		AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(userSession.getCivilId());
 		if (setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return setOtpCount;
@@ -529,11 +523,11 @@ public class EmailSmsService
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
 		if (null != mOtp && !mOtp.equals(""))
 		{
-			if (!metaData.getmOtpMobileNumber().equals(mobileNumber))
+			if (!userSession.getmOtpMobileNumber().equals(mobileNumber))
 			{
 				return initiateMotp(mobileNumber);
 			}
-			if (!metaData.getMotp().equals(mOtp))
+			if (!userSession.getMotp().equals(mOtp))
 			{
 				resp.setError(Message.REG_INVALID_OTP);
 				resp.setStatusKey(MessageKey.KEY_MOBILE_OTP_REQUIRED_INVALID);
@@ -562,7 +556,7 @@ public class EmailSmsService
 	public AmxApiResponse<Validate, Object> isOtpEnabled(String civilId)
 	{
 		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
-		boolean isOtpEnable = customerRegistrationDao.isOtpEnabled(civilId);
+		boolean isOtpEnable = customerRegistrationDao.isOtpEnabled(civilId , userSession.getUserType());
 		if (isOtpEnable)
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
@@ -575,8 +569,8 @@ public class EmailSmsService
 			resp.setMessage(Message.CUST_OTP_NOT_ENABLED);
 			resp.setMessageKey(MessageKey.KEY_USER_OTP_NOT_ENABLED);
 			Validate validate = new Validate();
-			validate.setContactUsHelpLineNumber(regSession.getContactUsHelpLineNumber());
-			validate.setContactUsEmail(regSession.getContactUsEmail());
+			validate.setContactUsHelpLineNumber(metaData.getContactUsHelpLineNumber());
+			validate.setContactUsEmail(metaData.getContactUsEmail());
 			resp.setData(validate);
 		}
 		return resp;
@@ -597,7 +591,7 @@ public class EmailSmsService
 	{
 		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
 
-		Validate setOtpCount = customerRegistrationDao.setOtpCount(civilId);
+		Validate setOtpCount = customerRegistrationDao.setOtpCount(civilId , userSession.getUserType());
 
 		if (setOtpCount.isValid())
 		{
@@ -626,7 +620,7 @@ public class EmailSmsService
 	/************* CHECK IF CIVIL ID EXIST **********/
 	public AmxApiResponse<Validate, Object> isCivilIdExist(String civilid)
 	{
-		boolean civilIdExistCheck = customerRegistrationDao.isCivilIdExist(civilid);
+		boolean civilIdExistCheck = customerRegistrationDao.isCivilIdExist(civilid , userSession.getUserType());
 		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
 		if (civilIdExistCheck)
 		{
@@ -684,10 +678,10 @@ public class EmailSmsService
 	
 	public String customerName()
 	{
-		String civilId = regSession.getCivilId();
+		String civilId = userSession.getCivilId();
 		if (null != civilId && !civilId.equals(""))
 		{
-			CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(metaData.getCivilId());
+			CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(userSession.getCivilId() , userSession.getUserType() , userSession.getUserSequenceNumber());
 			if (null != customerDetailModel.getUserName() && !customerDetailModel.getUserName().equals(""))
 			{
 				return customerDetailModel.getUserName();

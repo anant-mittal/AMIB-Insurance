@@ -26,9 +26,9 @@ import com.amx.jax.models.MetaData;
 import com.amx.jax.models.MyQuoteModel;
 import com.amx.jax.models.QuotationDetails;
 import com.amx.jax.models.QuoteAddPolicyDetails;
-import com.amx.jax.models.RegSession;
 import com.amx.jax.models.TotalPremium;
 import com.amx.jax.models.Validate;
+import com.amx.jax.ui.session.UserSession;
 import com.amx.jax.utility.CustomizeQuoteUtility;
 
 @Service
@@ -39,10 +39,10 @@ public class CustomizeQuoteService
 	private static final Logger logger = LoggerFactory.getLogger(CustomizeQuoteService.class);
 
 	@Autowired
-	RegSession regSession;
-
-	@Autowired
 	MetaData metaData;
+	
+	@Autowired
+	UserSession userSession;
 
 	@Autowired
 	private CustomizeQuoteDao customizeQuoteDao;
@@ -64,7 +64,7 @@ public class CustomizeQuoteService
 		try
 		{
 			MyQuoteModel myQuoteModel = new MyQuoteModel();
-			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote();
+			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber());
 			for (int i = 0; i < getUserQuote.size(); i++)
 			{
 				MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
@@ -140,7 +140,7 @@ public class CustomizeQuoteService
 		{
 			ArrayList<String> allQuotes = new ArrayList<String>();
 
-			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote();
+			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber());
 			for (int i = 0; i < getUserQuote.size(); i++)
 			{
 				MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
@@ -175,7 +175,7 @@ public class CustomizeQuoteService
 			BigDecimal quoteSeqNumber = customizeQuoteInfo.getQuoteSeqNumber();
 			
 			MyQuoteModel myQuoteModel = new MyQuoteModel();
-			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote();
+			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber());
 			for (int i = 0; i < getUserQuote.size(); i++)
 			{
 				MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
@@ -246,7 +246,7 @@ public class CustomizeQuoteService
 			BigDecimal quoteSeqNumber = customizeQuoteInfo.getQuoteSeqNumber();
 
 			MyQuoteModel myQuoteModel = new MyQuoteModel();
-			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote();
+			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber());
 			for (int i = 0; i < getUserQuote.size(); i++)
 			{
 				MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
@@ -292,7 +292,7 @@ public class CustomizeQuoteService
 				customizeQuoteSave.setAddCoveragePremium(totalPremium.getAddCoveragePremium());
 				customizeQuoteSave.setTotalAmount(totalPremium.getTotalAmount());
 				logger.info(TAG + " saveCustomizeQuoteAddPol :: customizeQuoteSave :" + customizeQuoteSave.toString());
-				Validate validate = customizeQuoteDao.saveCustomizeQuote(customizeQuoteSave);
+				Validate validate = customizeQuoteDao.saveCustomizeQuote(customizeQuoteSave , userSession.getCivilId());
 				logger.info(TAG + " saveCustomizeQuoteAddPol :: getErrorCode() :" + validate.getErrorCode());
 				if (validate.getErrorCode() == null)
 				{
@@ -347,7 +347,7 @@ public class CustomizeQuoteService
 				customizeQuoteAddPol.setReplacementTypeCode(quoteAddPolicyDetails.getReplacementTypeCode());
 				logger.info(TAG + " saveCustomizeQuoteAddPol :: customizeQuoteAddPol :" + customizeQuoteAddPol.toString());
 
-				Validate validate = customizeQuoteDao.saveCustomizeQuoteAddPol(customizeQuoteAddPol);
+				Validate validate = customizeQuoteDao.saveCustomizeQuoteAddPol(customizeQuoteAddPol , userSession.getCivilId());
 				logger.info(TAG + " saveCustomizeQuoteAddPol :: getErrorCode() :" + validate.getErrorCode());
 
 				if (validate.getErrorCode() != null)

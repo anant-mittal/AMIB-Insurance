@@ -34,6 +34,7 @@ public class RequestQuoteController
 	@RequestMapping(value = "/api/vehicledetails/make", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getMake()
 	{
+		logger.info(TAG + " getMake :: ");
 		return requestQuoteService.getMake();
 	}
 
@@ -46,6 +47,7 @@ public class RequestQuoteController
 	@RequestMapping(value = "/api/vehicledetails/fueltype", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getFuleType()
 	{
+		logger.info(TAG + " getFuleType :: ");
 		return requestQuoteService.getFuleType();
 	}
 

@@ -14,7 +14,6 @@ import com.amx.jax.models.ActivePolicyModel;
 import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.IncompleteApplModel;
 import com.amx.jax.models.MetaData;
-import com.amx.jax.models.VehicleSession;
 import com.amx.jax.utility.Calc;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,12 +32,9 @@ public class MyPolicyDao
 	@Autowired
 	MetaData metaData;
 
-	@Autowired
-	VehicleSession vehicleSession;
-
 	Connection connection;
 
-	public ArrayList<ActivePolicyModel> getUserActivePolicy()
+	public ArrayList<ActivePolicyModel> getUserActivePolicy(BigDecimal userAmibCustRef , String civilId , String userType , BigDecimal custSeqNum)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -51,7 +47,7 @@ public class MyPolicyDao
 
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
-			callableStatement.setBigDecimal(3, metaData.getUserAmibCustRef());
+			callableStatement.setBigDecimal(3, userAmibCustRef);
 			callableStatement.setBigDecimal(4, metaData.getLanguageId());
 			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -64,6 +60,7 @@ public class MyPolicyDao
 			{
 
 				ActivePolicyModel activePolicyModel = new ActivePolicyModel();
+				logger.info(TAG + " getUserActivePolicy :: rs :"+rs.getRow());
 				activePolicyModel.setCountryId(rs.getBigDecimal(1));
 				activePolicyModel.setCompCd(rs.getBigDecimal(2));
 				activePolicyModel.setDocNumber(rs.getBigDecimal(3));
@@ -89,7 +86,7 @@ public class MyPolicyDao
 				activePolicyModel.setColourCode(rs.getString(23));
 				activePolicyModel.setColourDesc(rs.getString(24));
 				activePolicyModel.setNoPass(rs.getBigDecimal(25));
-				activePolicyModel.setChassis(rs.getBigDecimal(26));
+				activePolicyModel.setChassis(rs.getString(26));
 				activePolicyModel.setKtNumber(rs.getString(27));
 				activePolicyModel.setVehicleConditionCode(rs.getString(28));
 				activePolicyModel.setVehicleConditionDesc(rs.getString(29));
@@ -115,7 +112,7 @@ public class MyPolicyDao
 				}
 				else
 				{
-					activePolicyModel.setRenewableApplCheck(checkRenewableApplicable(rs.getBigDecimal(3)));
+					activePolicyModel.setRenewableApplCheck(checkRenewableApplicable(rs.getBigDecimal(3) , civilId , userType , custSeqNum));
 				}
 				activePolicyArray.add(activePolicyModel);
 				logger.info(TAG + " getUserActivePolicy :: activePolicyModel :" + activePolicyModel.toString());
@@ -132,7 +129,7 @@ public class MyPolicyDao
 		return activePolicyArray;
 	}
 
-	public String checkRenewableApplicable(BigDecimal oldDocNumber)
+	public String checkRenewableApplicable(BigDecimal oldDocNumber , String civilId , String userType , BigDecimal custSeqNum)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -144,9 +141,9 @@ public class MyPolicyDao
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
-			callableStatement.setString(3, metaData.getUserType());
-			callableStatement.setString(4, metaData.getCivilId());
-			callableStatement.setBigDecimal(5, metaData.getCustomerSequenceNumber());
+			callableStatement.setString(3, userType);
+			callableStatement.setString(4, civilId);
+			callableStatement.setBigDecimal(5, custSeqNum);
 			callableStatement.setBigDecimal(6, oldDocNumber);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);

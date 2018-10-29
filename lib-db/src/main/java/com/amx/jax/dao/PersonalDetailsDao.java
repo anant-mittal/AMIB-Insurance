@@ -36,7 +36,7 @@ public class PersonalDetailsDao
 
 	Connection connection;
 
-	public CustomerProfileDetailModel getProfileDetails()
+	public CustomerProfileDetailModel getProfileDetails(String civilId , String userType , BigDecimal custSeqNum)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -49,10 +49,10 @@ public class PersonalDetailsDao
 
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
-			callableStatement.setString(3, metaData.getUserType());
-			callableStatement.setString(4, metaData.getCivilId());
+			callableStatement.setString(3, userType);
+			callableStatement.setString(4, civilId);
 			callableStatement.setBigDecimal(5, metaData.getLanguageId());
-			callableStatement.setBigDecimal(6, metaData.getCustomerSequenceNumber());
+			callableStatement.setBigDecimal(6, custSeqNum);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(9, java.sql.Types.VARCHAR);
@@ -114,7 +114,7 @@ public class PersonalDetailsDao
 		return customerProfileDetailModel;
 	}
 
-	public CustomerProfileDetailModel updateProfileDetails(CustomerProfileDetailModel customerProfileDetailModel)
+	public CustomerProfileDetailModel updateProfileDetails(CustomerProfileDetailModel customerProfileDetailModel , String civilId , String userType , BigDecimal custSeqNum)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -126,9 +126,9 @@ public class PersonalDetailsDao
 
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
-			callableStatement.setString(3, metaData.getUserType());
-			callableStatement.setString(4, metaData.getCivilId());
-			callableStatement.setBigDecimal(5, metaData.getCustomerSequenceNumber());
+			callableStatement.setString(3, userType);
+			callableStatement.setString(4, civilId);
+			callableStatement.setBigDecimal(5, custSeqNum);
 			callableStatement.setString(6, customerProfileDetailModel.getEnglishName());
 			callableStatement.setString(7, customerProfileDetailModel.getNativeArabicName());
 			callableStatement.setString(8, customerProfileDetailModel.getGenderCode());
@@ -142,7 +142,7 @@ public class PersonalDetailsDao
 			callableStatement.setBigDecimal(16, metaData.getLanguageId());
 			callableStatement.setString(17, metaData.getDeviceId());
 			callableStatement.setString(18, metaData.getDeviceType());
-			callableStatement.setString(19, metaData.getCivilId());
+			callableStatement.setString(19, civilId);
 
 			callableStatement.registerOutParameter(5, java.sql.Types.NUMERIC);
 			callableStatement.registerOutParameter(20, java.sql.Types.VARCHAR);
@@ -153,7 +153,6 @@ public class PersonalDetailsDao
 			if (null != callableStatement.getBigDecimal(5))
 			{
 				logger.info(TAG + " updateProfileDetails :: customerSequenceNumber :" + callableStatement.getBigDecimal(5));
-				metaData.setCustomerSequenceNumber(callableStatement.getBigDecimal(5));
 				customerProfileDetailModel.setCustSequenceNumber(callableStatement.getBigDecimal(5));
 			}
 

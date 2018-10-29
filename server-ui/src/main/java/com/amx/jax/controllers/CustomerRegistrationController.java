@@ -27,7 +27,6 @@ import com.amx.jax.models.CustomerLoginRequest;
 import com.amx.jax.models.CustomerRegistrationRequest;
 import com.amx.jax.models.CustomerRegistrationResponse;
 import com.amx.jax.models.Person;
-import com.amx.jax.models.RegSession;
 import com.amx.jax.models.RequestOtpModel;
 import com.amx.jax.models.Validate;
 import com.amx.jax.services.CustomerRegistrationService;
@@ -44,9 +43,6 @@ public class CustomerRegistrationController
 
 	@Autowired
 	private CustomerRegistrationService customerRegistrationService;
-
-	@Autowired
-	RegSession regSession;
 
 	@Autowired
 	EmailSmsService emailSmsService;
@@ -147,7 +143,7 @@ public class CustomerRegistrationController
 	@RequestMapping(value = "/pub/reg/sms-email-test", method = RequestMethod.POST, produces = "application/json")
 	public String testEmailPostman()
 	{
-		CustomerLoginRequest c = new CustomerLoginRequest();
+		/*CustomerLoginRequest c = new CustomerLoginRequest();
 		c.setCivilId("282071300105");
 		c.setPassword("Amx@1234");
 		customerRegistrationService.validateUserLogin(c);
@@ -161,7 +157,7 @@ public class CustomerRegistrationController
 		r.setMobileNumber("8796589233");
 		emailSmsService.sendFailedRegEmail(r);
 
-		emailSmsService.emailToCustomerAndAmib("Make - Hona", "Submake - kawasaki", "https://www.cricbuzz.com/");
+		emailSmsService.emailToCustomerAndAmib("Make - Hona", "Submake - kawasaki", "https://www.cricbuzz.com/");*/
 
 		return "Done";
 	}

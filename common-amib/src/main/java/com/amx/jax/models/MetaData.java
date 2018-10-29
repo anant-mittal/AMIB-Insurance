@@ -12,32 +12,13 @@ import org.springframework.stereotype.Component;
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class MetaData implements Serializable
 {
-
 	private static final long serialVersionUID = 4265567700694960490L;
 
 	private MetaData metaData;
 
-	private String motpPrefix;
-
-	private String eotpPrefix;
-
-	private String motp;
-
-	private String eotp;
-
-	private String civilId;
-
-	private String customerMobileNumber;
-
-	private String customerEmailId;
-
-	private String changePasswordOtp;
-
 	private BigDecimal countryId;
 
 	private BigDecimal compCd;
-
-	private String userType;
 
 	private String deviceType;
 
@@ -49,20 +30,10 @@ public class MetaData implements Serializable
 
 	private String contactUsHelpLineNumber;
 
-	private String mOtpMobileNumber = "";
-
-	private String eOtpEmailId = "";
-
 	String emailFromConfigured;
 
 	private String amibWebsiteLink;
 
-	private BigDecimal customerSequenceNumber; 
-
-	private BigDecimal userSequenceNumber; 
-	
-	private BigDecimal userAmibCustRef; 
-	
 	private BigDecimal decplc;
 
 	private String companyName;
@@ -107,16 +78,6 @@ public class MetaData implements Serializable
 		this.emailFromConfigured = emailFromConfigured;
 	}
 
-	public BigDecimal getUserAmibCustRef()
-	{
-		return userAmibCustRef;
-	}
-
-	public void setUserAmibCustRef(BigDecimal userAmibCustRef)
-	{
-		this.userAmibCustRef = userAmibCustRef;
-	}
-
 	public String getContactUsEmail()
 	{
 		return contactUsEmail;
@@ -141,87 +102,6 @@ public class MetaData implements Serializable
 	{
 		return serialVersionUID;
 	}
-
-	public String getChangePasswordOtp()
-	{
-		return changePasswordOtp;
-	}
-
-	public void setChangePasswordOtp(String changePasswordOtp)
-	{
-		this.changePasswordOtp = changePasswordOtp;
-	}
-
-	public String getMotpPrefix()
-	{
-		return motpPrefix;
-	}
-
-	public void setMotpPrefix(String motpPrefix)
-	{
-		this.motpPrefix = motpPrefix;
-	}
-
-	public String getEotpPrefix()
-	{
-		return eotpPrefix;
-	}
-
-	public void setEotpPrefix(String eotpPrefix)
-	{
-		this.eotpPrefix = eotpPrefix;
-	}
-
-	public String getMotp()
-	{
-		return motp;
-	}
-
-	public void setMotp(String motp)
-	{
-		this.motp = motp;
-	}
-
-	public String getEotp()
-	{
-		return eotp;
-	}
-
-	public void setEotp(String eotp)
-	{
-		this.eotp = eotp;
-	}
-
-	public String getCivilId()
-	{
-		return civilId;
-	}
-
-	public void setCivilId(String civilId)
-	{
-		this.civilId = civilId;
-	}
-
-	public String getCustomerMobileNumber()
-	{
-		return customerMobileNumber;
-	}
-
-	public void setCustomerMobileNumber(String customerMobileNumber)
-	{
-		this.customerMobileNumber = customerMobileNumber;
-	}
-
-	public String getCustomerEmailId()
-	{
-		return customerEmailId;
-	}
-
-	public void setCustomerEmailId(String customerEmailId)
-	{
-		this.customerEmailId = customerEmailId;
-	}
-
 	public BigDecimal getCountryId()
 	{
 		return countryId;
@@ -240,16 +120,6 @@ public class MetaData implements Serializable
 	public void setCompCd(BigDecimal compCd)
 	{
 		this.compCd = compCd;
-	}
-
-	public String getUserType()
-	{
-		return userType;
-	}
-
-	public void setUserType(String userType)
-	{
-		this.userType = userType;
 	}
 
 	public String getDeviceType()
@@ -282,16 +152,6 @@ public class MetaData implements Serializable
 		this.languageId = languageId;
 	}
 
-	public BigDecimal getCustomerSequenceNumber()
-	{
-		return customerSequenceNumber;
-	}
-
-	public void setCustomerSequenceNumber(BigDecimal customerSequenceNumber)
-	{
-		this.customerSequenceNumber = customerSequenceNumber;
-	}
-
 	public MetaData getMetaData()
 	{
 		return metaData;
@@ -300,35 +160,5 @@ public class MetaData implements Serializable
 	public void setMetaData(MetaData metaData)
 	{
 		this.metaData = metaData;
-	}
-
-	public BigDecimal getUserSequenceNumber()
-	{
-		return userSequenceNumber;
-	}
-
-	public void setUserSequenceNumber(BigDecimal userSequenceNumber)
-	{
-		this.userSequenceNumber = userSequenceNumber;
-	}
-
-	public String getmOtpMobileNumber()
-	{
-		return mOtpMobileNumber;
-	}
-
-	public void setmOtpMobileNumber(String mOtpMobileNumber)
-	{
-		this.mOtpMobileNumber = mOtpMobileNumber;
-	}
-
-	public String geteOtpEmailId()
-	{
-		return eOtpEmailId;
-	}
-
-	public void seteOtpEmailId(String eOtpEmailId)
-	{
-		this.eOtpEmailId = eOtpEmailId;
 	}
 }

@@ -223,7 +223,7 @@ public class CustomizeQuoteDao
 		return data;
 	}
 
-	public Validate saveCustomizeQuote(CustomizeQuoteSave customizeQuoteSave)
+	public Validate saveCustomizeQuote(CustomizeQuoteSave customizeQuoteSave , String civilId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -244,7 +244,7 @@ public class CustomizeQuoteDao
 			callableStatement.setBigDecimal(10,Calc.round(customizeQuoteSave.getTotalAmount(), metaData.getDecplc()));
 			callableStatement.setString(11, metaData.getDeviceType());
 			callableStatement.setString(12, metaData.getDeviceId());
-			callableStatement.setString(13, metaData.getCivilId());
+			callableStatement.setString(13, civilId);
 			callableStatement.registerOutParameter(14, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(15, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
@@ -263,7 +263,7 @@ public class CustomizeQuoteDao
 		return validate;
 	}
 
-	public Validate saveCustomizeQuoteAddPol(CustomizeQuoteAddPol customizeQuoteAddPol)
+	public Validate saveCustomizeQuoteAddPol(CustomizeQuoteAddPol customizeQuoteAddPol , String civilId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -283,7 +283,7 @@ public class CustomizeQuoteDao
 			callableStatement.setString(9, customizeQuoteAddPol.getReplacementTypeCode());
 			callableStatement.setString(10, metaData.getDeviceType());
 			callableStatement.setString(11, metaData.getDeviceId());
-			callableStatement.setString(12, metaData.getCivilId());
+			callableStatement.setString(12, civilId);
 			callableStatement.registerOutParameter(13, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(14, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();

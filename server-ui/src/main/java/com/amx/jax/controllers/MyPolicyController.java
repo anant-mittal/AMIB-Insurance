@@ -30,6 +30,7 @@ public class MyPolicyController
 	@RequestMapping(value = "/api/mypolicy/get-activepolicy", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<ActivePolicyModel, Object> getUserActivePolicy()
 	{
+		logger.info(TAG + " getUserActivePolicy :: ");
 		return myPolicyService.getUserActivePolicy();
 	}
 	
@@ -41,6 +42,7 @@ public class MyPolicyController
 		{
 			renewAppDocNumberDet = ArgUtil.parseAsBigDecimal(renewAppDocNumber);
 		}
+		logger.info(TAG + " renewInsuranceOldPolicy :: renewAppDocNumberDet :" + renewAppDocNumberDet);
 		return myPolicyService.renewInsuranceOldPolicy(renewAppDocNumberDet);
 	}
 }

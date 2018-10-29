@@ -54,7 +54,7 @@ public class ActivePolicyModel
 
 	private BigDecimal noPass;
 
-	private BigDecimal chassis;
+	private String chassis;
 
 	private String ktNumber;
 
@@ -336,12 +336,12 @@ public class ActivePolicyModel
 		this.noPass = noPass;
 	}
 
-	public BigDecimal getChassis()
+	public String getChassis()
 	{
 		return chassis;
 	}
 
-	public void setChassis(BigDecimal chassis)
+	public void setChassis(String chassis)
 	{
 		this.chassis = chassis;
 	}
