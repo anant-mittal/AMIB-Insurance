@@ -836,6 +836,7 @@ public class RequestQuoteService
 		ArrayResponseModel arrayResponseModel = requestQuoteDao.submitRequestQuote(appSeqNumber , userSession.getCivilId());
 		if (null == arrayResponseModel.getErrorCode())
 		{
+			
 			logger.info(TAG + " submitRequestQuote :: arrayResponseModel.getErrorCode() :" + arrayResponseModel.getErrorCode());
 			
 			ArrayResponseModel getVehicleDetailsArray = requestQuoteDao.getAppVehicleDetails(appSeqNumber);
@@ -850,6 +851,7 @@ public class RequestQuoteService
 					makeDesc = vehicleDetailsGetModel.getMakeDesc();
 					subMakeDesc = vehicleDetailsGetModel.getSubMakeDesc();
 					
+					
 					logger.info(TAG + " submitRequestQuote :: makeDesc:" + makeDesc);
 					logger.info(TAG + " submitRequestQuote :: subMakeDesc :" + subMakeDesc);
 				}
@@ -860,9 +862,13 @@ public class RequestQuoteService
 			logger.info(TAG + " submitRequestQuote :: subMakeDesc :" + subMakeDesc);
 			logger.info(TAG + " submitRequestQuote :: urlDetails :" + urlDetails);
 			
-			emailSmsService.emailToCustomerAndAmib(makeDesc,subMakeDesc,urlDetails);
+			emailSmsService.emailToCustomerOnCompilitionRequestQuote(makeDesc,subMakeDesc,appSeqNumber);
 			resp.setStatusKey(ApiConstants.SUCCESS);
 			logger.info(TAG + " submitRequestQuote :: resp :" + resp.toString());
+			
+			
+			
+			
 		}
 		else
 		{

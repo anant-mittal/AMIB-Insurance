@@ -1,5 +1,6 @@
 package com.amx.jax.services;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -256,13 +257,13 @@ public class EmailSmsService
 	 * 
 	 */
 	/*********
-	 * REQUEST QUOTE SUBMIT SUCCESS MAIL TO USER AND AMIB
+	 * REQUEST QUOTE SUBMIT SUCCESS MAIL TO USER
 	 ********/
-	public void emailToCustomerAndAmib(String makeDesc, String subMakeDesc, String urlDetails)
+	public void emailToCustomerOnCompilitionRequestQuote(String makeDesc, String subMakeDesc, BigDecimal appSeqNumber)
 	{
 		logger.info(TAG + " emailToCustomerAndAmib :: makeDesc :" + makeDesc);
 		logger.info(TAG + " emailToCustomerAndAmib :: subMakeDesc :" + subMakeDesc);
-		logger.info(TAG + " emailToCustomerAndAmib :: urlDetails :" + urlDetails);
+		logger.info(TAG + " emailToCustomerAndAmib :: appSeqNumber :" + appSeqNumber);
 		
 		String emailIdFrom = metaData.getEmailFromConfigured();
 		String emailIdTo = userSession.getCustomerEmailId();
@@ -277,13 +278,13 @@ public class EmailSmsService
 		model.put(DetailsConstants.CUSTOMER_EMAIL_ID, emailIdTo);
 		model.put(DetailsConstants.CUSTOMER_MOBILE_NO, customerMobileNumber);
 		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
+		model.put(DetailsConstants.CONTACT_US_MOBILE, metaData.getContactUsHelpLineNumber());
 		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaData.getAmibWebsiteLink());
 		model.put(DetailsConstants.COMPANY_NAME, metaData.getCompanyName());
 		model.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
 		model.put(DetailsConstants.MAKE_DESC, makeDesc);
 		model.put(DetailsConstants.SUB_MAKE_DESC, subMakeDesc);
-		model.put(DetailsConstants.URL_DETAILS, urlDetails);
-		
+		model.put(DetailsConstants.APPLICATION_ID, appSeqNumber);
 		wrapper.put("data", model);
 		
 		ArrayList<String> emailTo = new ArrayList<String>();
@@ -293,9 +294,73 @@ public class EmailSmsService
 		Email email = new Email();
 		email.setFrom(emailIdFrom);
 		email.setTo(emailTo);
-		email.setSubject("Al Mulla Insurance Brokerage Quote for your Motor Policy Application");
+		email.setSubject("Quote Request - "+appSeqNumber);
 		email.setModel(wrapper);
-		email.setITemplate(TemplatesIB.QUOTE_SUBMIT_EMAIL);
+		email.setITemplate(TemplatesIB.QUOTE_SUBMIT_EMAIL_TO_UESR);
+		email.setHtml(true);
+		email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
+		postManClient.sendEmail(email);
+
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	/*
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	/*********
+	 * REQUEST QUOTE SUBMIT SUCCESS MAIL TO AMIB
+	 ********/
+	public void emailToAmibOnCompilitionRequestQuote(String makeDesc, String subMakeDesc, BigDecimal appSeqNumber)
+	{
+		logger.info(TAG + " emailToCustomerAndAmib :: makeDesc :" + makeDesc);
+		logger.info(TAG + " emailToCustomerAndAmib :: subMakeDesc :" + subMakeDesc);
+		logger.info(TAG + " emailToCustomerAndAmib :: appSeqNumber :" + appSeqNumber);
+		
+		String emailIdFrom = metaData.getEmailFromConfigured();
+		String emailIdTo = userSession.getCustomerEmailId();
+		String customerMobileNumber = userSession.getCustomerMobileNumber();
+		String amibEmailId = metaData.getContactUsEmail();
+		String civilId = userSession.getCivilId();
+
+		Map<String, Object> wrapper = new HashMap<String, Object>();
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put(DetailsConstants.CUSTOMER_NAME, customerName());
+		model.put(DetailsConstants.CUSTOMER_CIVIL_ID, civilId);
+		model.put(DetailsConstants.CUSTOMER_EMAIL_ID, emailIdTo);
+		model.put(DetailsConstants.CUSTOMER_MOBILE_NO, customerMobileNumber);
+		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
+		model.put(DetailsConstants.CONTACT_US_MOBILE, metaData.getContactUsHelpLineNumber());
+		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaData.getAmibWebsiteLink());
+		model.put(DetailsConstants.COMPANY_NAME, metaData.getCompanyName());
+		model.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
+		model.put(DetailsConstants.MAKE_DESC, makeDesc);
+		model.put(DetailsConstants.SUB_MAKE_DESC, subMakeDesc);
+		model.put(DetailsConstants.APPLICATION_ID, appSeqNumber);
+		wrapper.put("data", model);
+		
+		ArrayList<String> emailTo = new ArrayList<String>();
+		emailTo.add(emailIdTo);
+		emailTo.add(amibEmailId);
+
+		Email email = new Email();
+		email.setFrom(emailIdFrom);
+		email.setTo(emailTo);
+		email.setSubject("Customer Quote Request - "+appSeqNumber);
+		email.setModel(wrapper);
+		email.setITemplate(TemplatesIB.QUOTE_SUBMIT_EMAIL_TO_UESR);
 		email.setHtml(true);
 		email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
 		postManClient.sendEmail(email);
