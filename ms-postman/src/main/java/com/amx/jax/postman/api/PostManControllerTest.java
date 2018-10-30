@@ -43,7 +43,7 @@ import com.amx.jax.postman.service.PostManServiceImpl;
 import com.amx.utils.IoUtils;
 import com.amx.utils.JsonUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ibm.icu.text.Transliterator;
+//import com.ibm.icu.text.Transliterator;
 
 /**
  * The Class PostManControllerTest.
@@ -139,7 +139,7 @@ public class PostManControllerTest {
 	 * @throws PostManException
 	 *             the post man exception
 	 */
-	@RequestMapping(value = PostManUrls.PROCESS_TEMPLATE + "/print", method = RequestMethod.GET)
+	/*@RequestMapping(value = PostManUrls.PROCESS_TEMPLATE + "/print", method = RequestMethod.GET)
 	public Message print(@RequestParam Tenant tnt) throws PostManException {
 
 		Message msg = new Message();
@@ -148,7 +148,7 @@ public class PostManControllerTest {
 		//String devnagiri = toDevnagiri.transliterate("lalit");
 
 		return msg;
-	}
+	}*/
 
 	/**
 	 * Fb push.

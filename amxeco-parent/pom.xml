@@ -107,7 +107,5 @@
 
 		<!-- Common Servers -->
 		<module>../ms-postman</module>
-		<module>../server-payg</module>
-		<module>../server-monitor</module>
 	</modules>
 </project>
