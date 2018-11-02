@@ -329,7 +329,7 @@ public class EmailSmsService
 		logger.info(TAG + " emailToCustomerAndAmib :: subMakeDesc :" + subMakeDesc);
 		logger.info(TAG + " emailToCustomerAndAmib :: appSeqNumber :" + appSeqNumber);
 		
-		String emailIdFrom = metaData.getEmailFromConfigured();
+		//String emailIdFrom = metaData.getEmailFromConfigured();
 		String emailIdTo = userSession.getCustomerEmailId();
 		String customerMobileNumber = userSession.getCustomerMobileNumber();
 		String amibEmailId = metaData.getContactUsEmail();
@@ -356,7 +356,7 @@ public class EmailSmsService
 		emailTo.add(amibEmailId);
 
 		Email email = new Email();
-		email.setFrom(emailIdFrom);
+		//email.setFrom(emailIdFrom);
 		email.setTo(emailTo);
 		email.setSubject("Customer Quote Request - "+appSeqNumber);
 		email.setModel(wrapper);
