@@ -71,7 +71,7 @@ public class EmailSmsService
 	/************* EMAIL OTP **********/
 	public String sendEmailOtp(String EmailTo)
 	{
-		String emailFrom = metaData.getEmailFromConfigured();
+		//String emailFrom = metaData.getEmailFromConfigured();
 
 		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 		String emailOtpPrefix = Random.randomAlpha(3);
@@ -96,7 +96,7 @@ public class EmailSmsService
 		emailTo.add(EmailTo);
 
 		Email email = new Email();
-		email.setFrom(emailFrom);
+		//email.setFrom(emailFrom);
 		email.setTo(emailTo);
 		email.setSubject(DetailsConstants.REG_OTP_EMAIL_SUBJECT);
 		email.setModel(wrapper);
@@ -175,7 +175,7 @@ public class EmailSmsService
 	public void emailTosuccessFullUserRegistration(String emailIdTo)
 	{
 
-		String emailIdFrom = metaData.getEmailFromConfigured();
+		//String emailIdFrom = metaData.getEmailFromConfigured();
 
 		Map<String, Object> wrapper = new HashMap<String, Object>();
 		Map<String, Object> model = new HashMap<String, Object>();
@@ -191,7 +191,7 @@ public class EmailSmsService
 		emailTo.add(emailIdTo);
 
 		Email email = new Email();
-		email.setFrom(emailIdFrom);
+		//email.setFrom(emailIdFrom);
 		email.setTo(emailTo);
 		email.setSubject(DetailsConstants.REG_SUCCESS_EMAIL);
 		email.setModel(wrapper);
@@ -217,7 +217,7 @@ public class EmailSmsService
 	public void sendFailedRegEmail(RequestOtpModel requestOtpModel)
 	{
 		String emailIdTo = metaData.getContactUsEmail();
-		String emailIdFrom = metaData.getEmailFromConfigured();
+		//String emailIdFrom = metaData.getEmailFromConfigured();
 
 		Map<String, Object> wrapper = new HashMap<String, Object>();
 		Map<String, Object> model = new HashMap<String, Object>();
@@ -235,7 +235,7 @@ public class EmailSmsService
 		emailTo.add(emailIdTo);
 
 		Email email = new Email();
-		email.setFrom(emailIdFrom);
+		//email.setFrom(emailIdFrom);
 		email.setTo(emailTo);
 		email.setSubject(DetailsConstants.FAILURE_REG_EMAIL_SUBJECT);
 		email.setModel(wrapper);
@@ -265,7 +265,7 @@ public class EmailSmsService
 		logger.info(TAG + " emailToCustomerAndAmib :: subMakeDesc :" + subMakeDesc);
 		logger.info(TAG + " emailToCustomerAndAmib :: appSeqNumber :" + appSeqNumber);
 		
-		String emailIdFrom = metaData.getEmailFromConfigured();
+		//String emailIdFrom = metaData.getEmailFromConfigured();
 		String emailIdTo = userSession.getCustomerEmailId();
 		String customerMobileNumber = userSession.getCustomerMobileNumber();
 		String amibEmailId = metaData.getContactUsEmail();
@@ -292,7 +292,7 @@ public class EmailSmsService
 		emailTo.add(amibEmailId);
 
 		Email email = new Email();
-		email.setFrom(emailIdFrom);
+		//email.setFrom(emailIdFrom);
 		email.setTo(emailTo);
 		email.setSubject("Quote Request - "+appSeqNumber);
 		email.setModel(wrapper);

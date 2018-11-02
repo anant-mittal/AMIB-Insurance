@@ -30,7 +30,7 @@ public class MetaData implements Serializable
 
 	private String contactUsHelpLineNumber;
 
-	String emailFromConfigured;
+	//String emailFromConfigured;
 
 	private String amibWebsiteLink;
 
@@ -68,7 +68,7 @@ public class MetaData implements Serializable
 		this.amibWebsiteLink = amibWebsiteLink;
 	}
 
-	public String getEmailFromConfigured()
+	/*public String getEmailFromConfigured()
 	{
 		return emailFromConfigured;
 	}
@@ -76,7 +76,7 @@ public class MetaData implements Serializable
 	public void setEmailFromConfigured(String emailFromConfigured)
 	{
 		this.emailFromConfigured = emailFromConfigured;
-	}
+	}*/
 
 	public String getContactUsEmail()
 	{

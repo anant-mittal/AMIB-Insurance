@@ -76,7 +76,7 @@ public class CustomerRegistrationService
 			metaData.setCompCd(getCompanySetUp.get(0).getCompCd());
 			metaData.setContactUsHelpLineNumber(getCompanySetUp.get(0).getHelpLineNumber());
 			metaData.setContactUsEmail(getCompanySetUp.get(0).getEmail());
-			metaData.setEmailFromConfigured("");
+			//metaData.setEmailFromConfigured("");
 			metaData.setAmibWebsiteLink(getCompanySetUp.get(0).getWebSite());
 			metaData.setDecplc(getCompanySetUp.get(0).getDecimalPlaceUpTo());
 			metaData.setCompanyName(getCompanySetUp.get(0).getCompanyName());
