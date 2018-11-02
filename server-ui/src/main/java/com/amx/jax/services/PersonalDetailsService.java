@@ -158,7 +158,7 @@ public class PersonalDetailsService
 			}
 			
 			logger.info(TAG + " updateProfileDetails :: Email "+customerProfileDetailModelCheck.getEmail());
-			AmxApiResponse<?, Object> validateEOTP = otpService.validateEotp(eOtp, customerProfileDetailModelCheck.getEmail());
+			AmxApiResponse<?, Object> validateEOTP = otpService.validateEotp(eOtp, customerProfileUpdateRequest.getEmail());
 			if (null != validateEOTP)
 			{
 				return validateEOTP;
@@ -183,7 +183,7 @@ public class PersonalDetailsService
 				return mobileNumberExists;
 			}
 
-			AmxApiResponse<?, Object> validateMOTP = otpService.validateMotp(mOtp, customerProfileDetailModelCheck.getMobile());
+			AmxApiResponse<?, Object> validateMOTP = otpService.validateMotp(mOtp, customerProfileUpdateRequest.getMobile());
 			if (null != validateMOTP)
 			{
 				return validateMOTP;

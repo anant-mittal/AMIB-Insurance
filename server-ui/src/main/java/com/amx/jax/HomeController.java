@@ -3,6 +3,7 @@ package com.amx.jax;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -169,7 +170,8 @@ public class HomeController
 	@RequestMapping(value = { "/pub/terms" }, method = { RequestMethod.GET })
 	public String termsAndCondition(Model model)
 	{
-		ArrayList<String> termsInfo = new ArrayList<String>();
+		
+		Map<String, Object> modelData = new HashMap<String, Object>();
 		TreeMap<Integer, String> data = customizeQuoteService.getTermsAndConditionTest();
 
 		Iterator it = data.entrySet().iterator();
@@ -177,16 +179,14 @@ public class HomeController
 		{
 			Map.Entry pair = (Map.Entry) it.next();
 			System.out.println(pair.getKey() + " = " + pair.getValue());
-			termsInfo.add(pair.getValue().toString());
+			modelData.put(pair.getKey().toString(), pair.getValue().toString());
 			it.remove();
 		}
-
-		for (int i = 0; i < termsInfo.size(); i++)
-		{
-			System.out.println("HomeController :: termsAndCondition :: termsInfo  : " + termsInfo.get(i));
-		}
-
-		model.addAllAttributes(termsInfo);
+		
+		Map<String, Object> wrapper = new HashMap<String, Object>();
+		wrapper.put("data", modelData);
+		
+		model.addAllAttributes(wrapper);
 
 		return "terms";
 	}
@@ -199,5 +199,4 @@ public class HomeController
 			customerRegistrationService.getCompanySetUp();
 		}
 	}
-
 }
