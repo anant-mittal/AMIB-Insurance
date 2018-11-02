@@ -172,7 +172,7 @@ public class HomeController
 	public String termsAndCondition(Model model)
 	{
 		JSONObject dataJson = new JSONObject();
-		JSONObject termsDataJson = new JSONObject();
+		ArrayList<String> dataList = new ArrayList<>();
 		try
 		{
 			TreeMap<Integer, String> data = customizeQuoteService.getTermsAndConditionTest();
@@ -181,10 +181,10 @@ public class HomeController
 			{
 				Map.Entry pair = (Map.Entry) it.next();
 				System.out.println(pair.getKey() + " = " + pair.getValue());
-				termsDataJson.put(pair.getKey().toString(), pair.getValue().toString());
+				dataList.add(pair.getValue().toString());
 				it.remove();
 			}
-			dataJson.put("data", termsDataJson);
+			dataJson.put("data", dataList);
 			System.out.println("HomeController :: termsAndCondition :: dataJson :" + dataJson.toString());
 			model.addAttribute(dataJson);
 			System.out.println("HomeController :: termsAndCondition :: model :" + model.asMap());
