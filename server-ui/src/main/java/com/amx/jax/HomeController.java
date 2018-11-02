@@ -3,14 +3,15 @@ package com.amx.jax;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-import javax.servlet.http.HttpServletRequest;
 
-import org.json.JSONObject;
+import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -193,8 +194,12 @@ public class HomeController
 		{
 			e.printStackTrace();
 		}
+
+		model.addAllAttributes(termsInfo);
+
 		return "terms";
 	}
+
 
 	public void laguageSetUp()
 	{
@@ -204,4 +209,5 @@ public class HomeController
 			customerRegistrationService.getCompanySetUp();
 		}
 	}
+
 }

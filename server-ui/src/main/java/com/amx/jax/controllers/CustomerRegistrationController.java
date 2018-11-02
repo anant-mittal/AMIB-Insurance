@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.Message;
+import com.amx.jax.constants.MessageKey;
 import com.amx.jax.models.ChangePasswordOtpRequest;
 import com.amx.jax.models.ChangePasswordRequest;
 import com.amx.jax.models.ChangePasswordResponse;
@@ -56,7 +57,7 @@ public class CustomerRegistrationController
 	
 	@Autowired
 	UserSession userSession;
-	
+
 	@Autowired
 	private CustomerRegistrationService customerRegistrationService;
 
@@ -181,11 +182,11 @@ public class CustomerRegistrationController
 		resp.setMessageKey(Message.LOGOUT_MESSAGE);
 		handleSession();
 		
-		
 		return resp;
 	}
 	
 	
+
 	@RequestMapping(value = "/pub/reg/sms-email-test", method = RequestMethod.POST, produces = "application/json")
 	public String testEmailPostman()
 	{
@@ -198,15 +199,14 @@ public class CustomerRegistrationController
 
 		emailSmsService.sendEmailOtp("abhishektiwaribecse@gmail.com");
 		emailSmsService.sendMobileOtp("8796589233");
-		emailSmsService.emailTosuccessFullUserRegistration("abhishektiwaribecse@gmail.com");
+
+		/*emailSmsService.emailTosuccessFullUserRegistration("abhishektiwaribecse@gmail.com");
 		RequestOtpModel r = new RequestOtpModel();
 		r.setCivilId("282071300105");
 		r.setEmailId("abhishektiwaribecse@gmail.com");
 		r.setMobileNumber("8796589233");
-		emailSmsService.sendFailedRegEmail(r);
-		// emailSmsService.emailToCustomerAndAmib("Make - Hona", "Submake -
-		// kawasaki", "https://www.cricbuzz.com/");
-
+		emailSmsService.sendFailedRegEmail(r);*/
+		
 		return "Done";
 	}
 
