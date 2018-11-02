@@ -19,9 +19,9 @@ import com.amx.jax.models.MetaData;
 import com.amx.jax.models.MyQuoteModel;
 import com.amx.jax.models.QuotationDetails;
 import com.amx.jax.models.QuoteAddPolicyDetails;
-import com.amx.jax.models.RegSession;
 import com.amx.jax.models.ReplacementTypeList;
 import com.amx.jax.models.TotalPremium;
+import com.amx.jax.ui.session.UserSession;
 
 @Service
 public class MyQuotesService
@@ -31,10 +31,10 @@ public class MyQuotesService
 	private static final Logger logger = LoggerFactory.getLogger(MyQuotesService.class);
 
 	@Autowired
-	RegSession regSession;
-
-	@Autowired
 	MetaData metaData;
+	
+	@Autowired
+	UserSession userSession;
 
 	@Autowired
 	private MyQuoteDao myQuoteDao;
@@ -45,7 +45,7 @@ public class MyQuotesService
 		try
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
-			resp.setResults(myQuoteDao.getUserQuote());
+			resp.setResults(myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber()));
 		}
 		catch (Exception e)
 		{

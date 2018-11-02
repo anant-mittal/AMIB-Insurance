@@ -23,7 +23,6 @@ import com.amx.jax.models.CustomerLoginModel;
 import com.amx.jax.models.CustomerRegistrationModel;
 import com.amx.jax.models.FailureException;
 import com.amx.jax.models.MetaData;
-import com.amx.jax.models.RegSession;
 import com.amx.jax.models.Validate;
 import oracle.jdbc.OracleTypes;
 
@@ -40,9 +39,9 @@ public class CustomerRegistrationDao
 	@Autowired
 	MetaData metaData;
 
-	@Autowired
-	RegSession regSession;
-
+	
+	
+	
 	Connection connection;
 
 	public ArrayList<CompanySetUp> getCompanySetUp(BigDecimal langId)
@@ -139,7 +138,7 @@ public class CustomerRegistrationDao
 		return false;
 	}
 
-	public boolean isCivilIdExist(String civilid)
+	public boolean isCivilIdExist(String civilid , String userType)
 	{
 
 		getConnection();
@@ -150,13 +149,17 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callFunction);
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
-			callableStatement.setBigDecimal(2, regSession.getCountryId());
-			callableStatement.setBigDecimal(3, regSession.getCompCd());
-			callableStatement.setString(4, regSession.getUserType());
+			logger.info(TAG + " isCivilIdExist :: metaData.getCivilId    :" + metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCountryId());
+			logger.info(TAG + " isCivilIdExist :: metaData.getCivilId    :" + metaData.getCompCd());
+			callableStatement.setBigDecimal(3, metaData.getCompCd());
+			logger.info(TAG + " isCivilIdExist :: userType    :" + userType);
+			callableStatement.setString(4, userType);
 			callableStatement.setString(5, civilid);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
-
+			logger.info(TAG + " isCivilIdExist :: result    :" + result);
+			
 			if (result.equalsIgnoreCase("Y"))
 			{
 				return true;
@@ -221,7 +224,7 @@ public class CustomerRegistrationDao
 		return validate;
 	}
 
-	public boolean isMobileNumberExist(String mobilenumber)
+	public boolean isMobileNumberExist(String mobilenumber , String userType)
 	{
 
 		getConnection();
@@ -234,7 +237,7 @@ public class CustomerRegistrationDao
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
 			callableStatement.setBigDecimal(2, metaData.getCountryId());
 			callableStatement.setBigDecimal(3, metaData.getCompCd());
-			callableStatement.setString(4, metaData.getUserType());
+			callableStatement.setString(4, userType);
 			callableStatement.setString(5, mobilenumber);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
@@ -259,7 +262,7 @@ public class CustomerRegistrationDao
 		return false;
 	}
 
-	public boolean isEmailIdExist(String email)
+	public boolean isEmailIdExist(String email , String userType)
 	{
 
 		getConnection();
@@ -272,7 +275,7 @@ public class CustomerRegistrationDao
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
 			callableStatement.setBigDecimal(2, metaData.getCountryId());
 			callableStatement.setBigDecimal(3, metaData.getCompCd());
-			callableStatement.setString(4, metaData.getUserType());
+			callableStatement.setString(4, userType);
 			callableStatement.setString(5, email);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
@@ -297,7 +300,7 @@ public class CustomerRegistrationDao
 		return false;
 	}
 
-	public boolean isOtpEnabled(String civilId)
+	public boolean isOtpEnabled(String civilId , String userType)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -309,7 +312,7 @@ public class CustomerRegistrationDao
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
 			callableStatement.setBigDecimal(2, metaData.getCountryId());
 			callableStatement.setBigDecimal(3, metaData.getCompCd());
-			callableStatement.setString(4, metaData.getUserType());
+			callableStatement.setString(4, userType);
 			callableStatement.setString(5, civilId);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
@@ -334,7 +337,7 @@ public class CustomerRegistrationDao
 		return false;
 	}
 
-	public Validate setOtpCount(String civilId)
+	public Validate setOtpCount(String civilId , String userType)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -346,7 +349,7 @@ public class CustomerRegistrationDao
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
-			callableStatement.setString(3, metaData.getUserType());
+			callableStatement.setString(3, userType);
 			callableStatement.setString(4, civilId);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -411,7 +414,7 @@ public class CustomerRegistrationDao
 			callableStatement.setString(7, "");
 			callableStatement.setString(8, emailId);
 			callableStatement.setString(9, "");
-			callableStatement.setBigDecimal(10, regSession.getLanguageId());
+			callableStatement.setBigDecimal(10, metaData.getLanguageId());
 			callableStatement.setString(11, deviceType);
 			callableStatement.setDate(12, getCurrentDate());
 			callableStatement.setString(13, createdDeviceId);
@@ -450,7 +453,7 @@ public class CustomerRegistrationDao
 		return customerRegistrationModel;
 	}
 
-	public CustomerDetailModel getUserDetails(String civilId)
+	public CustomerDetailModel getUserDetails(String civilId , String userType , BigDecimal userSeqNum)
 	{
 		getConnection();
 		CustomerDetailModel customerDetailModel = null;
@@ -464,10 +467,10 @@ public class CustomerRegistrationDao
 
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
-			callableStatement.setString(3, metaData.getUserType());
+			callableStatement.setString(3, userType);
 			callableStatement.setString(4, civilId);
 			callableStatement.setBigDecimal(5, metaData.getLanguageId());
-			callableStatement.setBigDecimal(6, metaData.getUserSequenceNumber());
+			callableStatement.setBigDecimal(6, userSeqNum);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(9, java.sql.Types.INTEGER);
@@ -523,7 +526,7 @@ public class CustomerRegistrationDao
 		return customerDetailModel;
 	}
 
-	public CustomerLoginModel validateUserLogin(CustomerLoginModel customerLoginModel)
+	public CustomerLoginModel validateUserLogin(CustomerLoginModel customerLoginModel , String userType)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -533,13 +536,13 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setBigDecimal(1, regSession.getCountryId());
-			callableStatement.setBigDecimal(2, regSession.getCompCd());
-			callableStatement.setString(3, regSession.getUserType());
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setString(3, userType);
 			callableStatement.setString(4, customerLoginModel.getCivilId());
 			callableStatement.setString(5, customerLoginModel.getPassword());
-			callableStatement.setString(6, regSession.getDeviceId());
-			callableStatement.setString(7, regSession.getDeviceType());
+			callableStatement.setString(6, metaData.getDeviceId());
+			callableStatement.setString(7, metaData.getDeviceType());
 			callableStatement.registerOutParameter(8, java.sql.Types.INTEGER);
 			callableStatement.registerOutParameter(9, java.sql.Types.INTEGER);
 			callableStatement.registerOutParameter(10, java.sql.Types.VARCHAR);
@@ -578,32 +581,18 @@ public class CustomerRegistrationDao
 		return customerLoginModel;
 	}
 
-	public CustomerDetailModel updatePassword(CustomerDetailModel customerDetailModel)
+	public CustomerDetailModel updatePassword(CustomerDetailModel customerDetailModel , String civilId , String userType)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_RESET_PWD(?,?,?,?,?,?,?,?,?,?,?,?)}";
-		String civilId = "";
-
+		
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-
-			logger.info(TAG + " updatePassword :: regSession.getCivilId    :" + regSession.getCivilId());
-			logger.info(TAG + " updatePassword :: metadata.getCivilId      :" + metaData.getCivilId());
-
-			if (null != regSession.getCivilId() && !regSession.getCivilId().equals(""))
-			{
-				civilId = regSession.getCivilId();
-			}
-			else if (null != metaData.getCivilId() && !metaData.getCivilId().equals(""))
-			{
-				civilId = metaData.getCivilId();
-			}
-
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
-			callableStatement.setString(3, metaData.getUserType());
+			callableStatement.setString(3, userType);
 			callableStatement.setString(4, civilId);
 			callableStatement.setString(5, customerDetailModel.getPassword());
 			callableStatement.setBigDecimal(6, null);

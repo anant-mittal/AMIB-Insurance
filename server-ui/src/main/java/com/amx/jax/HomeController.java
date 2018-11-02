@@ -3,12 +3,14 @@ package com.amx.jax;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-
 import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +22,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.amx.jax.AppConfig;
 import com.amx.jax.WebConfig;
 import com.amx.jax.api.AmxApiResponse;
-import com.amx.jax.models.RegSession;
+import com.amx.jax.constants.ApiConstants;
+import com.amx.jax.constants.Message;
+import com.amx.jax.models.ActivePolicyModel;
+import com.amx.jax.models.MetaData;
 import com.amx.jax.rest.RestService;
 import com.amx.jax.service.HttpService;
 import com.amx.jax.services.CustomerRegistrationService;
 import com.amx.jax.services.CustomizeQuoteService;
+import com.amx.jax.ui.response.ResponseMessage;
+import com.amx.jax.ui.response.ResponseWrapper;
+import com.amx.jax.ui.response.WebResponseStatus;
+import com.amx.jax.ui.session.UIConstants;
+import com.amx.jax.ui.session.UserSession;
 import com.amx.utils.JsonUtil;
 import io.swagger.annotations.Api;
 
@@ -43,7 +53,7 @@ public class HomeController
 	/** The web app config. */
 	@Autowired
 	private WebConfig webConfig;
-	
+
 	@Autowired
 	private AppConfig appConfig;
 
@@ -55,7 +65,7 @@ public class HomeController
 	RestService restService;
 
 	@Autowired
-	RegSession regSession;
+	private MetaData metaData;
 
 	/** The check time. */
 	private long checkTime = 0L;
@@ -65,9 +75,12 @@ public class HomeController
 
 	@Autowired
 	private CustomerRegistrationService customerRegistrationService;
-	
+
 	@Autowired
 	private CustomizeQuoteService customizeQuoteService;
+
+	@Autowired
+	UserSession userSession;
 
 	/**
 	 * Gets the version.
@@ -104,44 +117,37 @@ public class HomeController
 	@ResponseBody
 	public String loginPing(HttpServletRequest request)
 	{
-		System.out.println("HomeController :: defaultPage :: getLanguage : " + httpService.getLanguage());
+		System.out.println("HomeController :: loginPing :: getLanguage : " + httpService.getLanguage());
 		AmxApiResponse<Object, Object> wrapper = new AmxApiResponse<Object, Object>();
 		return JsonUtil.toJson(wrapper);
 	}
 
-	/**
-	 * Login J page.
-	 *
-	 * @param model
-	 *            the model
-	 * @return the string
-	 */
+	//@Timed
 	@RequestMapping(value = "/login/**", method = { RequestMethod.GET })
 	public String loginJPage(Model model)
 	{
-		System.out.println("HomeController :: defaultPage :: getLanguage : " + httpService.getLanguage());
+		System.out.println("HomeController :: loginJPage 1 :: getLanguage : " + httpService.getLanguage());
 		model.addAttribute("lang", httpService.getLanguage());
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
 		model.addAttribute("cdnUrl", appConfig.getCdnURL());
 		model.addAttribute("cdnVerion", getVersion());
+		//model.addAttribute(AppConstants.DEVICE_ID_KEY, userDevice.getFingerprint());
+		//model.addAttribute("fcmSenderId", fcmSenderId);
 		return "app";
 	}
 
-	/**
-	 * Login P json.
-	 *
-	 * @return the string
-	 */
 	@RequestMapping(value = "/login/**", method = { RequestMethod.GET, RequestMethod.POST }, headers = { "Accept=application/json", "Accept=application/v0+json" })
 	@ResponseBody
 	public String loginPJson()
 	{
-		System.out.println("HomeController :: defaultPage :: getLanguage : " + httpService.getLanguage());
-		AmxApiResponse<Object, Object> wrapper = new AmxApiResponse<Object, Object>();
-		// wrapper.setMessage(WebResponseStatus.UNAUTHORIZED,
-		// ResponseMessage.UNAUTHORIZED);
+		System.out.println("HomeController :: loginJPage 2 :: getLanguage : " + httpService.getLanguage());
+		ResponseWrapper<Object> wrapper = new ResponseWrapper<Object>(null);
+		wrapper.setMessage(WebResponseStatus.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED);
+		System.out.println("HomeController :: loginJPage 2 :: JsonUtil.toJson(wrapper): " + JsonUtil.toJson(wrapper));
+		
 		return JsonUtil.toJson(wrapper);
 	}
+		
 
 	/**
 	 * Default page.
@@ -158,40 +164,44 @@ public class HomeController
 		model.addAttribute("cdnUrl", appConfig.getCdnURL());
 		model.addAttribute("cdnVerion", getVersion());
 
-		if (httpService.getLanguage().toString().equalsIgnoreCase("EN"))
-		{
-			regSession.setLanguageId(new BigDecimal(0));
-		}
-		
-		customerRegistrationService.getCompanySetUp();
+		laguageSetUp();
 		return "app";
 	}
-	
-	
-	@RequestMapping(value = {"/pub/terms" }, method = { RequestMethod.GET })
+
+	@RequestMapping(value = { "/pub/terms" }, method = { RequestMethod.GET })
 	public String termsAndCondition(Model model)
 	{
-		ArrayList<String> termsInfo = new ArrayList<String>();
-		TreeMap<Integer,String> data =  customizeQuoteService.getTermsAndConditionTest();
-
-		Iterator it = data.entrySet().iterator();
-	    while (it.hasNext()) 
-	    {
-	        Map.Entry pair = (Map.Entry)it.next();
-	        System.out.println(pair.getKey() + " = " + pair.getValue());
-	        termsInfo.add(pair.getValue().toString());
-	        it.remove();
-	    }
-		
-		for(int i = 0; i < termsInfo.size() ; i++)
+		JSONObject dataJson = new JSONObject();
+		JSONObject termsDataJson = new JSONObject();
+		try
 		{
-			System.out.println("HomeController :: termsAndCondition :: termsInfo  : " + termsInfo.get(i));
+			TreeMap<Integer, String> data = customizeQuoteService.getTermsAndConditionTest();
+			Iterator it = data.entrySet().iterator();
+			while (it.hasNext())
+			{
+				Map.Entry pair = (Map.Entry) it.next();
+				System.out.println(pair.getKey() + " = " + pair.getValue());
+				termsDataJson.put(pair.getKey().toString(), pair.getValue().toString());
+				it.remove();
+			}
+			dataJson.put("data", termsDataJson);
+			System.out.println("HomeController :: termsAndCondition :: dataJson :" + dataJson.toString());
+			model.addAttribute(dataJson);
+			System.out.println("HomeController :: termsAndCondition :: model :" + model.asMap());
 		}
-		
-		model.addAllAttributes(termsInfo);
-		
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 		return "terms";
 	}
-	
-	
+
+	public void laguageSetUp()
+	{
+		if (httpService.getLanguage().toString().equalsIgnoreCase("EN"))
+		{
+			metaData.setLanguageId(new BigDecimal(0));
+			customerRegistrationService.getCompanySetUp();
+		}
+	}
 }

@@ -18,4 +18,6 @@ public class ApiConstants
 
 	public static String DUPLICATE = "409";
 
+	public static String AUTHORIZATION_FAILURE = "AUTHORIZATION_FAILURE";
+	
 }

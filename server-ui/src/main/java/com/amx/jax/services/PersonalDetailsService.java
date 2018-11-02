@@ -16,8 +16,8 @@ import com.amx.jax.models.CustomerProfileUpdateRequest;
 import com.amx.jax.models.CustomerProfileUpdateResponse;
 import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.MetaData;
-import com.amx.jax.models.RegSession;
 import com.amx.jax.models.Validate;
+import com.amx.jax.ui.session.UserSession;
 
 @Service
 public class PersonalDetailsService
@@ -34,12 +34,12 @@ public class PersonalDetailsService
 
 	@Autowired
 	private CustomerRegistrationService customerRegistrationService;
-
-	@Autowired
-	RegSession regSession;
-
+	
 	@Autowired
 	MetaData metaData;
+	
+	@Autowired
+	UserSession userSession;
 
 	@Autowired
 	private EmailSmsService otpService;
@@ -50,7 +50,7 @@ public class PersonalDetailsService
 		CustomerProfileDetailResponse customerProfileDetailResponse = new CustomerProfileDetailResponse();
 		CustomerProfileDetailModel customerProfileDetailModel = new CustomerProfileDetailModel();
 
-		customerProfileDetailModel = personalDetailsDao.getProfileDetails();
+		customerProfileDetailModel = personalDetailsDao.getProfileDetails(userSession.getCivilId() , userSession.getUserType() , userSession.getCustomerSequenceNumber());
 
 		customerProfileDetailResponse.setAreaCode(customerProfileDetailModel.getAreaCode());
 		customerProfileDetailResponse.setAreaDesc(customerProfileDetailModel.getAreaDesc());
@@ -89,7 +89,7 @@ public class PersonalDetailsService
 		CustomerProfileDetailModel customerProfileDetailModel = new CustomerProfileDetailModel();
 		CustomerProfileDetailModel customerProfileDetailModelCheck = new CustomerProfileDetailModel();
 		CustomerProfileUpdateResponse customerProfileUpdateResponse = new CustomerProfileUpdateResponse();
-		customerProfileDetailModelCheck = personalDetailsDao.getProfileDetails();
+		customerProfileDetailModelCheck = personalDetailsDao.getProfileDetails(userSession.getCivilId() , userSession.getUserType() , userSession.getCustomerSequenceNumber());
 		if (null != customerProfileUpdateRequest.getIdExpiryDate())
 		{
 			String dateFromDb = customerProfileUpdateRequest.getIdExpiryDate();
@@ -158,7 +158,7 @@ public class PersonalDetailsService
 			}
 			
 			logger.info(TAG + " updateProfileDetails :: Email "+customerProfileDetailModelCheck.getEmail());
-			AmxApiResponse<?, Object> validateEOTP = otpService.validateEotp(eOtp, customerProfileDetailModelCheck.getEmail());
+			AmxApiResponse<?, Object> validateEOTP = otpService.validateEotp(eOtp, customerProfileUpdateRequest.getEmail());
 			if (null != validateEOTP)
 			{
 				return validateEOTP;
@@ -183,7 +183,7 @@ public class PersonalDetailsService
 				return mobileNumberExists;
 			}
 
-			AmxApiResponse<?, Object> validateMOTP = otpService.validateMotp(mOtp, customerProfileDetailModelCheck.getMobile());
+			AmxApiResponse<?, Object> validateMOTP = otpService.validateMotp(mOtp, customerProfileUpdateRequest.getMobile());
 			if (null != validateMOTP)
 			{
 				return validateMOTP;
@@ -201,7 +201,9 @@ public class PersonalDetailsService
 		customerProfileDetailModel.setMobile(customerProfileUpdateRequest.getMobile());
 		customerProfileDetailModel.setEmail(customerProfileUpdateRequest.getEmail());
 		
-		customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel);
+		customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel , userSession.getCivilId() , userSession.getUserType() , userSession.getCustomerSequenceNumber());
+		userSession.setCustomerSequenceNumber(customerProfileDetailModel.getCustSequenceNumber());
+		
 		customerProfileUpdateResponse.setStatus(customerProfileDetailModel.getStatus());
 		customerProfileUpdateResponse.setErrorCode(customerProfileDetailModel.getErrorCode());
 		customerProfileUpdateResponse.setErrorMessage(customerProfileDetailModel.getErrorMessage());

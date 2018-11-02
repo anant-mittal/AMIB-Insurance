@@ -1,3 +1,4 @@
+
 package com.amx.jax.services;
 
 import java.math.BigDecimal;
@@ -9,10 +10,10 @@ import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.models.ActivePolicyModel;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.PersonalDetails;
-import com.amx.jax.models.RegSession;
 import com.amx.jax.models.RequestQuoteInfo;
 import com.amx.jax.models.RequestQuoteModel;
 import com.amx.jax.models.VehicleDetails;
+import com.amx.jax.ui.session.UserSession;
 import com.amx.jax.dao.MyPolicyDao;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +26,11 @@ public class MyPolicyService
 	private static final Logger logger = LoggerFactory.getLogger(MyPolicyService.class);
 
 	@Autowired
-	RegSession regSession;
-
-	@Autowired
 	MetaData metaData;
 
+	@Autowired
+	UserSession userSession;
+	
 	@Autowired
 	private MyPolicyDao myPolicyDao;
 	
@@ -38,10 +39,12 @@ public class MyPolicyService
 
 	public AmxApiResponse<ActivePolicyModel, Object> getUserActivePolicy()
 	{
+		logger.info(TAG + " MyPolicyService ::");
+		
 		AmxApiResponse<ActivePolicyModel, Object> resp = new AmxApiResponse<ActivePolicyModel, Object>();
 		try
 		{
-			resp.setResults(myPolicyDao.getUserActivePolicy());
+			resp.setResults(myPolicyDao.getUserActivePolicy(userSession.getUserAmibCustRef(), userSession.getCivilId() , userSession.getUserType() , userSession.getCustomerSequenceNumber()));
 			resp.setStatusKey(ApiConstants.SUCCESS);
 			
 		}
@@ -62,56 +65,85 @@ public class MyPolicyService
 		logger.info(TAG + " getRenewPolicyDetails :: oldDocNumber :" + oldDocNumber);
 
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
-		
 		try
 		{
-			
 			AmxApiResponse<?, Object> respPersonalDetails = requestQuoteService.getProfileDetails();
+			logger.info(TAG + " getRenewPolicyDetails :: respPersonalDetails :" + respPersonalDetails.getStatusKey());
 			if (respPersonalDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 			{
 				return respPersonalDetails;
 			}
 			else
 			{
-				AmxApiResponse<?, Object> setPersonalDetails = requestQuoteService.setProfileDetails(appSeqNumber, (PersonalDetails) respPersonalDetails.getData());
-				if (setPersonalDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				AmxApiResponse<?, Object> getVehicleDetails = requestQuoteService.getRenewPolicyVehicleDetails(oldDocNumber);
+				logger.info(TAG + " getRenewPolicyDetails :: getVehicleDetails :" + getVehicleDetails.getStatusKey());
+				if (getVehicleDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 				{
-					return setPersonalDetails;
-				}
-			}
-			
-			AmxApiResponse<?, Object> getVehicleDetails = requestQuoteService.getRenewPolicyVehicleDetails(oldDocNumber);
-			if (getVehicleDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-			{
-				return getVehicleDetails;
-			}
-			else
-			{
-				if (null != getVehicleDetails.getMeta())
-				{
-					insuranceCompCode = (BigDecimal) getVehicleDetails.getMeta();
-					logger.info(TAG + " getRenewPolicyDetails :: insuranceCompCode :" + insuranceCompCode);
-				}
-
-				AmxApiResponse<?, Object> submitVehicleDetails = requestQuoteService.setAppVehicleDetails(appSeqNumber, (VehicleDetails) getVehicleDetails.getData(), oldDocNumber);
-				if (submitVehicleDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-				{
-					return submitVehicleDetails;
+					return getVehicleDetails;
 				}
 				else
 				{
-					RequestQuoteModel requestQuoteModel = (RequestQuoteModel) submitVehicleDetails.getData();
-					RequestQuoteInfo requestQuoteInfo = requestQuoteModel.getRequestQuoteInfo();
-					appSeqNumber = requestQuoteInfo.getAppSeqNumber();
-					logger.info(TAG + " getRenewPolicyDetails :: appSeqNumber1 :" + appSeqNumber);
-				}
+					if (null != getVehicleDetails.getMeta())
+					{
+						insuranceCompCode = (BigDecimal) getVehicleDetails.getMeta();
+						logger.info(TAG + " getRenewPolicyDetails :: insuranceCompCode :" + insuranceCompCode);
+					}
 
-				AmxApiResponse<?, Object> updateInsuranceProvider = requestQuoteService.updateInsuranceProvider(appSeqNumber, insuranceCompCode);
-				if (updateInsuranceProvider.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-				{
-					return updateInsuranceProvider;
+					AmxApiResponse<?, Object> submitVehicleDetails = requestQuoteService.setAppVehicleDetails(appSeqNumber, (VehicleDetails) getVehicleDetails.getData(), oldDocNumber);
+					logger.info(TAG + " getRenewPolicyDetails :: submitVehicleDetails :" + submitVehicleDetails.getStatusKey());
+					if (submitVehicleDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+					{
+						return submitVehicleDetails;
+					}
+					else
+					{
+						RequestQuoteModel requestQuoteModel = (RequestQuoteModel) submitVehicleDetails.getData();
+						RequestQuoteInfo requestQuoteInfo = requestQuoteModel.getRequestQuoteInfo();
+						appSeqNumber = requestQuoteInfo.getAppSeqNumber();
+						logger.info(TAG + " getRenewPolicyDetails :: appSeqNumber1 :" + appSeqNumber);
+					}
+					
+					AmxApiResponse<?, Object> setPersonalDetails = requestQuoteService.setProfileDetails(appSeqNumber, (PersonalDetails) respPersonalDetails.getData());
+					logger.info(TAG + " getRenewPolicyDetails :: setPersonalDetails :" + setPersonalDetails.getStatusKey());
+					if (setPersonalDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+					{
+						return setPersonalDetails;
+					}
+					
+					AmxApiResponse<?, Object> updateInsuranceProvider = requestQuoteService.updateInsuranceProvider(appSeqNumber, insuranceCompCode , userSession.getCivilId());
+					logger.info(TAG + " getRenewPolicyDetails :: updateInsuranceProvider :" + updateInsuranceProvider.getStatusKey());
+					if (updateInsuranceProvider.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+					{
+						return updateInsuranceProvider;
+					}
 				}
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
 			}
+			
+			
 		}
 		catch (Exception e)
 		{

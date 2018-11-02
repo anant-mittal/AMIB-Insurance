@@ -28,6 +28,12 @@ public class AuditActor {
 		this.actorType = actorType;
 		this.actorId = ArgUtil.parseAsString(bigDecimal);
 	}
+	
+	public AuditActor(ActorType actorType, String actorId) 
+	{
+		this.actorType = actorType;
+		this.actorId = actorId;
+	}
 
 	public ActorType getActorType() {
 		return actorType;

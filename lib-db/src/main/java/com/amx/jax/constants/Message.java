@@ -39,4 +39,5 @@ public class Message
 
 	public static String EMPTY_VEHICLE_DETAILS = "Vehicle Details Empty While Renewing Policy";
 	
+	public static String LOGOUT_MESSAGE = "user logged out successfully.";
 }

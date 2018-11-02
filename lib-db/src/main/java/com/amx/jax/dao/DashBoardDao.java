@@ -1,5 +1,6 @@
 package com.amx.jax.dao;
 
+import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 
@@ -28,7 +29,7 @@ public class DashBoardDao
 	MetaData metaData;
 	
 	
-	public IncompleteApplModel getIncompleteApplication()
+	public IncompleteApplModel getIncompleteApplication(String civilId, String userType , BigDecimal custSeqNum)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -42,9 +43,9 @@ public class DashBoardDao
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
-			callableStatement.setString(3, metaData.getUserType());
-			callableStatement.setString(4, metaData.getCivilId());
-			callableStatement.setBigDecimal(5, metaData.getCustomerSequenceNumber());
+			callableStatement.setString(3, userType);
+			callableStatement.setString(4, civilId);
+			callableStatement.setBigDecimal(5, custSeqNum);
 			callableStatement.registerOutParameter(6, java.sql.Types.INTEGER);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);

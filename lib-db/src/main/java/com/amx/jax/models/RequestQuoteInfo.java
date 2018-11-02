@@ -8,6 +8,18 @@ public class RequestQuoteInfo
 
 	private BigDecimal docNumber;
 	
+	private String applicationType;
+
+	public String getApplicationType()
+	{
+		return applicationType;
+	}
+
+	public void setApplicationType(String applicationType)
+	{
+		this.applicationType = applicationType;
+	}
+	
 	public BigDecimal getAppSeqNumber()
 	{
 		return appSeqNumber;

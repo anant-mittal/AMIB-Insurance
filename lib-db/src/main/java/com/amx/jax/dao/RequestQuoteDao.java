@@ -41,7 +41,6 @@ import com.amx.jax.models.VehicleDetails;
 import com.amx.jax.models.VehicleDetailsGetModel;
 import com.amx.jax.models.VehicleDetailsHeaderModel;
 import com.amx.jax.models.VehicleDetailsUpdateModel;
-import com.amx.jax.models.VehicleSession;
 import com.amx.jax.utility.Calc;
 
 import oracle.jdbc.OracleTypes;
@@ -60,11 +59,9 @@ public class RequestQuoteDao
 
 	@Autowired
 	MetaData metaData;
+	
 
-	@Autowired
-	VehicleSession vehicleSession;
-
-	public IncompleteApplModel getIncompleteApplication()
+	public IncompleteApplModel getIncompleteApplication(String civilId , String userType , BigDecimal custSeqNum)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -76,9 +73,9 @@ public class RequestQuoteDao
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
-			callableStatement.setString(3, metaData.getUserType());
-			callableStatement.setString(4, metaData.getCivilId());
-			callableStatement.setBigDecimal(5, metaData.getCustomerSequenceNumber());
+			callableStatement.setString(3, userType);
+			callableStatement.setString(4, civilId);
+			callableStatement.setBigDecimal(5, custSeqNum);
 			callableStatement.registerOutParameter(6, java.sql.Types.INTEGER);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
@@ -565,7 +562,7 @@ public class RequestQuoteDao
 		return arrayResponseModel;
 	}
 
-	public VehicleDetailsHeaderModel setVehicleDetailsHeader(BigDecimal appSeqNumber, VehicleDetails vehicleDetails, BigDecimal oldDocNumber)
+	public VehicleDetailsHeaderModel setVehicleDetailsHeader(BigDecimal appSeqNumber, VehicleDetails vehicleDetails, BigDecimal oldDocNumber , String civilId , BigDecimal custSeqNum , BigDecimal userSeqNum)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -587,14 +584,14 @@ public class RequestQuoteDao
 				callableStatement.setString(4, HardCodedValues.REN_POLICY);
 			}
 			callableStatement.setString(5, HardCodedValues.DOCATT);
-			callableStatement.setBigDecimal(6, metaData.getCustomerSequenceNumber());
+			callableStatement.setBigDecimal(6, custSeqNum);
 			callableStatement.setBigDecimal(7, vehicleDetails.getPolicyDuration());
 			callableStatement.setBigDecimal(8, oldDocNumber);
-			callableStatement.setBigDecimal(9, metaData.getUserSequenceNumber());
+			callableStatement.setBigDecimal(9, userSeqNum);
 			callableStatement.setString(10, HardCodedValues.ONLINE_LOC_CODE);
 			callableStatement.setString(11, metaData.getDeviceType());
 			callableStatement.setString(12, metaData.getDeviceId());
-			callableStatement.setString(13, metaData.getCivilId());
+			callableStatement.setString(13, civilId);
 			callableStatement.registerOutParameter(3, java.sql.Types.NUMERIC);
 			callableStatement.registerOutParameter(14, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(15, java.sql.Types.VARCHAR);
@@ -618,7 +615,7 @@ public class RequestQuoteDao
 		return vehicleDetailsHeaderModel;
 	}
 
-	public VehicleDetailsUpdateModel insUpdateVehicleDetails(BigDecimal appSeqNumber, VehicleDetails vehicleDetails)
+	public VehicleDetailsUpdateModel insUpdateVehicleDetails(BigDecimal appSeqNumber, VehicleDetails vehicleDetails, String civilId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -649,7 +646,7 @@ public class RequestQuoteDao
 			callableStatement.setBigDecimal(19, Calc.round(vehicleDetails.getVehicleValue(), metaData.getDecplc()));
 			callableStatement.setString(20, metaData.getDeviceType());
 			callableStatement.setString(21, metaData.getDeviceId());
-			callableStatement.setString(22, metaData.getCivilId());
+			callableStatement.setString(22, civilId);
 			callableStatement.registerOutParameter(23, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(24, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
@@ -859,7 +856,7 @@ public class RequestQuoteDao
 		return downloadImageModel;
 	}
 
-	public ImageModel uploadVehicleImage(MultipartFile file, BigDecimal appSeqNumber, String docTypeCode, BigDecimal docSeqNumber)
+	public ImageModel uploadVehicleImage(MultipartFile file, BigDecimal appSeqNumber, String docTypeCode, BigDecimal docSeqNumber , String civilId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -879,7 +876,7 @@ public class RequestQuoteDao
 			callableStatement.setString(7, file.getContentType().toString());
 			callableStatement.setString(8, metaData.getDeviceType());
 			callableStatement.setString(9, metaData.getDeviceId());
-			callableStatement.setString(10, metaData.getCivilId());
+			callableStatement.setString(10, civilId);
 			callableStatement.registerOutParameter(11, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(12, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(5, java.sql.Types.NUMERIC);
@@ -996,7 +993,7 @@ public class RequestQuoteDao
 		return "N";
 	}
 
-	public ArrayResponseModel updateInsuranceProvider(BigDecimal appSeqNumber, BigDecimal insuranceCompCode, String prefIndic)
+	public ArrayResponseModel updateInsuranceProvider(BigDecimal appSeqNumber, BigDecimal insuranceCompCode, String prefIndic , String civilId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -1013,7 +1010,7 @@ public class RequestQuoteDao
 			callableStatement.setString(5, prefIndic);
 			callableStatement.setString(6, metaData.getDeviceType());
 			callableStatement.setString(7, metaData.getDeviceId());
-			callableStatement.setString(8, metaData.getCivilId());
+			callableStatement.setString(8, civilId);
 			callableStatement.registerOutParameter(9, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(10, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
@@ -1031,7 +1028,7 @@ public class RequestQuoteDao
 		return arrayResponseModel;
 	}
 
-	public ArrayResponseModel submitRequestQuote(BigDecimal appSeqNumber)
+	public ArrayResponseModel submitRequestQuote(BigDecimal appSeqNumber , String civilId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -1046,7 +1043,7 @@ public class RequestQuoteDao
 			callableStatement.setBigDecimal(3, appSeqNumber);
 			callableStatement.setString(4, metaData.getDeviceType());
 			callableStatement.setString(5, metaData.getDeviceId());
-			callableStatement.setString(6, metaData.getCivilId());
+			callableStatement.setString(6, civilId);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
@@ -1065,7 +1062,7 @@ public class RequestQuoteDao
 		return arrayResponseModel;
 	}
 
-	public CustomerProfileDetailModel updateCustomerSequenceNumber(BigDecimal custSeqNumber, BigDecimal appSeqNumber)
+	public CustomerProfileDetailModel updateCustomerSequenceNumber(BigDecimal custSeqNumber, BigDecimal appSeqNumber , String civilId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -1081,7 +1078,7 @@ public class RequestQuoteDao
 			callableStatement.setBigDecimal(4, custSeqNumber);
 			callableStatement.setString(5, metaData.getDeviceType());
 			callableStatement.setString(6, metaData.getDeviceId());
-			callableStatement.setString(7, metaData.getCivilId());
+			callableStatement.setString(7, civilId);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(9, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();

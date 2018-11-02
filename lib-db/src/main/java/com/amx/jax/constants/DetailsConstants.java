@@ -37,6 +37,8 @@ public class DetailsConstants
 
 	public static String CONTACT_US_EMAIL = "contactUsEmail";
 
+	public static String CONTACT_US_MOBILE = "contactUsMobile";
+	
 	public static String AMIB_WEBSITE_LINK = "amibWebLink";
 
 	public static String REG_OTP_EMAIL_SUBJECT = "One Time Password (OTP)";
@@ -64,5 +66,7 @@ public class DetailsConstants
 	public static String EMAIL_OTP = "eOtp";
 
 	public static String MOBILE_OTP = "mOtp";
+	
+	public static String APPLICATION_ID = "applicationId";
 
 }

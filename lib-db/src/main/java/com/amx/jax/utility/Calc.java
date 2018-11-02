@@ -4,13 +4,7 @@ import java.math.BigDecimal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
-
-import com.amx.jax.models.MetaData;
-import com.amx.jax.models.RegSession;
-import com.amx.jax.rest.RestService;
 
 @Component
 public class Calc
