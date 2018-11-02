@@ -3,6 +3,7 @@ package com.amx.jax.ui.session;
 import java.math.BigDecimal;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -14,12 +15,16 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 
 import com.amx.jax.config.CustomerAuthProvider;
+import com.amx.jax.service.HttpService;
 
 @Component
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class UserSession
 {
 
+	@Autowired
+	private HttpService httpService;
+	
 	boolean valid;
 
 	private String referrer = null;
@@ -196,6 +201,11 @@ public class UserSession
 	{
 		return valid;
 	}
+	
+	public void setUserValid(boolean valid)
+	{
+		this.valid = valid;
+	}
 
 	public boolean validateSessionUnique()
 	{
@@ -230,4 +240,25 @@ public class UserSession
 	{
 		return referrer;
 	}
+	
+	
+	
+	public void unauthorize()
+	{
+		this.invalidate();
+	}
+	
+	public void invalidate()
+	{
+		SecurityContextHolder.getContext().setAuthentication(null);
+		HttpSession session = request.getSession(false);
+		SecurityContextHolder.clearContext();
+		session = request.getSession(false);
+		if (session != null)
+		{
+			session.invalidate();
+		}
+		httpService.clearSessionCookie();
+	}
+	
 }

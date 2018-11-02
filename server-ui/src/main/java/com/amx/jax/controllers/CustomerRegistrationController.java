@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import com.amx.jax.api.AmxApiResponse;
+import com.amx.jax.constants.ApiConstants;
+import com.amx.jax.constants.Message;
 import com.amx.jax.models.ChangePasswordOtpRequest;
 import com.amx.jax.models.ChangePasswordRequest;
 import com.amx.jax.models.ChangePasswordResponse;
@@ -166,7 +168,20 @@ public class CustomerRegistrationController
 		eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
 		return customerRegistrationService.changePasswordLogedInUser(eOtp, mOtp, changePasswordRequest);
 	}
-
+	
+	@RequestMapping(value = "/pub/login/log-out", method = RequestMethod.POST)
+	public AmxApiResponse<?, Object> logout()
+	{
+		handleSession();
+		userSession.unauthorize();
+		
+		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
+		resp.setStatusKey(ApiConstants.SUCCESS);
+		resp.setMessage(Message.LOGOUT_MESSAGE);
+		return resp;
+	}
+	
+	
 	@RequestMapping(value = "/pub/reg/sms-email-test", method = RequestMethod.POST, produces = "application/json")
 	public String testEmailPostman()
 	{
