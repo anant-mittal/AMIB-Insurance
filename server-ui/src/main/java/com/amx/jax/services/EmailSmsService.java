@@ -50,7 +50,7 @@ public class EmailSmsService
 
 	@Autowired
 	private PostManClient postManClient;
-
+	
 	@Autowired
 	private AppConfig appConfig;
 

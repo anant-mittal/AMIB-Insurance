@@ -56,7 +56,7 @@ public class CustomerRegistrationController
 	
 	@Autowired
 	UserSession userSession;
-
+	
 	@Autowired
 	private CustomerRegistrationService customerRegistrationService;
 

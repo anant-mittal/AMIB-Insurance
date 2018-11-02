@@ -867,8 +867,6 @@ public class RequestQuoteService
 			logger.info(TAG + " submitRequestQuote :: resp :" + resp.toString());
 			
 			
-			
-			
 		}
 		else
 		{

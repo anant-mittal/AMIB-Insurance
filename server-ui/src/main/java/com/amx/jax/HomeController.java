@@ -8,8 +8,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-
 import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -170,24 +171,28 @@ public class HomeController
 	@RequestMapping(value = { "/pub/terms" }, method = { RequestMethod.GET })
 	public String termsAndCondition(Model model)
 	{
-		
-		Map<String, Object> modelData = new HashMap<String, Object>();
-		TreeMap<Integer, String> data = customizeQuoteService.getTermsAndConditionTest();
-
-		Iterator it = data.entrySet().iterator();
-		while (it.hasNext())
+		JSONObject dataJson = new JSONObject();
+		JSONObject termsDataJson = new JSONObject();
+		try
 		{
-			Map.Entry pair = (Map.Entry) it.next();
-			System.out.println(pair.getKey() + " = " + pair.getValue());
-			modelData.put(pair.getKey().toString(), pair.getValue().toString());
-			it.remove();
+			TreeMap<Integer, String> data = customizeQuoteService.getTermsAndConditionTest();
+			Iterator it = data.entrySet().iterator();
+			while (it.hasNext())
+			{
+				Map.Entry pair = (Map.Entry) it.next();
+				System.out.println(pair.getKey() + " = " + pair.getValue());
+				termsDataJson.put(pair.getKey().toString(), pair.getValue().toString());
+				it.remove();
+			}
+			dataJson.put("data", termsDataJson);
+			System.out.println("HomeController :: termsAndCondition :: dataJson :" + dataJson.toString());
+			model.addAttribute(dataJson);
+			System.out.println("HomeController :: termsAndCondition :: model :" + model.asMap());
 		}
-		
-		Map<String, Object> wrapper = new HashMap<String, Object>();
-		wrapper.put("data", modelData);
-		
-		model.addAllAttributes(wrapper);
-
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 		return "terms";
 	}
 

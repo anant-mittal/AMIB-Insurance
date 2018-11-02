@@ -36,7 +36,7 @@ public class WebConfig {
 
 	public static final String APP_COMP = "${app.company.code}";
 
-	public static final String CONFIG_EMAIL = "${spring.mail.username}";
+	//public static final String CONFIG_EMAIL = "${spring.mail.username}";
 
 	@Value(APP_NAME)
 	@AppParamKey(AppParam.APP_NAME)
@@ -48,12 +48,12 @@ public class WebConfig {
 	@Value(APP_COMP)
 	private String appComp;
 
-	@Value(CONFIG_EMAIL)
+	/*@Value(CONFIG_EMAIL)
 	private String configEmail;
 
 	public String getConfigEmail() {
 		return configEmail;
-	}
+	}*/
 
 	public String getAppCompCode() {
 		return appComp;
