@@ -178,6 +178,10 @@ public class CustomerRegistrationController
 		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
 		resp.setStatusKey(ApiConstants.SUCCESS);
 		resp.setMessage(Message.LOGOUT_MESSAGE);
+		resp.setMessageKey(Message.LOGOUT_MESSAGE);
+		handleSession();
+		
+		
 		return resp;
 	}
 	
