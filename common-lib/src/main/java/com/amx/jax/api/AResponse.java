@@ -8,7 +8,7 @@ import com.amx.jax.exception.IExceptionEnum;
 import com.amx.utils.ArgUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public abstract class AResponse<T> {
+public abstract class AResponse<M> {
 
 	protected Long timestamp;
 
@@ -34,7 +34,7 @@ public abstract class AResponse<T> {
 	protected String statusKey = "SUCCESS";
 
 	// Amx Specs
-	protected T meta;
+	protected M meta;
 	protected List<AmxFieldError> errors = null;
 
 	public AResponse() {
@@ -54,8 +54,7 @@ public abstract class AResponse<T> {
 	/**
 	 * Sets the timestamp.
 	 *
-	 * @param timestamp
-	 *            the new timestamp
+	 * @param timestamp the new timestamp
 	 */
 	public void setTimestamp(Long timestamp) {
 		this.timestamp = timestamp;
@@ -99,8 +98,7 @@ public abstract class AResponse<T> {
 	/**
 	 * Sets the status key.
 	 *
-	 * @param statusKey
-	 *            the new status key
+	 * @param statusKey the new status key
 	 */
 	public void setStatusKey(String statusKey) {
 		this.statusKey = statusKey;
@@ -109,16 +107,16 @@ public abstract class AResponse<T> {
 	/**
 	 * Sets the status.
 	 *
-	 * @param status
-	 *            the new status
+	 * @param status the new status
 	 */
 	@JsonIgnore
 	public void setHttpStatus(HttpStatus status) {
 		if (status.is5xxServerError() || status.is4xxClientError() || status.is3xxRedirection()) {
 			this.statusKey = status.series().name();
+			this.error = status.getReasonPhrase();
 		}
 		this.status = ArgUtil.parseAsString(status.value());
-		this.message = status.getReasonPhrase();
+
 	}
 
 	/**
@@ -193,11 +191,11 @@ public abstract class AResponse<T> {
 		this.path = path;
 	}
 
-	public T getMeta() {
+	public M getMeta() {
 		return meta;
 	}
 
-	public void setMeta(T meta) {
+	public void setMeta(M meta) {
 		this.meta = meta;
 	}
 
@@ -213,8 +211,7 @@ public abstract class AResponse<T> {
 	/**
 	 * Sets the errors.
 	 *
-	 * @param errors
-	 *            the new errors
+	 * @param errors the new errors
 	 */
 	public void setErrors(List<AmxFieldError> errors) {
 		this.errors = errors;
