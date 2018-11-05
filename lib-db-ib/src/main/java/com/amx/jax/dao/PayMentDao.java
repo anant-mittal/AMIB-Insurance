@@ -53,22 +53,22 @@ public class PayMentDao
 			callableStatement.setBigDecimal(6, insertPaymentDetails.getCustSeqNum());
 			callableStatement.setString(7, insertPaymentDetails.getPaymentMethod());//Suggested By Ashok Sir
 			callableStatement.setBigDecimal(8, insertPaymentDetails.getPaymentAmount());
-			callableStatement.setString(9, insertPaymentDetails.getPaymentId());
-			callableStatement.setString(10, insertPaymentDetails.getPaymentToken());
-			callableStatement.setString(11, metaData.getDeviceType());
-			callableStatement.setString(12, metaData.getDeviceId());
-			callableStatement.setString(13, civilId);
-			callableStatement.registerOutParameter(14, java.sql.Types.NUMERIC);
-			callableStatement.registerOutParameter(15, java.sql.Types.VARCHAR);
-			callableStatement.registerOutParameter(16, java.sql.Types.VARCHAR);
+			//callableStatement.setString(9, insertPaymentDetails.getPaymentId());
+			//callableStatement.setString(10, insertPaymentDetails.getPaymentToken());
+			callableStatement.setString(9, metaData.getDeviceType());
+			callableStatement.setString(10, metaData.getDeviceId());
+			callableStatement.setString(11, civilId);
+			callableStatement.registerOutParameter(12, java.sql.Types.NUMERIC);
+			callableStatement.registerOutParameter(13, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(14, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
 			
-			insertPaymentDetails.setPaySeqNum(callableStatement.getBigDecimal(14));
-			insertPaymentDetails.setErrorCode(callableStatement.getString(15));
-			insertPaymentDetails.setErrorMessage(callableStatement.getString(16));
+			insertPaymentDetails.setPaySeqNum(callableStatement.getBigDecimal(12));
+			insertPaymentDetails.setErrorCode(callableStatement.getString(13));
+			insertPaymentDetails.setErrorMessage(callableStatement.getString(14));
 
-			logger.info(TAG + " insertPaymentDetals :: Error Code :" + callableStatement.getString(15));
-			logger.info(TAG + " insertPaymentDetals :: Error Msg  :" + callableStatement.getString(16));
+			logger.info(TAG + " insertPaymentDetals :: Error Code :" + callableStatement.getString(13));
+			logger.info(TAG + " insertPaymentDetals :: Error Msg  :" + callableStatement.getString(14));
 			
 		}
 		catch (Exception e)
