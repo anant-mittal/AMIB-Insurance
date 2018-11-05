@@ -64,7 +64,8 @@ public class PayMentController {
 			payment.setPgCode(PayGServiceCode.KNET);
 
 			PgRedirectUrl pgRedirectUrl = new PgRedirectUrl();
-			pgRedirectUrl.setRedirectUrl(payGService.getPaymentUrl(payment,"https://" + webConfig.getPaymentUrl() + "/app/landing/myquotes"));
+			//pgRedirectUrl.setRedirectUrl(payGService.getPaymentUrl(payment,"https://" + webConfig.getPaymentUrl() + "/app/landing/myquotes"));
+			pgRedirectUrl.setRedirectUrl(payGService.getPaymentUrl(payment,"https://amib.amxremit.com/app/landing/myquotes"));
 			pgRedirectUrl.setPaySeqNum(new BigDecimal("3"));
 			resp.setData(pgRedirectUrl);
 			resp.setStatusKey(ApiConstants.SUCCESS);
