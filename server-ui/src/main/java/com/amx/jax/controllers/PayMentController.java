@@ -1,8 +1,10 @@
 package com.amx.jax.controllers;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +27,7 @@ import com.amx.jax.payg.Payment;
 import com.amx.jax.payg.PaymentResponseDto;
 import com.amx.jax.services.PayMentService;
 
-@Controller
+@RestController
 public class PayMentController {
 	String TAG = "com.amx.jax.services :: PayMentController :: ";
 
@@ -46,11 +48,9 @@ public class PayMentController {
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
 		try 
 		{
-			AmxApiResponse<PaymentDetails, Object> respInsertPayment = payMentService.insertPaymentDetals(quoteSeqNum);
-			
-			PaymentDetails paymentDetails = respInsertPayment.getData();
-			
-			logger.info(TAG + " createApplication :: paymentDetails  :" + paymentDetails.toString());
+			//AmxApiResponse<PaymentDetails, Object> respInsertPayment = payMentService.insertPaymentDetals(quoteSeqNum);
+			//PaymentDetails paymentDetails = respInsertPayment.getData();
+			//logger.info(TAG + " createApplication :: paymentDetails  :" + paymentDetails.toString());
 			
 			Payment payment = new Payment();
 			payment.setDocFinYear(null);
@@ -76,7 +76,7 @@ public class PayMentController {
 	}
 
 	@RequestMapping(value = "/remit/save-remittance", method = { RequestMethod.POST })
-	public String onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse) 
+	public String onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse , HttpServletResponse response) 
 	{
 		String redirectUrl;
 		
@@ -118,6 +118,15 @@ public class PayMentController {
 			redirectUrl = webConfig.getAppUrl() + "app/landing/myquotes";
 			
 			logger.info(TAG + " onPaymentCallback :: redirectUrl  :" + redirectUrl);
+			
+			try 
+			{
+				response.sendRedirect(redirectUrl);
+			} 
+			catch (IOException e) 
+			{
+				e.printStackTrace();
+			}
 			
 			return redirectUrl;
 
