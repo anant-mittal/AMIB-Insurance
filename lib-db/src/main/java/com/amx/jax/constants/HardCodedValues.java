@@ -10,4 +10,6 @@ public class HardCodedValues
 	
 	public static String REN_POLICY = "REN";//Suggested By Ashok Sir For Header In Vehicle Details
 	
+	public static String PAYMENT_METHOD = "5";//Suggested By Ashok Sir
+	
 }

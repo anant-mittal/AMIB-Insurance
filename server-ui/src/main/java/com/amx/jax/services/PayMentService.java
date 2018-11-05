@@ -1,0 +1,268 @@
+package com.amx.jax.services;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.amx.jax.api.AmxApiResponse;
+import com.amx.jax.constants.ApiConstants;
+import com.amx.jax.constants.HardCodedValues;
+import com.amx.jax.dao.MyQuoteDao;
+import com.amx.jax.dao.PayMentDao;
+import com.amx.jax.dao.RequestQuoteDao;
+import com.amx.jax.models.ArrayResponseModel;
+import com.amx.jax.models.PaymentDetails;
+import com.amx.jax.models.PaymentReceiptModel;
+import com.amx.jax.models.Validate;
+import com.amx.jax.models.MetaData;
+import com.amx.jax.models.MyQuoteModel;
+import com.amx.jax.models.VehicleDetailsGetModel;
+import com.amx.jax.ui.session.UserSession;
+
+@Service
+public class PayMentService
+{
+	String TAG = "com.amx.jax.services :: PayMentService :: ";
+
+	private static final Logger logger = LoggerFactory.getLogger(PayMentService.class);
+	
+	@Autowired
+	MetaData metaData;
+	
+	@Autowired
+	PayMentDao payMentDao;
+	
+	@Autowired
+	UserSession userSession;
+	
+	@Autowired
+	private MyQuoteDao myQuoteDao;
+
+	public AmxApiResponse<PaymentDetails, Object> insertPaymentDetals(BigDecimal quoteSeqNum)
+	{
+		AmxApiResponse<PaymentDetails, Object> resp = new AmxApiResponse<PaymentDetails, Object>();
+		try
+		{
+			MyQuoteModel myQuoteModel = new MyQuoteModel();
+			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber());
+			for (int i = 0; i < getUserQuote.size(); i++)
+			{
+				MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
+				logger.info(TAG + " insertPaymentDetals :: myQuoteModelFromDb :" + myQuoteModelFromDb.toString());
+				if (null != quoteSeqNum && !quoteSeqNum.toString().equals(""))
+				{
+					if (null != myQuoteModelFromDb.getQuoteSeqNumber() && myQuoteModelFromDb.getQuoteSeqNumber().equals(quoteSeqNum))
+					{
+						myQuoteModel = myQuoteModelFromDb;
+					}
+				}
+			}
+			
+			logger.info(TAG + " insertPaymentDetals :: quoteSeqNum :" + quoteSeqNum);
+			logger.info(TAG + " insertPaymentDetals :: getAppSeqNumber :" + myQuoteModel.getAppSeqNumber());
+			logger.info(TAG + " insertPaymentDetals :: getVerNumber :" + myQuoteModel.getVerNumber());
+			
+			PaymentDetails insertPaymentDetails = new PaymentDetails();
+			insertPaymentDetails.setAppSeqNum(myQuoteModel.getAppSeqNumber());
+			insertPaymentDetails.setQuoteSeqNum(quoteSeqNum);
+			insertPaymentDetails.setQouteVerNum(myQuoteModel.getVerNumber());
+			insertPaymentDetails.setCustSeqNum(userSession.getCustomerSequenceNumber());
+			insertPaymentDetails.setPaymentAmount(new BigDecimal(450));
+			insertPaymentDetails.setPaymentId("12AB_PAY_ID");
+			insertPaymentDetails.setPaymentMethod(HardCodedValues.PAYMENT_METHOD);
+			insertPaymentDetails.setPaymentToken("12AB_PAY_TOKEN");
+			
+			PaymentDetails paymentDetails = payMentDao.insertPaymentDetals(insertPaymentDetails , userSession.getCivilId());
+			if(null == paymentDetails.getErrorCode())
+			{
+				resp.setData(paymentDetails);
+				logger.info(TAG + " insertPaymentDetals :: updatePaymentDetailRet :" + paymentDetails);
+			}
+			else
+			{
+				resp.setMessageKey(paymentDetails.getErrorCode());
+				resp.setStatusKey(ApiConstants.FAILURE);
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
+		return resp;
+	}
+	
+	
+	public AmxApiResponse<?, Object> updatePaymentDetals(PaymentDetails paymentDetails)
+	{
+		AmxApiResponse<PaymentDetails, Object> resp = new AmxApiResponse<PaymentDetails, Object>();
+		try
+		{
+			PaymentDetails updatePaymentDetailRet = payMentDao.updatePaymentDetals(paymentDetails , userSession.getCivilId());
+			logger.info(TAG + " insertPaymentDetals :: updatePaymentDetailRet :" + updatePaymentDetailRet.toString());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
+		return resp;
+	}
+	
+	
+	public AmxApiResponse<?, Object> cretaeAmibCust()
+	{
+		AmxApiResponse<PaymentDetails, Object> resp = new AmxApiResponse<PaymentDetails, Object>();
+		try
+		{
+			Validate validate = payMentDao.cretaeAmibCust(userSession.getCustomerSequenceNumber(), userSession.getCivilId());
+			if(null == validate.getErrorCode())
+			{
+				resp.setStatusKey(ApiConstants.SUCCESS);
+			}
+			else
+			{
+				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setMessageKey(validate.getErrorCode());
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
+		return resp;
+	}
+	
+	
+	public AmxApiResponse<?, Object> processReceipt(BigDecimal paySeqNum)
+	{
+		AmxApiResponse<PaymentDetails, Object> resp = new AmxApiResponse<PaymentDetails, Object>();
+		try
+		{
+			Validate validate = payMentDao.processReceipt(userSession.getCustomerSequenceNumber(), userSession.getCivilId() , paySeqNum);
+			if(null == validate.getErrorCode())
+			{
+				resp.setStatusKey(ApiConstants.SUCCESS);
+			}
+			else
+			{
+				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setMessageKey(validate.getErrorCode());
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
+		return resp;
+	}
+	
+	
+	public AmxApiResponse<?, Object> createAmibPolicy(BigDecimal paySeqNum)
+	{
+		AmxApiResponse<PaymentDetails, Object> resp = new AmxApiResponse<PaymentDetails, Object>();
+		try
+		{
+			Validate validate = payMentDao.createAmibPolicy(userSession.getCustomerSequenceNumber(), userSession.getCivilId() , paySeqNum);
+			if(null == validate.getErrorCode())
+			{
+				resp.setStatusKey(ApiConstants.SUCCESS);
+			}
+			else
+			{
+				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setMessageKey(validate.getErrorCode());
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
+		return resp;
+	}
+	
+	public AmxApiResponse<?, Object> preparePrintData(BigDecimal paySeqNum)
+	{
+		AmxApiResponse<PaymentDetails, Object> resp = new AmxApiResponse<PaymentDetails, Object>();
+		try
+		{
+			Validate validate = payMentDao.preparePrintData(paySeqNum);
+			if(null == validate.getErrorCode())
+			{
+				resp.setStatusKey(ApiConstants.SUCCESS);
+			}
+			else
+			{
+				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setMessageKey(validate.getErrorCode());
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
+		return resp;
+	}
+	
+	public AmxApiResponse<?, Object> paymentReceiptData(BigDecimal paySeqNum)
+	{
+		AmxApiResponse<PaymentReceiptModel, Object> resp = new AmxApiResponse<PaymentReceiptModel, Object>();
+		try
+		{
+			PaymentReceiptModel paymentReceiptModel = payMentDao.paymentReceiptData(paySeqNum);
+			if(null == paymentReceiptModel.getErrorCode())
+			{
+				resp.setData(paymentReceiptModel);
+				resp.setStatusKey(ApiConstants.SUCCESS);
+			}
+			else
+			{
+				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setMessageKey(paymentReceiptModel.getErrorCode());
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
+		return resp;
+	}
+	
+	
+	private static java.sql.Date getCurrentDate()
+	{
+		java.util.Date todayNew = null;
+
+		try
+		{
+			java.util.Date today = new java.util.Date();
+			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SS");
+			String strDate = sdf.format(today.getTime());
+			todayNew = sdf.parse(strDate);
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return new java.sql.Date(todayNew.getTime());
+	}
+
+	
+}

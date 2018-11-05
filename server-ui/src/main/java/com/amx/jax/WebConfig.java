@@ -37,6 +37,9 @@ public class WebConfig {
 	public static final String APP_COMP = "${app.company.code}";
 
 	//public static final String CONFIG_EMAIL = "${spring.mail.username}";
+	
+	public static final String PAYMENT_URL = "${jax.payment.url}";
+	
 
 	@Value(APP_NAME)
 	@AppParamKey(AppParam.APP_NAME)
@@ -55,6 +58,14 @@ public class WebConfig {
 		return configEmail;
 	}*/
 
+	@Value(PAYMENT_URL)
+	private String paymentUrl;
+
+	public String getPaymentUrl() 
+	{
+		return paymentUrl;
+	}
+	
 	public String getAppCompCode() {
 		return appComp;
 	}
@@ -62,6 +73,8 @@ public class WebConfig {
 	public String getAppTitle() {
 		return appTitle;
 	}
+	
+	
 
 	@Value(APP_PROD)
 	@AppParamKey(AppParam.APP_PROD)

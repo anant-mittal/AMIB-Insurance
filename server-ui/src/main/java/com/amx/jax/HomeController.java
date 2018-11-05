@@ -12,6 +12,8 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -194,9 +196,6 @@ public class HomeController
 		{
 			e.printStackTrace();
 		}
-
-		model.addAllAttributes(termsInfo);
-
 		return "terms";
 	}
 
