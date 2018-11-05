@@ -115,7 +115,7 @@ public class PayMentController {
 			logger.info(TAG + " onPaymentCallback :: paymentResponse  :" + paymentResponse.toString());
 			
 			
-			redirectUrl = webConfig.getAppUrl() + "app/landing/myquotes";
+			redirectUrl = "https://amib.amxremit.com/app/landing/myquotes";
 			
 			logger.info(TAG + " onPaymentCallback :: redirectUrl  :" + redirectUrl);
 			
