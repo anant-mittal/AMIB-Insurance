@@ -2,26 +2,21 @@
 package com.amx.jax.controllers;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.Message;
-import com.amx.jax.constants.MessageKey;
+import com.amx.jax.http.CommonHttpRequest;
 import com.amx.jax.models.ChangePasswordOtpRequest;
 import com.amx.jax.models.ChangePasswordRequest;
 import com.amx.jax.models.ChangePasswordResponse;
@@ -30,16 +25,11 @@ import com.amx.jax.models.CustomerLoginRequest;
 import com.amx.jax.models.CustomerRegistrationRequest;
 import com.amx.jax.models.CustomerRegistrationResponse;
 import com.amx.jax.models.MetaData;
-import com.amx.jax.models.Person;
 import com.amx.jax.models.RequestOtpModel;
 import com.amx.jax.models.Validate;
-import com.amx.jax.service.HttpService;
 import com.amx.jax.services.CustomerRegistrationService;
 import com.amx.jax.services.EmailSmsService;
-import com.amx.jax.ui.response.ResponseWrapper;
-import com.amx.jax.ui.response.WebResponseStatus;
 import com.amx.jax.ui.session.UserSession;
-import com.amx.jax.utility.CustomizeQuoteUtility;
 import com.amx.utils.ArgUtil;
 
 @RestController
@@ -50,7 +40,7 @@ public class CustomerRegistrationController
 	private static final Logger logger = LoggerFactory.getLogger(CustomerRegistrationController.class);
 	
 	@Autowired
-	HttpService httpService;
+	CommonHttpRequest httpService;
 	
 	@Autowired
 	MetaData metaData;
