@@ -70,7 +70,6 @@
 		<module>amxeco-parent</module>
 		<module>common-amib</module>
 		<module>lib-db-ib</module>
-		<module>server-payg</module>
 		<module>server-ui</module>
 	</modules>
 </project>
