@@ -5,8 +5,12 @@ import java.math.BigDecimal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
+import com.amx.jax.dao.MyPolicyDao;
 import com.amx.jax.models.ActivePolicyModel;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.PersonalDetails;
@@ -14,9 +18,6 @@ import com.amx.jax.models.RequestQuoteInfo;
 import com.amx.jax.models.RequestQuoteModel;
 import com.amx.jax.models.VehicleDetails;
 import com.amx.jax.ui.session.UserSession;
-import com.amx.jax.dao.MyPolicyDao;
-import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
 public class MyPolicyService

@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.transform.Templates;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.amx.jax.AppConfig;
 import com.amx.jax.api.AmxApiResponse;
@@ -27,13 +27,10 @@ import com.amx.jax.postman.client.PostManClient;
 import com.amx.jax.postman.model.Email;
 import com.amx.jax.postman.model.Notipy;
 import com.amx.jax.postman.model.Notipy.Channel;
-import com.amx.jax.ui.session.UserSession;
 import com.amx.jax.postman.model.SMS;
 import com.amx.jax.postman.model.TemplatesIB;
-import com.amx.jax.postman.model.TemplatesMX;
+import com.amx.jax.ui.session.UserSession;
 import com.amx.utils.Random;
-import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
 public class EmailSmsService

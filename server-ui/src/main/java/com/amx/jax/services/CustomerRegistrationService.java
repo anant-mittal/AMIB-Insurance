@@ -1,20 +1,24 @@
 
 package com.amx.jax.services;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.amx.jax.WebConfig;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
-import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.constants.DatabaseErrorKey;
+import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.constants.Message;
 import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.CustomerRegistrationDao;
+import com.amx.jax.http.CommonHttpRequest;
 import com.amx.jax.models.ChangePasswordOtpRequest;
 import com.amx.jax.models.ChangePasswordRequest;
 import com.amx.jax.models.ChangePasswordResponse;
@@ -33,10 +37,7 @@ import com.amx.jax.models.MetaData;
 import com.amx.jax.models.RequestOtpModel;
 import com.amx.jax.models.ResponseOtpModel;
 import com.amx.jax.models.Validate;
-import com.amx.jax.service.HttpService;
 import com.amx.jax.ui.session.UserSession;
-import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
 public class CustomerRegistrationService
@@ -58,7 +59,7 @@ public class CustomerRegistrationService
 	private EmailSmsService emailSmsService;
 
 	@Autowired
-	HttpService httpService;
+	CommonHttpRequest httpService;
 	
 	@Autowired
 	private CustomerRegistrationDao customerRegistrationDao;

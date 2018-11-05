@@ -1,16 +1,11 @@
 
 package com.amx.jax;
 
-import java.lang.reflect.Field;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-
-import com.amx.utils.ArgUtil;
 
 @Configuration
 @PropertySource("classpath:application-lib.properties")

@@ -14,14 +14,11 @@ import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.dao.MyQuoteDao;
 import com.amx.jax.dao.PayMentDao;
-import com.amx.jax.dao.RequestQuoteDao;
-import com.amx.jax.models.ArrayResponseModel;
+import com.amx.jax.models.MetaData;
+import com.amx.jax.models.MyQuoteModel;
 import com.amx.jax.models.PaymentDetails;
 import com.amx.jax.models.PaymentReceiptModel;
 import com.amx.jax.models.Validate;
-import com.amx.jax.models.MetaData;
-import com.amx.jax.models.MyQuoteModel;
-import com.amx.jax.models.VehicleDetailsGetModel;
 import com.amx.jax.ui.session.UserSession;
 
 @Service

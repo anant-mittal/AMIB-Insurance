@@ -1,26 +1,15 @@
 package com.amx.jax.services;
 
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.dao.MyQuoteDao;
-import com.amx.jax.models.ActivePolicyModel;
-import com.amx.jax.models.CustomizeQuoteModel;
-import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.MyQuoteModel;
-import com.amx.jax.models.QuotationDetails;
-import com.amx.jax.models.QuoteAddPolicyDetails;
-import com.amx.jax.models.ReplacementTypeList;
-import com.amx.jax.models.TotalPremium;
 import com.amx.jax.ui.session.UserSession;
 
 @Service

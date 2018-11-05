@@ -19,6 +19,8 @@ import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.dict.PayGServiceCode;
 import com.amx.jax.models.PaymentDetails;
 import com.amx.jax.models.PgRedirectUrl;
+import com.amx.jax.payg.PayGService;
+import com.amx.jax.payg.Payment;
 import com.amx.jax.payg.PaymentResponseDto;
 import com.amx.jax.services.PayMentService;
 

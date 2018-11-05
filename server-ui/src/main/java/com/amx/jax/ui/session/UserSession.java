@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 
 import com.amx.jax.config.CustomerAuthProvider;
-import com.amx.jax.service.HttpService;
+import com.amx.jax.http.CommonHttpRequest;
 
 @Component
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
@@ -23,7 +23,7 @@ public class UserSession
 {
 
 	@Autowired
-	private HttpService httpService;
+	private CommonHttpRequest httpService;
 	
 	boolean valid;
 
