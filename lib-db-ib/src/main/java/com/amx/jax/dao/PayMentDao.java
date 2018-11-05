@@ -40,7 +40,7 @@ public class PayMentDao
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
-		String callProcedure = "{call IRB_PROCESS_QUOTE.IRB_INSERT_PAYMENT_DTLS(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+		String callProcedure = "{call IRB_PROCESS_QUOTE.IRB_INSERT_PAYMENT_DTLS(?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
 		
 		try
 		{
