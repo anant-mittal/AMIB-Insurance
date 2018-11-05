@@ -48,8 +48,7 @@ public final class FileUtil {
 	/**
 	 * Read file.
 	 *
-	 * @param filename
-	 *            the filename
+	 * @param filename the filename
 	 * @return the string
 	 */
 	@SuppressWarnings(RESOURCE)
@@ -86,12 +85,9 @@ public final class FileUtil {
 	/**
 	 * Write the data into file.
 	 *
-	 * @param fileLocation
-	 *            Path of file
-	 * @param content
-	 *            Content
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	 * @param fileLocation Path of file
+	 * @param content      Content
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public static void saveToFile(String fileLocation, String content) throws IOException {
 		Writer output = null;
@@ -113,12 +109,9 @@ public final class FileUtil {
 	/**
 	 * Save to file.
 	 *
-	 * @param fileLocation
-	 *            the file location
-	 * @param content
-	 *            the content
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	 * @param fileLocation the file location
+	 * @param content      the content
+	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
 	public static void saveToFile(String fileLocation, byte[] content) throws IOException {
 		BufferedOutputStream bos = null;
@@ -140,6 +133,31 @@ public final class FileUtil {
 				fos.close();
 			}
 		}
+	}
+
+	public static String read(URL url) {
+		StringBuilder sb = new StringBuilder();
+		InputStream in = null;
+		BufferedReader reader = null;
+
+		try {
+			in = url.openStream();
+			if (in == null) {
+				return null;
+			}
+			reader = new BufferedReader(new InputStreamReader(in));
+			String line = null;
+			while ((line = reader.readLine()) != null) {
+				sb.append(line).append('\n');
+			}
+
+		} catch (IOException e) {
+			LOG.error("cannot load  file " + url.toString(), e);
+		} finally {
+			CloseUtil.close(reader);
+			CloseUtil.close(in);
+		}
+		return sb.toString();
 	}
 
 	/**
