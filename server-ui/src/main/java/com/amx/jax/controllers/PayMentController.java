@@ -48,7 +48,6 @@ public class PayMentController {
 		{
 			AmxApiResponse<PaymentDetails, Object> respInsertPayment = payMentService.insertPaymentDetals(quoteSeqNum);
 			
-			
 			PaymentDetails paymentDetails = respInsertPayment.getData();
 			
 			logger.info(TAG + " createApplication :: paymentDetails  :" + paymentDetails.toString());
