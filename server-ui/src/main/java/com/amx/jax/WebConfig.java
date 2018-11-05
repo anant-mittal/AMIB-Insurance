@@ -35,6 +35,8 @@ public class WebConfig {
 	
 	public static final String PAYMENT_URL = "${jax.payment.url}";
 	
+	public static final String APP_URL = "${jax.app.url}";
+	
 
 	@Value(APP_NAME)
 	@AppParamKey(AppParam.APP_NAME)
@@ -45,6 +47,7 @@ public class WebConfig {
 
 	@Value(APP_COMP)
 	private String appComp;
+	
 
 	/*@Value(CONFIG_EMAIL)
 	private String configEmail;
@@ -60,6 +63,16 @@ public class WebConfig {
 	{
 		return paymentUrl;
 	}
+	
+	
+	@Value(APP_URL)
+	private String appUrl;
+
+	public String getAppUrl() 
+	{
+		return appUrl;
+	}
+	
 	
 	public String getAppCompCode() {
 		return appComp;
