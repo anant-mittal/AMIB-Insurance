@@ -1,16 +1,26 @@
 package com.amx.jax.models;
 
-public class PgRedirectUrl
-{
+import java.math.BigDecimal;
+
+public class PgRedirectUrl {
+
+	private BigDecimal paySeqNum;
+
+	public BigDecimal getPaySeqNum() {
+		return paySeqNum;
+	}
+
+	public void setPaySeqNum(BigDecimal paySeqNum) {
+		this.paySeqNum = paySeqNum;
+	}
+
 	private String redirectUrl;
 
-	public String getRedirectUrl()
-	{
+	public String getRedirectUrl() {
 		return redirectUrl;
 	}
 
-	public void setRedirectUrl(String redirectUrl)
-	{
+	public void setRedirectUrl(String redirectUrl) {
 		this.redirectUrl = redirectUrl;
 	}
 }
