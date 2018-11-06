@@ -51,7 +51,7 @@ public class PayMentController {
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
 		try 
 		{
-			AmxApiResponse<PaymentDetails, Object> respInsertPayment = payMentService.insertPaymentDetals(quoteSeqNum);
+			AmxApiResponse<PaymentDetails, Object> respInsertPayment = payMentService.insertPaymentDetals(quoteSeqNum,paymentAmount);
 			PaymentDetails paymentDetails = respInsertPayment.getData();
 			logger.info(TAG + " createApplication :: paymentDetails :" + paymentDetails.toString());
 
@@ -59,8 +59,6 @@ public class PayMentController {
 			payment.setDocFinYear(null);
 			payment.setDocNo(paymentDetails.getPaySeqNum().toString());// PaySeqNum
 			payment.setMerchantTrackId(paymentDetails.getPaySeqNum().toString());// PaySeqNum
-			//payment.setDocNo("3");// PaySeqNum
-			//payment.setMerchantTrackId("3");// PaySeqNum
 			payment.setNetPayableAmount(paymentAmount);
 			payment.setPgCode(PayGServiceCode.KNET);
 
