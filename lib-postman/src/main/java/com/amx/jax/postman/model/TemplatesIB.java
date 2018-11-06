@@ -9,7 +9,8 @@ public enum TemplatesIB implements ITemplate {
 	OTP_EMAIL("otp-email"),
 	REG_SUCCESS_EMAIL("reg-success-email"),
 	REG_INCOMPLETE_EMAIL("reg-incomplete-email"),
-	QUOTE_SUBMIT_EMAIL_TO_UESR("quote-submit-email");
+	QUOTE_SUBMIT_EMAIL_TO_UESR("quote-submit-email"),
+	TERMS("terms");
 	//QUOTE_SUBMIT_EMAIL_TO_AMIB("quote-submit-email");
 	
 	String fileName;
