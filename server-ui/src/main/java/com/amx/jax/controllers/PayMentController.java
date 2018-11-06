@@ -66,7 +66,7 @@ public class PayMentController {
 
 			PgRedirectUrl pgRedirectUrl = new PgRedirectUrl();
 			logger.info(TAG + " onPaymentCallback :: request.getServerName()  :" + request.getServerName());
-			pgRedirectUrl.setRedirectUrl(payGService.getPaymentUrl(payment,request.getServerName()+"/app/landing/myquotes"));
+			pgRedirectUrl.setRedirectUrl(payGService.getPaymentUrl(payment,"https://"+request.getServerName()+"/app/landing/myquotes"));
 			pgRedirectUrl.setPaySeqNum(new BigDecimal("3"));
 			resp.setData(pgRedirectUrl);
 			resp.setStatusKey(ApiConstants.SUCCESS);
