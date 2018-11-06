@@ -13,7 +13,6 @@ import com.amx.jax.AppConfig;
 import com.amx.jax.AppConstants;
 import com.amx.jax.AppContext;
 import com.amx.jax.AppContextUtil;
-import com.amx.jax.controllers.PayMentController;
 import com.amx.utils.URLBuilder;
 
 @Component
