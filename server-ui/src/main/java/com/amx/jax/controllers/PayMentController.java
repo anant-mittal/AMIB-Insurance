@@ -67,8 +67,6 @@ public class PayMentController {
 			PgRedirectUrl pgRedirectUrl = new PgRedirectUrl();
 			
 			logger.info(TAG + " onPaymentCallback :: webConfig.getAppUrl()  :" + webConfig.getAppUrl());
-			logger.info(TAG + " onPaymentCallback :: appConfig.getAppURL()  :" + appConfig.getAppURL());
-			
 			
 			pgRedirectUrl.setRedirectUrl(payGService.getPaymentUrl(payment, "/app/landing/myquotes"));
 			//pgRedirectUrl.setPaySeqNum(paymentDetails.getPaySeqNum());
@@ -111,14 +109,14 @@ public class PayMentController {
 					paymentDetails.setPaySeqNum(null);
 				}
 
-				AmxApiResponse<?, Object> updatePaymentResp = payMentService.updatePaymentDetals(paymentDetails);
+				/*AmxApiResponse<?, Object> updatePaymentResp = payMentService.updatePaymentDetals(paymentDetails);
 				if (updatePaymentResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 				{
 					 payMentService.cretaeAmibCust();
 					 payMentService.processReceipt(paymentDetails.getPaySeqNum());
 					 payMentService.createAmibPolicy(paymentDetails.getPaySeqNum());
 					 payMentService.preparePrintData(paymentDetails.getPaySeqNum());
-				}
+				}*/
 				
 			} 
 		catch (Exception e) 

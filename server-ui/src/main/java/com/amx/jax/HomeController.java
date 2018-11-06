@@ -179,9 +179,8 @@ public class HomeController
 				dataList.add(pair.getValue().toString());
 				it.remove();
 			}
-			dataJson.put("data", dataList);
-			model.addAttribute(dataJson);
-			System.out.println("HomeController :: termsAndCondition :: dataJson :" + dataJson.toString());
+			model.addAttribute("terms",dataList);
+			System.out.println("HomeController :: termsAndCondition :: dataJson :" + dataList.toString());
 			System.out.println("HomeController :: termsAndCondition :: model    :" + model.asMap());
 		}
 		catch(Exception e)
