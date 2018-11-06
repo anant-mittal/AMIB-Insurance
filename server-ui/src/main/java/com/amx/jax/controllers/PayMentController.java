@@ -20,6 +20,7 @@ import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.dict.PayGServiceCode;
 import com.amx.jax.models.PaymentDetails;
+import com.amx.jax.models.PaymentStatus;
 import com.amx.jax.models.PgRedirectUrl;
 import com.amx.jax.payg.PayGService;
 import com.amx.jax.payg.Payment;
@@ -27,8 +28,9 @@ import com.amx.jax.payg.PaymentResponseDto;
 import com.amx.jax.services.PayMentService;
 
 @RestController
-public class PayMentController {
-	String TAG = "com.amx.jax.services :: PayMentController :: ";
+public class PayMentController 
+{
+	/*String TAG = "com.amx.jax.services :: PayMentController :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(PayMentController.class);
 
@@ -54,21 +56,17 @@ public class PayMentController {
 			AmxApiResponse<PaymentDetails, Object> respInsertPayment = payMentService.insertPaymentDetals(quoteSeqNum,paymentAmount);
 			PaymentDetails paymentDetails = respInsertPayment.getData();
 			logger.info(TAG + " createApplication :: paymentDetails :" + paymentDetails.toString());
-
+			
 			Payment payment = new Payment();
 			payment.setDocFinYear(null);
 			payment.setDocNo(paymentDetails.getPaySeqNum().toString());// PaySeqNum
 			payment.setMerchantTrackId(paymentDetails.getPaySeqNum().toString());// PaySeqNum
 			payment.setNetPayableAmount(paymentAmount);
 			payment.setPgCode(PayGServiceCode.KNET);
-
-			PgRedirectUrl pgRedirectUrl = new PgRedirectUrl();
-			logger.info(TAG + " onPaymentCallback :: request.getServerName()  :" + request.getServerName());
-			pgRedirectUrl.setRedirectUrl(payGService.getPaymentUrl(payment,"https://"+request.getServerName()+"/app/landing/myquotes"));
-			pgRedirectUrl.setPaySeqNum(paymentDetails.getPaySeqNum());
-			resp.setData(pgRedirectUrl);
+			
+			String redirctUrl = payGService.getPaymentUrl(payment,"https://"+request.getServerName()+"/app/landing/myquotes/payment");
+			resp.setData(redirctUrl);
 			resp.setStatusKey(ApiConstants.SUCCESS);
-
 		} 
 		catch (Exception e) 
 		{
@@ -135,5 +133,5 @@ public class PayMentController {
 	public AmxApiResponse<?, Object> paymentReceiptData(@RequestParam BigDecimal paySeqNum) 
 	{
 		return payMentService.paymentReceiptData(paySeqNum);
-	}
+	}*/
 }

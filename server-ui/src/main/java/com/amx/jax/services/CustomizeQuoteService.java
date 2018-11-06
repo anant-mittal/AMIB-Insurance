@@ -6,15 +6,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeMap;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.amx.jax.AppConfig;
+import com.amx.jax.WebConfig;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.dao.CustomizeQuoteDao;
 import com.amx.jax.dao.MyQuoteDao;
+import com.amx.jax.dict.PayGServiceCode;
 import com.amx.jax.models.CustomizeQuoteAddPol;
 import com.amx.jax.models.CustomizeQuoteInfo;
 import com.amx.jax.models.CustomizeQuoteModel;
@@ -22,10 +27,13 @@ import com.amx.jax.models.CustomizeQuoteSave;
 import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.MyQuoteModel;
+import com.amx.jax.models.PaymentDetails;
 import com.amx.jax.models.QuotationDetails;
 import com.amx.jax.models.QuoteAddPolicyDetails;
 import com.amx.jax.models.TotalPremium;
 import com.amx.jax.models.Validate;
+import com.amx.jax.payg.PayGService;
+import com.amx.jax.payg.Payment;
 import com.amx.jax.ui.session.UserSession;
 import com.amx.jax.utility.CustomizeQuoteUtility;
 
@@ -47,6 +55,18 @@ public class CustomizeQuoteService
 
 	@Autowired
 	private MyQuoteDao myQuoteDao;
+	
+	@Autowired
+	private PayGService payGService;
+
+	@Autowired
+	PayMentService payMentService;
+
+	@Autowired
+	private WebConfig webConfig;
+	
+	@Autowired
+	private AppConfig appConfig;
 
 	public AmxApiResponse<?, Object> getCustomizedQuoteDetails(BigDecimal quoteSeqNumber)
 	{
@@ -235,7 +255,7 @@ public class CustomizeQuoteService
 		return customizeQuoteDao.getTermsAndConditionTest();
 	}
 
-	public AmxApiResponse<?, Object> saveCustomizeQuote(CustomizeQuoteModel customizeQuoteModel)
+	public AmxApiResponse<?, Object> saveCustomizeQuote(CustomizeQuoteModel customizeQuoteModel , HttpServletRequest request)
 	{
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
 		try
@@ -260,7 +280,7 @@ public class CustomizeQuoteService
 				return respQuoteAddModel;
 			}
 
-			return saveCustomizeQuoteDetails(customizeQuoteModel, myQuoteModel);
+			return saveCustomizeQuoteDetails(customizeQuoteModel, myQuoteModel ,customizeQuoteInfo ,request);
 		
 		}
 		catch (Exception e)
@@ -272,7 +292,7 @@ public class CustomizeQuoteService
 		return resp;
 	}
 
-	public AmxApiResponse<?, Object> saveCustomizeQuoteDetails(CustomizeQuoteModel customizeQuoteModel, MyQuoteModel myQuoteModel)
+	public AmxApiResponse<?, Object> saveCustomizeQuoteDetails(CustomizeQuoteModel customizeQuoteModel, MyQuoteModel myQuoteModel ,CustomizeQuoteInfo customizeQuoteInfo , HttpServletRequest request)
 	{
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
 		try
@@ -292,9 +312,26 @@ public class CustomizeQuoteService
 				logger.info(TAG + " saveCustomizeQuoteAddPol :: customizeQuoteSave :" + customizeQuoteSave.toString());
 				Validate validate = customizeQuoteDao.saveCustomizeQuote(customizeQuoteSave , userSession.getCivilId());
 				logger.info(TAG + " saveCustomizeQuoteAddPol :: getErrorCode() :" + validate.getErrorCode());
+				
 				if (validate.getErrorCode() == null)
 				{
 					resp.setStatusKey(ApiConstants.SUCCESS);
+					
+					/******************************************************PAYMENT GATEWAY***********************************************************/
+					AmxApiResponse<PaymentDetails, Object> respInsertPayment = payMentService.insertPaymentDetals(customizeQuoteInfo.getQuoteSeqNumber(),totalPremium.getTotalAmount());
+					PaymentDetails paymentDetails = respInsertPayment.getData();
+					logger.info(TAG + " createApplication :: paymentDetails :" + paymentDetails.toString());
+					
+					Payment payment = new Payment();
+					payment.setDocFinYear(null);
+					payment.setDocNo(paymentDetails.getPaySeqNum().toString());// PaySeqNum
+					payment.setMerchantTrackId(paymentDetails.getPaySeqNum().toString());// PaySeqNum
+					payment.setNetPayableAmount(totalPremium.getTotalAmount());
+					payment.setPgCode(PayGServiceCode.KNET);
+					String redirctUrl = payGService.getPaymentUrl(payment,"https://"+request.getServerName()+"/app/landing/myquotes/payment");
+					resp.setData(redirctUrl);
+					/******************************************************PAYMENT GATEWAY***********************************************************/
+					
 				}
 				else
 				{
