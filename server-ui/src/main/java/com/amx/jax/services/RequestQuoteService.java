@@ -863,6 +863,8 @@ public class RequestQuoteService
 			logger.info(TAG + " submitRequestQuote :: urlDetails :" + urlDetails);
 			
 			emailSmsService.emailToCustomerOnCompilitionRequestQuote(makeDesc,subMakeDesc,appSeqNumber);
+			emailSmsService.emailToAmibOnCompilitionRequestQuote(makeDesc,subMakeDesc,appSeqNumber);
+			
 			resp.setStatusKey(ApiConstants.SUCCESS);
 			logger.info(TAG + " submitRequestQuote :: resp :" + resp.toString());
 			

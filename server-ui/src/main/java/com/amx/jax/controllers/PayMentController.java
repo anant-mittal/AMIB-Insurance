@@ -1,6 +1,5 @@
 package com.amx.jax.controllers;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,7 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -43,34 +41,34 @@ public class PayMentController {
 	private WebConfig webConfig;
 
 	@RequestMapping(value = "/api/payment/pay", method = { RequestMethod.POST })
-	public AmxApiResponse<?, Object> createApplication(BigDecimal quoteSeqNum, HttpServletRequest request) {
+	public AmxApiResponse<?, Object> createApplication(@RequestParam BigDecimal quoteSeqNum, @RequestParam BigDecimal paymentAmount, HttpServletRequest request) {
 
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
-		try {
-			// AmxApiResponse<PaymentDetails, Object> respInsertPayment =
-			// payMentService.insertPaymentDetals(quoteSeqNum);
-			// PaymentDetails paymentDetails = respInsertPayment.getData();
-			// logger.info(TAG + " createApplication :: paymentDetails :" +
-			// paymentDetails.toString());
+		try 
+		{
+			/*AmxApiResponse<PaymentDetails, Object> respInsertPayment = payMentService.insertPaymentDetals(quoteSeqNum);
+			PaymentDetails paymentDetails = respInsertPayment.getData();
+			logger.info(TAG + " createApplication :: paymentDetails :" + paymentDetails.toString());*/
 
 			Payment payment = new Payment();
 			payment.setDocFinYear(null);
-			// payment.setDocNo(paymentDetails.getPaySeqNum().toString());// PaySeqNum
-			// payment.setMerchantTrackId(paymentDetails.getPaySeqNum().toString());//
-			// PaySeqNum
+			//payment.setDocNo(paymentDetails.getPaySeqNum().toString());// PaySeqNum
+			//payment.setMerchantTrackId(paymentDetails.getPaySeqNum().toString());// PaySeqNum
 			payment.setDocNo("3");// PaySeqNum
 			payment.setMerchantTrackId("3");// PaySeqNum
-			payment.setNetPayableAmount(100);
+			payment.setNetPayableAmount(paymentAmount);
 			payment.setPgCode(PayGServiceCode.KNET);
 
 			PgRedirectUrl pgRedirectUrl = new PgRedirectUrl();
-			//pgRedirectUrl.setRedirectUrl(payGService.getPaymentUrl(payment,"https://" + webConfig.getPaymentUrl() + "/app/landing/myquotes"));
-			pgRedirectUrl.setRedirectUrl(payGService.getPaymentUrl(payment,"https://amib.amxremit.com/app/landing/myquotes"));
+			pgRedirectUrl.setRedirectUrl(payGService.getPaymentUrl(payment, "/app/landing/myquotes"));
+			//pgRedirectUrl.setPaySeqNum(paymentDetails.getPaySeqNum());
 			pgRedirectUrl.setPaySeqNum(new BigDecimal("3"));
 			resp.setData(pgRedirectUrl);
 			resp.setStatusKey(ApiConstants.SUCCESS);
 
-		} catch (Exception e) {
+		} 
+		catch (Exception e) 
+		{
 			e.printStackTrace();
 			resp.setStatusKey(ApiConstants.FAILURE);
 		}
@@ -78,13 +76,15 @@ public class PayMentController {
 	}
 
 	@RequestMapping(value = "/remit/save-remittance", method = { RequestMethod.POST })
-	public void onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse, HttpServletResponse response) {
-		String redirectUrl;
-
+	public void onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse, HttpServletResponse response) 
+	{
+		
 		logger.info(TAG + " onPaymentCallback :: paymentResponse  :" + paymentResponse.toString());
 
-		try {
-			if (paymentResponse.getResultCode().equalsIgnoreCase("CAPTURED")) {
+		try 
+		{
+			if (paymentResponse.getResultCode().equalsIgnoreCase("CAPTURED")) 
+			{
 				PaymentDetails paymentDetails = new PaymentDetails();
 				paymentDetails.setPaymentId(paymentResponse.getPaymentId());
 				paymentDetails.setApprovalNo(paymentResponse.getAuth_appNo());
@@ -93,26 +93,40 @@ public class PayMentController {
 				paymentDetails.setTransId(paymentResponse.getTransactionId());
 				paymentDetails.setRefId(paymentResponse.getReferenceId());
 
-				if (null != paymentResponse.getTrackId()) {
+				if (null != paymentResponse.getTrackId()) 
+				{
 					BigDecimal appSeqNum = new BigDecimal(paymentResponse.getTrackId().toString());
 					paymentDetails.setPaySeqNum(appSeqNum);
-				} else {
+				} 
+				else 
+				{
 					paymentDetails.setPaySeqNum(null);
 				}
 
-				// payMentService.updatePaymentDetals(paymentDetails);
-				// payMentService.cretaeAmibCust();
-				// payMentService.processReceipt(paymentDetails.getPaySeqNum());
-				// payMentService.createAmibPolicy(paymentDetails.getPaySeqNum());
-				// payMentService.preparePrintData(paymentDetails.getPaySeqNum());
+				AmxApiResponse<?, Object> updatePaymentResp = payMentService.updatePaymentDetals(paymentDetails);
+				if (updatePaymentResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+				{
+					 payMentService.cretaeAmibCust();
+					 payMentService.processReceipt(paymentDetails.getPaySeqNum());
+					 payMentService.createAmibPolicy(paymentDetails.getPaySeqNum());
+					 payMentService.preparePrintData(paymentDetails.getPaySeqNum());
+				}
+				
+			} 
+			else if (paymentResponse.getResultCode().equalsIgnoreCase("INIT")) 
+			{
 
-			} else if (paymentResponse.getResultCode().equalsIgnoreCase("INIT")) {
+			} 
+			else if (paymentResponse.getResultCode().equalsIgnoreCase("CANCELLED")) 
+			{
 
-			} else if (paymentResponse.getResultCode().equalsIgnoreCase("CANCELLED")) {
+			} 
+			else if (paymentResponse.getResultCode().equalsIgnoreCase("ERROR")) 
+			{
 
-			} else if (paymentResponse.getResultCode().equalsIgnoreCase("ERROR")) {
-
-			} else if (paymentResponse.getResultCode().equalsIgnoreCase("NOT_CAPTURED")) {
+			} 
+			else if (paymentResponse.getResultCode().equalsIgnoreCase("NOT_CAPTURED")) 
+			{
 
 			}
 		} catch (Exception e) {
@@ -123,9 +137,16 @@ public class PayMentController {
 
 	//API REQUIRED FOR STATUS//STATUS OF PAYMENT GATEWAY
 	
+	@RequestMapping(value = "/api/payment-status", method = { RequestMethod.POST })
+	public AmxApiResponse<?, Object> getPaymentStatus(@RequestParam BigDecimal paySeqNum) 
+	{
+		return payMentService.getPaymentStatus(paySeqNum);
+	}
+	
 	
 	@RequestMapping(value = "/api/payment-receipt-data", method = { RequestMethod.POST })
-	public AmxApiResponse<?, Object> paymentReceiptData(@RequestParam BigDecimal paySeqNum) {
+	public AmxApiResponse<?, Object> paymentReceiptData(@RequestParam BigDecimal paySeqNum) 
+	{
 		return payMentService.paymentReceiptData(paySeqNum);
 	}
 }

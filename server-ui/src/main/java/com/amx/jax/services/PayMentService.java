@@ -14,10 +14,12 @@ import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.dao.MyQuoteDao;
 import com.amx.jax.dao.PayMentDao;
+import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.MyQuoteModel;
 import com.amx.jax.models.PaymentDetails;
 import com.amx.jax.models.PaymentReceiptModel;
+import com.amx.jax.models.PaymentStatus;
 import com.amx.jax.models.Validate;
 import com.amx.jax.ui.session.UserSession;
 
@@ -215,6 +217,35 @@ public class PayMentService
 		}
 		return resp;
 	}
+	
+	public AmxApiResponse<?, Object> getPaymentStatus(BigDecimal paySeqNum)
+	{
+		AmxApiResponse<PaymentStatus, Object> resp = new AmxApiResponse<>();
+		try
+		{
+			ArrayResponseModel arrayResponseModel = payMentDao.getPaymentStatus(paySeqNum);
+			if(null == arrayResponseModel.getErrorCode())
+			{
+				PaymentStatus paymentStatus = new PaymentStatus();
+				paymentStatus.setPaymentStatus(arrayResponseModel.getData());
+				resp.setData(paymentStatus);
+				resp.setStatusKey(ApiConstants.SUCCESS);
+			}
+			else
+			{
+				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setMessageKey(arrayResponseModel.getErrorCode());
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			resp.setException(e.toString());
+			resp.setStatusKey(ApiConstants.FAILURE);
+		}
+		return resp;
+	}
+	
 	
 	public AmxApiResponse<?, Object> paymentReceiptData(BigDecimal paySeqNum)
 	{

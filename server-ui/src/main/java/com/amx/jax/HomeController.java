@@ -180,9 +180,9 @@ public class HomeController
 				it.remove();
 			}
 			dataJson.put("data", dataList);
-			System.out.println("HomeController :: termsAndCondition :: dataJson :" + dataJson.toString());
 			model.addAttribute(dataJson);
-			System.out.println("HomeController :: termsAndCondition :: model :" + model.asMap());
+			System.out.println("HomeController :: termsAndCondition :: dataJson :" + dataJson.toString());
+			System.out.println("HomeController :: termsAndCondition :: model    :" + model.asMap());
 		}
 		catch(Exception e)
 		{

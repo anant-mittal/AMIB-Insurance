@@ -16,6 +16,7 @@ import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.models.PaymentDetails;
 import com.amx.jax.models.PaymentReceiptModel;
 import com.amx.jax.models.Validate;
+import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.MetaData;
 
@@ -104,6 +105,7 @@ public class PayMentDao
 			logger.info(TAG + " insertPaymentDetals :: getTransId :" + insertPaymentDetails.getTransId());
 			logger.info(TAG + " insertPaymentDetals :: getRefId :" + insertPaymentDetails.getRefId());
 			logger.info(TAG + " insertPaymentDetals :: getPaymentToken :" + insertPaymentDetails.getPaymentToken());
+			
 			
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
@@ -284,6 +286,46 @@ public class PayMentDao
 			CloseConnection(callableStatement, connection);
 		}
 		return validate;
+	}
+	
+	
+	
+	
+	
+	public ArrayResponseModel getPaymentStatus(BigDecimal paySeqNum)
+	{
+		getConnection();
+		CallableStatement callableStatement = null;
+		String callProcedure = "{call IRB_PAYMENT_STATUS(?,?,?,?,?,?)}";
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
+		try
+		{
+			callableStatement = connection.prepareCall(callProcedure);
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(3, paySeqNum);
+			callableStatement.registerOutParameter(4, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
+			callableStatement.executeUpdate();
+			
+			logger.info(TAG + " preparePrintData :: PaymentStaus  :" + callableStatement.getString(4));
+			logger.info(TAG + " preparePrintData :: Error Code    :" + callableStatement.getString(5));
+			logger.info(TAG + " preparePrintData :: Error Msg     :" + callableStatement.getString(6));
+			
+			arrayResponseModel.setData(callableStatement.getString(4));
+			arrayResponseModel.setErrorCode(callableStatement.getString(5));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(6));
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		return arrayResponseModel;
 	}
 	
 	

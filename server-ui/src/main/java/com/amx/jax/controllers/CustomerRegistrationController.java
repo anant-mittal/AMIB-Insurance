@@ -190,6 +190,9 @@ public class CustomerRegistrationController
 		emailSmsService.sendEmailOtp("abhishektiwaribecse@gmail.com");
 		emailSmsService.sendMobileOtp("8796589233");
 
+		emailSmsService.emailToCustomerOnCompilitionRequestQuote("Make1","SubMake2",new BigDecimal("1"));
+		emailSmsService.emailToAmibOnCompilitionRequestQuote("Make1","SubMake2",new BigDecimal("2"));
+		
 		/*emailSmsService.emailTosuccessFullUserRegistration("abhishektiwaribecse@gmail.com");
 		RequestOtpModel r = new RequestOtpModel();
 		r.setCivilId("282071300105");

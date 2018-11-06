@@ -282,6 +282,8 @@ public class EmailSmsService
 		model.put(DetailsConstants.MAKE_DESC, makeDesc);
 		model.put(DetailsConstants.SUB_MAKE_DESC, subMakeDesc);
 		model.put(DetailsConstants.APPLICATION_ID, appSeqNumber);
+		model.put(DetailsConstants.URL_DETAILS, "");
+		
 		wrapper.put("data", model);
 		
 		ArrayList<String> emailTo = new ArrayList<String>();
@@ -346,6 +348,7 @@ public class EmailSmsService
 		model.put(DetailsConstants.MAKE_DESC, makeDesc);
 		model.put(DetailsConstants.SUB_MAKE_DESC, subMakeDesc);
 		model.put(DetailsConstants.APPLICATION_ID, appSeqNumber);
+		model.put(DetailsConstants.URL_DETAILS, "");
 		wrapper.put("data", model);
 		
 		ArrayList<String> emailTo = new ArrayList<String>();
@@ -357,7 +360,7 @@ public class EmailSmsService
 		email.setTo(emailTo);
 		email.setSubject("Customer Quote Request - "+appSeqNumber);
 		email.setModel(wrapper);
-		email.setITemplate(TemplatesIB.QUOTE_SUBMIT_EMAIL_TO_UESR);
+		email.setITemplate(TemplatesIB.QUOTE_SUBMIT_EMAIL_TO_AMIB);
 		email.setHtml(true);
 		email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
 		postManClient.sendEmail(email);

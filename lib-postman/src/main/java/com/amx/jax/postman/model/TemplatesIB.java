@@ -12,10 +12,8 @@ public enum TemplatesIB implements ITemplate {
 	TERMS("terms"),
 	QUOTE_SUBMIT_EMAIL_TO_UESR("quote-submit-user-email"),
 	QUOTE_SUBMIT_EMAIL_TO_AMIB("quote-submit-amib-email"),
-	//QUOTE_SUBMIT_EMAIL("quote-submit-email"),
 	TRNX_RECEIPT("tranx-reciept", PDFConverter.JASPER, "tranx-reciept.json"),
 	POLICY_RECEIPT("policy-receipt", PDFConverter.JASPER, "policy-receipt.json"),
-	//TO DO needs to removed after completion of jasper report
 	REMIT_RECEIPT_JASPER("TransactionReceipt_jasper", PDFConverter.JASPER, "TransactionReceipt.json");
 		
 	String fileName;
