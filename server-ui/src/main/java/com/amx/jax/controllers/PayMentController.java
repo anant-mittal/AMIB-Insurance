@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.amx.jax.AppConfig;
 import com.amx.jax.WebConfig;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
@@ -39,6 +40,10 @@ public class PayMentController {
 
 	@Autowired
 	private WebConfig webConfig;
+	
+	@Autowired
+	private AppConfig appConfig;
+	
 
 	@RequestMapping(value = "/api/payment/pay", method = { RequestMethod.POST })
 	public AmxApiResponse<?, Object> createApplication(@RequestParam BigDecimal quoteSeqNum, @RequestParam BigDecimal paymentAmount, HttpServletRequest request) {
@@ -60,6 +65,11 @@ public class PayMentController {
 			payment.setPgCode(PayGServiceCode.KNET);
 
 			PgRedirectUrl pgRedirectUrl = new PgRedirectUrl();
+			
+			logger.info(TAG + " onPaymentCallback :: webConfig.getAppUrl()  :" + webConfig.getAppUrl());
+			logger.info(TAG + " onPaymentCallback :: appConfig.getAppURL()  :" + appConfig.getAppURL());
+			
+			
 			pgRedirectUrl.setRedirectUrl(payGService.getPaymentUrl(payment, "/app/landing/myquotes"));
 			//pgRedirectUrl.setPaySeqNum(paymentDetails.getPaySeqNum());
 			pgRedirectUrl.setPaySeqNum(new BigDecimal("3"));
@@ -78,13 +88,11 @@ public class PayMentController {
 	@RequestMapping(value = "/remit/save-remittance", method = { RequestMethod.POST })
 	public void onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse, HttpServletResponse response) 
 	{
-		
 		logger.info(TAG + " onPaymentCallback :: paymentResponse  :" + paymentResponse.toString());
 
 		try 
 		{
-			if (paymentResponse.getResultCode().equalsIgnoreCase("CAPTURED")) 
-			{
+			
 				PaymentDetails paymentDetails = new PaymentDetails();
 				paymentDetails.setPaymentId(paymentResponse.getPaymentId());
 				paymentDetails.setApprovalNo(paymentResponse.getAuth_appNo());
@@ -113,23 +121,8 @@ public class PayMentController {
 				}
 				
 			} 
-			else if (paymentResponse.getResultCode().equalsIgnoreCase("INIT")) 
-			{
-
-			} 
-			else if (paymentResponse.getResultCode().equalsIgnoreCase("CANCELLED")) 
-			{
-
-			} 
-			else if (paymentResponse.getResultCode().equalsIgnoreCase("ERROR")) 
-			{
-
-			} 
-			else if (paymentResponse.getResultCode().equalsIgnoreCase("NOT_CAPTURED")) 
-			{
-
-			}
-		} catch (Exception e) {
+		catch (Exception e) 
+		{
 			e.printStackTrace();
 		}
 
