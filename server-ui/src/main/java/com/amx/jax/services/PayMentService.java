@@ -42,7 +42,7 @@ public class PayMentService
 	@Autowired
 	private MyQuoteDao myQuoteDao;
 
-	public AmxApiResponse<PaymentDetails, Object> insertPaymentDetals(BigDecimal quoteSeqNum)
+	public AmxApiResponse<PaymentDetails, Object> insertPaymentDetals(BigDecimal quoteSeqNum , BigDecimal paymentAmount)
 	{
 		AmxApiResponse<PaymentDetails, Object> resp = new AmxApiResponse<PaymentDetails, Object>();
 		try
@@ -71,10 +71,11 @@ public class PayMentService
 			insertPaymentDetails.setQuoteSeqNum(quoteSeqNum);
 			insertPaymentDetails.setQouteVerNum(myQuoteModel.getVerNumber());
 			insertPaymentDetails.setCustSeqNum(userSession.getCustomerSequenceNumber());
-			insertPaymentDetails.setPaymentAmount(new BigDecimal(450));
-			insertPaymentDetails.setPaymentId("12AB_PAY_ID");
+			insertPaymentDetails.setPaymentAmount(paymentAmount);
 			insertPaymentDetails.setPaymentMethod(HardCodedValues.PAYMENT_METHOD);
-			insertPaymentDetails.setPaymentToken("12AB_PAY_TOKEN");
+			
+			//insertPaymentDetails.setPaymentToken("12AB_PAY_TOKEN");
+			//insertPaymentDetails.setPaymentId("12AB_PAY_ID");
 			
 			PaymentDetails paymentDetails = payMentDao.insertPaymentDetals(insertPaymentDetails , userSession.getCivilId());
 			if(null == paymentDetails.getErrorCode())
