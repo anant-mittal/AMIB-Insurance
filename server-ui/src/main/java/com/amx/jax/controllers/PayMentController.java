@@ -51,23 +51,23 @@ public class PayMentController {
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
 		try 
 		{
-			/*AmxApiResponse<PaymentDetails, Object> respInsertPayment = payMentService.insertPaymentDetals(quoteSeqNum);
+			AmxApiResponse<PaymentDetails, Object> respInsertPayment = payMentService.insertPaymentDetals(quoteSeqNum);
 			PaymentDetails paymentDetails = respInsertPayment.getData();
-			logger.info(TAG + " createApplication :: paymentDetails :" + paymentDetails.toString());*/
+			logger.info(TAG + " createApplication :: paymentDetails :" + paymentDetails.toString());
 
 			Payment payment = new Payment();
 			payment.setDocFinYear(null);
-			//payment.setDocNo(paymentDetails.getPaySeqNum().toString());// PaySeqNum
-			//payment.setMerchantTrackId(paymentDetails.getPaySeqNum().toString());// PaySeqNum
-			payment.setDocNo("3");// PaySeqNum
-			payment.setMerchantTrackId("3");// PaySeqNum
+			payment.setDocNo(paymentDetails.getPaySeqNum().toString());// PaySeqNum
+			payment.setMerchantTrackId(paymentDetails.getPaySeqNum().toString());// PaySeqNum
+			//payment.setDocNo("3");// PaySeqNum
+			//payment.setMerchantTrackId("3");// PaySeqNum
 			payment.setNetPayableAmount(paymentAmount);
 			payment.setPgCode(PayGServiceCode.KNET);
 
 			PgRedirectUrl pgRedirectUrl = new PgRedirectUrl();
 			logger.info(TAG + " onPaymentCallback :: request.getServerName()  :" + request.getServerName());
 			pgRedirectUrl.setRedirectUrl(payGService.getPaymentUrl(payment,"https://"+request.getServerName()+"/app/landing/myquotes"));
-			pgRedirectUrl.setPaySeqNum(new BigDecimal("3"));
+			pgRedirectUrl.setPaySeqNum(paymentDetails.getPaySeqNum());
 			resp.setData(pgRedirectUrl);
 			resp.setStatusKey(ApiConstants.SUCCESS);
 
@@ -106,14 +106,16 @@ public class PayMentController {
 					paymentDetails.setPaySeqNum(null);
 				}
 
-				/*AmxApiResponse<?, Object> updatePaymentResp = payMentService.updatePaymentDetals(paymentDetails);
+				logger.info(TAG + " onPaymentCallback :: paymentDetails  :" + paymentDetails.toString());
+				
+				AmxApiResponse<?, Object> updatePaymentResp = payMentService.updatePaymentDetals(paymentDetails);
 				if (updatePaymentResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 				{
 					 payMentService.cretaeAmibCust();
 					 payMentService.processReceipt(paymentDetails.getPaySeqNum());
 					 payMentService.createAmibPolicy(paymentDetails.getPaySeqNum());
 					 payMentService.preparePrintData(paymentDetails.getPaySeqNum());
-				}*/
+				}
 				
 			} 
 		catch (Exception e) 
