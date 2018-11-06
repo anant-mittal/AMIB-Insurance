@@ -123,7 +123,6 @@ public class PayMentController {
 
 	}
 
-	//API REQUIRED FOR STATUS//STATUS OF PAYMENT GATEWAY
 	
 	@RequestMapping(value = "/api/payment-status", method = { RequestMethod.POST })
 	public AmxApiResponse<?, Object> getPaymentStatus(@RequestParam BigDecimal paySeqNum) 
