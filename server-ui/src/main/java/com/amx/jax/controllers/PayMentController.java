@@ -67,6 +67,8 @@ public class PayMentController {
 			PgRedirectUrl pgRedirectUrl = new PgRedirectUrl();
 			
 			logger.info(TAG + " onPaymentCallback :: webConfig.getAppUrl()  :" + webConfig.getAppUrl());
+			logger.info(TAG + " onPaymentCallback :: request.getRequestURL()  :" + request.getRequestURL());
+			
 			
 			pgRedirectUrl.setRedirectUrl(payGService.getPaymentUrl(payment, "/app/landing/myquotes"));
 			//pgRedirectUrl.setPaySeqNum(paymentDetails.getPaySeqNum());
