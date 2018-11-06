@@ -1,0 +1,40 @@
+{
+ "timestamp": 1541409610492,
+ "status": "200",
+ "error": null,
+ "exception": null,
+ "message": null,
+ "path": null,
+ "redirectUrl": null,
+ "messageKey": null,
+ "statusKey": "SUCCESS",
+ "meta": null,
+ "errors": null,
+ "data": null,
+ "results": [
+   {
+     "applicationId": 165,
+     "customerId": 90,
+     "paymentDate": "03-Nov-18",
+     "paymentMode": "DEBIT CARD",
+     "amountPaidNumber": 1000,
+     "amountPaidWord": "KUWAITI DINAR ONE THOUSAND ONLY",
+     "paymentId": "12AB_PAY_ID",
+     "customerName": "Ashok Kumar Kalal",
+     "civilId": "285011606536",
+     "mobileNumber": "60454022",
+     "emialId": "erashokkalal@gmail.com",
+     "policyDuration": 1,
+     "governate": "HAWALLY",
+     "areaDesc": "SALMIYA",
+     "address": "HAWALLY,SALMIYA",
+     "make": "ACURA",
+     "subMake": "MDX",
+     "ktNumber": null,
+     "chasisNumber": "1945BHBPK35434344",
+     "modelYear": 2018,
+     "errorCode": null,
+     "errorMessage": null
+   }
+ ]
+}

@@ -10,6 +10,8 @@
 		"amibWebLink" : "www.almullainsurancebrokerage.com",
 		"companyName" : "AL MULLA INSURANCE AND BROKERAGE COMPANY W.L.L" ,
 		"country" : "KUWAIT",
-		"customerName":"Customer"
+		"customerName":"Customer",
+		"applicationId":"101",
+		"contactUsMobile":"@ + 965 2225088"
 		}
 }
