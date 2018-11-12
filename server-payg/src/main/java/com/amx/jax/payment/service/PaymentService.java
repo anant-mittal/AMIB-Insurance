@@ -46,11 +46,13 @@ public class PaymentService {
 			LOGGER.info("Calling saveRemittanceTransaction with ...  " + paymentResponseDto.toString());
 			AmxApiResponse<PaymentResponseDto, Object> resp = saveRemittanceTransaction(paymentResponseDto);
 			
+			LOGGER.info("Calling saveRemittanceTransaction with resp.getResult() 1 :" + resp.getResult());
+			
 			if (resp.getResult() != null) {
 				
 				LOGGER.info("Calling saveRemittanceTransaction with resp.getResult() :");
 				
-				LOGGER.info("Calling saveRemittanceTransaction with resp.getResult() :" + resp.getResult());
+				LOGGER.info("Calling saveRemittanceTransaction with resp.getResult() 2 :" + resp.getResult());
 				
 				LOGGER.info("PaymentResponseDto values -- CollectionDocumentCode : "
 						+ resp.getResult().getCollectionDocumentCode() + " CollectionDocumentNumber : "
