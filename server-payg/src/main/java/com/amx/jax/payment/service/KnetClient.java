@@ -187,9 +187,20 @@ public class KnetClient implements PayGClient {
 		LOGGER.info("KnetClient :: capture :: getCollectionDocumentCode :" + resdto.getCollectionDocumentCode());
 		LOGGER.info("KnetClient :: capture :: getCollectionDocumentNumber :" + resdto.getCollectionDocumentNumber());
 		
-		gatewayResponse.setCollectionFinYear(resdto.getCollectionFinanceYear().toString());
-		gatewayResponse.setCollectionDocCode(resdto.getCollectionDocumentCode().toString());
-		gatewayResponse.setCollectionDocNumber(resdto.getCollectionDocumentNumber().toString());
+		
+		if (null != resdto.getCollectionFinanceYear()) {
+			gatewayResponse.setCollectionFinYear(resdto.getCollectionFinanceYear().toString());
+		}
+
+		if (null != resdto.getCollectionDocumentCode()) {
+			gatewayResponse.setCollectionDocCode(resdto.getCollectionDocumentCode().toString());
+		}
+
+		if (null != resdto.getCollectionDocumentNumber()) {
+			gatewayResponse.setCollectionDocNumber(resdto.getCollectionDocumentNumber().toString());
+		}
+		
+		
 
 		if ("CAPTURED".equalsIgnoreCase(gatewayResponse.getResult())) {
 			gatewayResponse.setPayGStatus(PayGStatus.CAPTURED);
