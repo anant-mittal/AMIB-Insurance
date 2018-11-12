@@ -47,6 +47,8 @@ public class PaymentService {
 			LOGGER.info("Calling saveRemittanceTransaction with ...  " + paymentResponseDto.toString());
 			AmxApiResponse<PaymentResponseDto, Object> resp = saveRemittanceTransaction(paymentResponseDto);
 			
+			LOGGER.info("Calling saveRemittanceTransaction with resp  " + resp);
+			
 			if (resp.getResult() != null)
 			{
 				/*LOGGER.info("PaymentResponseDto values -- CollectionDocumentCode : "
@@ -79,6 +81,10 @@ public class PaymentService {
 			LOGGER.info("Calling saveRemittanceTransaction getCustomerId :" + paymentResponseDto.getCustomerId());
 			metaInfo.setCustomerId(paymentResponseDto.getCustomerId());
 			headers.add("meta-info", new ObjectMapper().writeValueAsString(metaInfo));
+			
+			LOGGER.info("Calling saveRemittanceTransaction appConfig.getJaxURL() : " + appConfig.getJaxURL());
+			LOGGER.info("Calling saveRemittanceTransaction paymentResponseDto : " + paymentResponseDto);
+			LOGGER.info("Calling saveRemittanceTransaction headers : " + headers);
 			
 			return restService.ajax(appConfig.getJaxURL() + "/remit/save-remittance/")
 					.post(new HttpEntity<PaymentResponseDto>(paymentResponseDto, headers))
