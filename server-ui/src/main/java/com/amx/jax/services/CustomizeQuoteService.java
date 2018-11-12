@@ -337,6 +337,9 @@ public class CustomizeQuoteService
 					payment.setNetPayableAmount(totalPremium.getTotalAmount());
 					payment.setPgCode(PayGServiceCode.KNET);
 					
+					/*request.getServerPort();
+					request.get*/
+					
 					String redirctUrl = payGService.getPaymentUrl(payment , "https://"+request.getServerName()+"/app/landing/myquotes/payment");
 					resp.setRedirectUrl(redirctUrl);
 					

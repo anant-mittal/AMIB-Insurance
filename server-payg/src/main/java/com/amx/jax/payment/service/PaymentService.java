@@ -33,6 +33,13 @@ public class PaymentService {
 	@Autowired
 	PayGConfig payGConfig;
 
+	@Autowired
+	RestService restService;
+	
+	@Autowired
+	AppConfig appConfig;
+
+	
 	/**
 	 * Captures the payment in jax service
 	 * 
@@ -40,23 +47,26 @@ public class PaymentService {
 	 *            - populated response recieved from PayMentgateWaye service
 	 * @return
 	 */
-	public PaymentResponseDto capturePayment(PayGResponse payGServiceResponse) {
+	public PaymentResponseDto capturePayment(PayGResponse payGServiceResponse) 
+	{
 		PaymentResponseDto paymentResponseDto = null;
-		try {
+		try 
+		{
 			paymentResponseDto = generatePaymentResponseDTO(payGServiceResponse);
 			LOGGER.info("Calling saveRemittanceTransaction with ...  " + paymentResponseDto.toString());
-			AmxApiResponse<PaymentResponseDto, Object> resp = saveRemittanceTransaction(paymentResponseDto);
 			
+			
+			/*AmxApiResponse<PaymentResponseDto, Object> resp = saveRemittanceTransaction(paymentResponseDto);
 			LOGGER.info("Calling saveRemittanceTransaction with resp  " + resp);
 			
 			if (resp.getResult() != null)
 			{
-				/*LOGGER.info("PaymentResponseDto values -- CollectionDocumentCode : "
+				LOGGER.info("PaymentResponseDto values -- CollectionDocumentCode : "
 						+ resp.getResult().getCollectionDocumentCode() + " CollectionDocumentNumber : "
 						+ resp.getResult().getCollectionDocumentNumber() + " CollectionFinanceYear : "
-						+ resp.getResult().getCollectionFinanceYear());*/
+						+ resp.getResult().getCollectionFinanceYear());
 				return resp.getResult();
-			}
+			}*/
 		} 
 		catch (Exception e) 
 		{
@@ -64,15 +74,13 @@ public class PaymentService {
 		}
 		return paymentResponseDto;
 	}
-
-	@Autowired
-	RestService restService;
-	@Autowired
-	AppConfig appConfig;
-
+	
+	
+	
 	public AmxApiResponse<PaymentResponseDto, Object> saveRemittanceTransaction(PaymentResponseDto paymentResponseDto)
 			throws Exception {
-		try {
+		try 
+		{
 			RestMetaInfo metaInfo = new RestMetaInfo();
 			HttpHeaders headers = new HttpHeaders();
 			metaInfo.setTenant(TenantContextHolder.currentSite());
@@ -90,12 +98,11 @@ public class PaymentService {
 					.post(new HttpEntity<PaymentResponseDto>(paymentResponseDto, headers))
 					.as(new ParameterizedTypeReference<AmxApiResponse<PaymentResponseDto, Object>>() {
 					});
-			
+		
 		} catch (Exception e) {
 			LOGGER.error("exception in saveRemittanceTransaction : ", e);
 			return AmxApiException.evaluate(e);
 		} // end of try-catch
-
 	}
 
 	/**

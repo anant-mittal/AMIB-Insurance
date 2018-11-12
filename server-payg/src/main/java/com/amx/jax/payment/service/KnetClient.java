@@ -182,7 +182,6 @@ public class KnetClient implements PayGClient {
 		PaymentResponseDto resdto = paymentService.capturePayment(gatewayResponse);
 		// Capturing JAX Response
 		
-		
 		LOGGER.info("KnetClient :: capture :: getCollectionFinanceYear :" + resdto.getCollectionFinanceYear());
 		LOGGER.info("KnetClient :: capture :: getCollectionDocumentCode :" + resdto.getCollectionDocumentCode());
 		LOGGER.info("KnetClient :: capture :: getCollectionDocumentNumber :" + resdto.getCollectionDocumentNumber());
