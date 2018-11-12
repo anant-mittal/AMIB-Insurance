@@ -30,7 +30,7 @@ import com.amx.jax.services.PayMentService;
 @RestController
 public class PayMentController 
 {
-	/*String TAG = "com.amx.jax.services :: PayMentController :: ";
+	String TAG = "com.amx.jax.services :: PayMentController :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(PayMentController.class);
 
@@ -47,7 +47,7 @@ public class PayMentController
 	private AppConfig appConfig;
 	
 
-	@RequestMapping(value = "/api/payment/pay", method = { RequestMethod.POST })
+	/*@RequestMapping(value = "/api/payment/pay", method = { RequestMethod.POST })
 	public AmxApiResponse<?, Object> createApplication(@RequestParam BigDecimal quoteSeqNum, @RequestParam BigDecimal paymentAmount, HttpServletRequest request) {
 
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
@@ -74,55 +74,47 @@ public class PayMentController
 			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
-	}
+	}*/
 
+	
 	@RequestMapping(value = "/remit/save-remittance", method = { RequestMethod.POST })
-	public void onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse, HttpServletResponse response) 
-	{
+	public void onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse, HttpServletResponse response) {
 		logger.info(TAG + " onPaymentCallback :: paymentResponse  :" + paymentResponse.toString());
 
-		try 
-		{
-			
-				PaymentDetails paymentDetails = new PaymentDetails();
-				paymentDetails.setPaymentId(paymentResponse.getPaymentId());
-				paymentDetails.setApprovalNo(paymentResponse.getAuth_appNo());
-				paymentDetails.setApprovalDate(null);
-				paymentDetails.setResultCd(paymentResponse.getResultCode());
-				paymentDetails.setTransId(paymentResponse.getTransactionId());
-				paymentDetails.setRefId(paymentResponse.getReferenceId());
+		try {
 
-				if (null != paymentResponse.getTrackId()) 
-				{
-					BigDecimal appSeqNum = new BigDecimal(paymentResponse.getTrackId().toString());
-					paymentDetails.setPaySeqNum(appSeqNum);
-				} 
-				else 
-				{
-					paymentDetails.setPaySeqNum(null);
-				}
+			PaymentDetails paymentDetails = new PaymentDetails();
+			paymentDetails.setPaymentId(paymentResponse.getPaymentId());
+			paymentDetails.setApprovalNo(paymentResponse.getAuth_appNo());
+			paymentDetails.setApprovalDate(null);
+			paymentDetails.setResultCd(paymentResponse.getResultCode());
+			paymentDetails.setTransId(paymentResponse.getTransactionId());
+			paymentDetails.setRefId(paymentResponse.getReferenceId());
 
-				logger.info(TAG + " onPaymentCallback :: paymentDetails  :" + paymentDetails.toString());
-				
-				AmxApiResponse<?, Object> updatePaymentResp = payMentService.updatePaymentDetals(paymentDetails);
-				if (updatePaymentResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
-				{
-					 payMentService.cretaeAmibCust();
-					 payMentService.processReceipt(paymentDetails.getPaySeqNum());
-					 payMentService.createAmibPolicy(paymentDetails.getPaySeqNum());
-					 payMentService.preparePrintData(paymentDetails.getPaySeqNum());
-				}
-				
-			} 
-		catch (Exception e) 
-		{
+			if (null != paymentResponse.getTrackId()) {
+				BigDecimal appSeqNum = new BigDecimal(paymentResponse.getTrackId().toString());
+				paymentDetails.setPaySeqNum(appSeqNum);
+			} else {
+				paymentDetails.setPaySeqNum(null);
+			}
+
+			logger.info(TAG + " onPaymentCallback :: paymentDetails  :" + paymentDetails.toString());
+
+			PaymentDetails updatePaymentResp = payMentService.updatePaymentDetals(paymentDetails);
+
+			payMentService.cretaeAmibCust();
+			payMentService.processReceipt(paymentDetails.getPaySeqNum());
+			payMentService.createAmibPolicy(paymentDetails.getPaySeqNum());
+			payMentService.preparePrintData(paymentDetails.getPaySeqNum());
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
 	}
 
 	
-	@RequestMapping(value = "/api/payment-status", method = { RequestMethod.POST })
+/*	@RequestMapping(value = "/api/payment-status", method = { RequestMethod.POST })
 	public AmxApiResponse<?, Object> getPaymentStatus(@RequestParam BigDecimal paySeqNum) 
 	{
 		return payMentService.getPaymentStatus(paySeqNum);
