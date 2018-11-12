@@ -34,9 +34,9 @@ public class PayGService {
 		
 		logger.info(TAG + " getPaymentUrl :: builder  :" + builder);
 		
-		String callbackUrl = callback + "?docNo=" + payment.getDocNo() + "&docFy=" + payment.getDocFinYear();
+		//String callbackUrl = callback + "?docNo=" + payment.getDocNo() + "&docFy=" + payment.getDocFinYear();
 		
-		//String callbackUrl = callback;
+		String callbackUrl = callback + "?paySeqNo=" + payment.getDocNo();
 		
 		logger.info(TAG + " getPaymentUrl :: callbackUrl  :" + callbackUrl);
 		
