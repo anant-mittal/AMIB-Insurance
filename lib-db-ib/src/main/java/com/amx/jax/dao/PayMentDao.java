@@ -98,14 +98,14 @@ public class PayMentDao
 		
 		try
 		{
-			logger.info(TAG + " insertPaymentDetals :: getPaySeqNum :" + insertPaymentDetails.getPaySeqNum());
-			logger.info(TAG + " insertPaymentDetals :: getPaymentId :" + insertPaymentDetails.getPaymentId());
-			logger.info(TAG + " insertPaymentDetals :: getApprovalNo :" + insertPaymentDetails.getApprovalNo());
-			logger.info(TAG + " insertPaymentDetals :: getApprovalDate :" + insertPaymentDetails.getApprovalDate());
-			logger.info(TAG + " insertPaymentDetals :: getResultCd :" + insertPaymentDetails.getResultCd());
-			logger.info(TAG + " insertPaymentDetals :: getTransId :" + insertPaymentDetails.getTransId());
-			logger.info(TAG + " insertPaymentDetals :: getRefId :" + insertPaymentDetails.getRefId());
-			logger.info(TAG + " insertPaymentDetals :: getPaymentToken :" + insertPaymentDetails.getPaymentToken());
+			logger.info(TAG + " updatePaymentDetals :: getPaySeqNum :" + insertPaymentDetails.getPaySeqNum());
+			logger.info(TAG + " updatePaymentDetals :: getPaymentId :" + insertPaymentDetails.getPaymentId());
+			logger.info(TAG + " updatePaymentDetals :: getApprovalNo :" + insertPaymentDetails.getApprovalNo());
+			logger.info(TAG + " updatePaymentDetals :: getApprovalDate :" + insertPaymentDetails.getApprovalDate());
+			logger.info(TAG + " updatePaymentDetals :: getResultCd :" + insertPaymentDetails.getResultCd());
+			logger.info(TAG + " updatePaymentDetals :: getTransId :" + insertPaymentDetails.getTransId());
+			logger.info(TAG + " updatePaymentDetals :: getRefId :" + insertPaymentDetails.getRefId());
+			logger.info(TAG + " updatePaymentDetals :: getPaymentToken :" + insertPaymentDetails.getPaymentToken());
 			
 			
 			callableStatement = connection.prepareCall(callProcedure);

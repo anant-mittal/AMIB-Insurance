@@ -100,16 +100,20 @@ public class CustomizeQuoteController
 				PaymentDetails paymentDetails = new PaymentDetails();
 				paymentDetails.setPaymentId(paymentResponse.getPaymentId());
 				paymentDetails.setApprovalNo(paymentResponse.getAuth_appNo());
+				
 				logger.info(TAG + " onPaymentCallback :: getPostDate  :" + paymentResponse.getPostDate());
 				paymentDetails.setApprovalDate(null);
 				paymentDetails.setResultCd(paymentResponse.getResultCode());
 				paymentDetails.setTransId(paymentResponse.getTransactionId());
 				paymentDetails.setRefId(paymentResponse.getReferenceId());
+				
 
 				if (null != paymentResponse.getTrackId()) 
 				{
-					BigDecimal appSeqNum = new BigDecimal(paymentResponse.getTrackId().toString());
-					paymentDetails.setPaySeqNum(appSeqNum);
+					BigDecimal paySeqNumber = new BigDecimal(paymentResponse.getTrackId().toString());
+					logger.info(TAG + " onPaymentCallback :: paySeqNumber  :" + paySeqNumber);
+					paymentDetails.setPaySeqNum(paySeqNumber);
+					paymentDetails.setPaymentToken(paySeqNumber.toString());
 				} 
 				else 
 				{
@@ -117,9 +121,7 @@ public class CustomizeQuoteController
 				}
 
 				logger.info(TAG + " onPaymentCallback :: paymentDetails  :" + paymentDetails.toString());
-				
 				PaymentDetails updateStatus = payMentService.updatePaymentDetals(paymentDetails);
-				
 				logger.info(TAG + " onPaymentCallback :: updateStatus  :" + updateStatus.toString());
 				
 				if (updateStatus.getErrorCode() == null)
