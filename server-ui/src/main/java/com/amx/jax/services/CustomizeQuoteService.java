@@ -282,7 +282,6 @@ public class CustomizeQuoteService
 			}
 			
 			return saveCustomizeQuoteDetails(customizeQuoteModel, myQuoteModel ,customizeQuoteInfo ,request);
-			//return saveCustomizeQuoteDetailsDummy(customizeQuoteModel,request);
 		}
 		catch (Exception e)
 		{
@@ -336,10 +335,7 @@ public class CustomizeQuoteService
 					payment.setPgCode(PayGServiceCode.KNET);
 					
 					String redirctUrl = payGService.getPaymentUrl(payment , "https://"+request.getServerName()+"/app/landing/myquotes/payment");
-					
-					PgRedirectUrl pgRedirectUrl = new PgRedirectUrl();
-					pgRedirectUrl.setRedirectUrl(redirctUrl);
-					resp.setData(pgRedirectUrl);
+					resp.setRedirectUrl(redirctUrl);
 					
 					/******************************************************PAYMENT GATEWAY***********************************************************/
 					
