@@ -331,7 +331,7 @@ public class CustomizeQuoteService
 					logger.info(TAG + " saveCustomizeQuoteDetails :: paymentDetails :" + paymentDetails.toString());
 					
 					Payment payment = new Payment();
-					payment.setDocFinYear(null);
+					payment.setDocFinYear(1123);
 					payment.setDocNo(paymentDetails.getPaySeqNum().toString());// PaySeqNum
 					payment.setMerchantTrackId(paymentDetails.getPaySeqNum().toString());// PaySeqNum
 					payment.setNetPayableAmount(totalPremium.getTotalAmount());
@@ -371,16 +371,13 @@ public class CustomizeQuoteService
 			/******************************************************PAYMENT GATEWAY***********************************************************/
 			
 			Payment payment = new Payment();
-			payment.setDocFinYear(null);
-			//payment.setDocNo(paymentDetails.getPaySeqNum().toString());// PaySeqNum
-			//payment.setMerchantTrackId(paymentDetails.getPaySeqNum().toString());// PaySeqNum
+			payment.setDocFinYear(1123);
 			payment.setDocNo("4");// PaySeqNum
 			payment.setMerchantTrackId("4");// PaySeqNum
-			//payment.setNetPayableAmount(totalPremium.getTotalAmount());
 			payment.setNetPayableAmount(new BigDecimal(450));
 			payment.setPgCode(PayGServiceCode.KNET);
 			
-			String redirctUrl = payGService.getPaymentUrl(payment,"https://"+request.getServerName()+"/app/landing/myquotes/payment");
+			String redirctUrl = payGService.getPaymentUrl(payment ,"https://"+request.getServerName()+"/app/landing/myquotes/payment");
 			
 			PgRedirectUrl pgRedirectUrl = new PgRedirectUrl();
 			pgRedirectUrl.setRedirectUrl(redirctUrl);
