@@ -88,7 +88,6 @@ public class CustomizeQuoteController
 	public void onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse, HttpServletResponse response) 
 	{
 		logger.info(TAG + " onPaymentCallback :: paymentResponse  :" + paymentResponse.toString());
-
 		try 
 		{
 			
