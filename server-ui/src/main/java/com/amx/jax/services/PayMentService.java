@@ -110,6 +110,10 @@ public class PayMentService
 		AmxApiResponse<PaymentDetails, Object> resp = new AmxApiResponse<PaymentDetails, Object>();
 		try
 		{
+			logger.info(TAG + " cretaeAmibCust :: getCustomerSequenceNumber  :" + userSession.getCustomerSequenceNumber());
+			
+			logger.info(TAG + " cretaeAmibCust :: getCivilId  :" + userSession.getCivilId());
+			
 			ResponseInfo validate = payMentDao.cretaeAmibCust(userSession.getCustomerSequenceNumber(), userSession.getCivilId());
 			
 			logger.info(TAG + " cretaeAmibCust :: validate  :" + validate.toString());
