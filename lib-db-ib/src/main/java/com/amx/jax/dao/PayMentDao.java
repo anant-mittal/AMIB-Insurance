@@ -107,6 +107,11 @@ public class PayMentDao
 			logger.info(TAG + " updatePaymentDetals :: getRefId :" + insertPaymentDetails.getRefId());
 			logger.info(TAG + " updatePaymentDetals :: getPaymentToken :" + insertPaymentDetails.getPaymentToken());
 			
+			logger.info(TAG + " updatePaymentDetals :: getCountryId    :" + metaData.getCountryId());
+			logger.info(TAG + " updatePaymentDetals :: getCompCd       :" + metaData.getCompCd());
+			logger.info(TAG + " updatePaymentDetals :: getDeviceType   :" + metaData.getDeviceType());
+			logger.info(TAG + " updatePaymentDetals :: getDeviceId     :" + metaData.getDeviceId());
+			
 			
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
