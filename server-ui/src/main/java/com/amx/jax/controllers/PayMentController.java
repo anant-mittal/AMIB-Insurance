@@ -74,7 +74,7 @@ public class PayMentController
 			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
-	}*/
+	}
 
 	
 	@RequestMapping(value = "/remit/save-remittance", method = { RequestMethod.POST })
@@ -114,7 +114,7 @@ public class PayMentController
 	}
 
 	
-/*	@RequestMapping(value = "/api/payment-status", method = { RequestMethod.POST })
+	@RequestMapping(value = "/api/payment-status", method = { RequestMethod.POST })
 	public AmxApiResponse<?, Object> getPaymentStatus(@RequestParam BigDecimal paySeqNum) 
 	{
 		return payMentService.getPaymentStatus(paySeqNum);
