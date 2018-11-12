@@ -91,11 +91,9 @@ public class CustomizeQuoteController
 	}
 	
 	@RequestMapping(value = "/remit/save-remittance", method = { RequestMethod.POST })
-	public void onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse, HttpServletResponse response) 
+	public PaymentResponseDto onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse) 
 	{
-	
 		logger.info(TAG + " onPaymentCallback :: paymentResponse  :" + paymentResponse.toString());
-		
 		try 
 		{
 			
@@ -136,7 +134,7 @@ public class CustomizeQuoteController
 		{
 			e.printStackTrace();
 		}
-
+		return paymentResponse;
 	}
 	
 	@RequestMapping(value = "/api/payment-status", method = { RequestMethod.POST })

@@ -56,7 +56,7 @@ public class PaymentService {
 			LOGGER.info("Calling saveRemittanceTransaction with ...  " + paymentResponseDto.toString());
 			
 			
-			/*AmxApiResponse<PaymentResponseDto, Object> resp = saveRemittanceTransaction(paymentResponseDto);
+			AmxApiResponse<PaymentResponseDto, Object> resp = saveRemittanceTransaction(paymentResponseDto);
 			LOGGER.info("Calling saveRemittanceTransaction with resp  " + resp);
 			
 			if (resp.getResult() != null)
@@ -66,7 +66,7 @@ public class PaymentService {
 						+ resp.getResult().getCollectionDocumentNumber() + " CollectionFinanceYear : "
 						+ resp.getResult().getCollectionFinanceYear());
 				return resp.getResult();
-			}*/
+			}
 		} 
 		catch (Exception e) 
 		{
