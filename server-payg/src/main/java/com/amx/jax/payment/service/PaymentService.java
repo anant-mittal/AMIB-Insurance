@@ -46,18 +46,15 @@ public class PaymentService {
 			LOGGER.info("Calling saveRemittanceTransaction with ...  " + paymentResponseDto.toString());
 			AmxApiResponse<PaymentResponseDto, Object> resp = saveRemittanceTransaction(paymentResponseDto);
 			
-			LOGGER.info("PaymentService :: saveRemittanceTransaction with resp... : " + resp);
-			LOGGER.info("PaymentService :: saveRemittanceTransaction with resp.getResult() ... : " + resp.getResult());
+			LOGGER.info("Calling saveRemittanceTransaction with resp.getResult() :" + resp.getResult());
 			
-			if (resp.getResult() != null) 
-			{
+			if (resp.getResult() != null) {
 				LOGGER.info("PaymentResponseDto values -- CollectionDocumentCode : "
 						+ resp.getResult().getCollectionDocumentCode() + " CollectionDocumentNumber : "
 						+ resp.getResult().getCollectionDocumentNumber() + " CollectionFinanceYear : "
 						+ resp.getResult().getCollectionFinanceYear());
 				return resp.getResult();
 			}
-			
 		} catch (Exception e) {
 			LOGGER.error("Exception while capture payment. : ", e);
 		}
@@ -75,9 +72,9 @@ public class PaymentService {
 			RestMetaInfo metaInfo = new RestMetaInfo();
 			HttpHeaders headers = new HttpHeaders();
 			metaInfo.setTenant(TenantContextHolder.currentSite());
-			LOGGER.info("PaymentService :: saveRemittanceTransaction :: getApplicationCountryId() : " + paymentResponseDto.getApplicationCountryId());
+			LOGGER.info("Calling saveRemittanceTransaction getApplicationCountryId() :" + paymentResponseDto.getApplicationCountryId());
 			metaInfo.setCountryId(paymentResponseDto.getApplicationCountryId());
-			LOGGER.info("PaymentService :: saveRemittanceTransaction :: getCustomerId : " + paymentResponseDto.getCustomerId());
+			LOGGER.info("Calling saveRemittanceTransaction getCustomerId :" + paymentResponseDto.getCustomerId());
 			metaInfo.setCustomerId(paymentResponseDto.getCustomerId());
 			headers.add("meta-info", new ObjectMapper().writeValueAsString(metaInfo));
 			return restService.ajax(appConfig.getJaxURL() + "/remit/save-remittance/")
