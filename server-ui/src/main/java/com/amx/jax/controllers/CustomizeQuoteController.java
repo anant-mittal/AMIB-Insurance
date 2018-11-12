@@ -95,6 +95,7 @@ public class CustomizeQuoteController
 				PaymentDetails paymentDetails = new PaymentDetails();
 				paymentDetails.setPaymentId(paymentResponse.getPaymentId());
 				paymentDetails.setApprovalNo(paymentResponse.getAuth_appNo());
+				logger.info(TAG + " onPaymentCallback :: getPostDate  :" + paymentResponse.getPostDate());
 				paymentDetails.setApprovalDate(null);
 				paymentDetails.setResultCd(paymentResponse.getResultCode());
 				paymentDetails.setTransId(paymentResponse.getTransactionId());
@@ -112,15 +113,17 @@ public class CustomizeQuoteController
 
 				logger.info(TAG + " onPaymentCallback :: paymentDetails  :" + paymentDetails.toString());
 				
-				AmxApiResponse<?, Object> updatePaymentResp = payMentService.updatePaymentDetals(paymentDetails);
-				if (updatePaymentResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+				PaymentDetails updateStatus = payMentService.updatePaymentDetals(paymentDetails);
+				
+				logger.info(TAG + " onPaymentCallback :: updateStatus  :" + updateStatus.toString());
+				
+				if (updateStatus.getErrorCode() == null)
 				{
 					 payMentService.cretaeAmibCust();
 					 payMentService.processReceipt(paymentDetails.getPaySeqNum());
 					 payMentService.createAmibPolicy(paymentDetails.getPaySeqNum());
 					 payMentService.preparePrintData(paymentDetails.getPaySeqNum());
 				}
-				
 			} 
 		catch (Exception e) 
 		{
@@ -133,6 +136,7 @@ public class CustomizeQuoteController
 	@RequestMapping(value = "/api/payment-status", method = { RequestMethod.POST })
 	public AmxApiResponse<?, Object> getPaymentStatus(@RequestParam BigDecimal paySeqNum) 
 	{
+		logger.info(TAG + " getPaymentStatus :: paySeqNum  :" + paySeqNum);
 		return payMentService.getPaymentStatus(paySeqNum);
 	}
 	
@@ -140,6 +144,7 @@ public class CustomizeQuoteController
 	@RequestMapping(value = "/api/payment-receipt-data", method = { RequestMethod.POST })
 	public AmxApiResponse<?, Object> paymentReceiptData(@RequestParam BigDecimal paySeqNum) 
 	{
+		logger.info(TAG + " paymentReceiptData :: paySeqNum  :" + paySeqNum);
 		return payMentService.paymentReceiptData(paySeqNum);
 	}
 }

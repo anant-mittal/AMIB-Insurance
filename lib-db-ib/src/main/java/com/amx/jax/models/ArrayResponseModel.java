@@ -63,4 +63,11 @@ public class ArrayResponseModel
 	{
 		this.errorCode = errorCode;
 	}
+	
+	@Override
+	public String toString() {
+		return "ArrayResponseModel [dataArray=" + dataArray + ", status=" + status + ", errorMessage=" + errorMessage
+				+ ", errorCode=" + errorCode + ", data=" + data + "]";
+	}
+
 }

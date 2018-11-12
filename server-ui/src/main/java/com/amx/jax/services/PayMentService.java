@@ -99,21 +99,9 @@ public class PayMentService
 	}
 	
 	
-	public AmxApiResponse<?, Object> updatePaymentDetals(PaymentDetails paymentDetails)
+	public PaymentDetails updatePaymentDetals(PaymentDetails paymentDetails)
 	{
-		AmxApiResponse<PaymentDetails, Object> resp = new AmxApiResponse<PaymentDetails, Object>();
-		try
-		{
-			PaymentDetails updatePaymentDetailRet = payMentDao.updatePaymentDetals(paymentDetails , userSession.getCivilId());
-			logger.info(TAG + " insertPaymentDetals :: updatePaymentDetailRet :" + updatePaymentDetailRet.toString());
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
-		}
-		return resp;
+		return payMentDao.updatePaymentDetals(paymentDetails , userSession.getCivilId());
 	}
 	
 	
@@ -123,6 +111,9 @@ public class PayMentService
 		try
 		{
 			Validate validate = payMentDao.cretaeAmibCust(userSession.getCustomerSequenceNumber(), userSession.getCivilId());
+			
+			logger.info(TAG + " cretaeAmibCust :: validate  :" + validate.toString());
+			
 			if(null == validate.getErrorCode())
 			{
 				resp.setStatusKey(ApiConstants.SUCCESS);
@@ -148,7 +139,12 @@ public class PayMentService
 		AmxApiResponse<PaymentDetails, Object> resp = new AmxApiResponse<PaymentDetails, Object>();
 		try
 		{
+			logger.info(TAG + " processReceipt :: paySeqNum  :" + paySeqNum);
+			
 			Validate validate = payMentDao.processReceipt(userSession.getCustomerSequenceNumber(), userSession.getCivilId() , paySeqNum);
+			
+			logger.info(TAG + " processReceipt :: validate  :" + validate.toString());
+			
 			if(null == validate.getErrorCode())
 			{
 				resp.setStatusKey(ApiConstants.SUCCESS);
@@ -174,7 +170,13 @@ public class PayMentService
 		AmxApiResponse<PaymentDetails, Object> resp = new AmxApiResponse<PaymentDetails, Object>();
 		try
 		{
+			
+			logger.info(TAG + " createAmibPolicy :: paySeqNum  :" + paySeqNum);
+			
 			Validate validate = payMentDao.createAmibPolicy(userSession.getCustomerSequenceNumber(), userSession.getCivilId() , paySeqNum);
+			
+			logger.info(TAG + " createAmibPolicy :: validate  :" + validate.toString());
+			
 			if(null == validate.getErrorCode())
 			{
 				resp.setStatusKey(ApiConstants.SUCCESS);
@@ -199,7 +201,12 @@ public class PayMentService
 		AmxApiResponse<PaymentDetails, Object> resp = new AmxApiResponse<PaymentDetails, Object>();
 		try
 		{
+			logger.info(TAG + " preparePrintData :: paySeqNum  :" + paySeqNum);
+			
 			Validate validate = payMentDao.preparePrintData(paySeqNum);
+			
+			logger.info(TAG + " preparePrintData :: validate  :" + validate.toString());
+			
 			if(null == validate.getErrorCode())
 			{
 				resp.setStatusKey(ApiConstants.SUCCESS);
@@ -225,6 +232,9 @@ public class PayMentService
 		try
 		{
 			ArrayResponseModel arrayResponseModel = payMentDao.getPaymentStatus(paySeqNum);
+			
+			logger.info(TAG + " getPaymentStatus :: arrayResponseModel  :" + arrayResponseModel.toString());
+			
 			if(null == arrayResponseModel.getErrorCode())
 			{
 				PaymentStatus paymentStatus = new PaymentStatus();
@@ -254,6 +264,9 @@ public class PayMentService
 		try
 		{
 			PaymentReceiptModel paymentReceiptModel = payMentDao.paymentReceiptData(paySeqNum);
+			
+			logger.info(TAG + " paymentReceiptData :: paymentReceiptModel  :" + paymentReceiptModel.toString());
+			
 			if(null == paymentReceiptModel.getErrorCode())
 			{
 				resp.setData(paymentReceiptModel);

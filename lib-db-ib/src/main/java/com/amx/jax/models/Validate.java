@@ -63,4 +63,11 @@ public class Validate
 		this.errorMessage = errorMessage;
 	}
 
+	@Override
+	public String toString() {
+		return "Validate [valid=" + valid + ", errorCode=" + errorCode + ", errorMessage=" + errorMessage
+				+ ", contactUsEmail=" + contactUsEmail + ", contactUsHelpLineNumber=" + contactUsHelpLineNumber + "]";
+	}
+
+	
 }
