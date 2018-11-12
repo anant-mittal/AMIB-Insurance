@@ -1,7 +1,7 @@
 
 package com.amx.jax.models;
 
-public class Validate
+public class ResponseInfo
 {
 	public boolean valid;
 

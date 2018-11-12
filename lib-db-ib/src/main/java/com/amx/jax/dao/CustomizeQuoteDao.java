@@ -22,7 +22,7 @@ import com.amx.jax.models.MetaData;
 import com.amx.jax.models.QuoteAddPolicyDetails;
 import com.amx.jax.models.ReplacementTypeList;
 import com.amx.jax.models.TermsCondition;
-import com.amx.jax.models.Validate;
+import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.utility.Calc;
 
 import oracle.jdbc.OracleTypes;
@@ -223,11 +223,11 @@ public class CustomizeQuoteDao
 		return data;
 	}
 
-	public Validate saveCustomizeQuote(CustomizeQuoteSave customizeQuoteSave , String civilId)
+	public ResponseInfo saveCustomizeQuote(CustomizeQuoteSave customizeQuoteSave , String civilId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
-		Validate validate = new Validate();
+		ResponseInfo validate = new ResponseInfo();
 		String callProcedure = "{call IRB_SAVE_QUOTE_SUMMARY(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
 		try
 		{
@@ -263,11 +263,11 @@ public class CustomizeQuoteDao
 		return validate;
 	}
 
-	public Validate saveCustomizeQuoteAddPol(CustomizeQuoteAddPol customizeQuoteAddPol , String civilId)
+	public ResponseInfo saveCustomizeQuoteAddPol(CustomizeQuoteAddPol customizeQuoteAddPol , String civilId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
-		Validate validate = new Validate();
+		ResponseInfo validate = new ResponseInfo();
 		String callProcedure = "{call IRB_CUSTOMIZE_QUOTE_ADDLPOL(?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
 		try
 		{

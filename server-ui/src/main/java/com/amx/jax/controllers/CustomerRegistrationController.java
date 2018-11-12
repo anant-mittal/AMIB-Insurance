@@ -26,7 +26,7 @@ import com.amx.jax.models.CustomerRegistrationRequest;
 import com.amx.jax.models.CustomerRegistrationResponse;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.RequestOtpModel;
-import com.amx.jax.models.Validate;
+import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.services.CustomerRegistrationService;
 import com.amx.jax.services.EmailSmsService;
 import com.amx.jax.ui.session.UserSession;
@@ -61,42 +61,42 @@ public class CustomerRegistrationController
 	}
 
 	@RequestMapping(value = "/pub/reg/civilid-valid", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<Validate, Object> isValidCivilId(@RequestParam("civilId") String civilid)
+	public AmxApiResponse<ResponseInfo, Object> isValidCivilId(@RequestParam("civilId") String civilid)
 	{
 		handleSession();
 		return customerRegistrationService.isValidCivilId(civilid);
 	}
 
 	@RequestMapping(value = "/pub/reg/civilid-exists", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<Validate, Object> isCivilIdExistCheck(@RequestParam("civilId") String civilid)
+	public AmxApiResponse<ResponseInfo, Object> isCivilIdExistCheck(@RequestParam("civilId") String civilid)
 	{
 		handleSession();
 		return customerRegistrationService.isCivilIdExistCheck(civilid);
 	}
 
 	@RequestMapping(value = "/pub/reg/mobile-valid", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<Validate, Object> isValidMobileNumber(@RequestParam("mobile") String mobile)
+	public AmxApiResponse<ResponseInfo, Object> isValidMobileNumber(@RequestParam("mobile") String mobile)
 	{
 		handleSession();
 		return customerRegistrationService.isValidMobileNumber(mobile);
 	}
 
 	@RequestMapping(value = "/pub/reg/mobile-exists", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<Validate, Object> isMobileNumberExistCheck(@RequestParam("mobile") String mobile)
+	public AmxApiResponse<ResponseInfo, Object> isMobileNumberExistCheck(@RequestParam("mobile") String mobile)
 	{
 		handleSession();
 		return customerRegistrationService.isMobileNumberExistCheck(mobile);
 	}
 
 	@RequestMapping(value = "/pub/reg/email-valid", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<Validate, Object> isValidEmailId(@RequestParam("emailId") String emailId)
+	public AmxApiResponse<ResponseInfo, Object> isValidEmailId(@RequestParam("emailId") String emailId)
 	{
 		handleSession();
 		return customerRegistrationService.isValidEmailId(emailId);
 	}
 
 	@RequestMapping(value = "/pub/reg/email-exists", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<Validate, Object> isEmailIdExistCheck(@RequestParam("emailId") String emailId)
+	public AmxApiResponse<ResponseInfo, Object> isEmailIdExistCheck(@RequestParam("emailId") String emailId)
 	{
 		handleSession();
 		return customerRegistrationService.isEmailIdExistCheck(emailId);
@@ -166,7 +166,7 @@ public class CustomerRegistrationController
 		handleSession();
 		userSession.unauthorize();
 		
-		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
+		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
 		resp.setStatusKey(ApiConstants.SUCCESS);
 		resp.setMessage(Message.LOGOUT_MESSAGE);
 		resp.setMessageKey(Message.LOGOUT_MESSAGE);

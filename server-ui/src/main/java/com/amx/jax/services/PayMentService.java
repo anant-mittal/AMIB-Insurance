@@ -20,7 +20,7 @@ import com.amx.jax.models.MyQuoteModel;
 import com.amx.jax.models.PaymentDetails;
 import com.amx.jax.models.PaymentReceiptModel;
 import com.amx.jax.models.PaymentStatus;
-import com.amx.jax.models.Validate;
+import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.ui.session.UserSession;
 
 @Service
@@ -110,7 +110,7 @@ public class PayMentService
 		AmxApiResponse<PaymentDetails, Object> resp = new AmxApiResponse<PaymentDetails, Object>();
 		try
 		{
-			Validate validate = payMentDao.cretaeAmibCust(userSession.getCustomerSequenceNumber(), userSession.getCivilId());
+			ResponseInfo validate = payMentDao.cretaeAmibCust(userSession.getCustomerSequenceNumber(), userSession.getCivilId());
 			
 			logger.info(TAG + " cretaeAmibCust :: validate  :" + validate.toString());
 			
@@ -141,7 +141,7 @@ public class PayMentService
 		{
 			logger.info(TAG + " processReceipt :: paySeqNum  :" + paySeqNum);
 			
-			Validate validate = payMentDao.processReceipt(userSession.getCustomerSequenceNumber(), userSession.getCivilId() , paySeqNum);
+			ResponseInfo validate = payMentDao.processReceipt(userSession.getCustomerSequenceNumber(), userSession.getCivilId() , paySeqNum);
 			
 			logger.info(TAG + " processReceipt :: validate  :" + validate.toString());
 			
@@ -173,7 +173,7 @@ public class PayMentService
 			
 			logger.info(TAG + " createAmibPolicy :: paySeqNum  :" + paySeqNum);
 			
-			Validate validate = payMentDao.createAmibPolicy(userSession.getCustomerSequenceNumber(), userSession.getCivilId() , paySeqNum);
+			ResponseInfo validate = payMentDao.createAmibPolicy(userSession.getCustomerSequenceNumber(), userSession.getCivilId() , paySeqNum);
 			
 			logger.info(TAG + " createAmibPolicy :: validate  :" + validate.toString());
 			
@@ -203,7 +203,7 @@ public class PayMentService
 		{
 			logger.info(TAG + " preparePrintData :: paySeqNum  :" + paySeqNum);
 			
-			Validate validate = payMentDao.preparePrintData(paySeqNum);
+			ResponseInfo validate = payMentDao.preparePrintData(paySeqNum);
 			
 			logger.info(TAG + " preparePrintData :: validate  :" + validate.toString());
 			
@@ -237,8 +237,7 @@ public class PayMentService
 			
 			if(null == arrayResponseModel.getErrorCode())
 			{
-				PaymentStatus paymentStatus = new PaymentStatus();
-				paymentStatus.setPaymentStatus(arrayResponseModel.getData());
+				PaymentStatus paymentStatus = (PaymentStatus) arrayResponseModel.getObject();
 				resp.setData(paymentStatus);
 				resp.setStatusKey(ApiConstants.SUCCESS);
 			}

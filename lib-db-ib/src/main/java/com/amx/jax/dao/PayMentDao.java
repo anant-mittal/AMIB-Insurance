@@ -15,7 +15,8 @@ import org.springframework.stereotype.Repository;
 import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.models.PaymentDetails;
 import com.amx.jax.models.PaymentReceiptModel;
-import com.amx.jax.models.Validate;
+import com.amx.jax.models.PaymentStatus;
+import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.MetaData;
@@ -144,12 +145,12 @@ public class PayMentDao
 	}
 	
 	
-	public Validate cretaeAmibCust(BigDecimal custSeqNum , String civilId)
+	public ResponseInfo cretaeAmibCust(BigDecimal custSeqNum , String civilId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_PROCESS_QUOTE.IRB_CREATE_AMIB_CUSTOMER(?,?,?,?,?,?)}";
-		Validate validate = new Validate();
+		ResponseInfo validate = new ResponseInfo();
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -179,12 +180,12 @@ public class PayMentDao
 		return validate;
 	}
 	
-	public Validate processReceipt(BigDecimal custSeqNum , String civilId , BigDecimal paySeqNum)
+	public ResponseInfo processReceipt(BigDecimal custSeqNum , String civilId , BigDecimal paySeqNum)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_PROCESS_QUOTE.IRB_PROCESS_RECEIPT(?,?,?,?,?,?,?,?)}";
-		Validate validate = new Validate();
+		ResponseInfo validate = new ResponseInfo();
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -217,12 +218,12 @@ public class PayMentDao
 	}
 	
 	
-	public Validate createAmibPolicy(BigDecimal custSeqNum , String civilId , BigDecimal paySeqNum)
+	public ResponseInfo createAmibPolicy(BigDecimal custSeqNum , String civilId , BigDecimal paySeqNum)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_PROCESS_QUOTE.IRB_CREATE_AMIB_POLICY(?,?,?,?,?,?,?,?)}";
-		Validate validate = new Validate();
+		ResponseInfo validate = new ResponseInfo();
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -254,12 +255,12 @@ public class PayMentDao
 		return validate;
 	}
 	
-	public Validate preparePrintData(BigDecimal paySeqNum)
+	public ResponseInfo preparePrintData(BigDecimal paySeqNum)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_PROCESS_QUOTE.IRB_PREPARE_PRINT_DATA(?,?,?,?,?)}";
-		Validate validate = new Validate();
+		ResponseInfo validate = new ResponseInfo();
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -296,26 +297,49 @@ public class PayMentDao
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
-		String callProcedure = "{call IRB_PAYMENT_STATUS(?,?,?,?,?,?)}";
+		String callProcedure = "{call IRB_PAYMENT_STATUS(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
 		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		try
 		{
+			
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			callableStatement.setBigDecimal(3, paySeqNum);
 			callableStatement.registerOutParameter(4, java.sql.Types.VARCHAR);
-			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(5, java.sql.Types.DATE);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(8, java.sql.Types.NUMERIC);
+			callableStatement.registerOutParameter(9, java.sql.Types.NUMERIC);
+			callableStatement.registerOutParameter(10, java.sql.Types.NUMERIC);
+			callableStatement.registerOutParameter(11, java.sql.Types.NUMERIC);
+			callableStatement.registerOutParameter(12, java.sql.Types.NUMERIC);
+			callableStatement.registerOutParameter(13, java.sql.Types.NUMERIC);
+			callableStatement.registerOutParameter(14, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(15, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
 			
-			logger.info(TAG + " preparePrintData :: PaymentStaus  :" + callableStatement.getString(4));
-			logger.info(TAG + " preparePrintData :: Error Code    :" + callableStatement.getString(5));
-			logger.info(TAG + " preparePrintData :: Error Msg     :" + callableStatement.getString(6));
+			PaymentStatus paymentStatus = new PaymentStatus();
+			paymentStatus.setPaymentStatus(callableStatement.getString(4));
+			paymentStatus.setPaymentDate(DateFormats.uiFormattedDate(callableStatement.getDate(5)));
+			paymentStatus.setPayId(callableStatement.getString(6));
+			paymentStatus.setRefId(callableStatement.getString(7));
+			paymentStatus.setModePremium(callableStatement.getBigDecimal(8));
+			paymentStatus.setSupervisionFees(callableStatement.getBigDecimal(9));
+			paymentStatus.setIssueFees(callableStatement.getBigDecimal(10));
+			paymentStatus.setAdditionalPremium(callableStatement.getBigDecimal(11));
+			paymentStatus.setDiscount(callableStatement.getBigDecimal(12));
+			paymentStatus.setTotalAmount(callableStatement.getBigDecimal(13));
 			
-			arrayResponseModel.setData(callableStatement.getString(4));
-			arrayResponseModel.setErrorCode(callableStatement.getString(5));
-			arrayResponseModel.setErrorMessage(callableStatement.getString(6));
+			logger.info(TAG + " preparePrintData :: Status        :" + callableStatement.getString(4));
+			logger.info(TAG + " preparePrintData :: Date          :" + callableStatement.getDate(5));
+			logger.info(TAG + " preparePrintData :: Error Code    :" + callableStatement.getString(14));
+			logger.info(TAG + " preparePrintData :: Error Msg     :" + callableStatement.getString(15));
+			
+			arrayResponseModel.setObject(paymentStatus);
+			arrayResponseModel.setErrorCode(callableStatement.getString(14));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(15));
 		}
 		catch (Exception e)
 		{

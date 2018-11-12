@@ -22,7 +22,7 @@ import com.amx.jax.models.CustomerDetailModel;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.RequestOtpModel;
 import com.amx.jax.models.ResponseOtpModel;
-import com.amx.jax.models.Validate;
+import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.postman.client.PostManClient;
 import com.amx.jax.postman.model.Email;
 import com.amx.jax.postman.model.Notipy;
@@ -385,8 +385,8 @@ public class EmailSmsService
 		userSession.setmOtpMobileNumber("");
 		userSession.seteOtpEmailId("");
 
-		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(userSession.getCivilId());
-		AmxApiResponse<Validate, Object> isOtpEnabled = isOtpEnabled(userSession.getCivilId());
+		AmxApiResponse<ResponseInfo, Object> civilIdExistCheck = isCivilIdExist(userSession.getCivilId());
+		AmxApiResponse<ResponseInfo, Object> isOtpEnabled = isOtpEnabled(userSession.getCivilId());
 		if (isOtpEnabled.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return isOtpEnabled;
@@ -406,7 +406,7 @@ public class EmailSmsService
 		resp.setStatusKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
 		resp.setMessageKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
 
-		AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(userSession.getCivilId());
+		AmxApiResponse<ResponseInfo, Object> setOtpCount = setOtpCount(userSession.getCivilId());
 		if (setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return setOtpCount;
@@ -469,8 +469,8 @@ public class EmailSmsService
 		userSession.setmOtpMobileNumber("");
 		userSession.seteOtpEmailId("");
 
-		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(userSession.getCivilId());
-		AmxApiResponse<Validate, Object> isOtpEnabled = isOtpEnabled(userSession.getCivilId());
+		AmxApiResponse<ResponseInfo, Object> civilIdExistCheck = isCivilIdExist(userSession.getCivilId());
+		AmxApiResponse<ResponseInfo, Object> isOtpEnabled = isOtpEnabled(userSession.getCivilId());
 		if (isOtpEnabled.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return isOtpEnabled;
@@ -486,7 +486,7 @@ public class EmailSmsService
 		resp.setStatusKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
 		resp.setMessageKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
 
-		AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(userSession.getCivilId());
+		AmxApiResponse<ResponseInfo, Object> setOtpCount = setOtpCount(userSession.getCivilId());
 		if (setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return setOtpCount;
@@ -547,8 +547,8 @@ public class EmailSmsService
 		userSession.setmOtpMobileNumber("");
 		userSession.seteOtpEmailId("");
 
-		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(userSession.getCivilId());
-		AmxApiResponse<Validate, Object> isOtpEnabled = isOtpEnabled(userSession.getCivilId());
+		AmxApiResponse<ResponseInfo, Object> civilIdExistCheck = isCivilIdExist(userSession.getCivilId());
+		AmxApiResponse<ResponseInfo, Object> isOtpEnabled = isOtpEnabled(userSession.getCivilId());
 		if (isOtpEnabled.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return isOtpEnabled;
@@ -564,7 +564,7 @@ public class EmailSmsService
 		resp.setStatusKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
 		resp.setMessageKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
 
-		AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(userSession.getCivilId());
+		AmxApiResponse<ResponseInfo, Object> setOtpCount = setOtpCount(userSession.getCivilId());
 		if (setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return setOtpCount;
@@ -618,9 +618,9 @@ public class EmailSmsService
 	 * 
 	 */
 	/************* CHECK IF OTP IS ENABLED FOR THIS PERTICULAR USER **********/
-	public AmxApiResponse<Validate, Object> isOtpEnabled(String civilId)
+	public AmxApiResponse<ResponseInfo, Object> isOtpEnabled(String civilId)
 	{
-		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
+		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
 		boolean isOtpEnable = customerRegistrationDao.isOtpEnabled(civilId , userSession.getUserType());
 		if (isOtpEnable)
 		{
@@ -633,7 +633,7 @@ public class EmailSmsService
 			resp.setStatusKey(ApiConstants.FAILURE);
 			resp.setMessage(Message.CUST_OTP_NOT_ENABLED);
 			resp.setMessageKey(MessageKey.KEY_USER_OTP_NOT_ENABLED);
-			Validate validate = new Validate();
+			ResponseInfo validate = new ResponseInfo();
 			validate.setContactUsHelpLineNumber(metaData.getContactUsHelpLineNumber());
 			validate.setContactUsEmail(metaData.getContactUsEmail());
 			resp.setData(validate);
@@ -652,11 +652,11 @@ public class EmailSmsService
 	 * 
 	 */
 	/************* MAINTAIN COUNT OF OTP SENT BY USRE IN A DAY **********/
-	public AmxApiResponse<Validate, Object> setOtpCount(String civilId)
+	public AmxApiResponse<ResponseInfo, Object> setOtpCount(String civilId)
 	{
-		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
+		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
 
-		Validate setOtpCount = customerRegistrationDao.setOtpCount(civilId , userSession.getUserType());
+		ResponseInfo setOtpCount = customerRegistrationDao.setOtpCount(civilId , userSession.getUserType());
 
 		if (setOtpCount.isValid())
 		{
@@ -683,10 +683,10 @@ public class EmailSmsService
 	 * 
 	 */
 	/************* CHECK IF CIVIL ID EXIST **********/
-	public AmxApiResponse<Validate, Object> isCivilIdExist(String civilid)
+	public AmxApiResponse<ResponseInfo, Object> isCivilIdExist(String civilid)
 	{
 		boolean civilIdExistCheck = customerRegistrationDao.isCivilIdExist(civilid , userSession.getUserType());
-		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
+		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
 		if (civilIdExistCheck)
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);

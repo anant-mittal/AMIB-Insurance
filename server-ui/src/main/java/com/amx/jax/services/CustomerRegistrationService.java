@@ -36,7 +36,7 @@ import com.amx.jax.models.FailureException;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.RequestOtpModel;
 import com.amx.jax.models.ResponseOtpModel;
-import com.amx.jax.models.Validate;
+import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.ui.session.UserSession;
 
 @Service
@@ -104,10 +104,10 @@ public class CustomerRegistrationService
 		return matcher.find();
 	}
 
-	public AmxApiResponse<Validate, Object> isValidCivilId(String civilid)
+	public AmxApiResponse<ResponseInfo, Object> isValidCivilId(String civilid)
 	{
 		boolean isValidCivilId = customerRegistrationDao.isValidCivilId(civilid);
-		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
+		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
 		if (isValidCivilId)
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
@@ -123,12 +123,12 @@ public class CustomerRegistrationService
 		return resp;
 	}
 
-	public AmxApiResponse<Validate, Object> isCivilIdExist(String civilid)
+	public AmxApiResponse<ResponseInfo, Object> isCivilIdExist(String civilid)
 	{
 		boolean civilIdExistCheck = customerRegistrationDao.isCivilIdExist(civilid , userSession.getUserType());
 		logger.info(TAG + " isCivilIdExist :: civilIdExistCheck :" + civilIdExistCheck);
 		
-		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
+		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
 		if (civilIdExistCheck)
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
@@ -145,10 +145,10 @@ public class CustomerRegistrationService
 
 	}
 
-	public AmxApiResponse<Validate, Object> isValidMobileNumber(String mobileNumber)
+	public AmxApiResponse<ResponseInfo, Object> isValidMobileNumber(String mobileNumber)
 	{
-		Validate isValidMobileNumber = customerRegistrationDao.isValidMobileNumber(mobileNumber);
-		AmxApiResponse<Validate, Object> validMobileNumber = new AmxApiResponse<Validate, Object>();
+		ResponseInfo isValidMobileNumber = customerRegistrationDao.isValidMobileNumber(mobileNumber);
+		AmxApiResponse<ResponseInfo, Object> validMobileNumber = new AmxApiResponse<ResponseInfo, Object>();
 		if (isValidMobileNumber.isValid())
 		{
 			validMobileNumber.setStatusKey(ApiConstants.SUCCESS);
@@ -163,10 +163,10 @@ public class CustomerRegistrationService
 		return validMobileNumber;
 	}
 
-	public AmxApiResponse<Validate, Object> isMobileNumberExist(String mobileNumber)
+	public AmxApiResponse<ResponseInfo, Object> isMobileNumberExist(String mobileNumber)
 	{
 		boolean mobileNumberExists = customerRegistrationDao.isMobileNumberExist(mobileNumber , userSession.getUserType());
-		AmxApiResponse<Validate, Object> validMobileNumber = new AmxApiResponse<Validate, Object>();
+		AmxApiResponse<ResponseInfo, Object> validMobileNumber = new AmxApiResponse<ResponseInfo, Object>();
 		if (mobileNumberExists)
 		{
 			validMobileNumber.setStatusKey(ApiConstants.SUCCESS);
@@ -178,17 +178,17 @@ public class CustomerRegistrationService
 			validMobileNumber.setStatusKey(ApiConstants.FAILURE);
 			validMobileNumber.setMessage(Message.MOBILE_NO_NOT_REGISTER);
 			validMobileNumber.setMessageKey(MessageKey.KEY_MOBILE_NO_NOT_REGISTER);
-			Validate validate = new Validate();
+			ResponseInfo validate = new ResponseInfo();
 			validate.setContactUsHelpLineNumber(metaData.getContactUsHelpLineNumber());
 			validate.setContactUsEmail(metaData.getContactUsEmail());
 		}
 		return validMobileNumber;
 	}
 
-	public AmxApiResponse<Validate, Object> isValidEmailId(String emailId)
+	public AmxApiResponse<ResponseInfo, Object> isValidEmailId(String emailId)
 	{
-		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
-		Validate validate = new Validate();
+		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
+		ResponseInfo validate = new ResponseInfo();
 		if (validate(emailId))
 		{
 			validate.setValid(true);
@@ -207,11 +207,11 @@ public class CustomerRegistrationService
 		return resp;
 	}
 
-	public AmxApiResponse<Validate, Object> isEmailIdExist(String emailId)
+	public AmxApiResponse<ResponseInfo, Object> isEmailIdExist(String emailId)
 	{
 		boolean emailIdExistCheck = customerRegistrationDao.isEmailIdExist(emailId , userSession.getUserType());
 		logger.info(TAG + " isCivilIdExist :: civilIdExistCheck :" + emailIdExistCheck);
-		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
+		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
 		if (emailIdExistCheck)
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
@@ -223,7 +223,7 @@ public class CustomerRegistrationService
 			resp.setStatusKey(ApiConstants.FAILURE);
 			resp.setMessage(Message.EMAIL_ALREDAY_NOT_REGISTER);
 			resp.setMessageKey(MessageKey.KEY_EMAID_NOT_REGISTER);
-			Validate validate = new Validate();
+			ResponseInfo validate = new ResponseInfo();
 			validate.setContactUsHelpLineNumber(metaData.getContactUsHelpLineNumber());
 			validate.setContactUsEmail(metaData.getContactUsEmail());
 		}
@@ -271,9 +271,9 @@ public class CustomerRegistrationService
 		return resp;
 	}
 
-	public AmxApiResponse<Validate, Object> isCivilIdExistCheck(String civilid)
+	public AmxApiResponse<ResponseInfo, Object> isCivilIdExistCheck(String civilid)
 	{
-		AmxApiResponse<Validate, Object> validateCivilID = isValidCivilId(civilid);
+		AmxApiResponse<ResponseInfo, Object> validateCivilID = isValidCivilId(civilid);
 
 		if (validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 		{
@@ -282,9 +282,9 @@ public class CustomerRegistrationService
 		return isCivilIdExist(civilid);
 	}
 
-	public AmxApiResponse<Validate, Object> isMobileNumberExistCheck(String mobilenumber)
+	public AmxApiResponse<ResponseInfo, Object> isMobileNumberExistCheck(String mobilenumber)
 	{
-		AmxApiResponse<Validate, Object> isValidMobileNumber = isValidMobileNumber(mobilenumber);
+		AmxApiResponse<ResponseInfo, Object> isValidMobileNumber = isValidMobileNumber(mobilenumber);
 
 		if (isValidMobileNumber.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 		{
@@ -293,9 +293,9 @@ public class CustomerRegistrationService
 		return isMobileNumberExist(mobilenumber);
 	}
 
-	public AmxApiResponse<Validate, Object> isEmailIdExistCheck(String emailId)
+	public AmxApiResponse<ResponseInfo, Object> isEmailIdExistCheck(String emailId)
 	{
-		AmxApiResponse<Validate, Object> isValidEmailId = isValidEmailId(emailId);
+		AmxApiResponse<ResponseInfo, Object> isValidEmailId = isValidEmailId(emailId);
 
 		if (isValidEmailId.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 		{
@@ -377,8 +377,8 @@ public class CustomerRegistrationService
 		CustomerLoginResponse customerLoginResponse = new CustomerLoginResponse();
 		CustomerLoginModel customerLoginModel = new CustomerLoginModel();
 		AmxApiResponse<CustomerLoginResponse, Object> resp = new AmxApiResponse<CustomerLoginResponse, Object>();
-		AmxApiResponse<Validate, Object> validateCivilID = isValidCivilId(customerLoginRequest.getCivilId());
-		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(customerLoginRequest.getCivilId());
+		AmxApiResponse<ResponseInfo, Object> validateCivilID = isValidCivilId(customerLoginRequest.getCivilId());
+		AmxApiResponse<ResponseInfo, Object> civilIdExistCheck = isCivilIdExist(customerLoginRequest.getCivilId());
 
 		if (validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 		{
@@ -474,13 +474,13 @@ public class CustomerRegistrationService
 		userSession.setCivilId(changePasswordOtpRequest.getCivilId());
 		
 		
-		AmxApiResponse<Validate, Object> validateCivilID = isValidCivilId(changePasswordOtpRequest.getCivilId());
+		AmxApiResponse<ResponseInfo, Object> validateCivilID = isValidCivilId(changePasswordOtpRequest.getCivilId());
 		if (validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 		{
 			return validateCivilID;
 		}
 
-		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(changePasswordOtpRequest.getCivilId());
+		AmxApiResponse<ResponseInfo, Object> civilIdExistCheck = isCivilIdExist(changePasswordOtpRequest.getCivilId());
 		logger.info(TAG + " changePasswordOtpInitiate :: civilIdExistCheck :"+civilIdExistCheck.getStatus());
 		if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 		{
@@ -616,12 +616,12 @@ public class CustomerRegistrationService
 	{
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
 
-		AmxApiResponse<Validate, Object> validateCivilID = isValidCivilId(requestOtpModel.getCivilId());
-		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(requestOtpModel.getCivilId());
-		AmxApiResponse<Validate, Object> isValidMobileNumber = isValidMobileNumber(requestOtpModel.getMobileNumber());
-		AmxApiResponse<Validate, Object> mobileNumberExists = isMobileNumberExist(requestOtpModel.getMobileNumber());
-		AmxApiResponse<Validate, Object> validateEmailID = isValidEmailId(requestOtpModel.getEmailId());
-		AmxApiResponse<Validate, Object> emailIdExists = isEmailIdExist(requestOtpModel.getEmailId());
+		AmxApiResponse<ResponseInfo, Object> validateCivilID = isValidCivilId(requestOtpModel.getCivilId());
+		AmxApiResponse<ResponseInfo, Object> civilIdExistCheck = isCivilIdExist(requestOtpModel.getCivilId());
+		AmxApiResponse<ResponseInfo, Object> isValidMobileNumber = isValidMobileNumber(requestOtpModel.getMobileNumber());
+		AmxApiResponse<ResponseInfo, Object> mobileNumberExists = isMobileNumberExist(requestOtpModel.getMobileNumber());
+		AmxApiResponse<ResponseInfo, Object> validateEmailID = isValidEmailId(requestOtpModel.getEmailId());
+		AmxApiResponse<ResponseInfo, Object> emailIdExists = isEmailIdExist(requestOtpModel.getEmailId());
 
 		try
 		{

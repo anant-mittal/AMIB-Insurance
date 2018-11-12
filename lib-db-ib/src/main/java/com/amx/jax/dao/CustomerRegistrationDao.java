@@ -23,7 +23,7 @@ import com.amx.jax.models.CustomerLoginModel;
 import com.amx.jax.models.CustomerRegistrationModel;
 import com.amx.jax.models.FailureException;
 import com.amx.jax.models.MetaData;
-import com.amx.jax.models.Validate;
+import com.amx.jax.models.ResponseInfo;
 import oracle.jdbc.OracleTypes;
 
 @Repository
@@ -180,12 +180,12 @@ public class CustomerRegistrationDao
 		return false;
 	}
 
-	public Validate isValidMobileNumber(String mobileNumber)
+	public ResponseInfo isValidMobileNumber(String mobileNumber)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_VALIDATE_MOBILE(?,?,?,?,?)}";
-		Validate validate = new Validate();
+		ResponseInfo validate = new ResponseInfo();
 
 		try
 		{
@@ -337,12 +337,12 @@ public class CustomerRegistrationDao
 		return false;
 	}
 
-	public Validate setOtpCount(String civilId , String userType)
+	public ResponseInfo setOtpCount(String civilId , String userType)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_UPDATE_OTP_ATTEMPT(?,?,?,?,?,?)}";
-		Validate validate = new Validate();
+		ResponseInfo validate = new ResponseInfo();
 
 		try
 		{

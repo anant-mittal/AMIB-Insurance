@@ -14,6 +14,16 @@ public class ArrayResponseModel
 	
 	private String data;
 	
+	private Object object;
+	
+	public Object getObject() {
+		return object;
+	}
+
+	public void setObject(Object object) {
+		this.object = object;
+	}
+
 	public String getData()
 	{
 		return data;

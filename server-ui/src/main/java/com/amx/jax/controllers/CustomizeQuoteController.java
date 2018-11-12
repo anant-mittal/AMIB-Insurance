@@ -130,7 +130,6 @@ public class CustomizeQuoteController
 		}
 
 	}
-
 	
 	@RequestMapping(value = "/api/payment-status", method = { RequestMethod.POST })
 	public AmxApiResponse<?, Object> getPaymentStatus(@RequestParam BigDecimal paySeqNum) 
@@ -138,7 +137,6 @@ public class CustomizeQuoteController
 		logger.info(TAG + " getPaymentStatus :: paySeqNum  :" + paySeqNum);
 		return payMentService.getPaymentStatus(paySeqNum);
 	}
-	
 	
 	@RequestMapping(value = "/api/payment-receipt-data", method = { RequestMethod.POST })
 	public AmxApiResponse<?, Object> paymentReceiptData(@RequestParam BigDecimal paySeqNum) 
