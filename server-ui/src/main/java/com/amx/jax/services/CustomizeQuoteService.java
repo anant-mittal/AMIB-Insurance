@@ -282,6 +282,9 @@ public class CustomizeQuoteService
 			}
 			
 			return saveCustomizeQuoteDetails(customizeQuoteModel, myQuoteModel ,customizeQuoteInfo ,request);
+			
+			//return saveCustomizeQuoteDetailsDummy(customizeQuoteModel , request);
+
 		}
 		catch (Exception e)
 		{
@@ -357,7 +360,7 @@ public class CustomizeQuoteService
 	}
 	
 	
-	public AmxApiResponse<?, Object> saveCustomizeQuoteDetailsDummy(CustomizeQuoteModel customizeQuoteModel, HttpServletRequest request)
+	public AmxApiResponse<?, Object> paymentTest(HttpServletRequest request)
 	{
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
 		try
@@ -371,10 +374,10 @@ public class CustomizeQuoteService
 			payment.setDocFinYear(null);
 			//payment.setDocNo(paymentDetails.getPaySeqNum().toString());// PaySeqNum
 			//payment.setMerchantTrackId(paymentDetails.getPaySeqNum().toString());// PaySeqNum
-			payment.setDocNo("3");// PaySeqNum
-			payment.setMerchantTrackId("3");// PaySeqNum
+			payment.setDocNo("4");// PaySeqNum
+			payment.setMerchantTrackId("4");// PaySeqNum
 			//payment.setNetPayableAmount(totalPremium.getTotalAmount());
-			payment.setNetPayableAmount(new BigDecimal(100));
+			payment.setNetPayableAmount(new BigDecimal(450));
 			payment.setPgCode(PayGServiceCode.KNET);
 			
 			String redirctUrl = payGService.getPaymentUrl(payment,"https://"+request.getServerName()+"/app/landing/myquotes/payment");

@@ -84,6 +84,12 @@ public class CustomizeQuoteController
 		return customizeQuoteService.saveCustomizeQuote(customizeQuoteModel , request);
 	}
 	
+	@RequestMapping(value = "/api/customize-quote/payment-test", method = RequestMethod.POST, produces = "application/json")
+	public AmxApiResponse<?, Object> paymentTest(HttpServletRequest request)
+	{
+		return customizeQuoteService.paymentTest(request);
+	}
+	
 	@RequestMapping(value = "/remit/save-remittance", method = { RequestMethod.POST })
 	public void onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse, HttpServletResponse response) 
 	{
