@@ -18,6 +18,7 @@ import com.amx.jax.payment.gateway.PayGResponse;
 import com.amx.jax.rest.RestMetaInfo;
 import com.amx.jax.rest.RestService;
 import com.amx.jax.scope.TenantContextHolder;
+import com.amx.utils.ArgUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
@@ -46,18 +47,12 @@ public class PaymentService {
 			LOGGER.info("Calling saveRemittanceTransaction with ...  " + paymentResponseDto.toString());
 			AmxApiResponse<PaymentResponseDto, Object> resp = saveRemittanceTransaction(paymentResponseDto);
 			
-			//LOGGER.info("Calling saveRemittanceTransaction with resp.getResult() 1 :" + resp.getResult());
-			//if (resp.getResult() != null)
-			
-			if (null != resp.getResult())
+			if (resp.getResult() != null)
 			{
-				
-				LOGGER.info("Calling saveRemittanceTransaction with resp.getResult() :");
-				LOGGER.info("Calling saveRemittanceTransaction with resp.getResult() 2 :" + resp.getResult());
-				LOGGER.info("PaymentResponseDto values -- CollectionDocumentCode : "
+				/*LOGGER.info("PaymentResponseDto values -- CollectionDocumentCode : "
 						+ resp.getResult().getCollectionDocumentCode() + " CollectionDocumentNumber : "
 						+ resp.getResult().getCollectionDocumentNumber() + " CollectionFinanceYear : "
-						+ resp.getResult().getCollectionFinanceYear());
+						+ resp.getResult().getCollectionFinanceYear());*/
 				return resp.getResult();
 			}
 		} 
@@ -84,10 +79,12 @@ public class PaymentService {
 			LOGGER.info("Calling saveRemittanceTransaction getCustomerId :" + paymentResponseDto.getCustomerId());
 			metaInfo.setCustomerId(paymentResponseDto.getCustomerId());
 			headers.add("meta-info", new ObjectMapper().writeValueAsString(metaInfo));
+			
 			return restService.ajax(appConfig.getJaxURL() + "/remit/save-remittance/")
 					.post(new HttpEntity<PaymentResponseDto>(paymentResponseDto, headers))
 					.as(new ParameterizedTypeReference<AmxApiResponse<PaymentResponseDto, Object>>() {
 					});
+			
 		} catch (Exception e) {
 			LOGGER.error("exception in saveRemittanceTransaction : ", e);
 			return AmxApiException.evaluate(e);
@@ -111,6 +108,12 @@ public class PaymentService {
 		paymentResponseDto.setTransactionId(payGServiceResponse.getTranxId());
 		paymentResponseDto.setResultCode(payGServiceResponse.getResult());
 		paymentResponseDto.setPostDate(payGServiceResponse.getPostDate());
+		
+		
+		paymentResponseDto.setCollectionFinanceYear(ArgUtil.parseAsBigDecimal(payGServiceResponse.getCollectionFinYear()));
+		paymentResponseDto.setCollectionDocumentCode(ArgUtil.parseAsBigDecimal(payGServiceResponse.getCollectionDocCode()));
+		paymentResponseDto.setCollectionDocumentNumber(ArgUtil.parseAsBigDecimal(payGServiceResponse.getCollectionDocNumber()));
+		
 
 		if (payGServiceResponse.getTrackId() != null) {
 			paymentResponseDto.setCustomerId(new BigDecimal(payGServiceResponse.getTrackId()));
