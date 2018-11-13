@@ -114,6 +114,8 @@ public class CustomizeQuoteController
 		
 		try 
 		{
+			metaDataSetup();
+			
 			PaymentDetails paymentDetails = new PaymentDetails();
 			paymentDetails.setPaymentId(paymentResponse.getPaymentId());
 			paymentDetails.setApprovalNo(paymentResponse.getAuth_appNo());
@@ -170,7 +172,7 @@ public class CustomizeQuoteController
 		return payMentService.paymentReceiptData(paySeqNum);
 	}
 	
-	/*public void metaDataSetup()
+	public void metaDataSetup()
 	{
 		if(null == metaData.getCountryId())
 		{
@@ -180,5 +182,5 @@ public class CustomizeQuoteController
 				customerRegistrationService.getCompanySetUp();
 			}
 		}
-	}*/
+	}
 }
