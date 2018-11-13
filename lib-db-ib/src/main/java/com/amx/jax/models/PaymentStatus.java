@@ -24,14 +24,14 @@ public class PaymentStatus {
 	
 	private BigDecimal totalAmount;
 	
-	private String transectionId;
+	private String transactionId;
 	
-	public String getTransectionId() {
-		return transectionId;
+	public String getTransactionId() {
+		return transactionId;
 	}
 
-	public void setTransectionId(String transectionId) {
-		this.transectionId = transectionId;
+	public void setTransactionId(String transactionId) {
+		this.transactionId = transactionId;
 	}
 
 	public String getPayToken() {
@@ -129,6 +129,6 @@ public class PaymentStatus {
 		return "PaymentStatus [paymentStatus=" + paymentStatus + ", paymentDate=" + paymentDate + ", payId=" + payId
 				+ ", refId=" + refId + ", modePremium=" + modePremium + ", supervisionFees=" + supervisionFees
 				+ ", issueFees=" + issueFees + ", additionalPremium=" + additionalPremium + ", discount=" + discount
-				+ ", totalAmount=" + totalAmount + ", transectionId=" + transectionId + ", payToken=" + payToken + "]";
+				+ ", totalAmount=" + totalAmount + ", transactionId=" + transactionId + ", payToken=" + payToken + "]";
 	}
 }

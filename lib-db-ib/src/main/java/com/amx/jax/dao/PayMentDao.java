@@ -347,7 +347,7 @@ public class PayMentDao
 			paymentStatus.setAdditionalPremium(callableStatement.getBigDecimal(11));
 			paymentStatus.setDiscount(callableStatement.getBigDecimal(12));
 			paymentStatus.setTotalAmount(callableStatement.getBigDecimal(13));
-			paymentStatus.setTransectionId(callableStatement.getString(14));
+			paymentStatus.setTransactionId(callableStatement.getString(14));
 			paymentStatus.setPayToken(callableStatement.getString(15));
 			
 			logger.info(TAG + " preparePrintData :: paymentStatus      :" + paymentStatus.toString());
