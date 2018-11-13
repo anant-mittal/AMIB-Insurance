@@ -161,4 +161,12 @@ public class MetaData implements Serializable
 	{
 		this.metaData = metaData;
 	}
+	
+	@Override
+	public String toString() {
+		return "MetaData [metaData=" + metaData + ", countryId=" + countryId + ", compCd=" + compCd + ", deviceType="
+				+ deviceType + ", deviceId=" + deviceId + ", languageId=" + languageId + ", contactUsEmail="
+				+ contactUsEmail + ", contactUsHelpLineNumber=" + contactUsHelpLineNumber + ", amibWebsiteLink="
+				+ amibWebsiteLink + ", decplc=" + decplc + ", companyName=" + companyName + "]";
+	}
 }

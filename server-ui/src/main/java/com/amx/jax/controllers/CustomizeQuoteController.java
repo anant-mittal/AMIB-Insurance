@@ -27,6 +27,7 @@ import com.amx.jax.payg.PaymentResponseDto;
 import com.amx.jax.services.CustomerRegistrationService;
 import com.amx.jax.services.CustomizeQuoteService;
 import com.amx.jax.services.PayMentService;
+import com.amx.jax.ui.session.UserSession;
 import com.amx.utils.ArgUtil;
 
 @RestController
@@ -56,6 +57,9 @@ public class CustomizeQuoteController
 	
 	@Autowired
 	MetaData metaData;
+	
+	@Autowired
+	UserSession userSession;
 	
 	@Autowired
 	private CustomerRegistrationService customerRegistrationService;
@@ -105,16 +109,16 @@ public class CustomizeQuoteController
 	@RequestMapping(value = "/remit/save-remittance", method = { RequestMethod.POST })
 	public PaymentResponseDto onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse) 
 	{
-		logger.info(TAG + " onPaymentCallback :: paymentResponse  :" + paymentResponse.toString());
+		logger.info(TAG + " onPaymentCallback :: userSession  :" + userSession.toString());
+		logger.info(TAG + " onPaymentCallback :: metaData     :" + metaData.toString());
+		
 		try 
 		{
-			
 			metaDataSetup();
 			
 			PaymentDetails paymentDetails = new PaymentDetails();
 			paymentDetails.setPaymentId(paymentResponse.getPaymentId());
 			paymentDetails.setApprovalNo(paymentResponse.getAuth_appNo());
-			
 			logger.info(TAG + " onPaymentCallback :: getPostDate  :" + paymentResponse.getPostDate());
 			paymentDetails.setApprovalDate(null);
 			paymentDetails.setResultCd(paymentResponse.getResultCode());

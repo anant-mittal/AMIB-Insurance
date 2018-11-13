@@ -33,6 +33,9 @@ public class MyQuotesService
 		AmxApiResponse<MyQuoteModel, Object> resp = new AmxApiResponse<MyQuoteModel, Object>();
 		try
 		{
+			logger.info(TAG + " getUserQuote :: getCivilId :" + userSession.getCivilId());
+			logger.info(TAG + " getUserQuote :: getCustomerSequenceNumber :" + userSession.getCustomerSequenceNumber());
+			
 			resp.setStatusKey(ApiConstants.SUCCESS);
 			resp.setResults(myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber()));
 		}
