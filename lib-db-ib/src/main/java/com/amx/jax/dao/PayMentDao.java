@@ -346,10 +346,9 @@ public class PayMentDao
 			paymentStatus.setDiscount(callableStatement.getBigDecimal(12));
 			paymentStatus.setTotalAmount(callableStatement.getBigDecimal(13));
 			
-			logger.info(TAG + " preparePrintData :: Status        :" + callableStatement.getString(4));
-			logger.info(TAG + " preparePrintData :: Date          :" + callableStatement.getDate(5));
-			logger.info(TAG + " preparePrintData :: Error Code    :" + callableStatement.getString(14));
-			logger.info(TAG + " preparePrintData :: Error Msg     :" + callableStatement.getString(15));
+			logger.info(TAG + " preparePrintData :: paymentStatus      :" + paymentStatus.toString());
+			logger.info(TAG + " preparePrintData :: Error Code         :" + callableStatement.getString(14));
+			logger.info(TAG + " preparePrintData :: Error Msg          :" + callableStatement.getString(15));
 			
 			arrayResponseModel.setObject(paymentStatus);
 			arrayResponseModel.setErrorCode(callableStatement.getString(14));

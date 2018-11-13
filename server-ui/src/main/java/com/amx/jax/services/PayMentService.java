@@ -228,36 +228,47 @@ public class PayMentService
 		try
 		{
 			
-			AmxApiResponse<? , Object> createAmibResp = payMentService.cretaeAmibCust();
-			if (createAmibResp.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-			{
-				return createAmibResp;
-			}
-			
-			AmxApiResponse<? , Object> processTeceiptResp = payMentService.processReceipt(paySeqNum);
-			if (processTeceiptResp.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-			{
-				return processTeceiptResp;
-			}
-			
-			AmxApiResponse<? , Object> createAmibPolicyResp = payMentService.createAmibPolicy(paySeqNum);
-			if (createAmibPolicyResp.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-			{
-				return createAmibPolicyResp;
-			}
-			
-			AmxApiResponse<? , Object> preparePrintData = payMentService.preparePrintData(paySeqNum);
-			if (preparePrintData.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-			{
-				return preparePrintData;
-			}
-			
-			
 			ArrayResponseModel arrayResponseModel = payMentDao.getPaymentStatus(paySeqNum);
 			logger.info(TAG + " getPaymentStatus :: arrayResponseModel  :" + arrayResponseModel.toString());
 			if(null == arrayResponseModel.getErrorCode())
 			{
 				PaymentStatus paymentStatus = (PaymentStatus) arrayResponseModel.getObject();
+				logger.info(TAG + " getPaymentStatus :: paymentStatus  :" + paymentStatus.toString());
+				if(paymentStatus.getPaymentStatus().equalsIgnoreCase("CAPTURED"))
+				{
+					AmxApiResponse<? , Object> createAmibResp = payMentService.cretaeAmibCust();
+					if (createAmibResp.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+					{
+						return createAmibResp;
+					}
+					else
+					{
+						AmxApiResponse<? , Object> processTeceiptResp = payMentService.processReceipt(paySeqNum);
+						if (processTeceiptResp.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+						{
+							return processTeceiptResp;
+						}
+						else
+						{
+							AmxApiResponse<? , Object> createAmibPolicyResp = payMentService.createAmibPolicy(paySeqNum);
+							if (createAmibPolicyResp.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+							{
+								return createAmibPolicyResp;
+							}
+							else
+							{
+								AmxApiResponse<? , Object> preparePrintData = payMentService.preparePrintData(paySeqNum);
+								if (preparePrintData.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+								{
+									return preparePrintData;
+								}
+								
+							}
+						}
+					}
+					
+				}
+				
 				resp.setData(paymentStatus);
 				resp.setStatusKey(ApiConstants.SUCCESS);
 			}
@@ -306,24 +317,5 @@ public class PayMentService
 		return resp;
 	}
 	
-	
-	private static java.sql.Date getCurrentDate()
-	{
-		java.util.Date todayNew = null;
-
-		try
-		{
-			java.util.Date today = new java.util.Date();
-			SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss.SS");
-			String strDate = sdf.format(today.getTime());
-			todayNew = sdf.parse(strDate);
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		return new java.sql.Date(todayNew.getTime());
-	}
-
 	
 }

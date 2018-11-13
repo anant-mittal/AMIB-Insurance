@@ -282,9 +282,7 @@ public class CustomizeQuoteService
 			}
 			
 			return saveCustomizeQuoteDetails(customizeQuoteModel, myQuoteModel ,customizeQuoteInfo ,request);
-			
-			//return saveCustomizeQuoteDetailsDummy(customizeQuoteModel , request);
-
+		
 		}
 		catch (Exception e)
 		{
@@ -312,8 +310,8 @@ public class CustomizeQuoteService
 				customizeQuoteSave.setDisscountAmt(new BigDecimal(0));
 				customizeQuoteSave.setAddCoveragePremium(totalPremium.getAddCoveragePremium());
 				customizeQuoteSave.setTotalAmount(totalPremium.getTotalAmount());
-				logger.info(TAG + " saveCustomizeQuoteAddPol :: customizeQuoteSave :" + customizeQuoteSave.toString());
 				
+				logger.info(TAG + " saveCustomizeQuoteAddPol :: customizeQuoteSave :" + customizeQuoteSave.toString());
 				ResponseInfo validate = customizeQuoteDao.saveCustomizeQuote(customizeQuoteSave , userSession.getCivilId());
 				logger.info(TAG + " saveCustomizeQuoteAddPol :: getErrorCode() :" + validate.getErrorCode());
 				
@@ -325,11 +323,11 @@ public class CustomizeQuoteService
 					
 					logger.info(TAG + " saveCustomizeQuoteDetails :: getQuoteSeqNumber :" + customizeQuoteInfo.getQuoteSeqNumber());
 					logger.info(TAG + " saveCustomizeQuoteDetails :: getTotalAmount    :" + totalPremium.getTotalAmount());
-					
 					logger.info(TAG + " saveCustomizeQuoteDetails :: getTotalAmount    :" + totalPremium.getTotalAmount());
 					
 					AmxApiResponse<PaymentDetails, Object> respInsertPayment = payMentService.insertPaymentDetals(customizeQuoteInfo.getQuoteSeqNumber(),totalPremium.getTotalAmount());
 					PaymentDetails paymentDetails = respInsertPayment.getData();
+					
 					logger.info(TAG + " saveCustomizeQuoteDetails :: paymentDetails :" + paymentDetails.toString());
 					
 					Payment payment = new Payment();
@@ -340,11 +338,7 @@ public class CustomizeQuoteService
 					payment.setPgCode(PayGServiceCode.KNET);
 					
 					logger.info(TAG + " saveCustomizeQuoteDetails :: request.getSession().getId() :" + request.getSession().getId());
-					
-					//String redirctUrl = payGService.getPaymentUrl(payment , "https://"+request.getServerName()+"/app/landing/myquotes/payment;"+request.getSession().getId());
-					
 					String redirctUrl = payGService.getPaymentUrl(payment , "https://"+request.getServerName()+"/app/landing/myquotes/payment");
-					
 					logger.info(TAG + " saveCustomizeQuoteDetails :: redirctUrl :" + redirctUrl);
 					
 					resp.setRedirectUrl(redirctUrl);
@@ -369,7 +363,7 @@ public class CustomizeQuoteService
 	}
 	
 	
-	public AmxApiResponse<?, Object> paymentTest(HttpServletRequest request)
+	/*public AmxApiResponse<?, Object> paymentTest(HttpServletRequest request)
 	{
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
 		try
@@ -377,7 +371,6 @@ public class CustomizeQuoteService
 			
 			resp.setStatusKey(ApiConstants.SUCCESS);
 			
-			/******************************************************PAYMENT GATEWAY***********************************************************/
 			
 			Payment payment = new Payment();
 			payment.setDocFinYear(1123);
@@ -391,9 +384,6 @@ public class CustomizeQuoteService
 			PgRedirectUrl pgRedirectUrl = new PgRedirectUrl();
 			pgRedirectUrl.setRedirectUrl(redirctUrl);
 			resp.setData(pgRedirectUrl);
-			
-			/******************************************************PAYMENT GATEWAY***********************************************************/
-					
 				
 			return resp;
 		}
@@ -402,7 +392,7 @@ public class CustomizeQuoteService
 			e.printStackTrace();
 		}
 		return null;
-	}
+	}*/
 	
 
 	private AmxApiResponse<?, Object> saveCustomizeQuoteAddPol(CustomizeQuoteModel customizeQuoteModel, MyQuoteModel myQuoteModel)
