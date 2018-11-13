@@ -158,6 +158,9 @@ public class PayMentDao
 		ResponseInfo validate = new ResponseInfo();
 		try
 		{
+			logger.info(TAG + " cretaeAmibCust :: custSeqNum :" + custSeqNum);
+			logger.info(TAG + " cretaeAmibCust :: civilId    :" + civilId);
+			
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
@@ -167,8 +170,8 @@ public class PayMentDao
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
 			
-			logger.info(TAG + " insertPaymentDetals :: Error Code :" + callableStatement.getString(5));
-			logger.info(TAG + " insertPaymentDetals :: Error Msg  :" + callableStatement.getString(6));
+			logger.info(TAG + " cretaeAmibCust :: Error Code :" + callableStatement.getString(5));
+			logger.info(TAG + " cretaeAmibCust :: Error Msg  :" + callableStatement.getString(6));
 			
 			validate.setErrorCode(callableStatement.getString(5));
 			validate.setErrorMessage(callableStatement.getString(6));
@@ -193,6 +196,9 @@ public class PayMentDao
 		ResponseInfo validate = new ResponseInfo();
 		try
 		{
+			logger.info(TAG + " processReceipt :: paySeqNum :" + paySeqNum);
+			logger.info(TAG + " processReceipt :: civilId   :" + civilId);
+			
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
@@ -231,6 +237,9 @@ public class PayMentDao
 		ResponseInfo validate = new ResponseInfo();
 		try
 		{
+			logger.info(TAG + " createAmibPolicy :: paySeqNum :" + paySeqNum);
+			logger.info(TAG + " createAmibPolicy :: civilId   :" + civilId);
+			
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());

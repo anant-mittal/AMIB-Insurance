@@ -326,6 +326,8 @@ public class CustomizeQuoteService
 					logger.info(TAG + " saveCustomizeQuoteDetails :: getQuoteSeqNumber :" + customizeQuoteInfo.getQuoteSeqNumber());
 					logger.info(TAG + " saveCustomizeQuoteDetails :: getTotalAmount    :" + totalPremium.getTotalAmount());
 					
+					logger.info(TAG + " saveCustomizeQuoteDetails :: getTotalAmount    :" + totalPremium.getTotalAmount());
+					
 					AmxApiResponse<PaymentDetails, Object> respInsertPayment = payMentService.insertPaymentDetals(customizeQuoteInfo.getQuoteSeqNumber(),totalPremium.getTotalAmount());
 					PaymentDetails paymentDetails = respInsertPayment.getData();
 					logger.info(TAG + " saveCustomizeQuoteDetails :: paymentDetails :" + paymentDetails.toString());
@@ -337,7 +339,12 @@ public class CustomizeQuoteService
 					payment.setNetPayableAmount(totalPremium.getTotalAmount());
 					payment.setPgCode(PayGServiceCode.KNET);
 					
-					String redirctUrl = payGService.getPaymentUrl(payment , "https://"+request.getServerName()+"/app/landing/myquotes/payment");
+					logger.info(TAG + " saveCustomizeQuoteDetails :: request.getSession().getId() :" + request.getSession().getId());
+					
+					String redirctUrl = payGService.getPaymentUrl(payment , "https://"+request.getServerName()+"/app/landing/myquotes/payment;"+request.getSession().getId());
+					
+					logger.info(TAG + " saveCustomizeQuoteDetails :: redirctUrl :" + redirctUrl);
+					
 					resp.setRedirectUrl(redirctUrl);
 					
 					/******************************************************PAYMENT GATEWAY***********************************************************/
