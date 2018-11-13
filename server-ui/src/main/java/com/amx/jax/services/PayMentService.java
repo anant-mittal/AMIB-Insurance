@@ -203,9 +203,7 @@ public class PayMentService
 		try
 		{
 			logger.info(TAG + " preparePrintData :: paySeqNum  :" + paySeqNum);
-			
 			ResponseInfo validate = payMentDao.preparePrintData(paySeqNum);
-			
 			logger.info(TAG + " preparePrintData :: validate  :" + validate.toString());
 			
 			if(null == validate.getErrorCode())
@@ -233,9 +231,7 @@ public class PayMentService
 		try
 		{
 			ArrayResponseModel arrayResponseModel = payMentDao.getPaymentStatus(paySeqNum);
-			
 			logger.info(TAG + " getPaymentStatus :: arrayResponseModel  :" + arrayResponseModel.toString());
-			
 			if(null == arrayResponseModel.getErrorCode())
 			{
 				PaymentStatus paymentStatus = (PaymentStatus) arrayResponseModel.getObject();
