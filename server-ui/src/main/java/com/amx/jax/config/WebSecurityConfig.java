@@ -27,7 +27,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
 	{
 		System.out.println("WebSecurityConfig :: configure :: check ");
 		
-		http.sessionManagement()				// Register Calls
+		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+				// Register Calls
 				.and().authorizeRequests().antMatchers("/register/**").permitAll()
 				// Home Pages Calls
 				.and().authorizeRequests().antMatchers("/home/**").permitAll()

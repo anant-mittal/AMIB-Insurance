@@ -140,13 +140,13 @@ public class CustomizeQuoteController
 			PaymentDetails updateStatus = payMentService.updatePaymentDetals(paymentDetails);
 			logger.info(TAG + " onPaymentCallback :: updateStatus  :" + updateStatus.toString());
 			
-			if (updateStatus.getErrorCode() == null)
+			/*if (updateStatus.getErrorCode() == null)
 			{
 				 payMentService.cretaeAmibCust();
 				 payMentService.processReceipt(paymentDetails.getPaySeqNum());
 				 payMentService.createAmibPolicy(paymentDetails.getPaySeqNum());
 				 payMentService.preparePrintData(paymentDetails.getPaySeqNum());
-			}
+			}*/
 		} 
 				
 		catch (Exception e) 

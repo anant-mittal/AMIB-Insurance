@@ -41,6 +41,9 @@ public class PayMentService
 	
 	@Autowired
 	private MyQuoteDao myQuoteDao;
+	
+	@Autowired
+	PayMentService payMentService;
 
 	public AmxApiResponse<PaymentDetails, Object> insertPaymentDetals(BigDecimal quoteSeqNum , BigDecimal paymentAmount)
 	{
@@ -230,6 +233,12 @@ public class PayMentService
 		AmxApiResponse<PaymentStatus, Object> resp = new AmxApiResponse<>();
 		try
 		{
+			
+			payMentService.cretaeAmibCust();
+			payMentService.processReceipt(paySeqNum);
+			payMentService.createAmibPolicy(paySeqNum);
+			payMentService.preparePrintData(paySeqNum);
+			
 			ArrayResponseModel arrayResponseModel = payMentDao.getPaymentStatus(paySeqNum);
 			logger.info(TAG + " getPaymentStatus :: arrayResponseModel  :" + arrayResponseModel.toString());
 			if(null == arrayResponseModel.getErrorCode())
