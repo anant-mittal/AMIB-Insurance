@@ -129,7 +129,6 @@ public class PaymentStatus {
 		return "PaymentStatus [paymentStatus=" + paymentStatus + ", paymentDate=" + paymentDate + ", payId=" + payId
 				+ ", refId=" + refId + ", modePremium=" + modePremium + ", supervisionFees=" + supervisionFees
 				+ ", issueFees=" + issueFees + ", additionalPremium=" + additionalPremium + ", discount=" + discount
-				+ ", totalAmount=" + totalAmount + "]";
+				+ ", totalAmount=" + totalAmount + ", transectionId=" + transectionId + ", payToken=" + payToken + "]";
 	}
-
 }

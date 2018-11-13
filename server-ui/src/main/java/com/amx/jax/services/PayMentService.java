@@ -239,28 +239,28 @@ public class PayMentService
 					AmxApiResponse<? , Object> createAmibResp = payMentService.cretaeAmibCust();
 					if (createAmibResp.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 					{
-						return createAmibResp;
+						//return createAmibResp;
 					}
 					else
 					{
 						AmxApiResponse<? , Object> processTeceiptResp = payMentService.processReceipt(paySeqNum);
 						if (processTeceiptResp.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 						{
-							return processTeceiptResp;
+							//return processTeceiptResp;
 						}
 						else
 						{
 							AmxApiResponse<? , Object> createAmibPolicyResp = payMentService.createAmibPolicy(paySeqNum);
 							if (createAmibPolicyResp.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 							{
-								return createAmibPolicyResp;
+								//return createAmibPolicyResp;
 							}
 							else
 							{
 								AmxApiResponse<? , Object> preparePrintData = payMentService.preparePrintData(paySeqNum);
 								if (preparePrintData.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 								{
-									return preparePrintData;
+									//return preparePrintData;
 								}
 								
 							}
@@ -269,6 +269,8 @@ public class PayMentService
 					
 				}
 				
+				
+				
 				resp.setData(paymentStatus);
 				resp.setStatusKey(ApiConstants.SUCCESS);
 			}
@@ -276,6 +278,7 @@ public class PayMentService
 			{
 				resp.setStatusKey(ApiConstants.FAILURE);
 				resp.setMessageKey(arrayResponseModel.getErrorCode());
+				//Send Mail
 			}
 		}
 		catch (Exception e)
