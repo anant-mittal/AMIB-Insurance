@@ -111,11 +111,9 @@ public class PayMentService
 		try
 		{
 			logger.info(TAG + " cretaeAmibCust :: getCustomerSequenceNumber  :" + userSession.getCustomerSequenceNumber());
-			
 			logger.info(TAG + " cretaeAmibCust :: getCivilId  :" + userSession.getCivilId());
 			
 			ResponseInfo validate = payMentDao.cretaeAmibCust(userSession.getCustomerSequenceNumber(), userSession.getCivilId());
-			
 			logger.info(TAG + " cretaeAmibCust :: validate  :" + validate.toString());
 			
 			if(null == validate.getErrorCode())
@@ -144,9 +142,7 @@ public class PayMentService
 		try
 		{
 			logger.info(TAG + " processReceipt :: paySeqNum  :" + paySeqNum);
-			
 			ResponseInfo validate = payMentDao.processReceipt(userSession.getCustomerSequenceNumber(), userSession.getCivilId() , paySeqNum);
-			
 			logger.info(TAG + " processReceipt :: validate  :" + validate.toString());
 			
 			if(null == validate.getErrorCode())
@@ -176,9 +172,7 @@ public class PayMentService
 		{
 			
 			logger.info(TAG + " createAmibPolicy :: paySeqNum  :" + paySeqNum);
-			
 			ResponseInfo validate = payMentDao.createAmibPolicy(userSession.getCustomerSequenceNumber(), userSession.getCivilId() , paySeqNum);
-			
 			logger.info(TAG + " createAmibPolicy :: validate  :" + validate.toString());
 			
 			if(null == validate.getErrorCode())
@@ -234,10 +228,30 @@ public class PayMentService
 		try
 		{
 			
-			payMentService.cretaeAmibCust();
-			payMentService.processReceipt(paySeqNum);
-			payMentService.createAmibPolicy(paySeqNum);
-			payMentService.preparePrintData(paySeqNum);
+			AmxApiResponse<? , Object> createAmibResp = payMentService.cretaeAmibCust();
+			if (createAmibResp.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			{
+				return createAmibResp;
+			}
+			
+			AmxApiResponse<? , Object> processTeceiptResp = payMentService.processReceipt(paySeqNum);
+			if (processTeceiptResp.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			{
+				return processTeceiptResp;
+			}
+			
+			AmxApiResponse<? , Object> createAmibPolicyResp = payMentService.createAmibPolicy(paySeqNum);
+			if (createAmibPolicyResp.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			{
+				return createAmibPolicyResp;
+			}
+			
+			AmxApiResponse<? , Object> preparePrintData = payMentService.preparePrintData(paySeqNum);
+			if (preparePrintData.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			{
+				return preparePrintData;
+			}
+			
 			
 			ArrayResponseModel arrayResponseModel = payMentDao.getPaymentStatus(paySeqNum);
 			logger.info(TAG + " getPaymentStatus :: arrayResponseModel  :" + arrayResponseModel.toString());

@@ -111,7 +111,6 @@ public class PayMentDao
 			logger.info(TAG + " updatePaymentDetals :: getCompCd       :" + metaData.getCompCd());
 			logger.info(TAG + " updatePaymentDetals :: getDeviceType   :" + metaData.getDeviceType());
 			logger.info(TAG + " updatePaymentDetals :: getDeviceId     :" + metaData.getDeviceId());
-			civilId = "282071300105";
 			logger.info(TAG + " updatePaymentDetals :: civilId         :" + civilId);
 			
 			callableStatement = connection.prepareCall(callProcedure);

@@ -18,6 +18,8 @@ import com.amx.jax.AppConfig;
 import com.amx.jax.WebConfig;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
+import com.amx.jax.constants.Message;
+import com.amx.jax.constants.MessageKey;
 import com.amx.jax.http.CommonHttpRequest;
 import com.amx.jax.models.CustomizeQuoteModel;
 import com.amx.jax.models.MetaData;
@@ -111,6 +113,7 @@ public class CustomizeQuoteController
 	{
 		logger.info(TAG + " onPaymentCallback :: userSession  :" + userSession.toString());
 		logger.info(TAG + " onPaymentCallback :: metaData     :" + metaData.toString());
+		logger.info(TAG + " onPaymentCallback :: paymentResponse  :" + paymentResponse.toString());
 		
 		try 
 		{
@@ -142,13 +145,6 @@ public class CustomizeQuoteController
 			PaymentDetails updateStatus = payMentService.updatePaymentDetals(paymentDetails);
 			logger.info(TAG + " onPaymentCallback :: updateStatus  :" + updateStatus.toString());
 			
-			/*if (updateStatus.getErrorCode() == null)
-			{
-				 payMentService.cretaeAmibCust();
-				 payMentService.processReceipt(paymentDetails.getPaySeqNum());
-				 payMentService.createAmibPolicy(paymentDetails.getPaySeqNum());
-				 payMentService.preparePrintData(paymentDetails.getPaySeqNum());
-			}*/
 		} 
 				
 		catch (Exception e) 
