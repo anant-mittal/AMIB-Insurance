@@ -24,6 +24,25 @@ public class PaymentStatus {
 	
 	private BigDecimal totalAmount;
 	
+	private String transectionId;
+	
+	public String getTransectionId() {
+		return transectionId;
+	}
+
+	public void setTransectionId(String transectionId) {
+		this.transectionId = transectionId;
+	}
+
+	public String getPayToken() {
+		return payToken;
+	}
+
+	public void setPayToken(String payToken) {
+		this.payToken = payToken;
+	}
+
+	private String payToken;
 	
 	public String getPaymentStatus() {
 		return paymentStatus;

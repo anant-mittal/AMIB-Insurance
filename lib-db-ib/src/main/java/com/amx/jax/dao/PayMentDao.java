@@ -311,7 +311,7 @@ public class PayMentDao
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
-		String callProcedure = "{call IRB_PAYMENT_STATUS(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+		String callProcedure = "{call IRB_PAYMENT_STATUS(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
 		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		try
 		{
@@ -332,6 +332,8 @@ public class PayMentDao
 			callableStatement.registerOutParameter(13, java.sql.Types.NUMERIC);
 			callableStatement.registerOutParameter(14, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(15, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(16, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(17, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
 			
 			PaymentStatus paymentStatus = new PaymentStatus();
@@ -345,14 +347,17 @@ public class PayMentDao
 			paymentStatus.setAdditionalPremium(callableStatement.getBigDecimal(11));
 			paymentStatus.setDiscount(callableStatement.getBigDecimal(12));
 			paymentStatus.setTotalAmount(callableStatement.getBigDecimal(13));
+			paymentStatus.setTransectionId(callableStatement.getString(14));
+			paymentStatus.setPayToken(callableStatement.getString(15));
 			
 			logger.info(TAG + " preparePrintData :: paymentStatus      :" + paymentStatus.toString());
-			logger.info(TAG + " preparePrintData :: Error Code         :" + callableStatement.getString(14));
-			logger.info(TAG + " preparePrintData :: Error Msg          :" + callableStatement.getString(15));
+			
+			logger.info(TAG + " preparePrintData :: Error Code         :" + callableStatement.getString(16));
+			logger.info(TAG + " preparePrintData :: Error Msg          :" + callableStatement.getString(17));
 			
 			arrayResponseModel.setObject(paymentStatus);
-			arrayResponseModel.setErrorCode(callableStatement.getString(14));
-			arrayResponseModel.setErrorMessage(callableStatement.getString(15));
+			arrayResponseModel.setErrorCode(callableStatement.getString(16));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(17));
 		}
 		catch (Exception e)
 		{
