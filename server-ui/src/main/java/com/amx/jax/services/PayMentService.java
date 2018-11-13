@@ -74,9 +74,6 @@ public class PayMentService
 			insertPaymentDetails.setPaymentAmount(paymentAmount);
 			insertPaymentDetails.setPaymentMethod(HardCodedValues.PAYMENT_METHOD);
 			
-			//insertPaymentDetails.setPaymentToken("12AB_PAY_TOKEN");
-			//insertPaymentDetails.setPaymentId("12AB_PAY_ID");
-			
 			PaymentDetails paymentDetails = payMentDao.insertPaymentDetals(insertPaymentDetails , userSession.getCivilId());
 			if(null == paymentDetails.getErrorCode())
 			{

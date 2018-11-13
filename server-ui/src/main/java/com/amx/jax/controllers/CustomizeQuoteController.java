@@ -18,10 +18,13 @@ import com.amx.jax.AppConfig;
 import com.amx.jax.WebConfig;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
+import com.amx.jax.http.CommonHttpRequest;
 import com.amx.jax.models.CustomizeQuoteModel;
+import com.amx.jax.models.MetaData;
 import com.amx.jax.models.PaymentDetails;
 import com.amx.jax.payg.PayGService;
 import com.amx.jax.payg.PaymentResponseDto;
+import com.amx.jax.services.CustomerRegistrationService;
 import com.amx.jax.services.CustomizeQuoteService;
 import com.amx.jax.services.PayMentService;
 import com.amx.utils.ArgUtil;
@@ -47,6 +50,15 @@ public class CustomizeQuoteController
 	
 	@Autowired
 	private AppConfig appConfig;
+	
+	@Autowired
+	CommonHttpRequest httpService;
+	
+	@Autowired
+	MetaData metaData;
+	
+	@Autowired
+	private CustomerRegistrationService customerRegistrationService;
 	
 
 	@RequestMapping(value = "/api/customize-quote/get-quote-details", method = RequestMethod.POST, produces = "application/json")
@@ -97,41 +109,44 @@ public class CustomizeQuoteController
 		try 
 		{
 			
-				PaymentDetails paymentDetails = new PaymentDetails();
-				paymentDetails.setPaymentId(paymentResponse.getPaymentId());
-				paymentDetails.setApprovalNo(paymentResponse.getAuth_appNo());
-				
-				logger.info(TAG + " onPaymentCallback :: getPostDate  :" + paymentResponse.getPostDate());
-				paymentDetails.setApprovalDate(null);
-				paymentDetails.setResultCd(paymentResponse.getResultCode());
-				paymentDetails.setTransId(paymentResponse.getTransactionId());
-				paymentDetails.setRefId(paymentResponse.getReferenceId());
-				
+			metaDataSetup();
+			
+			PaymentDetails paymentDetails = new PaymentDetails();
+			paymentDetails.setPaymentId(paymentResponse.getPaymentId());
+			paymentDetails.setApprovalNo(paymentResponse.getAuth_appNo());
+			
+			logger.info(TAG + " onPaymentCallback :: getPostDate  :" + paymentResponse.getPostDate());
+			paymentDetails.setApprovalDate(null);
+			paymentDetails.setResultCd(paymentResponse.getResultCode());
+			paymentDetails.setTransId(paymentResponse.getTransactionId());
+			paymentDetails.setRefId(paymentResponse.getReferenceId());
+			
 
-				if (null != paymentResponse.getTrackId()) 
-				{
-					BigDecimal paySeqNumber = new BigDecimal(paymentResponse.getTrackId().toString());
-					logger.info(TAG + " onPaymentCallback :: paySeqNumber  :" + paySeqNumber);
-					paymentDetails.setPaySeqNum(paySeqNumber);
-					paymentDetails.setPaymentToken(paySeqNumber.toString());
-				} 
-				else 
-				{
-					paymentDetails.setPaySeqNum(null);
-				}
-
-				logger.info(TAG + " onPaymentCallback :: paymentDetails  :" + paymentDetails.toString());
-				PaymentDetails updateStatus = payMentService.updatePaymentDetals(paymentDetails);
-				logger.info(TAG + " onPaymentCallback :: updateStatus  :" + updateStatus.toString());
-				
-				if (updateStatus.getErrorCode() == null)
-				{
-					 payMentService.cretaeAmibCust();
-					 payMentService.processReceipt(paymentDetails.getPaySeqNum());
-					 payMentService.createAmibPolicy(paymentDetails.getPaySeqNum());
-					 payMentService.preparePrintData(paymentDetails.getPaySeqNum());
-				}
+			if (null != paymentResponse.getTrackId()) 
+			{
+				BigDecimal paySeqNumber = new BigDecimal(paymentResponse.getTrackId().toString());
+				logger.info(TAG + " onPaymentCallback :: paySeqNumber  :" + paySeqNumber);
+				paymentDetails.setPaySeqNum(paySeqNumber);
+				paymentDetails.setPaymentToken(paySeqNumber.toString());
 			} 
+			else 
+			{
+				paymentDetails.setPaySeqNum(null);
+			}
+
+			logger.info(TAG + " onPaymentCallback :: paymentDetails  :" + paymentDetails.toString());
+			PaymentDetails updateStatus = payMentService.updatePaymentDetals(paymentDetails);
+			logger.info(TAG + " onPaymentCallback :: updateStatus  :" + updateStatus.toString());
+			
+			if (updateStatus.getErrorCode() == null)
+			{
+				 payMentService.cretaeAmibCust();
+				 payMentService.processReceipt(paymentDetails.getPaySeqNum());
+				 payMentService.createAmibPolicy(paymentDetails.getPaySeqNum());
+				 payMentService.preparePrintData(paymentDetails.getPaySeqNum());
+			}
+		} 
+				
 		catch (Exception e) 
 		{
 			e.printStackTrace();
@@ -151,5 +166,17 @@ public class CustomizeQuoteController
 	{
 		logger.info(TAG + " paymentReceiptData :: paySeqNum  :" + paySeqNum);
 		return payMentService.paymentReceiptData(paySeqNum);
+	}
+	
+	public void metaDataSetup()
+	{
+		if(null == metaData.getCountryId())
+		{
+			if (httpService.getLanguage().toString().equalsIgnoreCase("EN"))
+			{
+				metaData.setLanguageId(new BigDecimal(0));
+				customerRegistrationService.getCompanySetUp();
+			}
+		}
 	}
 }
