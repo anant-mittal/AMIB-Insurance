@@ -14,6 +14,7 @@ public enum TemplatesIB implements ITemplate {
 	QUOTE_SUBMIT_EMAIL_TO_AMIB("quote-submit-amib-email"),
 	TRNX_RECEIPT("tranx-reciept", PDFConverter.JASPER, "tranx-reciept.json"),
 	POLICY_RECEIPT("policy-receipt", PDFConverter.JASPER, "policy-receipt.json"),
+	//TODO dummy example of remit
 	REMIT_RECEIPT_JASPER("TransactionReceipt_jasper", PDFConverter.JASPER, "TransactionReceipt.json");
 		
 	String fileName;

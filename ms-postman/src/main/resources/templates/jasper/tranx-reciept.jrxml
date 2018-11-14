@@ -325,18 +325,7 @@
                                 <text><![CDATA[Customer Details]]></text>
                             </staticText>
 
-                            <textField isStretchWithOverflow="true">
-                                <reportElement x="160" y="4" width="400" height="15"
-                                               forecolor="#000000"
-                                               isPrintWhenDetailOverflows="true"/>
-                                <textElement textAlignment="Left">
-                                    <font fontName="Arial" size="8" isItalic="true"
-                                          pdfFontName="fonts/all/arial.ttf"/>
-                                </textElement>
-                                <textFieldExpression class="java.lang.String">
-                                    <![CDATA[$F{tranx}.get("firstName")]]>
-                                </textFieldExpression>
-                            </textField>
+                            
 
                             
                         </frame>
@@ -536,7 +525,7 @@
                                           pdfFontName="fonts/all/arial.ttf"/>
                                 </textElement>
                                 <textFieldExpression class="java.lang.String">
-                                    <![CDATA[$F{tranx}.get("firstName")]]>
+                                    <![CDATA[$F{tranx}.get("trnsReceiptRef")]]>
                                 </textFieldExpression>
                             </textField>
 
