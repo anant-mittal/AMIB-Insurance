@@ -1,6 +1,9 @@
 package com.amx.jax.controllers;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,8 +21,10 @@ import com.amx.jax.AppConfig;
 import com.amx.jax.WebConfig;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
+import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.constants.Message;
 import com.amx.jax.constants.MessageKey;
+import com.amx.jax.dict.Language;
 import com.amx.jax.http.CommonHttpRequest;
 import com.amx.jax.models.CustomizeQuoteModel;
 import com.amx.jax.models.MetaData;
@@ -167,7 +172,7 @@ public class CustomizeQuoteController
 		return payMentService.getPaymentStatus(paySeqNum);
 	}
 	
-	@RequestMapping(value = "/api/payment-receipt-data", method = { RequestMethod.POST })
+	/*@RequestMapping(value = "/api/payment-receipt-data", method = { RequestMethod.POST })
 	public String paymentReceiptData(@RequestBody PaymentReceipt paymentReceipt , @RequestParam BigDecimal paySeqNum) 
 	{
 		File file = null;
@@ -176,18 +181,101 @@ public class CustomizeQuoteController
 			logger.info(TAG + " paymentReceiptData :: paySeqNum  :" + paySeqNum);
 			logger.info(TAG + " paymentReceiptData :: paymentReceipt  :" + paymentReceipt.toString());
 			
-			ResponseWrapper<PaymentReceipt> wrapper = new ResponseWrapper<PaymentReceipt>(paymentReceipt);
-			logger.info(TAG + " paymentReceiptData :: wrapper  :" + wrapper);
+			Map<String, Object> wrapper = new HashMap<String, Object>();
+			Map<String, Object> model = new HashMap<String, Object>();
+			ArrayList<Map> dataList = new ArrayList<>();
 			
-			file = postManService.processTemplate(new File(TemplatesIB.REMIT_RECEIPT_JASPER, wrapper, File.Type.PDF)).getResult();
-			file.create(response, true);
+			model.put(DetailsConstants.applicationId, paymentReceipt.getApplicationId());
+			model.put(DetailsConstants.customerId, paymentReceipt.getCustomerId());
+			model.put(DetailsConstants.paymentDate, paymentReceipt.getPaymentDate());
+			model.put(DetailsConstants.paymentMode, paymentReceipt.getPaymentMode());
+			model.put(DetailsConstants.amountPaidNumber, paymentReceipt.getAmountPaidNumber());
+			model.put(DetailsConstants.amountPaidWord, paymentReceipt.getAmountPaidWord());
+			model.put(DetailsConstants.paymentId, paymentReceipt.getPaymentId());
+			model.put(DetailsConstants.customerName, paymentReceipt.getCustomerName());
+			model.put(DetailsConstants.civilId, paymentReceipt.getCivilId());
+			model.put(DetailsConstants.mobileNumber, paymentReceipt.getMobileNumber());
+			model.put(DetailsConstants.emialId, paymentReceipt.getEmialId());
+			model.put(DetailsConstants.policyDuration, paymentReceipt.getPolicyDuration());
+			model.put(DetailsConstants.governate, paymentReceipt.getGovernate());
+			model.put(DetailsConstants.areaDesc, paymentReceipt.getAreaDesc());
+			model.put(DetailsConstants.address, paymentReceipt.getAddress());
+			model.put(DetailsConstants.make, paymentReceipt.getMake());
+			model.put(DetailsConstants.subMake, paymentReceipt.getSubMake());
+			model.put(DetailsConstants.ktNumber, paymentReceipt.getKtNumber());
+			model.put(DetailsConstants.chasisNumber, paymentReceipt.getChasisNumber());
+			model.put(DetailsConstants.modelYear, paymentReceipt.getModelYear());
+			model.put(DetailsConstants.trnsReceiptRef, paymentReceipt.getTrnsReceiptRef());
+			
+			dataList.add(model);
+			wrapper.put("results", dataList);
+			
+			file = postManService.processTemplate(new File(TemplatesIB.TRNX_RECEIPT, wrapper, File.Type.PDF)).getResult();
+			file.create(response, false);
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
 		return JsonUtil.toJson(file);
+	}*/
+	
+	
+	@RequestMapping(value = "/api/payment-receipt-data", method = { RequestMethod.GET })
+	public String paymentReceiptDataExt(@RequestParam BigDecimal paySeqNum) 
+	{
+		File file = null;
+		PaymentReceipt paymentReceipt = null;
+		try
+		{
+
+			AmxApiResponse<?, Object> receiptData  = payMentService.paymentReceiptData(paySeqNum);
+			if (receiptData.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+			{
+				paymentReceipt = (PaymentReceipt) receiptData.getData();
+				logger.info(TAG + " getPaymentStatus :: paymentReceipt  :" + paymentReceipt.toString());
+			}
+			
+			Map<String, Object> wrapper = new HashMap<String, Object>();
+			Map<String, Object> model = new HashMap<String, Object>();
+			ArrayList<Map> dataList = new ArrayList<>();
+			
+			model.put(DetailsConstants.applicationId, paymentReceipt.getApplicationId());
+			model.put(DetailsConstants.customerId, paymentReceipt.getCustomerId());
+			model.put(DetailsConstants.paymentDate, paymentReceipt.getPaymentDate());
+			model.put(DetailsConstants.paymentMode, paymentReceipt.getPaymentMode());
+			model.put(DetailsConstants.amountPaidNumber, paymentReceipt.getAmountPaidNumber());
+			model.put(DetailsConstants.amountPaidWord, paymentReceipt.getAmountPaidWord());
+			model.put(DetailsConstants.paymentId, paymentReceipt.getPaymentId());
+			model.put(DetailsConstants.customerName, paymentReceipt.getCustomerName());
+			model.put(DetailsConstants.civilId, paymentReceipt.getCivilId());
+			model.put(DetailsConstants.mobileNumber, paymentReceipt.getMobileNumber());
+			model.put(DetailsConstants.emialId, paymentReceipt.getEmialId());
+			model.put(DetailsConstants.policyDuration, paymentReceipt.getPolicyDuration());
+			model.put(DetailsConstants.governate, paymentReceipt.getGovernate());
+			model.put(DetailsConstants.areaDesc, paymentReceipt.getAreaDesc());
+			model.put(DetailsConstants.address, paymentReceipt.getAddress());
+			model.put(DetailsConstants.make, paymentReceipt.getMake());
+			model.put(DetailsConstants.subMake, paymentReceipt.getSubMake());
+			model.put(DetailsConstants.ktNumber, paymentReceipt.getKtNumber());
+			model.put(DetailsConstants.chasisNumber, paymentReceipt.getChasisNumber());
+			model.put(DetailsConstants.modelYear, paymentReceipt.getModelYear());
+			model.put(DetailsConstants.trnsReceiptRef, paymentReceipt.getTrnsReceiptRef());
+			
+			dataList.add(model);
+			wrapper.put("results", dataList);
+			
+			file = postManService.processTemplate(new File(TemplatesIB.TRNX_RECEIPT, wrapper, File.Type.PDF)).getResult();
+			file.create(response, true);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		//return JsonUtil.toJson(file);
+		return null;
 	}
+	
 	
 	public void metaDataSetup()
 	{

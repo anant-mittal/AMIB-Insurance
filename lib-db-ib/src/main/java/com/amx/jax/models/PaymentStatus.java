@@ -27,16 +27,6 @@ public class PaymentStatus
 	
 	private String transactionId;
 	
-	private PaymentReceipt paymentReceipt;
-	
-	public PaymentReceipt getPaymentReceipt() {
-		return paymentReceipt;
-	}
-
-	public void setPaymentReceipt(PaymentReceipt paymentReceipt) {
-		this.paymentReceipt = paymentReceipt;
-	}
-
 	public String getTransactionId() {
 		return transactionId;
 	}

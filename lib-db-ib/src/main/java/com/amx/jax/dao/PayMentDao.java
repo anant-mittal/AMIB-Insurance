@@ -305,8 +305,6 @@ public class PayMentDao
 	
 	
 	
-	
-	
 	public ArrayResponseModel getPaymentStatus(BigDecimal paySeqNum)
 	{
 		getConnection();
@@ -374,7 +372,7 @@ public class PayMentDao
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
-		String callProcedure = "{call IRB_ONLINE_RECEIPT_DATA(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+		String callProcedure = "{call IRB_ONLINE_RECEIPT_DATA(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
 		PaymentReceipt paymentReceiptModel = new PaymentReceipt();
 		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		
@@ -382,14 +380,15 @@ public class PayMentDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			
 			logger.info(TAG + " paymentReceiptData :: getCountryId   :" + metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			logger.info(TAG + " paymentReceiptData :: getCompCd      :" + metaData.getCompCd());
-			callableStatement.setBigDecimal(3, paySeqNum);
 			logger.info(TAG + " paymentReceiptData :: paySeqNum      :" + paySeqNum);
-			callableStatement.setBigDecimal(4, metaData.getLanguageId());
 			logger.info(TAG + " paymentReceiptData :: getLanguageId  :" + metaData.getLanguageId());
 			
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(3, paySeqNum);
+			callableStatement.setBigDecimal(4, metaData.getLanguageId());
 			
 			callableStatement.registerOutParameter(5, java.sql.Types.NUMERIC);
 			callableStatement.registerOutParameter(6, java.sql.Types.NUMERIC);
@@ -414,9 +413,11 @@ public class PayMentDao
 			callableStatement.registerOutParameter(21, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(22, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(23, java.sql.Types.NUMERIC);
-			
 			callableStatement.registerOutParameter(24, java.sql.Types.VARCHAR);
+			
 			callableStatement.registerOutParameter(25, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(26, java.sql.Types.VARCHAR);
+			
 			callableStatement.executeUpdate();
 			
 			paymentReceiptModel.setApplicationId(callableStatement.getBigDecimal(5));
@@ -442,7 +443,7 @@ public class PayMentDao
 			
 			paymentReceiptModel.setGovernate(callableStatement.getString(17));
 			paymentReceiptModel.setAreaDesc(callableStatement.getString(18));
-			String address = callableStatement.getString(17) + "" + callableStatement.getString(18);
+			String address = callableStatement.getString(17) + " , " + callableStatement.getString(18);
 			paymentReceiptModel.setAddress(address);
 			paymentReceiptModel.setMake(callableStatement.getString(19));
 			paymentReceiptModel.setSubMake(callableStatement.getString(20));
@@ -450,9 +451,11 @@ public class PayMentDao
 			paymentReceiptModel.setKtNumber(callableStatement.getString(21));
 			paymentReceiptModel.setChasisNumber(callableStatement.getString(22));
 			paymentReceiptModel.setModelYear(callableStatement.getBigDecimal(23));
+			paymentReceiptModel.setTrnsReceiptRef(callableStatement.getString(24));
 			
-			arrayResponseModel.setErrorCode(callableStatement.getString(24));
-			arrayResponseModel.setErrorMessage(callableStatement.getString(25));
+			
+			arrayResponseModel.setErrorCode(callableStatement.getString(25));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(26));
 			arrayResponseModel.setObject(paymentReceiptModel);
 			
 			logger.info(TAG + " paymentReceiptData :: paymentReceiptModel  :" + paymentReceiptModel.toString());

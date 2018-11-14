@@ -272,18 +272,6 @@ public class PayMentService
 					}
 				}
 				
-				AmxApiResponse<?, Object> receiptData  = paymentReceiptData(paySeqNum);
-				if (receiptData.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
-				{
-					paymentReceipt = (PaymentReceipt) receiptData.getData();
-					paymentStatus.setPaymentReceipt(paymentReceipt);
-					logger.info(TAG + " getPaymentStatus :: paymentReceipt  :" + paymentReceipt.toString());
-				}
-				else
-				{
-					paymentStatus.setPaymentReceipt(null);
-				}
-				
 				resp.setData(paymentStatus);
 				resp.setStatusKey(ApiConstants.SUCCESS);
 			}

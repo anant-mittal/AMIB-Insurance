@@ -69,4 +69,51 @@ public class DetailsConstants
 	
 	public static String APPLICATION_ID = "applicationId";
 
+	
+	
+	
+	/******************************PG RECEIPT CONSTANTS***************************/
+	
+	public static String applicationId = "applicationId";
+
+	public static String customerId = "customerId";
+
+	public static String paymentDate = "paymentDate";
+
+	public static String paymentMode = "paymentMode";
+
+	public static String amountPaidNumber = "amountPaidNumber";
+
+	public static String amountPaidWord = "amountPaidWord";
+
+	public static String paymentId = "paymentId";
+
+	public static String customerName = "customerName";
+
+	public static String civilId = "civilId";
+
+	public static String mobileNumber = "mobileNumber";
+
+	public static String emialId = "emialId";
+
+	public static String policyDuration = "policyDuration";
+
+	public static String governate = "governate";
+
+	public static String areaDesc = "areaDesc";
+
+	public static String address = "address";
+
+	public static String make = "make";
+
+	public static String subMake = "subMake";
+
+	public static String ktNumber = "ktNumber";
+
+	public static String chasisNumber = "chasisNumber";
+
+	public static String modelYear = "modelYear";
+	
+	public static String trnsReceiptRef = "trnsReceiptRef";
+	
 }
