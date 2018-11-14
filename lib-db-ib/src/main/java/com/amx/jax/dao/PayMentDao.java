@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.models.PaymentDetails;
-import com.amx.jax.models.PaymentReceiptModel;
+import com.amx.jax.models.PaymentReceipt;
 import com.amx.jax.models.PaymentStatus;
 import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.models.ArrayResponseModel;
@@ -370,12 +370,13 @@ public class PayMentDao
 	}
 	
 	
-	public PaymentReceiptModel paymentReceiptData(BigDecimal paySeqNum)
+	public ArrayResponseModel paymentReceiptData(BigDecimal paySeqNum)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_ONLINE_RECEIPT_DATA(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
-		PaymentReceiptModel paymentReceiptModel = new PaymentReceiptModel();
+		PaymentReceipt paymentReceiptModel = new PaymentReceipt();
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		
 		try
 		{
@@ -450,8 +451,9 @@ public class PayMentDao
 			paymentReceiptModel.setChasisNumber(callableStatement.getString(22));
 			paymentReceiptModel.setModelYear(callableStatement.getBigDecimal(23));
 			
-			paymentReceiptModel.setErrorCode(callableStatement.getString(24));
-			paymentReceiptModel.setErrorMessage(callableStatement.getString(25));
+			arrayResponseModel.setErrorCode(callableStatement.getString(24));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(25));
+			arrayResponseModel.setObject(paymentReceiptModel);
 			
 			logger.info(TAG + " paymentReceiptData :: paymentReceiptModel  :" + paymentReceiptModel.toString());
 		}
@@ -463,7 +465,7 @@ public class PayMentDao
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return paymentReceiptModel;
+		return arrayResponseModel;
 	}
 	
 

@@ -18,7 +18,7 @@ import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.MyQuoteModel;
 import com.amx.jax.models.PaymentDetails;
-import com.amx.jax.models.PaymentReceiptModel;
+import com.amx.jax.models.PaymentReceipt;
 import com.amx.jax.models.PaymentStatus;
 import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.ui.session.UserSession;
@@ -228,14 +228,16 @@ public class PayMentService
 	public AmxApiResponse<?, Object> getPaymentStatus(BigDecimal paySeqNum)
 	{
 		AmxApiResponse<PaymentStatus, Object> resp = new AmxApiResponse<>();
+		PaymentReceipt paymentReceipt = new PaymentReceipt();
+		PaymentStatus paymentStatus = new PaymentStatus();
+		
 		try
 		{
-			
 			ArrayResponseModel arrayResponseModel = payMentDao.getPaymentStatus(paySeqNum);
 			logger.info(TAG + " getPaymentStatus :: arrayResponseModel  :" + arrayResponseModel.toString());
 			if(null == arrayResponseModel.getErrorCode())
 			{
-				PaymentStatus paymentStatus = (PaymentStatus) arrayResponseModel.getObject();
+				paymentStatus = (PaymentStatus) arrayResponseModel.getObject();
 				logger.info(TAG + " getPaymentStatus :: paymentStatus  :" + paymentStatus.toString());
 				if(paymentStatus.getPaymentStatus().equalsIgnoreCase("CAPTURED"))
 				{
@@ -269,6 +271,19 @@ public class PayMentService
 						}
 					}
 				}
+				
+				AmxApiResponse<?, Object> receiptData  = paymentReceiptData(paySeqNum);
+				if (receiptData.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+				{
+					paymentReceipt = (PaymentReceipt) receiptData.getData();
+					paymentStatus.setPaymentReceipt(paymentReceipt);
+					logger.info(TAG + " getPaymentStatus :: paymentReceipt  :" + paymentReceipt.toString());
+				}
+				else
+				{
+					paymentStatus.setPaymentReceipt(null);
+				}
+				
 				resp.setData(paymentStatus);
 				resp.setStatusKey(ApiConstants.SUCCESS);
 			}
@@ -290,22 +305,19 @@ public class PayMentService
 	
 	public AmxApiResponse<?, Object> paymentReceiptData(BigDecimal paySeqNum)
 	{
-		AmxApiResponse<PaymentReceiptModel, Object> resp = new AmxApiResponse<PaymentReceiptModel, Object>();
+		AmxApiResponse<Object, Object> resp = new AmxApiResponse<>();
 		try
 		{
-			PaymentReceiptModel paymentReceiptModel = payMentDao.paymentReceiptData(paySeqNum);
-			
-			logger.info(TAG + " paymentReceiptData :: paymentReceiptModel  :" + paymentReceiptModel.toString());
-			
-			if(null == paymentReceiptModel.getErrorCode())
+			ArrayResponseModel arrayResponseModel = payMentDao.paymentReceiptData(paySeqNum);
+			if(null == arrayResponseModel.getErrorCode())
 			{
-				resp.setData(paymentReceiptModel);
+				resp.setData(arrayResponseModel.getObject());
 				resp.setStatusKey(ApiConstants.SUCCESS);
 			}
 			else
 			{
 				resp.setStatusKey(ApiConstants.FAILURE);
-				resp.setMessageKey(paymentReceiptModel.getErrorCode());
+				resp.setMessageKey(arrayResponseModel.getErrorCode());
 			}
 		}
 		catch (Exception e)

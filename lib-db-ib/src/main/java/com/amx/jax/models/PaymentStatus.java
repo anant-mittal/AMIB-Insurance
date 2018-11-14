@@ -2,7 +2,8 @@ package com.amx.jax.models;
 
 import java.math.BigDecimal;
 
-public class PaymentStatus {
+public class PaymentStatus 
+{
 	
 	private String paymentStatus;
 	
@@ -26,6 +27,16 @@ public class PaymentStatus {
 	
 	private String transactionId;
 	
+	private PaymentReceipt paymentReceipt;
+	
+	public PaymentReceipt getPaymentReceipt() {
+		return paymentReceipt;
+	}
+
+	public void setPaymentReceipt(PaymentReceipt paymentReceipt) {
+		this.paymentReceipt = paymentReceipt;
+	}
+
 	public String getTransactionId() {
 		return transactionId;
 	}

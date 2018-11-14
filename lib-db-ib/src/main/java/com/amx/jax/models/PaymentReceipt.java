@@ -2,7 +2,7 @@ package com.amx.jax.models;
 
 import java.math.BigDecimal;
 
-public class PaymentReceiptModel
+public class PaymentReceipt
 {
 	private BigDecimal applicationId;
 
@@ -43,11 +43,6 @@ public class PaymentReceiptModel
 	private String chasisNumber;
 
 	private BigDecimal modelYear;
-
-	public String errorCode;
-
-	public String errorMessage;
-	
 	
 	public BigDecimal getApplicationId()
 	{
@@ -248,34 +243,13 @@ public class PaymentReceiptModel
 	{
 		this.modelYear = modelYear;
 	}
-
-	public String getErrorCode()
-	{
-		return errorCode;
-	}
-
-	public void setErrorCode(String errorCode)
-	{
-		this.errorCode = errorCode;
-	}
-
-	public String getErrorMessage()
-	{
-		return errorMessage;
-	}
-
-	public void setErrorMessage(String errorMessage)
-	{
-		this.errorMessage = errorMessage;
-	}
-
 	
 	@Override
 	public String toString()
 	{
 		return "PaymentReceiptModel [applicationId=" + applicationId + ", customerId=" + customerId + ", paymentDate=" + paymentDate + ", paymentMode=" + paymentMode + ", amountPaidNumber=" + amountPaidNumber + ", amountPaidWord=" + amountPaidWord + ", paymentId=" + paymentId + ", customerName="
 				+ customerName + ", civilId=" + civilId + ", mobileNumber=" + mobileNumber + ", emialId=" + emialId + ", policyDuration=" + policyDuration + ", governate=" + governate + ", areaDesc=" + areaDesc + ", address=" + address + ", make=" + make + ", subMake=" + subMake + ", ktNumber="
-				+ ktNumber + ", chasisNumber=" + chasisNumber + ", modelYear=" + modelYear + ", errorCode=" + errorCode + ", errorMessage=" + errorMessage + "]";
+				+ ktNumber + ", chasisNumber=" + chasisNumber + ", modelYear=" + modelYear + "]";
 	}
 
 	

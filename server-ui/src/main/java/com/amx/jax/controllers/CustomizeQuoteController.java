@@ -24,13 +24,19 @@ import com.amx.jax.http.CommonHttpRequest;
 import com.amx.jax.models.CustomizeQuoteModel;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.PaymentDetails;
+import com.amx.jax.models.PaymentReceipt;
 import com.amx.jax.payg.PayGService;
 import com.amx.jax.payg.PaymentResponseDto;
+import com.amx.jax.postman.model.TemplatesIB;
 import com.amx.jax.services.CustomerRegistrationService;
 import com.amx.jax.services.CustomizeQuoteService;
 import com.amx.jax.services.PayMentService;
+import com.amx.jax.ui.response.ResponseWrapper;
 import com.amx.jax.ui.session.UserSession;
 import com.amx.utils.ArgUtil;
+import com.amx.utils.JsonUtil;
+import com.amx.jax.postman.PostManService;
+import com.amx.jax.postman.model.File;
 
 @RestController
 public class CustomizeQuoteController
@@ -64,7 +70,13 @@ public class CustomizeQuoteController
 	UserSession userSession;
 	
 	@Autowired
+	private PostManService postManService;
+	
+	@Autowired
 	private CustomerRegistrationService customerRegistrationService;
+	
+	@Autowired
+	private HttpServletResponse response;
 	
 
 	@RequestMapping(value = "/api/customize-quote/get-quote-details", method = RequestMethod.POST, produces = "application/json")
@@ -156,10 +168,25 @@ public class CustomizeQuoteController
 	}
 	
 	@RequestMapping(value = "/api/payment-receipt-data", method = { RequestMethod.POST })
-	public AmxApiResponse<?, Object> paymentReceiptData(@RequestParam BigDecimal paySeqNum) 
+	public String paymentReceiptData(@RequestBody PaymentReceipt paymentReceipt , @RequestParam BigDecimal paySeqNum) 
 	{
-		logger.info(TAG + " paymentReceiptData :: paySeqNum  :" + paySeqNum);
-		return payMentService.paymentReceiptData(paySeqNum);
+		File file = null;
+		try
+		{
+			logger.info(TAG + " paymentReceiptData :: paySeqNum  :" + paySeqNum);
+			logger.info(TAG + " paymentReceiptData :: paymentReceipt  :" + paymentReceipt.toString());
+			
+			ResponseWrapper<PaymentReceipt> wrapper = new ResponseWrapper<PaymentReceipt>(paymentReceipt);
+			logger.info(TAG + " paymentReceiptData :: wrapper  :" + wrapper);
+			
+			file = postManService.processTemplate(new File(TemplatesIB.REMIT_RECEIPT_JASPER, wrapper, File.Type.PDF)).getResult();
+			file.create(response, true);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		return JsonUtil.toJson(file);
 	}
 	
 	public void metaDataSetup()
