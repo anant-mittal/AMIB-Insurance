@@ -27,6 +27,16 @@ public class PaymentStatus
 	
 	private String transactionId;
 	
+	private BigDecimal appSeqNumber;
+	
+	public BigDecimal getAppSeqNumber() {
+		return appSeqNumber;
+	}
+
+	public void setAppSeqNumber(BigDecimal appSeqNumber) {
+		this.appSeqNumber = appSeqNumber;
+	}
+
 	public String getTransactionId() {
 		return transactionId;
 	}

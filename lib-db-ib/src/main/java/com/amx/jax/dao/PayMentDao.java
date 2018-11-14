@@ -309,7 +309,7 @@ public class PayMentDao
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
-		String callProcedure = "{call IRB_PAYMENT_STATUS(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+		String callProcedure = "{call IRB_PAYMENT_STATUS(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
 		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		try
 		{
@@ -332,6 +332,7 @@ public class PayMentDao
 			callableStatement.registerOutParameter(15, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(16, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(17, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(18, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
 			
 			PaymentStatus paymentStatus = new PaymentStatus();
@@ -347,14 +348,15 @@ public class PayMentDao
 			paymentStatus.setTotalAmount(callableStatement.getBigDecimal(13));
 			paymentStatus.setTransactionId(callableStatement.getString(14));
 			paymentStatus.setPayToken(callableStatement.getString(15));
+			paymentStatus.setAppSeqNumber(callableStatement.getBigDecimal(16));
 			
 			logger.info(TAG + " preparePrintData :: paymentStatus      :" + paymentStatus.toString());
-			logger.info(TAG + " preparePrintData :: Error Code         :" + callableStatement.getString(16));
-			logger.info(TAG + " preparePrintData :: Error Msg          :" + callableStatement.getString(17));
+			logger.info(TAG + " preparePrintData :: Error Code         :" + callableStatement.getString(17));
+			logger.info(TAG + " preparePrintData :: Error Msg          :" + callableStatement.getString(18));
 			
 			arrayResponseModel.setObject(paymentStatus);
-			arrayResponseModel.setErrorCode(callableStatement.getString(16));
-			arrayResponseModel.setErrorMessage(callableStatement.getString(17));
+			arrayResponseModel.setErrorCode(callableStatement.getString(17));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(18));
 		}
 		catch (Exception e)
 		{

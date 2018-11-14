@@ -68,8 +68,12 @@ public class DetailsConstants
 	public static String MOBILE_OTP = "mOtp";
 	
 	public static String APPLICATION_ID = "applicationId";
-
 	
+	public static String POLICY_AMOUNT = "policyAmount";
+
+	public static String TRANSECTION_ID = "transectionId";
+	
+	public static String POLICY_APP_NO = "policyAppNo";
 	
 	
 	/******************************PG RECEIPT CONSTANTS***************************/

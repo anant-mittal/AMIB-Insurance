@@ -172,54 +172,6 @@ public class CustomizeQuoteController
 		return payMentService.getPaymentStatus(paySeqNum);
 	}
 	
-	/*@RequestMapping(value = "/api/payment-receipt-data", method = { RequestMethod.POST })
-	public String paymentReceiptData(@RequestBody PaymentReceipt paymentReceipt , @RequestParam BigDecimal paySeqNum) 
-	{
-		File file = null;
-		try
-		{
-			logger.info(TAG + " paymentReceiptData :: paySeqNum  :" + paySeqNum);
-			logger.info(TAG + " paymentReceiptData :: paymentReceipt  :" + paymentReceipt.toString());
-			
-			Map<String, Object> wrapper = new HashMap<String, Object>();
-			Map<String, Object> model = new HashMap<String, Object>();
-			ArrayList<Map> dataList = new ArrayList<>();
-			
-			model.put(DetailsConstants.applicationId, paymentReceipt.getApplicationId());
-			model.put(DetailsConstants.customerId, paymentReceipt.getCustomerId());
-			model.put(DetailsConstants.paymentDate, paymentReceipt.getPaymentDate());
-			model.put(DetailsConstants.paymentMode, paymentReceipt.getPaymentMode());
-			model.put(DetailsConstants.amountPaidNumber, paymentReceipt.getAmountPaidNumber());
-			model.put(DetailsConstants.amountPaidWord, paymentReceipt.getAmountPaidWord());
-			model.put(DetailsConstants.paymentId, paymentReceipt.getPaymentId());
-			model.put(DetailsConstants.customerName, paymentReceipt.getCustomerName());
-			model.put(DetailsConstants.civilId, paymentReceipt.getCivilId());
-			model.put(DetailsConstants.mobileNumber, paymentReceipt.getMobileNumber());
-			model.put(DetailsConstants.emialId, paymentReceipt.getEmialId());
-			model.put(DetailsConstants.policyDuration, paymentReceipt.getPolicyDuration());
-			model.put(DetailsConstants.governate, paymentReceipt.getGovernate());
-			model.put(DetailsConstants.areaDesc, paymentReceipt.getAreaDesc());
-			model.put(DetailsConstants.address, paymentReceipt.getAddress());
-			model.put(DetailsConstants.make, paymentReceipt.getMake());
-			model.put(DetailsConstants.subMake, paymentReceipt.getSubMake());
-			model.put(DetailsConstants.ktNumber, paymentReceipt.getKtNumber());
-			model.put(DetailsConstants.chasisNumber, paymentReceipt.getChasisNumber());
-			model.put(DetailsConstants.modelYear, paymentReceipt.getModelYear());
-			model.put(DetailsConstants.trnsReceiptRef, paymentReceipt.getTrnsReceiptRef());
-			
-			dataList.add(model);
-			wrapper.put("results", dataList);
-			
-			file = postManService.processTemplate(new File(TemplatesIB.TRNX_RECEIPT, wrapper, File.Type.PDF)).getResult();
-			file.create(response, false);
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-		return JsonUtil.toJson(file);
-	}*/
-	
 	
 	@RequestMapping(value = "/api/payment-receipt-data", method = { RequestMethod.GET })
 	public String paymentReceiptDataExt(@RequestParam BigDecimal paySeqNum) 
@@ -272,7 +224,6 @@ public class CustomizeQuoteController
 		{
 			e.printStackTrace();
 		}
-		//return JsonUtil.toJson(file);
 		return null;
 	}
 	

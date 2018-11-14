@@ -228,7 +228,6 @@ public class PayMentService
 	public AmxApiResponse<?, Object> getPaymentStatus(BigDecimal paySeqNum)
 	{
 		AmxApiResponse<PaymentStatus, Object> resp = new AmxApiResponse<>();
-		PaymentReceipt paymentReceipt = new PaymentReceipt();
 		PaymentStatus paymentStatus = new PaymentStatus();
 		
 		try
@@ -239,33 +238,36 @@ public class PayMentService
 			{
 				paymentStatus = (PaymentStatus) arrayResponseModel.getObject();
 				logger.info(TAG + " getPaymentStatus :: paymentStatus  :" + paymentStatus.toString());
+				
+				
+				
 				if(paymentStatus.getPaymentStatus().equalsIgnoreCase("CAPTURED"))
 				{
 					AmxApiResponse<? , Object> createAmibResp = payMentService.cretaeAmibCust();
 					if (createAmibResp.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 					{
-						emailSmsService.failedPGProcedureAfterCapture(paymentStatus , createAmibResp.getMessageKey() , createAmibResp.getMessage() , "CREATE AMIB PROCEDURE");
+						emailSmsService.failedPGProcedureAfterCapture(paymentStatus , createAmibResp.getMessageKey() , createAmibResp.getMessage() , "CREATE AMIB PROCEDURE" , paySeqNum.toString());
 					}
 					else
 					{
 						AmxApiResponse<? , Object> processTeceiptResp = payMentService.processReceipt(paySeqNum);
 						if (processTeceiptResp.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 						{
-							emailSmsService.failedPGProcedureAfterCapture(paymentStatus , createAmibResp.getMessageKey() , createAmibResp.getMessage() , "PROCESS RECEIPT PROCEDURE");
+							emailSmsService.failedPGProcedureAfterCapture(paymentStatus , processTeceiptResp.getMessageKey() , processTeceiptResp.getMessage() , "PROCESS RECEIPT PROCEDURE" , paySeqNum.toString());
 						}
 						else
 						{
 							AmxApiResponse<? , Object> createAmibPolicyResp = payMentService.createAmibPolicy(paySeqNum);
 							if (createAmibPolicyResp.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 							{
-								emailSmsService.failedPGProcedureAfterCapture(paymentStatus , createAmibResp.getMessageKey() , createAmibResp.getMessage() , "CREATE AMIB PLOICY PROCEDURE");
+								emailSmsService.failedPGProcedureAfterCapture(paymentStatus , createAmibPolicyResp.getMessageKey() , createAmibPolicyResp.getMessage() , "CREATE AMIB PLOICY PROCEDURE" , paySeqNum.toString());
 							}
 							else
 							{
 								AmxApiResponse<? , Object> preparePrintData = payMentService.preparePrintData(paySeqNum);
 								if (preparePrintData.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 								{
-									emailSmsService.failedPGProcedureAfterCapture(paymentStatus , createAmibResp.getMessageKey() , createAmibResp.getMessage() , "PREPARE STATEMENT PROCEDURE");
+									emailSmsService.failedPGProcedureAfterCapture(paymentStatus , preparePrintData.getMessageKey() , preparePrintData.getMessage() , "PREPARE STATEMENT PROCEDURE" , paySeqNum.toString());
 								}
 							}
 						}
