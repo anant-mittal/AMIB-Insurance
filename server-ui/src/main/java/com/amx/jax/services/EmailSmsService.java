@@ -20,6 +20,7 @@ import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.dict.Language;
 import com.amx.jax.models.CustomerDetailModel;
 import com.amx.jax.models.MetaData;
+import com.amx.jax.models.PaymentStatus;
 import com.amx.jax.models.RequestOtpModel;
 import com.amx.jax.models.ResponseOtpModel;
 import com.amx.jax.models.ResponseInfo;
@@ -263,16 +264,15 @@ public class EmailSmsService
 		logger.info(TAG + " emailToCustomerAndAmib :: appSeqNumber :" + appSeqNumber);
 		
 		//String emailIdFrom = metaData.getEmailFromConfigured();
-		String emailIdTo = userSession.getCustomerEmailId();
+		String customerEmailId = userSession.getCustomerEmailId();
 		String customerMobileNumber = userSession.getCustomerMobileNumber();
-		String amibEmailId = metaData.getContactUsEmail();
 		String civilId = userSession.getCivilId();
 
 		Map<String, Object> wrapper = new HashMap<String, Object>();
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put(DetailsConstants.CUSTOMER_NAME, customerName());
 		model.put(DetailsConstants.CUSTOMER_CIVIL_ID, civilId);
-		model.put(DetailsConstants.CUSTOMER_EMAIL_ID, emailIdTo);
+		model.put(DetailsConstants.CUSTOMER_EMAIL_ID, customerEmailId);
 		model.put(DetailsConstants.CUSTOMER_MOBILE_NO, customerMobileNumber);
 		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
 		model.put(DetailsConstants.CONTACT_US_MOBILE, metaData.getContactUsHelpLineNumber());
@@ -287,9 +287,8 @@ public class EmailSmsService
 		wrapper.put("data", model);
 		
 		ArrayList<String> emailTo = new ArrayList<String>();
-		emailTo.add(emailIdTo);
-		emailTo.add(amibEmailId);
-
+		emailTo.add(customerEmailId);
+		
 		Email email = new Email();
 		//email.setFrom(emailIdFrom);
 		email.setTo(emailTo);
@@ -328,8 +327,7 @@ public class EmailSmsService
 		logger.info(TAG + " emailToCustomerAndAmib :: subMakeDesc :" + subMakeDesc);
 		logger.info(TAG + " emailToCustomerAndAmib :: appSeqNumber :" + appSeqNumber);
 		
-		//String emailIdFrom = metaData.getEmailFromConfigured();
-		String emailIdTo = userSession.getCustomerEmailId();
+		String customerEmailId = userSession.getCustomerEmailId();
 		String customerMobileNumber = userSession.getCustomerMobileNumber();
 		String amibEmailId = metaData.getContactUsEmail();
 		String civilId = userSession.getCivilId();
@@ -338,7 +336,7 @@ public class EmailSmsService
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put(DetailsConstants.CUSTOMER_NAME, customerName());
 		model.put(DetailsConstants.CUSTOMER_CIVIL_ID, civilId);
-		model.put(DetailsConstants.CUSTOMER_EMAIL_ID, emailIdTo);
+		model.put(DetailsConstants.CUSTOMER_EMAIL_ID, customerEmailId);
 		model.put(DetailsConstants.CUSTOMER_MOBILE_NO, customerMobileNumber);
 		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
 		model.put(DetailsConstants.CONTACT_US_MOBILE, metaData.getContactUsHelpLineNumber());
@@ -352,7 +350,6 @@ public class EmailSmsService
 		wrapper.put("data", model);
 		
 		ArrayList<String> emailTo = new ArrayList<String>();
-		emailTo.add(emailIdTo);
 		emailTo.add(amibEmailId);
 
 		Email email = new Email();
@@ -366,6 +363,74 @@ public class EmailSmsService
 		postManClient.sendEmail(email);
 
 	}
+	
+	
+	
+	
+	
+	
+	
+	/*********
+	 * REQUEST QUOTE SUBMIT SUCCESS MAIL TO AMIB
+	 ********/
+	public void failedPGProcedureAfterCapture(PaymentStatus paymentStatus, String messageKey , String message , String type )
+	{
+		logger.info(TAG + " emailToCustomerAndAmib :: paymentStatus :" + paymentStatus.toString());
+		logger.info(TAG + " emailToCustomerAndAmib :: messageKey :" + messageKey);
+		logger.info(TAG + " emailToCustomerAndAmib :: message :" + message);
+		logger.info(TAG + " emailToCustomerAndAmib :: type :" + type);
+		
+		//String emailIdFrom = metaData.getEmailFromConfigured();
+		//String emailIdTo = userSession.getCustomerEmailId();
+		String emailIdAshokSir = "Ashok.Kalal@almullaexchange.com";
+		String amibEmailId = metaData.getContactUsEmail();
+		String civilId = userSession.getCivilId();
+
+		
+		ArrayList<String> emailTo = new ArrayList<String>();
+		emailTo.add(amibEmailId);
+		emailTo.add(emailIdAshokSir);
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append("\n");
+		sb.append("\n USER PAYMENT GATEWAY INFO :");
+		sb.append("\n");
+		sb.append("\n CIVIL ID   ::  " + civilId);
+		sb.append("\n");
+		sb.append("\n PROCEDURE FAILED  ::  " + type);
+		sb.append("\n");
+		sb.append("\n MESSAGE    ::  " + message);
+		sb.append("\n");
+		sb.append("\n MESSAGE KEY    :: "+ messageKey);
+		sb.append("\n");
+		sb.append("\n APPLICATION ID    :: "+ paymentStatus.getTransactionId());
+		sb.append("\n");
+		sb.append("\n PAY ID    :: "+ paymentStatus.getPayId());
+		sb.append("\n");
+		String mailData = sb.toString();
+		
+
+		Email email = new Email();
+		email.setTo(emailTo);
+		email.setSubject("");
+		email.setHtml(false);
+		email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
+		email.setMessage(mailData);
+		postManClient.sendEmail(email);
+
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	/*
 	 * 

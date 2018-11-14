@@ -351,7 +351,6 @@ public class PayMentDao
 			paymentStatus.setPayToken(callableStatement.getString(15));
 			
 			logger.info(TAG + " preparePrintData :: paymentStatus      :" + paymentStatus.toString());
-			
 			logger.info(TAG + " preparePrintData :: Error Code         :" + callableStatement.getString(16));
 			logger.info(TAG + " preparePrintData :: Error Msg          :" + callableStatement.getString(17));
 			
