@@ -250,13 +250,13 @@ public class PayMentService
 				paymentStatus = (PaymentStatus) arrayResponseModel.getObject();
 				logger.info(TAG + " getPaymentStatus :: paymentStatus  :" + paymentStatus.toString());
 				
-				emailSmsService.emialToCustonSuccessPg(paymentStatus.getTotalAmount()
-						,paymentStatus.getTransactionId()
-						,paymentStatus.getAppSeqNumber() 
-						,receiptData(paySeqNum));
-				
 				if(paymentStatus.getPaymentStatus().equalsIgnoreCase("CAPTURED"))
 				{
+					emailSmsService.emialToCustonSuccessPg(paymentStatus.getTotalAmount()
+							,paymentStatus.getTransactionId()
+							,paymentStatus.getAppSeqNumber() 
+							,receiptData(paySeqNum));
+					
 					AmxApiResponse<? , Object> createAmibResp = payMentService.cretaeAmibCust();
 					if (createAmibResp.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 					{
