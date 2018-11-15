@@ -98,7 +98,9 @@ public class PostManServiceImpl implements PostManService {
 	 * File)
 	 */
 	@Override
-	public AmxApiResponse<File, Object> processTemplate(File file) {
+	public AmxApiResponse<File, Object> processTemplate(File file) 
+	{
+		LOGGER.info("PostManServiceImpl :: processTemplate :: file :"+ file);
 		return AmxApiResponse.build(fileService.create(file));
 	}
 

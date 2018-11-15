@@ -366,23 +366,85 @@ public class EmailSmsService
 	
 	
 	
-	
-	
-	
-	
+	/*
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
 	/*********
 	 * REQUEST QUOTE SUBMIT SUCCESS MAIL TO AMIB
 	 ********/
-	public void failedPGProcedureAfterCapture(PaymentStatus paymentStatus, String messageKey , String message , String type )
+	public void emailToCustomerAfterSuccessPg(String amount , String transecionId , String policyAppNo)
+	{
+		
+		String customerEmailId = userSession.getCustomerEmailId();
+		String customerMobileNumber = userSession.getCustomerMobileNumber();
+		String amibEmailId = metaData.getContactUsEmail();
+		String civilId = userSession.getCivilId();
+
+		Map<String, Object> wrapper = new HashMap<String, Object>();
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put(DetailsConstants.CUSTOMER_NAME, customerName());
+		
+		model.put(DetailsConstants.CUSTOMER_CIVIL_ID, civilId);
+		model.put(DetailsConstants.CUSTOMER_EMAIL_ID, customerEmailId);
+		model.put(DetailsConstants.CUSTOMER_MOBILE_NO, customerMobileNumber);
+		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
+		model.put(DetailsConstants.CONTACT_US_MOBILE, metaData.getContactUsHelpLineNumber());
+		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaData.getAmibWebsiteLink());
+		model.put(DetailsConstants.COMPANY_NAME, metaData.getCompanyName());
+		model.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
+		model.put(DetailsConstants.URL_DETAILS, "");
+		
+		model.put(DetailsConstants.POLICY_AMOUNT, amount);
+		model.put(DetailsConstants.TRANSECTION_ID, transecionId);
+		model.put(DetailsConstants.POLICY_APP_NO, policyAppNo);
+		
+		wrapper.put("data", model);
+		
+		ArrayList<String> emailTo = new ArrayList<String>();
+		emailTo.add(customerEmailId);
+
+		Email email = new Email();
+		email.setTo(emailTo);
+		email.setSubject("Al Mulla Insurance Brokerage Payment Success");
+		email.setModel(wrapper);
+		email.setITemplate(TemplatesIB.QUOTE_SUBMIT_EMAIL_TO_AMIB);
+		email.setHtml(true);
+		email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
+		postManClient.sendEmail(email);
+
+	}
+	
+	
+	
+	
+	/*
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	/*********
+	 * FAILED PROCEDURE WHILE POST PG
+	 ********/
+	public void failedPGProcedureAfterCapture(PaymentStatus paymentStatus, String messageKey , String message , String type , String paySeqNum)
 	{
 		logger.info(TAG + " emailToCustomerAndAmib :: paymentStatus :" + paymentStatus.toString());
 		logger.info(TAG + " emailToCustomerAndAmib :: messageKey :" + messageKey);
 		logger.info(TAG + " emailToCustomerAndAmib :: message :" + message);
 		logger.info(TAG + " emailToCustomerAndAmib :: type :" + type);
 		
-		//String emailIdFrom = metaData.getEmailFromConfigured();
-		//String emailIdTo = userSession.getCustomerEmailId();
-		String emailIdAshokSir = "Ashok.Kalal@almullaexchange.com";
+		String emailIdAshokSir = "ashok.kalal@almullaexchange.com";
 		String amibEmailId = metaData.getContactUsEmail();
 		String civilId = userSession.getCivilId();
 
@@ -395,24 +457,26 @@ public class EmailSmsService
 		sb.append("\n");
 		sb.append("\n USER PAYMENT GATEWAY INFO :");
 		sb.append("\n");
-		sb.append("\n CIVIL ID   ::  " + civilId);
+		sb.append("\n CIVIL ID                    :: " + civilId);
 		sb.append("\n");
-		sb.append("\n PROCEDURE FAILED  ::  " + type);
+		sb.append("\n PROCEDURE FAILED            :: " + type);
 		sb.append("\n");
-		sb.append("\n MESSAGE    ::  " + message);
+		sb.append("\n MESSAGE                     :: " + message);
 		sb.append("\n");
-		sb.append("\n MESSAGE KEY    :: "+ messageKey);
+		sb.append("\n MESSAGE KEY                 :: "+ messageKey);
 		sb.append("\n");
-		sb.append("\n APPLICATION ID    :: "+ paymentStatus.getTransactionId());
+		sb.append("\n APP SEQUENCE NUMBER         :: "+ paymentStatus.getAppSeqNumber());
 		sb.append("\n");
-		sb.append("\n PAY ID    :: "+ paymentStatus.getPayId());
+		sb.append("\n PAY ID                      :: "+ paymentStatus.getPayId());
+		sb.append("\n");
+		sb.append("\n PAYMENT SEQUENCE NUMBER     :: "+ paySeqNum);
 		sb.append("\n");
 		String mailData = sb.toString();
 		
 
 		Email email = new Email();
 		email.setTo(emailTo);
-		email.setSubject("");
+		email.setSubject("INSURANCE FAILED PROCEDURE POST PG");
 		email.setHtml(false);
 		email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
 		email.setMessage(mailData);

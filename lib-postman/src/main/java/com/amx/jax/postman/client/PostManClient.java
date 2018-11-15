@@ -147,6 +147,8 @@ public class PostManClient implements PostManService {
 	@Override
 	public AmxApiResponse<File, Object> processTemplate(File file)
 			throws PostManException {
+		
+		LOGGER.info("PostManClient :: processTemplate :: file :"+ file);
 		try {
 			return AmxApiResponse
 					.build(restService.ajax(appConfig.getPostmapURL())

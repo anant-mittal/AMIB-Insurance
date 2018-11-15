@@ -44,6 +44,18 @@ public class PaymentReceipt
 
 	private BigDecimal modelYear;
 	
+	private String trnsReceiptRef;
+	
+	public String getTrnsReceiptRef() 
+	{
+		return trnsReceiptRef;
+	}
+
+	public void setTrnsReceiptRef(String trnsReceiptRef) 
+	{
+		this.trnsReceiptRef = trnsReceiptRef;
+	}
+
 	public BigDecimal getApplicationId()
 	{
 		return applicationId;

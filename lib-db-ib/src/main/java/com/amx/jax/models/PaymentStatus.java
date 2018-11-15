@@ -27,14 +27,14 @@ public class PaymentStatus
 	
 	private String transactionId;
 	
-	private PaymentReceipt paymentReceipt;
+	private BigDecimal appSeqNumber;
 	
-	public PaymentReceipt getPaymentReceipt() {
-		return paymentReceipt;
+	public BigDecimal getAppSeqNumber() {
+		return appSeqNumber;
 	}
 
-	public void setPaymentReceipt(PaymentReceipt paymentReceipt) {
-		this.paymentReceipt = paymentReceipt;
+	public void setAppSeqNumber(BigDecimal appSeqNumber) {
+		this.appSeqNumber = appSeqNumber;
 	}
 
 	public String getTransactionId() {
