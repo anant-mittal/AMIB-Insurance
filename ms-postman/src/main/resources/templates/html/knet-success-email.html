@@ -226,6 +226,9 @@ a {
 	border-bottom: 2px solid #333;
 	font-weight: 700;
 }
+.note{
+	color:green;
+}
 
 @media only screen and (max-width: 640px) {
 	body {
@@ -283,16 +286,15 @@ a {
 										<td class="content-block">Welcome to <span th:text="${data.companyName}" th:remove="tag"></span>!</td>
 									</tr>
 									<tr>
-										<td class="content-block">Your payment for premium amount <span th:text="${data.policyAmount}" th:remove="tag"></span> is paid successfully to <br/> 
-										Al Mulla Insurance Brokerage. Your transaction reference ID is - <span th:text="${data.transactionId}" th:remove="tag"></span> and policy 
+										<td class="content-block">Your payment for premium amount <span th:text="${data.policyAmount}" th:remove="tag"></span> is paid successfully to Al Mulla<br/> 
+										 Insurance Brokerage.Your transaction reference ID is - <span th:text="${data.transactionId}" th:remove="tag"></span> and policy 
 										application number is - <span th:text="${data.policyAppNo}" th:remove="tag"></span>
 										</td>
 									</tr>
 									<tr>
-										<td class="content-block"><strong><span>NOTE: In case you are facing issue to download/view the transaction receipt, </span></strong><br/>
-										<strong><span>please contact AMIB team <span  th:text="${data.contactUsMobile}"></span></span> or 
-										<span  th:text="${data.contactUsEmail}"></span> for more details.
-										 </strong>
+										<td class="content-block note"><span>NOTE:</span><span> In case you are facing issue to download/view the transaction receipt, </span><br/>
+										<span>please contact AMIB team <span class="note"  th:text="${data.contactUsMobile}"></span> or </span>
+										<span th:text="${data.contactUsEmail}"></span> for more details.
 										</td>
 									</tr>
 									<tr>
