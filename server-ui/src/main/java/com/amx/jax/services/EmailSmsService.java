@@ -393,7 +393,6 @@ public class EmailSmsService
 		logger.info(TAG + " emailToCustomerAfterSuccessPg :: amount  :" + amount);
 		String customerEmailId = userSession.getCustomerEmailId();
 		String customerMobileNumber = userSession.getCustomerMobileNumber();
-		String amibEmailId = metaData.getContactUsEmail();
 		String civilId = userSession.getCivilId();
 
 		Map<String, Object> wrapper = new HashMap<String, Object>();
@@ -461,7 +460,6 @@ public class EmailSmsService
 		String emailIdAshokSir = "ashok.kalal@almullaexchange.com";
 		String amibEmailId = metaData.getContactUsEmail();
 		String civilId = userSession.getCivilId();
-
 		
 		ArrayList<String> emailTo = new ArrayList<String>();
 		emailTo.add(amibEmailId);
@@ -471,22 +469,21 @@ public class EmailSmsService
 		sb.append("\n");
 		sb.append("\n USER PAYMENT GATEWAY INFO :");
 		sb.append("\n");
-		sb.append("\n CIVIL ID                    :: " + civilId);
+		sb.append("\n CIVIL ID :: " + civilId);
 		sb.append("\n");
-		sb.append("\n PROCEDURE FAILED            :: " + type);
+		sb.append("\n PROCEDURE FAILED :: " + type);
 		sb.append("\n");
-		sb.append("\n MESSAGE                     :: " + message);
+		sb.append("\n MESSAGE :: " + message);
 		sb.append("\n");
-		sb.append("\n MESSAGE KEY                 :: "+ messageKey);
+		sb.append("\n MESSAGE KEY :: "+ messageKey);
 		sb.append("\n");
-		sb.append("\n APP SEQUENCE NUMBER         :: "+ paymentStatus.getAppSeqNumber());
+		sb.append("\n APP SEQUENCE NUMBER :: "+ paymentStatus.getAppSeqNumber());
 		sb.append("\n");
-		sb.append("\n PAY ID                      :: "+ paymentStatus.getPayId());
+		sb.append("\n PAY ID :: "+ paymentStatus.getPayId());
 		sb.append("\n");
-		sb.append("\n PAYMENT SEQUENCE NUMBER     :: "+ paySeqNum);
+		sb.append("\n PAYMENT SEQUENCE NUMBER :: "+ paySeqNum);
 		sb.append("\n");
 		String mailData = sb.toString();
-		
 
 		Email email = new Email();
 		email.setTo(emailTo);

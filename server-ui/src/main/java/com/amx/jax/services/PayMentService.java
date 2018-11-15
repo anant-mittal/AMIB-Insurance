@@ -138,6 +138,7 @@ public class PayMentService
 			{
 				resp.setStatusKey(ApiConstants.FAILURE);
 				resp.setMessageKey(validate.getErrorCode());
+				resp.setMessage(validate.getErrorMessage());
 			}
 		}
 		catch (Exception e)
@@ -167,6 +168,7 @@ public class PayMentService
 			{
 				resp.setStatusKey(ApiConstants.FAILURE);
 				resp.setMessageKey(validate.getErrorCode());
+				resp.setMessage(validate.getErrorMessage());
 			}
 		}
 		catch (Exception e)
@@ -197,6 +199,7 @@ public class PayMentService
 			{
 				resp.setStatusKey(ApiConstants.FAILURE);
 				resp.setMessageKey(validate.getErrorCode());
+				resp.setMessage(validate.getErrorMessage());
 			}
 		}
 		catch (Exception e)
@@ -225,6 +228,7 @@ public class PayMentService
 			{
 				resp.setStatusKey(ApiConstants.FAILURE);
 				resp.setMessageKey(validate.getErrorCode());
+				resp.setMessage(validate.getErrorMessage());
 			}
 		}
 		catch (Exception e)
@@ -252,10 +256,8 @@ public class PayMentService
 				
 				if(paymentStatus.getPaymentStatus().equalsIgnoreCase("CAPTURED"))
 				{
-					emailSmsService.emialToCustonSuccessPg(paymentStatus.getTotalAmount()
-							,paymentStatus.getTransactionId()
-							,paymentStatus.getAppSeqNumber() 
-							,receiptData(paySeqNum));
+					emailSmsService.emialToCustonSuccessPg(paymentStatus.getTotalAmount(),
+							paymentStatus.getTransactionId(), paymentStatus.getAppSeqNumber(), receiptData(paySeqNum));
 					
 					AmxApiResponse<? , Object> createAmibResp = payMentService.cretaeAmibCust();
 					if (createAmibResp.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
