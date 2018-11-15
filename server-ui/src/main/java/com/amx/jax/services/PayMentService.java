@@ -3,6 +3,8 @@ package com.amx.jax.services;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
+import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.dao.MyQuoteDao;
 import com.amx.jax.dao.PayMentDao;
@@ -21,6 +24,11 @@ import com.amx.jax.models.PaymentDetails;
 import com.amx.jax.models.PaymentReceipt;
 import com.amx.jax.models.PaymentStatus;
 import com.amx.jax.models.ResponseInfo;
+import com.amx.jax.postman.PostManException;
+import com.amx.jax.postman.PostManService;
+import com.amx.jax.postman.model.Email;
+import com.amx.jax.postman.model.File;
+import com.amx.jax.postman.model.TemplatesIB;
 import com.amx.jax.ui.session.UserSession;
 
 @Service
@@ -47,6 +55,9 @@ public class PayMentService
 	
 	@Autowired
 	EmailSmsService emailSmsService;
+	
+	@Autowired
+	private PostManService postManService;
 
 	public AmxApiResponse<PaymentDetails, Object> insertPaymentDetals(BigDecimal quoteSeqNum , BigDecimal paymentAmount)
 	{
@@ -239,7 +250,10 @@ public class PayMentService
 				paymentStatus = (PaymentStatus) arrayResponseModel.getObject();
 				logger.info(TAG + " getPaymentStatus :: paymentStatus  :" + paymentStatus.toString());
 				
-				
+				emailSmsService.emialToCustonSuccessPg(paymentStatus.getTotalAmount()
+						,paymentStatus.getTransactionId()
+						,paymentStatus.getAppSeqNumber() 
+						,receiptData(paySeqNum));
 				
 				if(paymentStatus.getPaymentStatus().equalsIgnoreCase("CAPTURED"))
 				{
@@ -292,6 +306,49 @@ public class PayMentService
 		return resp;
 	}
 	
+	private ArrayList<Map> receiptData(BigDecimal paySeqNum) 
+	{
+		PaymentReceipt paymentReceipt = null;
+		
+		logger.info(TAG + " receiptData :: paySeqNum  :" + paySeqNum);
+		
+		AmxApiResponse<?, Object> receiptData  = payMentService.paymentReceiptData(paySeqNum);
+		if (receiptData.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+		{
+			paymentReceipt = (PaymentReceipt) receiptData.getData();
+			logger.info(TAG + " getPaymentStatus :: paymentReceipt  :" + paymentReceipt.toString());
+		}
+		
+		Map<String, Object> wrapper = new HashMap<String, Object>();
+		Map<String, Object> model = new HashMap<String, Object>();
+		ArrayList<Map> dataList = new ArrayList<>();
+		
+		model.put(DetailsConstants.applicationId, paymentReceipt.getApplicationId());
+		model.put(DetailsConstants.customerId, paymentReceipt.getCustomerId());
+		model.put(DetailsConstants.paymentDate, paymentReceipt.getPaymentDate());
+		model.put(DetailsConstants.paymentMode, paymentReceipt.getPaymentMode());
+		model.put(DetailsConstants.amountPaidNumber, paymentReceipt.getAmountPaidNumber());
+		model.put(DetailsConstants.amountPaidWord, paymentReceipt.getAmountPaidWord());
+		model.put(DetailsConstants.paymentId, paymentReceipt.getPaymentId());
+		model.put(DetailsConstants.customerName, paymentReceipt.getCustomerName());
+		model.put(DetailsConstants.civilId, paymentReceipt.getCivilId());
+		model.put(DetailsConstants.mobileNumber, paymentReceipt.getMobileNumber());
+		model.put(DetailsConstants.emialId, paymentReceipt.getEmialId());
+		model.put(DetailsConstants.policyDuration, paymentReceipt.getPolicyDuration());
+		model.put(DetailsConstants.governate, paymentReceipt.getGovernate());
+		model.put(DetailsConstants.areaDesc, paymentReceipt.getAreaDesc());
+		model.put(DetailsConstants.address, paymentReceipt.getAddress());
+		model.put(DetailsConstants.make, paymentReceipt.getMake());
+		model.put(DetailsConstants.subMake, paymentReceipt.getSubMake());
+		model.put(DetailsConstants.ktNumber, paymentReceipt.getKtNumber());
+		model.put(DetailsConstants.chasisNumber, paymentReceipt.getChasisNumber());
+		model.put(DetailsConstants.modelYear, paymentReceipt.getModelYear());
+		model.put(DetailsConstants.trnsReceiptRef, paymentReceipt.getTrnsReceiptRef());
+		dataList.add(model);
+		
+		return dataList;
+	}
+	
 	
 	public AmxApiResponse<?, Object> paymentReceiptData(BigDecimal paySeqNum)
 	{
@@ -318,6 +375,8 @@ public class PayMentService
 		}
 		return resp;
 	}
+	
+	
 	
 	
 }

@@ -71,7 +71,7 @@ public class DetailsConstants
 	
 	public static String POLICY_AMOUNT = "policyAmount";
 
-	public static String TRANSECTION_ID = "transectionId";
+	public static String TRANSACTION_ID = "transactionId";
 	
 	public static String POLICY_APP_NO = "policyAppNo";
 	
