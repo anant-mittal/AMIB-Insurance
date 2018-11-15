@@ -12,6 +12,8 @@ public enum TemplatesIB implements ITemplate {
 	TERMS("terms"),
 	QUOTE_SUBMIT_EMAIL_TO_UESR("quote-submit-user-email"),
 	QUOTE_SUBMIT_EMAIL_TO_AMIB("quote-submit-amib-email"),
+	POLICY_DUE_REMINDER("policy-due-reminder"),
+	KNET_SUCCESS_EMAIL("knet-success-email"),
 	TRNX_RECEIPT("tranx-reciept", PDFConverter.JASPER, "tranx-reciept.json"),
 	POLICY_RECEIPT("policy-receipt", PDFConverter.JASPER, "policy-receipt.json"),
 	//TODO dummy example of remit
