@@ -180,7 +180,6 @@ public class CustomizeQuoteController
 		PaymentReceipt paymentReceipt = null;
 		try
 		{
-
 			AmxApiResponse<?, Object> receiptData  = payMentService.paymentReceiptData(paySeqNum);
 			if (receiptData.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{

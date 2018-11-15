@@ -20,12 +20,16 @@ import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.dict.Language;
 import com.amx.jax.models.CustomerDetailModel;
 import com.amx.jax.models.MetaData;
+import com.amx.jax.models.PaymentReceipt;
 import com.amx.jax.models.PaymentStatus;
 import com.amx.jax.models.RequestOtpModel;
 import com.amx.jax.models.ResponseOtpModel;
 import com.amx.jax.models.ResponseInfo;
+import com.amx.jax.postman.PostManException;
+import com.amx.jax.postman.PostManService;
 import com.amx.jax.postman.client.PostManClient;
 import com.amx.jax.postman.model.Email;
+import com.amx.jax.postman.model.File;
 import com.amx.jax.postman.model.Notipy;
 import com.amx.jax.postman.model.Notipy.Channel;
 import com.amx.jax.postman.model.SMS;
@@ -54,6 +58,13 @@ public class EmailSmsService
 
 	@Autowired
 	CustomerRegistrationDao customerRegistrationDao;
+	
+	@Autowired
+	private PostManService postManService;
+	
+	@Autowired
+	PayMentService payMentService;
+	
 
 	/*
 	 * 
@@ -69,8 +80,6 @@ public class EmailSmsService
 	/************* EMAIL OTP **********/
 	public String sendEmailOtp(String EmailTo)
 	{
-		//String emailFrom = metaData.getEmailFromConfigured();
-
 		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 		String emailOtpPrefix = Random.randomAlpha(3);
 		String emailOtp = Random.randomNumeric(6);
@@ -349,11 +358,11 @@ public class EmailSmsService
 		model.put(DetailsConstants.URL_DETAILS, "");
 		wrapper.put("data", model);
 		
+		
 		ArrayList<String> emailTo = new ArrayList<String>();
 		emailTo.add(amibEmailId);
 
 		Email email = new Email();
-		//email.setFrom(emailIdFrom);
 		email.setTo(emailTo);
 		email.setSubject("Customer Quote Request - "+appSeqNumber);
 		email.setModel(wrapper);
@@ -377,20 +386,18 @@ public class EmailSmsService
 	 * 
 	 */
 	/*********
-	 * REQUEST QUOTE SUBMIT SUCCESS MAIL TO AMIB
+	 * EMAIL TO CUSTOMER AFTER SUCCESSFULL PG TRANSACTION
 	 ********/
-	public void emailToCustomerAfterSuccessPg(String amount , String transecionId , String policyAppNo)
+	public void emialToCustonSuccessPg(BigDecimal amount , String transecionId , BigDecimal policyAppNo ,ArrayList<Map> receiptData)
 	{
-		
+		logger.info(TAG + " emailToCustomerAfterSuccessPg :: amount  :" + amount);
 		String customerEmailId = userSession.getCustomerEmailId();
 		String customerMobileNumber = userSession.getCustomerMobileNumber();
-		String amibEmailId = metaData.getContactUsEmail();
 		String civilId = userSession.getCivilId();
 
 		Map<String, Object> wrapper = new HashMap<String, Object>();
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put(DetailsConstants.CUSTOMER_NAME, customerName());
-		
 		model.put(DetailsConstants.CUSTOMER_CIVIL_ID, civilId);
 		model.put(DetailsConstants.CUSTOMER_EMAIL_ID, customerEmailId);
 		model.put(DetailsConstants.CUSTOMER_MOBILE_NO, customerMobileNumber);
@@ -399,27 +406,33 @@ public class EmailSmsService
 		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaData.getAmibWebsiteLink());
 		model.put(DetailsConstants.COMPANY_NAME, metaData.getCompanyName());
 		model.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
-		model.put(DetailsConstants.URL_DETAILS, "");
-		
+		model.put(DetailsConstants.URL_DETAILS, "");//TODO
 		model.put(DetailsConstants.POLICY_AMOUNT, amount);
-		model.put(DetailsConstants.TRANSECTION_ID, transecionId);
+		model.put(DetailsConstants.TRANSACTION_ID, transecionId);
 		model.put(DetailsConstants.POLICY_APP_NO, policyAppNo);
-		
 		wrapper.put("data", model);
 		
 		ArrayList<String> emailTo = new ArrayList<String>();
 		emailTo.add(customerEmailId);
 
+		File file = new File();
+		file.setITemplate(TemplatesIB.TRNX_RECEIPT);
+		file.setType(File.Type.PDF);
+		file.getModel().put("results", receiptData);
+		
 		Email email = new Email();
 		email.setTo(emailTo);
 		email.setSubject("Al Mulla Insurance Brokerage Payment Success");
 		email.setModel(wrapper);
-		email.setITemplate(TemplatesIB.QUOTE_SUBMIT_EMAIL_TO_AMIB);
+		email.setITemplate(TemplatesIB.KNET_SUCCESS_EMAIL);
 		email.setHtml(true);
+		email.addFile(file);
 		email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
 		postManClient.sendEmail(email);
 
 	}
+	
+	
 	
 	
 	
@@ -447,7 +460,6 @@ public class EmailSmsService
 		String emailIdAshokSir = "ashok.kalal@almullaexchange.com";
 		String amibEmailId = metaData.getContactUsEmail();
 		String civilId = userSession.getCivilId();
-
 		
 		ArrayList<String> emailTo = new ArrayList<String>();
 		emailTo.add(amibEmailId);
@@ -457,22 +469,21 @@ public class EmailSmsService
 		sb.append("\n");
 		sb.append("\n USER PAYMENT GATEWAY INFO :");
 		sb.append("\n");
-		sb.append("\n CIVIL ID                    :: " + civilId);
+		sb.append("\n CIVIL ID :: " + civilId);
 		sb.append("\n");
-		sb.append("\n PROCEDURE FAILED            :: " + type);
+		sb.append("\n PROCEDURE FAILED :: " + type);
 		sb.append("\n");
-		sb.append("\n MESSAGE                     :: " + message);
+		sb.append("\n MESSAGE :: " + message);
 		sb.append("\n");
-		sb.append("\n MESSAGE KEY                 :: "+ messageKey);
+		sb.append("\n MESSAGE KEY :: "+ messageKey);
 		sb.append("\n");
-		sb.append("\n APP SEQUENCE NUMBER         :: "+ paymentStatus.getAppSeqNumber());
+		sb.append("\n APP SEQUENCE NUMBER :: "+ paymentStatus.getAppSeqNumber());
 		sb.append("\n");
-		sb.append("\n PAY ID                      :: "+ paymentStatus.getPayId());
+		sb.append("\n PAY ID :: "+ paymentStatus.getPayId());
 		sb.append("\n");
-		sb.append("\n PAYMENT SEQUENCE NUMBER     :: "+ paySeqNum);
+		sb.append("\n PAYMENT SEQUENCE NUMBER :: "+ paySeqNum);
 		sb.append("\n");
 		String mailData = sb.toString();
-		
 
 		Email email = new Email();
 		email.setTo(emailTo);
