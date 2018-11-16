@@ -12,7 +12,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import com.amx.jax.models.ActivePolicyModel;
 import com.amx.jax.models.DateFormats;
-import com.amx.jax.models.IncompleteApplModel;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.PolicyReceiptDetails;
 import com.amx.jax.utility.Calc;
