@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.transform.Templates;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.amx.jax.AppConfig;
 import com.amx.jax.api.AmxApiResponse;
@@ -20,20 +20,22 @@ import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.dict.Language;
 import com.amx.jax.models.CustomerDetailModel;
 import com.amx.jax.models.MetaData;
+import com.amx.jax.models.PaymentReceipt;
+import com.amx.jax.models.PaymentStatus;
 import com.amx.jax.models.RequestOtpModel;
 import com.amx.jax.models.ResponseOtpModel;
-import com.amx.jax.models.Validate;
+import com.amx.jax.models.ResponseInfo;
+import com.amx.jax.postman.PostManException;
+import com.amx.jax.postman.PostManService;
 import com.amx.jax.postman.client.PostManClient;
 import com.amx.jax.postman.model.Email;
+import com.amx.jax.postman.model.File;
 import com.amx.jax.postman.model.Notipy;
 import com.amx.jax.postman.model.Notipy.Channel;
-import com.amx.jax.ui.session.UserSession;
 import com.amx.jax.postman.model.SMS;
 import com.amx.jax.postman.model.TemplatesIB;
-import com.amx.jax.postman.model.TemplatesMX;
+import com.amx.jax.ui.session.UserSession;
 import com.amx.utils.Random;
-import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
 public class EmailSmsService
@@ -56,6 +58,13 @@ public class EmailSmsService
 
 	@Autowired
 	CustomerRegistrationDao customerRegistrationDao;
+	
+	@Autowired
+	private PostManService postManService;
+	
+	@Autowired
+	PayMentService payMentService;
+	
 
 	/*
 	 * 
@@ -71,8 +80,6 @@ public class EmailSmsService
 	/************* EMAIL OTP **********/
 	public String sendEmailOtp(String EmailTo)
 	{
-		//String emailFrom = metaData.getEmailFromConfigured();
-
 		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 		String emailOtpPrefix = Random.randomAlpha(3);
 		String emailOtp = Random.randomNumeric(6);
@@ -266,16 +273,15 @@ public class EmailSmsService
 		logger.info(TAG + " emailToCustomerAndAmib :: appSeqNumber :" + appSeqNumber);
 		
 		//String emailIdFrom = metaData.getEmailFromConfigured();
-		String emailIdTo = userSession.getCustomerEmailId();
+		String customerEmailId = userSession.getCustomerEmailId();
 		String customerMobileNumber = userSession.getCustomerMobileNumber();
-		String amibEmailId = metaData.getContactUsEmail();
 		String civilId = userSession.getCivilId();
 
 		Map<String, Object> wrapper = new HashMap<String, Object>();
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put(DetailsConstants.CUSTOMER_NAME, customerName());
 		model.put(DetailsConstants.CUSTOMER_CIVIL_ID, civilId);
-		model.put(DetailsConstants.CUSTOMER_EMAIL_ID, emailIdTo);
+		model.put(DetailsConstants.CUSTOMER_EMAIL_ID, customerEmailId);
 		model.put(DetailsConstants.CUSTOMER_MOBILE_NO, customerMobileNumber);
 		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
 		model.put(DetailsConstants.CONTACT_US_MOBILE, metaData.getContactUsHelpLineNumber());
@@ -285,12 +291,13 @@ public class EmailSmsService
 		model.put(DetailsConstants.MAKE_DESC, makeDesc);
 		model.put(DetailsConstants.SUB_MAKE_DESC, subMakeDesc);
 		model.put(DetailsConstants.APPLICATION_ID, appSeqNumber);
+		model.put(DetailsConstants.URL_DETAILS, "");
+		
 		wrapper.put("data", model);
 		
 		ArrayList<String> emailTo = new ArrayList<String>();
-		emailTo.add(emailIdTo);
-		emailTo.add(amibEmailId);
-
+		emailTo.add(customerEmailId);
+		
 		Email email = new Email();
 		//email.setFrom(emailIdFrom);
 		email.setTo(emailTo);
@@ -329,8 +336,7 @@ public class EmailSmsService
 		logger.info(TAG + " emailToCustomerAndAmib :: subMakeDesc :" + subMakeDesc);
 		logger.info(TAG + " emailToCustomerAndAmib :: appSeqNumber :" + appSeqNumber);
 		
-		//String emailIdFrom = metaData.getEmailFromConfigured();
-		String emailIdTo = userSession.getCustomerEmailId();
+		String customerEmailId = userSession.getCustomerEmailId();
 		String customerMobileNumber = userSession.getCustomerMobileNumber();
 		String amibEmailId = metaData.getContactUsEmail();
 		String civilId = userSession.getCivilId();
@@ -339,7 +345,7 @@ public class EmailSmsService
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put(DetailsConstants.CUSTOMER_NAME, customerName());
 		model.put(DetailsConstants.CUSTOMER_CIVIL_ID, civilId);
-		model.put(DetailsConstants.CUSTOMER_EMAIL_ID, emailIdTo);
+		model.put(DetailsConstants.CUSTOMER_EMAIL_ID, customerEmailId);
 		model.put(DetailsConstants.CUSTOMER_MOBILE_NO, customerMobileNumber);
 		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
 		model.put(DetailsConstants.CONTACT_US_MOBILE, metaData.getContactUsHelpLineNumber());
@@ -349,23 +355,157 @@ public class EmailSmsService
 		model.put(DetailsConstants.MAKE_DESC, makeDesc);
 		model.put(DetailsConstants.SUB_MAKE_DESC, subMakeDesc);
 		model.put(DetailsConstants.APPLICATION_ID, appSeqNumber);
+		model.put(DetailsConstants.URL_DETAILS, "");
 		wrapper.put("data", model);
 		
+		
 		ArrayList<String> emailTo = new ArrayList<String>();
-		emailTo.add(emailIdTo);
 		emailTo.add(amibEmailId);
 
 		Email email = new Email();
-		//email.setFrom(emailIdFrom);
 		email.setTo(emailTo);
 		email.setSubject("Customer Quote Request - "+appSeqNumber);
 		email.setModel(wrapper);
-		email.setITemplate(TemplatesIB.QUOTE_SUBMIT_EMAIL_TO_UESR);
+		email.setITemplate(TemplatesIB.QUOTE_SUBMIT_EMAIL_TO_AMIB);
 		email.setHtml(true);
 		email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
 		postManClient.sendEmail(email);
 
 	}
+	
+	
+	
+	/*
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	/*********
+	 * EMAIL TO CUSTOMER AFTER SUCCESSFULL PG TRANSACTION
+	 ********/
+	public void emialToCustonSuccessPg(BigDecimal amount , String transecionId , BigDecimal policyAppNo ,ArrayList<Map> receiptData)
+	{
+		logger.info(TAG + " emailToCustomerAfterSuccessPg :: amount  :" + amount);
+		String customerEmailId = userSession.getCustomerEmailId();
+		String customerMobileNumber = userSession.getCustomerMobileNumber();
+		String civilId = userSession.getCivilId();
+
+		Map<String, Object> wrapper = new HashMap<String, Object>();
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put(DetailsConstants.CUSTOMER_NAME, customerName());
+		model.put(DetailsConstants.CUSTOMER_CIVIL_ID, civilId);
+		model.put(DetailsConstants.CUSTOMER_EMAIL_ID, customerEmailId);
+		model.put(DetailsConstants.CUSTOMER_MOBILE_NO, customerMobileNumber);
+		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
+		model.put(DetailsConstants.CONTACT_US_MOBILE, metaData.getContactUsHelpLineNumber());
+		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaData.getAmibWebsiteLink());
+		model.put(DetailsConstants.COMPANY_NAME, metaData.getCompanyName());
+		model.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
+		model.put(DetailsConstants.URL_DETAILS, "");//TODO
+		model.put(DetailsConstants.POLICY_AMOUNT, amount);
+		model.put(DetailsConstants.TRANSACTION_ID, transecionId);
+		model.put(DetailsConstants.POLICY_APP_NO, policyAppNo);
+		wrapper.put("data", model);
+		
+		ArrayList<String> emailTo = new ArrayList<String>();
+		emailTo.add(customerEmailId);
+
+		File file = new File();
+		file.setITemplate(TemplatesIB.TRNX_RECEIPT);
+		file.setType(File.Type.PDF);
+		file.getModel().put("results", receiptData);
+		
+		Email email = new Email();
+		email.setTo(emailTo);
+		email.setSubject("Al Mulla Insurance Brokerage Payment Success");
+		email.setModel(wrapper);
+		email.setITemplate(TemplatesIB.KNET_SUCCESS_EMAIL);
+		email.setHtml(true);
+		email.addFile(file);
+		email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
+		postManClient.sendEmail(email);
+
+	}
+	
+	
+	
+	
+	
+	
+	/*
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 */
+	/*********
+	 * FAILED PROCEDURE WHILE POST PG
+	 ********/
+	public void failedPGProcedureAfterCapture(PaymentStatus paymentStatus, String messageKey , String message , String type , String paySeqNum)
+	{
+		logger.info(TAG + " emailToCustomerAndAmib :: paymentStatus :" + paymentStatus.toString());
+		logger.info(TAG + " emailToCustomerAndAmib :: messageKey :" + messageKey);
+		logger.info(TAG + " emailToCustomerAndAmib :: message :" + message);
+		logger.info(TAG + " emailToCustomerAndAmib :: type :" + type);
+		
+		String emailIdAshokSir = "ashok.kalal@almullaexchange.com";
+		String amibEmailId = metaData.getContactUsEmail();
+		String civilId = userSession.getCivilId();
+		
+		ArrayList<String> emailTo = new ArrayList<String>();
+		emailTo.add(amibEmailId);
+		emailTo.add(emailIdAshokSir);
+		
+		StringBuffer sb = new StringBuffer();
+		sb.append("\n");
+		sb.append("\n USER PAYMENT GATEWAY INFO :");
+		sb.append("\n");
+		sb.append("\n CIVIL ID :: " + civilId);
+		sb.append("\n");
+		sb.append("\n PROCEDURE FAILED :: " + type);
+		sb.append("\n");
+		sb.append("\n MESSAGE :: " + message);
+		sb.append("\n");
+		sb.append("\n MESSAGE KEY :: "+ messageKey);
+		sb.append("\n");
+		sb.append("\n APP SEQUENCE NUMBER :: "+ paymentStatus.getAppSeqNumber());
+		sb.append("\n");
+		sb.append("\n PAY ID :: "+ paymentStatus.getPayId());
+		sb.append("\n");
+		sb.append("\n PAYMENT SEQUENCE NUMBER :: "+ paySeqNum);
+		sb.append("\n");
+		String mailData = sb.toString();
+
+		Email email = new Email();
+		email.setTo(emailTo);
+		email.setSubject("INSURANCE FAILED PROCEDURE POST PG");
+		email.setHtml(false);
+		email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
+		email.setMessage(mailData);
+		postManClient.sendEmail(email);
+
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 	/*
 	 * 
@@ -385,8 +525,8 @@ public class EmailSmsService
 		userSession.setmOtpMobileNumber("");
 		userSession.seteOtpEmailId("");
 
-		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(userSession.getCivilId());
-		AmxApiResponse<Validate, Object> isOtpEnabled = isOtpEnabled(userSession.getCivilId());
+		AmxApiResponse<ResponseInfo, Object> civilIdExistCheck = isCivilIdExist(userSession.getCivilId());
+		AmxApiResponse<ResponseInfo, Object> isOtpEnabled = isOtpEnabled(userSession.getCivilId());
 		if (isOtpEnabled.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return isOtpEnabled;
@@ -406,7 +546,7 @@ public class EmailSmsService
 		resp.setStatusKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
 		resp.setMessageKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
 
-		AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(userSession.getCivilId());
+		AmxApiResponse<ResponseInfo, Object> setOtpCount = setOtpCount(userSession.getCivilId());
 		if (setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return setOtpCount;
@@ -469,8 +609,8 @@ public class EmailSmsService
 		userSession.setmOtpMobileNumber("");
 		userSession.seteOtpEmailId("");
 
-		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(userSession.getCivilId());
-		AmxApiResponse<Validate, Object> isOtpEnabled = isOtpEnabled(userSession.getCivilId());
+		AmxApiResponse<ResponseInfo, Object> civilIdExistCheck = isCivilIdExist(userSession.getCivilId());
+		AmxApiResponse<ResponseInfo, Object> isOtpEnabled = isOtpEnabled(userSession.getCivilId());
 		if (isOtpEnabled.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return isOtpEnabled;
@@ -486,7 +626,7 @@ public class EmailSmsService
 		resp.setStatusKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
 		resp.setMessageKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
 
-		AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(userSession.getCivilId());
+		AmxApiResponse<ResponseInfo, Object> setOtpCount = setOtpCount(userSession.getCivilId());
 		if (setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return setOtpCount;
@@ -547,8 +687,8 @@ public class EmailSmsService
 		userSession.setmOtpMobileNumber("");
 		userSession.seteOtpEmailId("");
 
-		AmxApiResponse<Validate, Object> civilIdExistCheck = isCivilIdExist(userSession.getCivilId());
-		AmxApiResponse<Validate, Object> isOtpEnabled = isOtpEnabled(userSession.getCivilId());
+		AmxApiResponse<ResponseInfo, Object> civilIdExistCheck = isCivilIdExist(userSession.getCivilId());
+		AmxApiResponse<ResponseInfo, Object> isOtpEnabled = isOtpEnabled(userSession.getCivilId());
 		if (isOtpEnabled.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return isOtpEnabled;
@@ -564,7 +704,7 @@ public class EmailSmsService
 		resp.setStatusKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
 		resp.setMessageKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
 
-		AmxApiResponse<Validate, Object> setOtpCount = setOtpCount(userSession.getCivilId());
+		AmxApiResponse<ResponseInfo, Object> setOtpCount = setOtpCount(userSession.getCivilId());
 		if (setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return setOtpCount;
@@ -618,9 +758,9 @@ public class EmailSmsService
 	 * 
 	 */
 	/************* CHECK IF OTP IS ENABLED FOR THIS PERTICULAR USER **********/
-	public AmxApiResponse<Validate, Object> isOtpEnabled(String civilId)
+	public AmxApiResponse<ResponseInfo, Object> isOtpEnabled(String civilId)
 	{
-		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
+		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
 		boolean isOtpEnable = customerRegistrationDao.isOtpEnabled(civilId , userSession.getUserType());
 		if (isOtpEnable)
 		{
@@ -633,7 +773,7 @@ public class EmailSmsService
 			resp.setStatusKey(ApiConstants.FAILURE);
 			resp.setMessage(Message.CUST_OTP_NOT_ENABLED);
 			resp.setMessageKey(MessageKey.KEY_USER_OTP_NOT_ENABLED);
-			Validate validate = new Validate();
+			ResponseInfo validate = new ResponseInfo();
 			validate.setContactUsHelpLineNumber(metaData.getContactUsHelpLineNumber());
 			validate.setContactUsEmail(metaData.getContactUsEmail());
 			resp.setData(validate);
@@ -652,11 +792,11 @@ public class EmailSmsService
 	 * 
 	 */
 	/************* MAINTAIN COUNT OF OTP SENT BY USRE IN A DAY **********/
-	public AmxApiResponse<Validate, Object> setOtpCount(String civilId)
+	public AmxApiResponse<ResponseInfo, Object> setOtpCount(String civilId)
 	{
-		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
+		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
 
-		Validate setOtpCount = customerRegistrationDao.setOtpCount(civilId , userSession.getUserType());
+		ResponseInfo setOtpCount = customerRegistrationDao.setOtpCount(civilId , userSession.getUserType());
 
 		if (setOtpCount.isValid())
 		{
@@ -683,10 +823,10 @@ public class EmailSmsService
 	 * 
 	 */
 	/************* CHECK IF CIVIL ID EXIST **********/
-	public AmxApiResponse<Validate, Object> isCivilIdExist(String civilid)
+	public AmxApiResponse<ResponseInfo, Object> isCivilIdExist(String civilid)
 	{
 		boolean civilIdExistCheck = customerRegistrationDao.isCivilIdExist(civilid , userSession.getUserType());
-		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
+		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
 		if (civilIdExistCheck)
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);

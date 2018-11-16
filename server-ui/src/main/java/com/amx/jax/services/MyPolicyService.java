@@ -5,18 +5,21 @@ import java.math.BigDecimal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
+import com.amx.jax.constants.MessageKey;
+import com.amx.jax.dao.MyPolicyDao;
 import com.amx.jax.models.ActivePolicyModel;
+import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.PersonalDetails;
 import com.amx.jax.models.RequestQuoteInfo;
 import com.amx.jax.models.RequestQuoteModel;
 import com.amx.jax.models.VehicleDetails;
 import com.amx.jax.ui.session.UserSession;
-import com.amx.jax.dao.MyPolicyDao;
-import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
 public class MyPolicyService
@@ -68,22 +71,26 @@ public class MyPolicyService
 		try
 		{
 			AmxApiResponse<?, Object> respPersonalDetails = requestQuoteService.getProfileDetails();
-			logger.info(TAG + " getRenewPolicyDetails :: respPersonalDetails :" + respPersonalDetails.getStatusKey());
 			if (respPersonalDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 			{
 				return respPersonalDetails;
 			}
 			else
 			{
-				
-				
-				
-				
-				
-				
-				
-				
-				
+				PersonalDetails personalDetails = (PersonalDetails) respPersonalDetails.getData();
+				logger.info(TAG + " renewInsuranceOldPolicy :: personalDetails :" + personalDetails.toString());
+				if (null != personalDetails.getIdExpiryDate())
+				{
+					String dateFromDb = personalDetails.getIdExpiryDate();
+					logger.info(TAG + " renewInsuranceOldPolicy :: checkExpiryDate :" + DateFormats.checkExpiryDate(dateFromDb));
+					if (DateFormats.checkExpiryDate(dateFromDb))
+					{
+						logger.info(TAG + " renewInsuranceOldPolicy :: checkExpiryDate : TRUE");
+						resp.setStatusKey(ApiConstants.FAILURE);
+						resp.setMessageKey(MessageKey.KEY_CIVIL_ID_EXPIRED);
+						return resp;
+					}
+				}
 				
 				
 				AmxApiResponse<?, Object> getVehicleDetails = requestQuoteService.getRenewPolicyVehicleDetails(oldDocNumber);
@@ -129,21 +136,7 @@ public class MyPolicyService
 					}
 				}
 				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
-				
 			}
-			
-			
 		}
 		catch (Exception e)
 		{

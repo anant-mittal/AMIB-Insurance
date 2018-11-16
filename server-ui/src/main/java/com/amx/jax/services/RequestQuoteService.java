@@ -3,13 +3,13 @@ package com.amx.jax.services;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.amx.jax.WebConfig;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.MessageKey;
@@ -26,7 +26,7 @@ import com.amx.jax.models.MetaData;
 import com.amx.jax.models.PersonalDetails;
 import com.amx.jax.models.RequestQuoteInfo;
 import com.amx.jax.models.RequestQuoteModel;
-import com.amx.jax.models.Validate;
+import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.models.VehicleDetails;
 import com.amx.jax.models.VehicleDetailsGetModel;
 import com.amx.jax.models.VehicleDetailsHeaderModel;
@@ -632,7 +632,7 @@ public class RequestQuoteService
 		{
 			logger.info(TAG + " setProfileDetails :: customerProfileDetailModel.getCustSequenceNumber() :" + customerProfileDetailModel.getCustSequenceNumber());
 			logger.info(TAG + " setProfileDetails :: appSeqNumber :" + appSeqNumber);
-			AmxApiResponse<Validate, Object> updateCustSeqNum = updateCustomerSequenceNumber(customerProfileDetailModel.getCustSequenceNumber(), appSeqNumber , userSession.getCivilId());
+			AmxApiResponse<ResponseInfo, Object> updateCustSeqNum = updateCustomerSequenceNumber(customerProfileDetailModel.getCustSequenceNumber(), appSeqNumber , userSession.getCivilId());
 			if (updateCustSeqNum.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 			{
 				return updateCustSeqNum;
@@ -799,10 +799,10 @@ public class RequestQuoteService
 		return resp;
 	}
 
-	public AmxApiResponse<Validate, Object> updateCustomerSequenceNumber(BigDecimal custSeqNumber, BigDecimal appSeqNumber , String civilId)
+	public AmxApiResponse<ResponseInfo, Object> updateCustomerSequenceNumber(BigDecimal custSeqNumber, BigDecimal appSeqNumber , String civilId)
 	{
 		CustomerProfileDetailModel customerProfileDetailModel = requestQuoteDao.updateCustomerSequenceNumber(custSeqNumber, appSeqNumber , civilId);
-		AmxApiResponse<Validate, Object> resp = new AmxApiResponse<Validate, Object>();
+		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
 		if (null == customerProfileDetailModel.getErrorCode())
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
@@ -863,6 +863,8 @@ public class RequestQuoteService
 			logger.info(TAG + " submitRequestQuote :: urlDetails :" + urlDetails);
 			
 			emailSmsService.emailToCustomerOnCompilitionRequestQuote(makeDesc,subMakeDesc,appSeqNumber);
+			emailSmsService.emailToAmibOnCompilitionRequestQuote(makeDesc,subMakeDesc,appSeqNumber);
+			
 			resp.setStatusKey(ApiConstants.SUCCESS);
 			logger.info(TAG + " submitRequestQuote :: resp :" + resp.toString());
 			

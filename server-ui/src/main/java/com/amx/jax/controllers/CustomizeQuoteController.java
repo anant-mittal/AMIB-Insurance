@@ -1,6 +1,13 @@
 package com.amx.jax.controllers;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +16,32 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.amx.jax.AppConfig;
+import com.amx.jax.WebConfig;
 import com.amx.jax.api.AmxApiResponse;
+import com.amx.jax.constants.ApiConstants;
+import com.amx.jax.constants.DetailsConstants;
+import com.amx.jax.constants.Message;
+import com.amx.jax.constants.MessageKey;
+import com.amx.jax.dict.Language;
+import com.amx.jax.http.CommonHttpRequest;
 import com.amx.jax.models.CustomizeQuoteModel;
+import com.amx.jax.models.MetaData;
+import com.amx.jax.models.PaymentDetails;
+import com.amx.jax.models.PaymentReceipt;
+import com.amx.jax.payg.PayGService;
+import com.amx.jax.payg.PaymentResponseDto;
+import com.amx.jax.postman.model.TemplatesIB;
+import com.amx.jax.services.CustomerRegistrationService;
 import com.amx.jax.services.CustomizeQuoteService;
+import com.amx.jax.services.PayMentService;
+import com.amx.jax.ui.response.ResponseWrapper;
+import com.amx.jax.ui.session.UserSession;
 import com.amx.utils.ArgUtil;
+import com.amx.utils.JsonUtil;
+import com.amx.jax.postman.PostManService;
+import com.amx.jax.postman.model.File;
 
 @RestController
 public class CustomizeQuoteController
@@ -23,6 +52,37 @@ public class CustomizeQuoteController
 
 	@Autowired
 	private CustomizeQuoteService customizeQuoteService;
+	
+	@Autowired
+	private PayGService payGService;
+
+	@Autowired
+	PayMentService payMentService;
+
+	@Autowired
+	private WebConfig webConfig;
+	
+	@Autowired
+	private AppConfig appConfig;
+	
+	@Autowired
+	CommonHttpRequest httpService;
+	
+	@Autowired
+	MetaData metaData;
+	
+	@Autowired
+	UserSession userSession;
+	
+	@Autowired
+	private PostManService postManService;
+	
+	@Autowired
+	private CustomerRegistrationService customerRegistrationService;
+	
+	@Autowired
+	private HttpServletResponse response;
+	
 
 	@RequestMapping(value = "/api/customize-quote/get-quote-details", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> getCustomizedQuoteDetails(@RequestParam(name = "quoteSeqNumber", required = false) String quoteSeqNumber)
@@ -54,8 +114,128 @@ public class CustomizeQuoteController
 	}
 
 	@RequestMapping(value = "/api/customize-quote/submit-quote", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> saveCustomizeQuote(@RequestBody CustomizeQuoteModel customizeQuoteModel)
+	public AmxApiResponse<?, Object> saveCustomizeQuote(@RequestBody CustomizeQuoteModel customizeQuoteModel , HttpServletRequest request)
 	{
-		return customizeQuoteService.saveCustomizeQuote(customizeQuoteModel);
+		return customizeQuoteService.saveCustomizeQuote(customizeQuoteModel , request);
+	}
+	
+	@RequestMapping(value = "/remit/save-remittance", method = { RequestMethod.POST })
+	public PaymentResponseDto onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse) 
+	{
+		logger.info(TAG + " onPaymentCallback :: userSession  :" + userSession.toString());
+		logger.info(TAG + " onPaymentCallback :: metaData     :" + metaData.toString());
+		logger.info(TAG + " onPaymentCallback :: paymentResponse  :" + paymentResponse.toString());
+		
+		try 
+		{
+			metaDataSetup();
+			
+			PaymentDetails paymentDetails = new PaymentDetails();
+			paymentDetails.setPaymentId(paymentResponse.getPaymentId());
+			paymentDetails.setApprovalNo(paymentResponse.getAuth_appNo());
+			logger.info(TAG + " onPaymentCallback :: getPostDate  :" + paymentResponse.getPostDate());
+			paymentDetails.setApprovalDate(null);
+			paymentDetails.setResultCd(paymentResponse.getResultCode());
+			paymentDetails.setTransId(paymentResponse.getTransactionId());
+			paymentDetails.setRefId(paymentResponse.getReferenceId());
+			
+
+			if (null != paymentResponse.getTrackId()) 
+			{
+				BigDecimal paySeqNumber = new BigDecimal(paymentResponse.getTrackId().toString());
+				logger.info(TAG + " onPaymentCallback :: paySeqNumber  :" + paySeqNumber);
+				paymentDetails.setPaySeqNum(paySeqNumber);
+				paymentDetails.setPaymentToken(paySeqNumber.toString());
+			} 
+			else 
+			{
+				paymentDetails.setPaySeqNum(null);
+			}
+
+			logger.info(TAG + " onPaymentCallback :: paymentDetails  :" + paymentDetails.toString());
+			PaymentDetails updateStatus = payMentService.updatePaymentDetals(paymentDetails);
+			logger.info(TAG + " onPaymentCallback :: updateStatus  :" + updateStatus.toString());
+			
+		} 
+				
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		return paymentResponse;
+	}
+	
+	@RequestMapping(value = "/api/payment-status", method = { RequestMethod.POST })
+	public AmxApiResponse<?, Object> getPaymentStatus(@RequestParam BigDecimal paySeqNum) 
+	{
+		logger.info(TAG + " getPaymentStatus :: paySeqNum  :" + paySeqNum);
+		return payMentService.getPaymentStatus(paySeqNum);
+	}
+	
+	
+	@RequestMapping(value = "/api/payment-receipt-data", method = { RequestMethod.GET })
+	public String paymentReceiptDataExt(@RequestParam BigDecimal paySeqNum) 
+	{
+		File file = null;
+		PaymentReceipt paymentReceipt = null;
+		try
+		{
+			AmxApiResponse<?, Object> receiptData  = payMentService.paymentReceiptData(paySeqNum);
+			if (receiptData.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+			{
+				paymentReceipt = (PaymentReceipt) receiptData.getData();
+				logger.info(TAG + " getPaymentStatus :: paymentReceipt  :" + paymentReceipt.toString());
+			}
+			
+			Map<String, Object> wrapper = new HashMap<String, Object>();
+			Map<String, Object> model = new HashMap<String, Object>();
+			ArrayList<Map> dataList = new ArrayList<>();
+			
+			model.put(DetailsConstants.applicationId, paymentReceipt.getApplicationId());
+			model.put(DetailsConstants.customerId, paymentReceipt.getCustomerId());
+			model.put(DetailsConstants.paymentDate, paymentReceipt.getPaymentDate());
+			model.put(DetailsConstants.paymentMode, paymentReceipt.getPaymentMode());
+			model.put(DetailsConstants.amountPaidNumber, paymentReceipt.getAmountPaidNumber());
+			model.put(DetailsConstants.amountPaidWord, paymentReceipt.getAmountPaidWord());
+			model.put(DetailsConstants.paymentId, paymentReceipt.getPaymentId());
+			model.put(DetailsConstants.customerName, paymentReceipt.getCustomerName());
+			model.put(DetailsConstants.civilId, paymentReceipt.getCivilId());
+			model.put(DetailsConstants.mobileNumber, paymentReceipt.getMobileNumber());
+			model.put(DetailsConstants.emialId, paymentReceipt.getEmialId());
+			model.put(DetailsConstants.policyDuration, paymentReceipt.getPolicyDuration());
+			model.put(DetailsConstants.governate, paymentReceipt.getGovernate());
+			model.put(DetailsConstants.areaDesc, paymentReceipt.getAreaDesc());
+			model.put(DetailsConstants.address, paymentReceipt.getAddress());
+			model.put(DetailsConstants.make, paymentReceipt.getMake());
+			model.put(DetailsConstants.subMake, paymentReceipt.getSubMake());
+			model.put(DetailsConstants.ktNumber, paymentReceipt.getKtNumber());
+			model.put(DetailsConstants.chasisNumber, paymentReceipt.getChasisNumber());
+			model.put(DetailsConstants.modelYear, paymentReceipt.getModelYear());
+			model.put(DetailsConstants.trnsReceiptRef, paymentReceipt.getTrnsReceiptRef());
+			
+			dataList.add(model);
+			wrapper.put("results", dataList);
+			
+			file = postManService.processTemplate(new File(TemplatesIB.TRNX_RECEIPT, wrapper, File.Type.PDF)).getResult();
+			file.create(response, true);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
+	public void metaDataSetup()
+	{
+		if(null == metaData.getCountryId())
+		{
+			if (httpService.getLanguage().toString().equalsIgnoreCase("EN"))
+			{
+				metaData.setLanguageId(new BigDecimal(0));
+				customerRegistrationService.getCompanySetUp();
+			}
+		}
 	}
 }

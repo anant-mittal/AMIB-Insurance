@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -15,15 +17,21 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 
 import com.amx.jax.config.CustomerAuthProvider;
-import com.amx.jax.service.HttpService;
+import com.amx.jax.dao.MyQuoteDao;
+import com.amx.jax.http.CommonHttpRequest;
 
 @Component
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class UserSession
 {
+	
+	String TAG = "com.amx.jax.UserSession :: ";
+
+	private static final Logger logger = LoggerFactory.getLogger(UserSession.class);
+
 
 	@Autowired
-	private HttpService httpService;
+	private CommonHttpRequest httpService;
 	
 	boolean valid;
 
@@ -224,11 +232,15 @@ public class UserSession
 
 	public void authorize(String civilId, String password)
 	{
+		logger.info(TAG + " authorize 1");
+		
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(civilId, password);
 		token.setDetails(new WebAuthenticationDetails(request));
 		Authentication authentication = this.customerAuthProvider.authenticate(token);
 		valid = true;
 		SecurityContextHolder.getContext().setAuthentication(authentication);
+		
+		logger.info(TAG + " authorize 2");
 	}
 
 	public void setReferrer(String referrer)
@@ -241,8 +253,6 @@ public class UserSession
 		return referrer;
 	}
 	
-	
-	
 	public void unauthorize()
 	{
 		this.invalidate();
@@ -250,6 +260,8 @@ public class UserSession
 	
 	public void invalidate()
 	{
+		logger.info(TAG + " invalidate 1");
+		
 		SecurityContextHolder.getContext().setAuthentication(null);
 		HttpSession session = request.getSession(false);
 		SecurityContextHolder.clearContext();
@@ -258,7 +270,20 @@ public class UserSession
 		{
 			session.invalidate();
 		}
+		
+		logger.info(TAG + " invalidate 2");
+		
 		httpService.clearSessionCookie();
 	}
 	
+	@Override
+	public String toString() {
+		return "UserSession [httpService=" + httpService + ", valid=" + valid + ", referrer=" + referrer + ", civilId="
+				+ civilId + ", motpPrefix=" + motpPrefix + ", eotpPrefix=" + eotpPrefix + ", motp=" + motp + ", eotp="
+				+ eotp + ", customerMobileNumber=" + customerMobileNumber + ", customerEmailId=" + customerEmailId
+				+ ", changePasswordOtp=" + changePasswordOtp + ", userType=" + userType + ", mOtpMobileNumber="
+				+ mOtpMobileNumber + ", eOtpEmailId=" + eOtpEmailId + ", customerSequenceNumber="
+				+ customerSequenceNumber + ", userSequenceNumber=" + userSequenceNumber + ", userAmibCustRef="
+				+ userAmibCustRef + ", request=" + request + ", customerAuthProvider=" + customerAuthProvider + "]";
+	}
 }

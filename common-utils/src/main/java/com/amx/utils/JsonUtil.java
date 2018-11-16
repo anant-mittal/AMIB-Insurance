@@ -283,6 +283,7 @@ public final class JsonUtil {
 	public static Map<String, Object> getMapFromJsonString(String jsonString) throws IOException {
 		return ((Map<String, Object>) instance.getMapper().readValue(jsonString, Map.class));
 	}
+	
 
 	/**
 	 * Gets the generic object list from json string.
@@ -310,3 +311,5 @@ class EnumByIdSerializer extends JsonSerializer<EnumById> {
 		gen.writeString(value.getId());
 	}
 }
+
+

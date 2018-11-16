@@ -1,0 +1,1200 @@
+<jasperReport name="yes"
+              xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              leftMargin="0" rightMargin="0"
+              topMargin="0" bottomMargin="0">
+    <subDataset name="tranxs">
+        <parameter name="TU" class="com.amx.jax.postman.service.TemplateUtils"/>
+        <field name="tranx" class="com.amx.utils.FlatMap">
+            <fieldDescription><![CDATA[_THIS]]></fieldDescription>
+        </field>
+    </subDataset>
+
+
+    <subDataset name="tranxtypes">
+        <parameter name="TU" class="com.amx.jax.postman.service.TemplateUtils"/>
+        <field name="tranxtype" class="com.amx.utils.FlatMap">
+            <fieldDescription><![CDATA[_THIS]]></fieldDescription>
+        </field>
+    </subDataset>
+
+    <parameter name="title" class="java.lang.String"/>
+    <parameter name="condition" class="java.lang.String"/>
+    <parameter name="minSalary" class="java.lang.Double"/>
+    <parameter name="model" class="com.amx.utils.FlatMap"/>
+    <parameter name="promos" class="com.amx.utils.FlatMap"/>
+    <parameter name="TU" class="com.amx.jax.postman.service.TemplateUtils"/>
+    <detail>
+        <band height="822">
+            <componentElement>
+                <reportElement x="0" y="0" width="595" height="822"/>
+                <c:list xmlns:c="http://jasperreports.sourceforge.net/jasperreports/components"
+                        xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd"
+                        printOrder="Vertical">
+                    <datasetRun subDataset="tranxs" uuid="b8180534-701e-4f9a-ad5f-785d1a5fb74b">
+                        <datasetParameter name="REPORT_RESOURCE_BUNDLE">
+                            <datasetParameterExpression>
+                                <![CDATA[$P{REPORT_RESOURCE_BUNDLE}]]></datasetParameterExpression>
+                        </datasetParameter>
+                        <datasetParameter name="TU">
+                            <datasetParameterExpression><![CDATA[$P{TU}]]></datasetParameterExpression>
+                        </datasetParameter>
+                        <dataSourceExpression>
+                            <![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{model}.getList("/results"))]]></dataSourceExpression>
+                    </datasetRun>
+                    <c:listContents height="822">
+
+                        <!--##################HEADER START####################-->
+                        <frame>
+                            <reportElement x="0" y="0" width="595" height="80"
+                                           forecolor="blue"/>
+                            <rectangle>
+                                <reportElement x="0" y="0" width="595" height="80" backcolor="#000000"/>
+                            </rectangle>
+                            <image evaluationTime="Now" hyperlinkType="None" hyperlinkTarget="Self">
+                                <reportElement
+                                        x="220"
+                                        y="25"
+                                        width="150"
+                                        height="60"
+                                        key="image-1"
+                                        stretchType="NoStretch"/>
+                                <graphicElement/>
+                                <imageExpression class="java.lang.String">
+                                    <![CDATA[$P{TU}.prop("company.logo.path")]]>
+                                </imageExpression>
+                            </image>
+                             <staticText>
+                                <reportElement x="5" y="70" width="290" height="20" isPrintWhenDetailOverflows="true"  forecolor="#FFFFFF"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Mezzanine Floor, Al Saleh Complex, Block 10, Mirqab, Kuwait]]></text>
+                            </staticText>
+                            
+                           
+                        </frame>
+                        <!--##################HEADER END####################-->
+
+                        <!--##################Policy Details START####################--> 
+                        <frame>
+                            <reportElement x="5" y="80" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Policy Details]]></text>
+                            </staticText>
+
+
+                           </frame>
+                        <!--##################Policy Details END####################-->
+
+                         <!--##################Policy No START####################-->
+                        <frame>
+                            <reportElement x="5" y="100" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Policy No]]></text>
+                            </staticText>
+
+ 							<textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+                           </frame>
+                        <!--##################Policy No END####################-->
+                        
+
+   						<!--##################Policy Issue Date START####################-->
+                        <frame>
+                            <reportElement x="5" y="120" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Policy Issue Date]]></text>
+                            </staticText>
+                            
+                            <textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+
+
+                           </frame>
+                        <!--##################Policy Issue Date END####################-->
+                        
+                        
+                           <!--##################Policy From Date START####################-->
+                        <frame>
+                            <reportElement x="5" y="140" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Policy From Date]]></text>
+                            </staticText>
+                            
+							<textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+
+                           </frame>
+                        <!--##################Policy From Date END####################-->
+                        
+                           <!--##################Policy Due Date  START####################-->
+                        <frame>
+                            <reportElement x="5" y="160" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Policy Due Date ]]></text>
+                            </staticText>
+							<textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+					
+
+                           </frame>
+                        <!--##################Policy Due Date  END####################-->
+                        
+                           <!--##################Additional Coverage START####################-->
+                        <frame>
+                            <reportElement x="5" y="180" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Additional Coverage]]></text>
+                            </staticText>
+							<textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+
+                           </frame>
+                        <!--##################Additional Coverage END####################-->
+                        
+                           <!--##################Insurance Co START####################-->
+                        <frame>
+                            <reportElement x="5" y="200" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#000000" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Insurance Co]]></text>
+                            </staticText>
+
+							<textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+
+                           </frame>
+                        <!--##################Insurance Co END####################-->
+                        
+                           <!--##################Vehicle Details START####################-->
+                        <frame>
+                            <reportElement x="5" y="220" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Vehicle Details]]></text>
+                            </staticText>
+
+							<textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+                           </frame>
+                        <!--##################Vehicle Details END####################-->
+                        
+                           <!--##################Make START####################-->
+                        <frame>
+                            <reportElement x="5" y="240" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Make]]></text>
+                            </staticText>
+							<textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+
+                           </frame>
+                        <!--##################Make END####################-->
+                        
+                           <!--##################Sub-Make START####################-->
+                        <frame>
+                            <reportElement x="5" y="260" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Sub-Make]]></text>
+                            </staticText>
+							<textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+
+                           </frame>
+                        <!--##################Sub-Make END####################-->
+                            
+                               <!--##################Model Year START####################-->
+                        <frame>
+                            <reportElement x="5" y="280" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Model Year]]></text>
+                            </staticText>
+							<textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+
+                           </frame>
+                        <!--##################Model Year END####################-->
+                        
+                           <!--##################Chassis No. START####################-->
+                        <frame>
+                            <reportElement x="5" y="300" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Chassis No.]]></text>
+                            </staticText>
+							<textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+
+                           </frame>
+                        <!--##################Chassis No. END####################-->
+                        
+                           <!--##################KT No. START####################-->
+                        <frame>
+                            <reportElement x="5" y="320" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[KT No.]]></text>
+                            </staticText>
+                           
+                            <textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+						</frame>
+                        <!--##################KT No. END####################-->
+                        
+                           <!--##################Policy Duration START####################-->
+                        <frame>
+                            <reportElement x="5" y="340" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Policy Duration]]></text>
+                            </staticText>
+                            <textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+						</frame>
+                        <!--##################Policy DurationEND####################-->
+                        
+                           <!--##################Vehicle Type START####################-->
+                        <frame>
+                            <reportElement x="5" y="360" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Vehicle Type]]></text>
+                            </staticText>
+                            <textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+						</frame>
+                        <!--##################Vehicle Type END####################-->
+                        
+                           <!--##################Max. Vehicle Value START####################-->
+                        <frame>
+                            <reportElement x="5" y="380" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Max. Vehicle Value]]></text>
+                            </staticText>
+                            <textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+						</frame>
+                        <!--##################Max. Vehicle Value END####################-->
+                        
+                           <!--##################Purpose START####################-->
+                        <frame>
+                            <reportElement x="5" y="400" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Purpose]]></text>
+                            </staticText>
+                            <textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+						</frame>
+                        <!--##################Purpose END####################-->
+                        
+                           <!--##################Vehicle Colour START####################-->
+                        <frame>
+                            <reportElement x="5" y="420" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Vehicle Colour]]></text>
+                            </staticText>
+                            <textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+						</frame>
+                        <!--##################Vehicle Colour END####################-->
+                        
+                           <!--##################Vehicle Shape  START####################-->
+                        <frame>
+                            <reportElement x="5" y="440" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Vehicle Shape ]]></text>
+                            </staticText>
+                            <textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+						</frame>
+                        <!--##################Vehicle Shape END####################-->
+                        
+                           <!--##################Seating Capacity START####################-->
+                        <frame>
+                            <reportElement x="5" y="460" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[KT No.]]></text>
+                            </staticText>
+                            <textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+						</frame>
+                        <!--#################Seating Capacity END####################-->
+                        
+                           <!--#################Fuel START####################-->
+                        <frame>
+                            <reportElement x="5" y="480" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Fuel]]></text>
+                            </staticText>
+                            <textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+						</frame>
+                        <!--##################Fuel END####################-->
+                        
+                           <!--##################Vehicle Condition START####################-->
+                        <frame>
+                            <reportElement x="5" y="500" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#000000" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Vehicle Condition]]></text>
+                            </staticText>
+                            <textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+						</frame>
+                        <!--##################Vehicle Condition END####################-->
+                        
+                           <!--##################Insured Details START####################-->
+                        <frame>
+                            <reportElement x="5" y="520" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Insured Details]]></text>
+                            </staticText>
+                            <textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+						</frame>
+                        <!--##################Insured Details END####################-->
+                        
+                           <!--##################Insured Name START####################-->
+                        <frame>
+                            <reportElement x="5" y="540" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Insured Name]]></text>
+                            </staticText>
+                            <textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+						</frame>
+                        <!--##################Insured Name END####################-->
+                        
+                           <!--##################Insured Address START####################-->
+                        <frame>
+                            <reportElement x="5" y="560" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Insured Address]]></text>
+                            </staticText>
+                            <textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+						</frame>
+                        <!--##################Insured Address END####################-->
+                        
+                           <!--##################Insured Mobile No. START####################-->
+                        <frame>
+                            <reportElement x="5" y="580" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Insured Mobile No.]]></text>
+                            </staticText>
+                            <textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+						</frame>
+                        <!--##################Insured Mobile No. END####################-->
+
+
+                          <!--##################Sum Insured  START####################-->
+                        <frame>
+                            <reportElement x="5" y="600" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Sum Insured ]]></text>
+                            </staticText>
+                            <textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+						</frame>
+                        <!--##################Sum Insured  END####################-->
+                      
+                          <!--##################Policy Contribution START####################-->
+                        <frame>
+                            <reportElement x="5" y="620" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Policy Contribution]]></text>
+                            </staticText>
+                            <textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+						</frame>
+                        <!--##################Policy Contribution END####################-->
+                      
+                          <!--##################Supervision Fees START####################-->
+                        <frame>
+                            <reportElement x="5" y="640" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Supervision Fees]]></text>
+                            </staticText>
+                            <textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+						</frame>
+                        <!--##################Supervision Fees END####################-->
+                      
+                          <!--##################Issue Fees START####################-->
+                        <frame>
+                            <reportElement x="5" y="660" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Issue Fees]]></text>
+                            </staticText>
+                            <textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+						</frame>
+                        <!--#################Issue Fees END####################-->
+                      
+                          <!--##################Endorsement Fees START####################-->
+                        <frame>
+                            <reportElement x="5" y="680" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Endorsement Fees]]></text>
+                            </staticText>
+                            <textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+						</frame>
+                        <!--##################Endorsement Fees END####################-->
+                      
+                          <!--##################Discount Amount START####################-->
+                        <frame>
+                            <reportElement x="5" y="700" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Discount Amount]]></text>
+                            </staticText>
+                            <textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+						</frame>
+                        <!--##################Discount Amount END####################-->
+                      
+                         <!--#################Amount Paid (in Numbers) START####################-->
+                        <frame>
+                            <reportElement x="5" y="720" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Amount Paid (in Numbers)]]></text>
+                            </staticText>
+                            <textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+						</frame>
+                        <!--##################Amount Paid (in Numbers) END####################-->
+                        
+                        <!--##################Amount Paid (in Words)START####################-->
+                        <frame>
+                            <reportElement x="5" y="740" width="585" height="15"/>
+                            <staticText>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <textElement />
+                                <text><![CDATA[]]></text>
+                            </staticText>
+                            <staticText>
+                                <reportElement x="0" y="3" width="185" height="15" isPrintWhenDetailOverflows="true"/>
+                                <textElement>
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arialbd.ttf"/>
+                                </textElement>
+                                <text><![CDATA[Amount Paid (in Words)]]></text>
+                            </staticText>
+                            <textField isStretchWithOverflow="true">
+                                <reportElement x="160" y="4" width="400" height="15"
+                                               forecolor="#000000"
+                                               isPrintWhenDetailOverflows="true"/>
+                                <textElement textAlignment="Left">
+                                    <font fontName="Arial" size="8" isItalic="true"
+                                          pdfFontName="fonts/all/arial.ttf"/>
+                                </textElement>
+                                <textFieldExpression class="java.lang.String">
+                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                </textFieldExpression>
+                            </textField>
+						</frame>
+                        <!--##################Amount Paid (in Words) END####################-->
+                      
+                       
+                       
+                       
+                      
+                        
+                       
+                       
+                       
+
+                  
+            	 <!--##################FOOTER END####################-->
+
+                    <!--##################FOOTER START####################-->
+                    <!--##################FOOTER END####################-->
+                    </c:listContents>
+                </c:list>
+            </componentElement>
+
+        </band>
+    </detail>
+</jasperReport>
+
