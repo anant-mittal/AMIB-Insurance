@@ -78,7 +78,7 @@ public class EmailSmsService
 	 */
 
 	/************* EMAIL OTP **********/
-	public String sendEmailOtp(String EmailTo)
+	public String sendEmailOtp(String EmailTo ,String otpType)
 	{
 		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 		String emailOtpPrefix = Random.randomAlpha(3);
@@ -95,15 +95,36 @@ public class EmailSmsService
 		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
 		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaData.getAmibWebsiteLink());
 		model.put(DetailsConstants.EMAIL_OTP, emailOtpToSend);
-		model.put(DetailsConstants.COMPANY_NAME, metaData.getCompanyName());
+		model.put(DetailsConstants.COMPANY_NAME, getCompanyName());
 		model.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
+		
+		if(otpType.equalsIgnoreCase(DetailsConstants.REGISTRATION_OTP))
+		{
+			model.put(DetailsConstants.PROCESS, "registration process");
+			model.put(DetailsConstants.OTP_USED_FOR, "registration");
+		}
+		else if(otpType.equalsIgnoreCase(DetailsConstants.RESET_PASSOWRD_OTP))
+		{
+			model.put(DetailsConstants.PROCESS, "reset password process");
+			model.put(DetailsConstants.OTP_USED_FOR, "password reset");
+		}
+		else if(otpType.equalsIgnoreCase(DetailsConstants.UPDATE_PROFILE_OTP))
+		{
+			model.put(DetailsConstants.PROCESS, "update profile");
+			model.put(DetailsConstants.OTP_USED_FOR, "updating details");
+		}
+		else
+		{
+			model.put(DetailsConstants.PROCESS, "");
+			model.put(DetailsConstants.OTP_USED_FOR, "");
+		}
+		
 		wrapper.put("data", model);
 		
 		ArrayList<String> emailTo = new ArrayList<String>();
 		emailTo.add(EmailTo);
 
 		Email email = new Email();
-		//email.setFrom(emailFrom);
 		email.setTo(emailTo);
 		email.setSubject(DetailsConstants.REG_OTP_EMAIL_SUBJECT);
 		email.setModel(wrapper);
@@ -182,7 +203,7 @@ public class EmailSmsService
 	public void emailTosuccessFullUserRegistration(String emailIdTo)
 	{
 
-		//String emailIdFrom = metaData.getEmailFromConfigured();
+		logger.info(TAG + " emailTosuccessFullUserRegistration :: civilId :" + userSession.getCivilId());
 
 		Map<String, Object> wrapper = new HashMap<String, Object>();
 		Map<String, Object> model = new HashMap<String, Object>();
@@ -190,7 +211,7 @@ public class EmailSmsService
 		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
 		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaData.getAmibWebsiteLink());
 		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
-		model.put(DetailsConstants.COMPANY_NAME, metaData.getCompanyName());
+		model.put(DetailsConstants.COMPANY_NAME, getCompanyName());
 		model.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
 		wrapper.put("data", model);
 		
@@ -234,7 +255,7 @@ public class EmailSmsService
 		model.put(DetailsConstants.CUSTOMER_MOBILE_NO, requestOtpModel.getMobileNumber());
 		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
 		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaData.getAmibWebsiteLink());
-		model.put(DetailsConstants.COMPANY_NAME, metaData.getCompanyName());
+		model.put(DetailsConstants.COMPANY_NAME, getCompanyName());
 		model.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
 		wrapper.put("data", model);
 		
@@ -286,7 +307,7 @@ public class EmailSmsService
 		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
 		model.put(DetailsConstants.CONTACT_US_MOBILE, metaData.getContactUsHelpLineNumber());
 		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaData.getAmibWebsiteLink());
-		model.put(DetailsConstants.COMPANY_NAME, metaData.getCompanyName());
+		model.put(DetailsConstants.COMPANY_NAME, getCompanyName());
 		model.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
 		model.put(DetailsConstants.MAKE_DESC, makeDesc);
 		model.put(DetailsConstants.SUB_MAKE_DESC, subMakeDesc);
@@ -350,7 +371,7 @@ public class EmailSmsService
 		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
 		model.put(DetailsConstants.CONTACT_US_MOBILE, metaData.getContactUsHelpLineNumber());
 		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaData.getAmibWebsiteLink());
-		model.put(DetailsConstants.COMPANY_NAME, metaData.getCompanyName());
+		model.put(DetailsConstants.COMPANY_NAME, getCompanyName());
 		model.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
 		model.put(DetailsConstants.MAKE_DESC, makeDesc);
 		model.put(DetailsConstants.SUB_MAKE_DESC, subMakeDesc);
@@ -404,7 +425,7 @@ public class EmailSmsService
 		model.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
 		model.put(DetailsConstants.CONTACT_US_MOBILE, metaData.getContactUsHelpLineNumber());
 		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaData.getAmibWebsiteLink());
-		model.put(DetailsConstants.COMPANY_NAME, metaData.getCompanyName());
+		model.put(DetailsConstants.COMPANY_NAME, getCompanyName());
 		model.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
 		model.put(DetailsConstants.URL_DETAILS, "");//TODO
 		model.put(DetailsConstants.POLICY_AMOUNT, amount);
@@ -518,7 +539,7 @@ public class EmailSmsService
 	 * 
 	 */
 	/************* INITIATE D OTP **********/
-	public AmxApiResponse<?, Object> initiateDotp(String emailId, String mobileNumber)
+	public AmxApiResponse<?, Object> initiateDotp(String emailId, String mobileNumber , String otpType)
 	{
 		userSession.setEotp("");
 		userSession.setMotp("");
@@ -535,7 +556,7 @@ public class EmailSmsService
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
 		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
 
-		String eOtpPrefix = sendEmailOtp(emailId);
+		String eOtpPrefix = sendEmailOtp(emailId , otpType);
 		String mOtpPrefix = sendMobileOtp(mobileNumber);
 
 		responseOtpModel.setEotpPrefix(eOtpPrefix);
@@ -565,7 +586,7 @@ public class EmailSmsService
 	 * 
 	 */
 	/************* VALIDATE D OTP **********/
-	public AmxApiResponse<?, Object> validateDOTP(String eOtp, String mOtp, String emailId, String mobileNumber)
+	public AmxApiResponse<?, Object> validateDOTP(String eOtp, String mOtp, String emailId, String mobileNumber,String otpType)
 	{
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
 
@@ -573,7 +594,7 @@ public class EmailSmsService
 		{
 			if (!userSession.geteOtpEmailId().equals(emailId) || !userSession.getmOtpMobileNumber().equals(mobileNumber))
 			{
-				return initiateDotp(emailId, mobileNumber);
+				return initiateDotp(emailId, mobileNumber , otpType);
 			}
 
 			if (!userSession.getMotp().equals(mOtp) || !userSession.getEotp().equals(eOtp))
@@ -586,7 +607,7 @@ public class EmailSmsService
 		}
 		else
 		{
-			return initiateDotp(emailId, mobileNumber);
+			return initiateDotp(emailId, mobileNumber , otpType);
 		}
 		return null;
 	}
@@ -602,7 +623,7 @@ public class EmailSmsService
 	 * 
 	 */
 	/************* INITIATE E OTP **********/
-	public AmxApiResponse<?, Object> initiateEotp(String emailId)
+	public AmxApiResponse<?, Object> initiateEotp(String emailId , String otpType)
 	{
 		userSession.setEotp("");
 		userSession.setMotp("");
@@ -618,7 +639,7 @@ public class EmailSmsService
 
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
 		ResponseOtpModel responseOtpModel = new ResponseOtpModel();
-		String eOtpPrefix = sendEmailOtp(emailId);
+		String eOtpPrefix = sendEmailOtp(emailId , otpType);
 		responseOtpModel.setEotpPrefix(eOtpPrefix);
 		responseOtpModel.setMotpPrefix(null);
 		userSession.seteOtpEmailId(emailId);
@@ -645,14 +666,14 @@ public class EmailSmsService
 	 * 
 	 */
 	/************* VALIDATE E OTP **********/
-	public AmxApiResponse<?, Object> validateEotp(String eOtp, String emailId)
+	public AmxApiResponse<?, Object> validateEotp(String eOtp, String emailId , String otpType)
 	{
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
 		if (null != eOtp && !eOtp.equals(""))
 		{
 			if (!userSession.geteOtpEmailId().equals(emailId))
 			{
-				return initiateEotp(emailId);
+				return initiateEotp(emailId , otpType);
 			}
 			if (!userSession.getEotp().equals(eOtp))
 			{
@@ -664,7 +685,7 @@ public class EmailSmsService
 		}
 		else
 		{
-			return initiateEotp(emailId);
+			return initiateEotp(emailId , otpType);
 		}
 		return null;
 	}
@@ -761,7 +782,7 @@ public class EmailSmsService
 	public AmxApiResponse<ResponseInfo, Object> isOtpEnabled(String civilId)
 	{
 		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
-		boolean isOtpEnable = customerRegistrationDao.isOtpEnabled(civilId , userSession.getUserType());
+		boolean isOtpEnable = customerRegistrationDao.isOtpEnabled(civilId , metaData.getUserType());
 		if (isOtpEnable)
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
@@ -796,7 +817,7 @@ public class EmailSmsService
 	{
 		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
 
-		ResponseInfo setOtpCount = customerRegistrationDao.setOtpCount(civilId , userSession.getUserType());
+		ResponseInfo setOtpCount = customerRegistrationDao.setOtpCount(civilId , metaData.getUserType());
 
 		if (setOtpCount.isValid())
 		{
@@ -825,7 +846,7 @@ public class EmailSmsService
 	/************* CHECK IF CIVIL ID EXIST **********/
 	public AmxApiResponse<ResponseInfo, Object> isCivilIdExist(String civilid)
 	{
-		boolean civilIdExistCheck = customerRegistrationDao.isCivilIdExist(civilid , userSession.getUserType());
+		boolean civilIdExistCheck = customerRegistrationDao.isCivilIdExist(civilid , metaData.getUserType());
 		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
 		if (civilIdExistCheck)
 		{
@@ -886,12 +907,21 @@ public class EmailSmsService
 		String civilId = userSession.getCivilId();
 		if (null != civilId && !civilId.equals(""))
 		{
-			CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(userSession.getCivilId() , userSession.getUserType() , userSession.getUserSequenceNumber());
+			CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(userSession.getCivilId() , metaData.getUserType() , userSession.getUserSequenceNumber());
 			if (null != customerDetailModel.getUserName() && !customerDetailModel.getUserName().equals(""))
 			{
 				return customerDetailModel.getUserName();
 			}
 		}
 		return "Customer";
+	}
+	
+	public String getCompanyName()
+	{
+		if(null != metaData.getCompanyName() && metaData.getCompanyName().toString().equals(""))
+		{
+			return metaData.getCompanyName().toLowerCase();
+		}
+		return "";
 	}
 }

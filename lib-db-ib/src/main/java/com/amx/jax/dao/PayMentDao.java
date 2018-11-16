@@ -55,8 +55,6 @@ public class PayMentDao
 			callableStatement.setBigDecimal(6, insertPaymentDetails.getCustSeqNum());
 			callableStatement.setString(7, insertPaymentDetails.getPaymentMethod());//Suggested By Ashok Sir
 			callableStatement.setBigDecimal(8, insertPaymentDetails.getPaymentAmount());
-			//callableStatement.setString(9, insertPaymentDetails.getPaymentId());
-			//callableStatement.setString(10, insertPaymentDetails.getPaymentToken());
 			callableStatement.setString(9, metaData.getDeviceType());
 			callableStatement.setString(10, metaData.getDeviceId());
 			callableStatement.setString(11, civilId);

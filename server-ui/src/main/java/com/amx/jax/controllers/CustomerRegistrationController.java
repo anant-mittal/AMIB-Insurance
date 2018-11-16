@@ -63,42 +63,42 @@ public class CustomerRegistrationController
 	@RequestMapping(value = "/pub/reg/civilid-valid", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<ResponseInfo, Object> isValidCivilId(@RequestParam("civilId") String civilid)
 	{
-		handleSession();
+		setMetaData();
 		return customerRegistrationService.isValidCivilId(civilid);
 	}
 
 	@RequestMapping(value = "/pub/reg/civilid-exists", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<ResponseInfo, Object> isCivilIdExistCheck(@RequestParam("civilId") String civilid)
 	{
-		handleSession();
+		setMetaData();
 		return customerRegistrationService.isCivilIdExistCheck(civilid);
 	}
 
 	@RequestMapping(value = "/pub/reg/mobile-valid", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<ResponseInfo, Object> isValidMobileNumber(@RequestParam("mobile") String mobile)
 	{
-		handleSession();
+		setMetaData();
 		return customerRegistrationService.isValidMobileNumber(mobile);
 	}
 
 	@RequestMapping(value = "/pub/reg/mobile-exists", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<ResponseInfo, Object> isMobileNumberExistCheck(@RequestParam("mobile") String mobile)
 	{
-		handleSession();
+		setMetaData();
 		return customerRegistrationService.isMobileNumberExistCheck(mobile);
 	}
 
 	@RequestMapping(value = "/pub/reg/email-valid", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<ResponseInfo, Object> isValidEmailId(@RequestParam("emailId") String emailId)
 	{
-		handleSession();
+		setMetaData();
 		return customerRegistrationService.isValidEmailId(emailId);
 	}
 
 	@RequestMapping(value = "/pub/reg/email-exists", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<ResponseInfo, Object> isEmailIdExistCheck(@RequestParam("emailId") String emailId)
 	{
-		handleSession();
+		setMetaData();
 		return customerRegistrationService.isEmailIdExistCheck(emailId);
 	}
 
@@ -106,7 +106,7 @@ public class CustomerRegistrationController
 	public AmxApiResponse<?, Object> registrationOtpInitiate(@RequestHeader(value = "mOtp", required = false) String mOtpHeader, @RequestHeader(value = "eOtp", required = false) String eOtpHeader, @RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp,
 			@RequestBody RequestOtpModel requestOtpModel)
 	{
-		handleSession();
+		setMetaData();
 		mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
 		eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
 		return customerRegistrationService.registrationOtp(eOtp, mOtp, requestOtpModel);
@@ -115,14 +115,14 @@ public class CustomerRegistrationController
 	@RequestMapping(value = "/pub/reg/customer-registration", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<CustomerRegistrationResponse, Object> addNewCustomer(@RequestBody CustomerRegistrationRequest customerRegistrationRequest)
 	{
-		handleSession();
+		setMetaData();
 		return customerRegistrationService.addNewCustomer(customerRegistrationRequest);
 	}
 
 	@RequestMapping(value = "/pub/login/validate-userlogin", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> validateUserLogin(@RequestBody CustomerLoginRequest customerLoginRequest)
 	{
-		handleSession();
+		setMetaData();
 		return customerRegistrationService.validateUserLogin(customerLoginRequest);
 	}
 
@@ -130,7 +130,7 @@ public class CustomerRegistrationController
 	public AmxApiResponse<?, Object> changePasswordOtpInitiate(@RequestHeader(value = "mOtp", required = false) String mOtpHeader, @RequestHeader(value = "eOtp", required = false) String eOtpHeader, @RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp,
 			@RequestBody ChangePasswordOtpRequest changePasswordRequest)
 	{
-		handleSession();
+		setMetaData();
 		mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
 		eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
 		return customerRegistrationService.changePasswordOtpInitiate(eOtp, mOtp, changePasswordRequest);
@@ -139,14 +139,14 @@ public class CustomerRegistrationController
 	@RequestMapping(value = "/pub/login/changepass", method = RequestMethod.POST)
 	public AmxApiResponse<ChangePasswordResponse, Object> updatePassword(@RequestBody ChangePasswordRequest changePasswordRequest)
 	{
-		handleSession();
+		setMetaData();
 		return customerRegistrationService.updatePassword(changePasswordRequest);
 	}
 
 	@RequestMapping(value = "/pub/reg/userdetails", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<CustomerDetailResponse, Object> getUserDetails()
 	{
-		handleSession();
+		setMetaData();
 		return customerRegistrationService.getCustomerDetails();
 	}
 
@@ -154,7 +154,7 @@ public class CustomerRegistrationController
 	public AmxApiResponse<?, Object> changePasswordLogedInUser(@RequestHeader(value = "mOtp", required = false) String mOtpHeader, @RequestHeader(value = "eOtp", required = false) String eOtpHeader, @RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp,
 			@RequestBody ChangePasswordRequest changePasswordRequest)
 	{
-		handleSession();
+		setMetaData();
 		mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
 		eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
 		return customerRegistrationService.changePasswordLogedInUser(eOtp, mOtp, changePasswordRequest);
@@ -163,14 +163,14 @@ public class CustomerRegistrationController
 	@RequestMapping(value = "/pub/login/log-out", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> logout()
 	{
-		handleSession();
+		setMetaData();
 		userSession.unauthorize();
 		
 		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
 		resp.setStatusKey(ApiConstants.SUCCESS);
 		resp.setMessage(Message.LOGOUT_MESSAGE);
 		resp.setMessageKey(Message.LOGOUT_MESSAGE);
-		handleSession();
+		setMetaData();
 		
 		return resp;
 	}
@@ -180,7 +180,7 @@ public class CustomerRegistrationController
 	@RequestMapping(value = "/pub/reg/sms-email-test", method = RequestMethod.POST, produces = "application/json")
 	public String testEmailPostman()
 	{
-		handleSession();
+		setMetaData();
 		CustomerLoginRequest c = new CustomerLoginRequest();
 		c.setCivilId("282071300105");
 		c.setPassword("Amx@1234");
@@ -203,7 +203,7 @@ public class CustomerRegistrationController
 	}
 
 	
-	private void handleSession()
+	private void setMetaData()
 	{
 		if(null == metaData.getCountryId())
 		{

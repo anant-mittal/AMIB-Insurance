@@ -10,6 +10,7 @@ import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.dao.DashBoardDao;
 import com.amx.jax.models.DashBoardDetails;
 import com.amx.jax.models.IncompleteApplModel;
+import com.amx.jax.models.MetaData;
 import com.amx.jax.models.RequestQuoteDetrails;
 import com.amx.jax.ui.session.UserSession;
 
@@ -25,6 +26,9 @@ public class DashBoardService
 	
 	@Autowired
 	UserSession userSession;
+	
+	@Autowired
+	MetaData metaData;
 
 	public AmxApiResponse<DashBoardDetails, Object> getIncompleteApplication()
 	{
@@ -34,7 +38,7 @@ public class DashBoardService
 		
 		try
 		{
-			IncompleteApplModel incompleteApplModel = dashBoardDao.getIncompleteApplication(userSession.getCivilId() , userSession.getUserType(), userSession.getCustomerSequenceNumber());
+			IncompleteApplModel incompleteApplModel = dashBoardDao.getIncompleteApplication(userSession.getCivilId() , metaData.getUserType(), userSession.getCustomerSequenceNumber());
 			incompleteApplResponse.setAppSeqNumber(incompleteApplModel.getAppSeqNumber());
 			incompleteApplResponse.setAppStage(incompleteApplModel.getAppStage());
 			if (null == incompleteApplModel.getErrorCode())

@@ -14,6 +14,7 @@ import com.amx.jax.models.ActivePolicyModel;
 import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.IncompleteApplModel;
 import com.amx.jax.models.MetaData;
+import com.amx.jax.models.PolicyReceiptDetails;
 import com.amx.jax.utility.Calc;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +65,7 @@ public class MyPolicyDao
 				activePolicyModel.setCountryId(rs.getBigDecimal(1));
 				activePolicyModel.setCompCd(rs.getBigDecimal(2));
 				activePolicyModel.setDocNumber(rs.getBigDecimal(3));
+				logger.info(TAG + " getUserActivePolicy :: DocNumber :"+rs.getBigDecimal(3));
 				activePolicyModel.setDocDate(DateFormats.uiFormattedDate(rs.getDate(4)));
 				activePolicyModel.setFinance(rs.getBigDecimal(5));
 				activePolicyModel.setShowRoom(rs.getBigDecimal(6));
@@ -128,7 +130,17 @@ public class MyPolicyDao
 		}
 		return activePolicyArray;
 	}
-
+	
+	/**
+	 * 
+	 * 
+	 * 
+	 * @param oldDocNumber
+	 * @param civilId
+	 * @param userType
+	 * @param custSeqNum
+	 * @return
+	 */
 	public String checkRenewableApplicable(BigDecimal oldDocNumber , String civilId , String userType , BigDecimal custSeqNum)
 	{
 		getConnection();
@@ -163,6 +175,101 @@ public class MyPolicyDao
 			CloseConnection(callableStatement, connection);
 		}
 		return renewableApplCheck;
+	}
+	
+	public PolicyReceiptDetails downloadPolicyReceipt(BigDecimal docNumber)
+	{
+		getConnection();
+		CallableStatement callableStatement = null;
+		String callProcedure = "{call IRB_ONLINE_POLICY_PRINT(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+		
+		
+		PolicyReceiptDetails policyReceiptDetails = new PolicyReceiptDetails();
+		
+		try
+		{
+			callableStatement = connection.prepareCall(callProcedure);
+			
+			
+			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(3, docNumber);
+			callableStatement.setBigDecimal(4, metaData.getLanguageId());
+			callableStatement.registerOutParameter(5, java.sql.Types.DATE);
+			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(7, java.sql.Types.DATE);
+			callableStatement.registerOutParameter(8, java.sql.Types.DATE);
+			callableStatement.registerOutParameter(9, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(10, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(11, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(12, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(13, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(14, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(15, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(16, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(17, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(18, java.sql.Types.NUMERIC);
+			callableStatement.registerOutParameter(19, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(20, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(21, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(22, java.sql.Types.NUMERIC);
+			callableStatement.registerOutParameter(23, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(24, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(25, java.sql.Types.VARCHAR);
+            callableStatement.registerOutParameter(26, java.sql.Types.NUMERIC);
+			callableStatement.registerOutParameter(27, java.sql.Types.NUMERIC);
+			callableStatement.registerOutParameter(28, java.sql.Types.NUMERIC);
+			callableStatement.registerOutParameter(29, java.sql.Types.NUMERIC);
+			callableStatement.registerOutParameter(30, java.sql.Types.NUMERIC);
+			callableStatement.registerOutParameter(31, java.sql.Types.NUMERIC);
+			callableStatement.registerOutParameter(32, java.sql.Types.NUMERIC);
+			callableStatement.registerOutParameter(33, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(34, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(35, java.sql.Types.VARCHAR);
+			callableStatement.executeUpdate();
+
+			policyReceiptDetails.setPolicyIssueDate(DateFormats.uiFormattedDate(callableStatement.getDate(5)));
+			policyReceiptDetails.setPolicyNumber(callableStatement.getString(6));
+			policyReceiptDetails.setPolicyFromDate(DateFormats.uiFormattedDate(callableStatement.getDate(7)));
+			policyReceiptDetails.setPolicyDueDate(DateFormats.uiFormattedDate(callableStatement.getDate(8)));
+			policyReceiptDetails.setInsuranceCo(callableStatement.getString(9));
+			policyReceiptDetails.setInsuredName(callableStatement.getString(10));
+			policyReceiptDetails.setInsuredAddress(callableStatement.getString(11));
+			//Civil ID
+			policyReceiptDetails.setInsuredMobileNo(callableStatement.getString(13));
+			logger.info(TAG + " downloadPolicyReceipt :: insuredMobileNo :" + callableStatement.getString(13));
+			policyReceiptDetails.setMake(callableStatement.getString(14));
+			policyReceiptDetails.setSubMake(callableStatement.getString(15));
+			policyReceiptDetails.setKtNumber(callableStatement.getString(16));
+			policyReceiptDetails.setChaisisNumber(callableStatement.getString(17));
+			policyReceiptDetails.setModelYear(callableStatement.getBigDecimal(18));
+			policyReceiptDetails.setPurpose(callableStatement.getString(19));
+			policyReceiptDetails.setColour(callableStatement.getString(20));
+			policyReceiptDetails.setShape(callableStatement.getString(21));
+			policyReceiptDetails.setCapacity(callableStatement.getBigDecimal(22));
+			policyReceiptDetails.setFuelType(callableStatement.getString(23));
+			policyReceiptDetails.setVehicleCondition(callableStatement.getString(24));
+			logger.info(TAG + " downloadPolicyReceipt :: setAdditionalCoverage :" + callableStatement.getString(25));
+			policyReceiptDetails.setAdditionalCoverage(callableStatement.getString(25));
+			policyReceiptDetails.setVehicleValue(callableStatement.getBigDecimal(26));
+			policyReceiptDetails.setPolicyContribution(callableStatement.getBigDecimal(27));
+			policyReceiptDetails.setSupervisionFees(callableStatement.getBigDecimal(28));
+			policyReceiptDetails.setIssueFees(callableStatement.getBigDecimal(29));
+			policyReceiptDetails.setEndrosMentFees(callableStatement.getBigDecimal(30));
+			policyReceiptDetails.setDiscountAmount(callableStatement.getBigDecimal(31));
+			policyReceiptDetails.setAmountPaidInNum(callableStatement.getBigDecimal(32));
+			policyReceiptDetails.setAmountPaidInWord(callableStatement.getString(33));
+			
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		return policyReceiptDetails;
 	}
 
 	private Connection getConnection()

@@ -53,7 +53,7 @@ public class UserSession
 
 	private String changePasswordOtp;
 
-	private String userType;
+	//private String userType;
 
 	private String mOtpMobileNumber = "";
 
@@ -155,7 +155,7 @@ public class UserSession
 		this.customerEmailId = customerEmailId;
 	}
 
-	public String getUserType()
+	/*public String getUserType()
 	{
 		return userType;
 	}
@@ -163,7 +163,7 @@ public class UserSession
 	public void setUserType(String userType)
 	{
 		this.userType = userType;
-	}
+	}*/
 
 	public BigDecimal getCustomerSequenceNumber()
 	{
@@ -281,7 +281,7 @@ public class UserSession
 		return "UserSession [httpService=" + httpService + ", valid=" + valid + ", referrer=" + referrer + ", civilId="
 				+ civilId + ", motpPrefix=" + motpPrefix + ", eotpPrefix=" + eotpPrefix + ", motp=" + motp + ", eotp="
 				+ eotp + ", customerMobileNumber=" + customerMobileNumber + ", customerEmailId=" + customerEmailId
-				+ ", changePasswordOtp=" + changePasswordOtp + ", userType=" + userType + ", mOtpMobileNumber="
+				+ ", changePasswordOtp=" + changePasswordOtp + /*", userType=" + userType + */", mOtpMobileNumber="
 				+ mOtpMobileNumber + ", eOtpEmailId=" + eOtpEmailId + ", customerSequenceNumber="
 				+ customerSequenceNumber + ", userSequenceNumber=" + userSequenceNumber + ", userAmibCustRef="
 				+ userAmibCustRef + ", request=" + request + ", customerAuthProvider=" + customerAuthProvider + "]";

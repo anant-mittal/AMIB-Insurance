@@ -75,6 +75,15 @@ public class DetailsConstants
 	
 	public static String POLICY_APP_NO = "policyAppNo";
 	
+	public static String REGISTRATION_OTP = "REGISTRATION_OTP";
+	
+	public static String RESET_PASSOWRD_OTP = "RESET_PASSOWRD_OTP";
+	
+	public static String UPDATE_PROFILE_OTP = "UPDATE_PROFILE_OTP";
+	
+	public static String PROCESS = "process";
+	
+	public static String OTP_USED_FOR = "otpUsedFor";
 	
 	/******************************PG RECEIPT CONSTANTS***************************/
 	
@@ -119,5 +128,26 @@ public class DetailsConstants
 	public static String modelYear = "modelYear";
 	
 	public static String trnsReceiptRef = "trnsReceiptRef";
+	
+	/******************************PG RECEIPT CONSTANTS***************************/
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 }

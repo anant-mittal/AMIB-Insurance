@@ -174,11 +174,10 @@ public class RequestQuoteController
 		}
 
 		BigDecimal insuranceCompDet = null;
-		if (null != insuranceCompCode && !appSeqNumber.equals("") && !insuranceCompCode.equalsIgnoreCase("null"))
+		if (null != insuranceCompCode && !insuranceCompCode.equals("") && !insuranceCompCode.equalsIgnoreCase("null"))
 		{
 			insuranceCompDet = ArgUtil.parseAsBigDecimal(insuranceCompCode, null);
 		}
-
 		return requestQuoteService.submitRequestQuote(appSeqNumberDet, insuranceCompDet);
 	}
 }

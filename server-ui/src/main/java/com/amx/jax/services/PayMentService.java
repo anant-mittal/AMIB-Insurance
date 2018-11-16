@@ -258,7 +258,7 @@ public class PayMentService
 				{
 					emailSmsService.emialToCustonSuccessPg(paymentStatus.getTotalAmount(),
 							paymentStatus.getTransactionId(), paymentStatus.getAppSeqNumber(), receiptData(paySeqNum));
-					
+
 					AmxApiResponse<? , Object> createAmibResp = payMentService.cretaeAmibCust();
 					if (createAmibResp.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 					{
@@ -377,8 +377,4 @@ public class PayMentService
 		}
 		return resp;
 	}
-	
-	
-	
-	
 }

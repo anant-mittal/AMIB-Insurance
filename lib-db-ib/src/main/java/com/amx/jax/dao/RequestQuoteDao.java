@@ -912,6 +912,8 @@ public class RequestQuoteDao
 		String callProcedure = "{call IRB_GET_ONLINE_INSCOMPANY(?,?,?,?,?,?)}";
 		ArrayList<InsuranceCompanyDetails> insuranceCompanyArray = new ArrayList<InsuranceCompanyDetails>();
 		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
+		boolean defaultInsuCompSelected = true;
+		
 		try
 		{
 
@@ -932,9 +934,29 @@ public class RequestQuoteDao
 				insuranceCompanyDetails.setCompanyName(rs.getString(5));
 				insuranceCompanyDetails.setCompanyShortCode(rs.getString(15));
 				String insuranceSelected = appSelectedProvider(rs.getBigDecimal(3), appSeqNumber);
+				if(insuranceSelected.equalsIgnoreCase("Y"))
+				{
+					defaultInsuCompSelected = false;
+				}
 				insuranceCompanyDetails.setInsuranceSelected(insuranceSelected);
 				insuranceCompanyArray.add(insuranceCompanyDetails);
 			}
+			
+			InsuranceCompanyDetails amibCompanyDetails = new InsuranceCompanyDetails();
+			amibCompanyDetails.setCompanyCode(new BigDecimal(HardCodedValues.COMPANY_CODE));
+			amibCompanyDetails.setCompanyName(HardCodedValues.COMPANY_NAME);
+			amibCompanyDetails.setCompanyShortCode(HardCodedValues.COMPANY_SHORT_CODE);
+			if(defaultInsuCompSelected)
+			{
+				amibCompanyDetails.setInsuranceSelected("Y");
+			}
+			else
+			{
+				amibCompanyDetails.setInsuranceSelected("N");
+			}
+			insuranceCompanyArray.add(amibCompanyDetails);
+			
+			
 			arrayResponseModel.setDataArray(insuranceCompanyArray);
 			arrayResponseModel.setErrorCode(callableStatement.getString(5));
 			arrayResponseModel.setErrorMessage(callableStatement.getString(6));

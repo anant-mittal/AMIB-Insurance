@@ -362,38 +362,6 @@ public class CustomizeQuoteService
 		return null;
 	}
 	
-	
-	/*public AmxApiResponse<?, Object> paymentTest(HttpServletRequest request)
-	{
-		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
-		try
-		{
-			
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			
-			
-			Payment payment = new Payment();
-			payment.setDocFinYear(1123);
-			payment.setDocNo("4");// PaySeqNum
-			payment.setMerchantTrackId("4");// PaySeqNum
-			payment.setNetPayableAmount(new BigDecimal(450));
-			payment.setPgCode(PayGServiceCode.KNET);
-			
-			String redirctUrl = payGService.getPaymentUrl(payment ,"https://"+request.getServerName()+"/app/landing/myquotes/payment");
-			
-			PgRedirectUrl pgRedirectUrl = new PgRedirectUrl();
-			pgRedirectUrl.setRedirectUrl(redirctUrl);
-			resp.setData(pgRedirectUrl);
-				
-			return resp;
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		return null;
-	}*/
-	
 
 	private AmxApiResponse<?, Object> saveCustomizeQuoteAddPol(CustomizeQuoteModel customizeQuoteModel, MyQuoteModel myQuoteModel)
 	{

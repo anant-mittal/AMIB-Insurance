@@ -54,16 +54,7 @@ public class CustomizeQuoteController
 	private CustomizeQuoteService customizeQuoteService;
 	
 	@Autowired
-	private PayGService payGService;
-
-	@Autowired
 	PayMentService payMentService;
-
-	@Autowired
-	private WebConfig webConfig;
-	
-	@Autowired
-	private AppConfig appConfig;
 	
 	@Autowired
 	CommonHttpRequest httpService;
@@ -166,21 +157,34 @@ public class CustomizeQuoteController
 	}
 	
 	@RequestMapping(value = "/api/payment-status", method = { RequestMethod.POST })
-	public AmxApiResponse<?, Object> getPaymentStatus(@RequestParam BigDecimal paySeqNum) 
+	public AmxApiResponse<?, Object> getPaymentStatus(@RequestParam String paySeqNum) 
 	{
 		logger.info(TAG + " getPaymentStatus :: paySeqNum  :" + paySeqNum);
-		return payMentService.getPaymentStatus(paySeqNum);
+		
+		BigDecimal paySeqNumDet = null;
+		if (null != paySeqNum && !paySeqNum.equals("") && !paySeqNum.equalsIgnoreCase("null"))
+		{
+			paySeqNumDet = ArgUtil.parseAsBigDecimal(paySeqNum, null);
+		}
+		
+		return payMentService.getPaymentStatus(paySeqNumDet);
 	}
 	
 	
 	@RequestMapping(value = "/api/payment-receipt-data", method = { RequestMethod.GET })
-	public String paymentReceiptDataExt(@RequestParam BigDecimal paySeqNum) 
+	public String paymentReceiptDataExt(@RequestParam String paySeqNum) 
 	{
 		File file = null;
 		PaymentReceipt paymentReceipt = null;
 		try
 		{
-			AmxApiResponse<?, Object> receiptData  = payMentService.paymentReceiptData(paySeqNum);
+			BigDecimal paySeqNumDet = null;
+			if (null != paySeqNum && !paySeqNum.equals("") && !paySeqNum.equalsIgnoreCase("null"))
+			{
+				paySeqNumDet = ArgUtil.parseAsBigDecimal(paySeqNum, null);
+			}
+			
+			AmxApiResponse<?, Object> receiptData  = payMentService.paymentReceiptData(paySeqNumDet);
 			if (receiptData.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				paymentReceipt = (PaymentReceipt) receiptData.getData();

@@ -37,6 +37,16 @@ public class MetaData implements Serializable
 	private BigDecimal decplc;
 
 	private String companyName;
+	
+	private String userType;
+
+	public String getUserType() {
+		return userType;
+	}
+
+	public void setUserType(String userType) {
+		this.userType = userType;
+	}
 
 	public String getCompanyName()
 	{

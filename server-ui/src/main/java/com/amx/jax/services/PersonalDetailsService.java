@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
+import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.dao.PersonalDetailsDao;
@@ -51,7 +52,7 @@ public class PersonalDetailsService
 		CustomerProfileDetailResponse customerProfileDetailResponse = new CustomerProfileDetailResponse();
 		CustomerProfileDetailModel customerProfileDetailModel = new CustomerProfileDetailModel();
 
-		customerProfileDetailModel = personalDetailsDao.getProfileDetails(userSession.getCivilId() , userSession.getUserType() , userSession.getCustomerSequenceNumber());
+		customerProfileDetailModel = personalDetailsDao.getProfileDetails(userSession.getCivilId() , metaData.getUserType() , userSession.getCustomerSequenceNumber());
 
 		customerProfileDetailResponse.setAreaCode(customerProfileDetailModel.getAreaCode());
 		customerProfileDetailResponse.setAreaDesc(customerProfileDetailModel.getAreaDesc());
@@ -90,7 +91,7 @@ public class PersonalDetailsService
 		CustomerProfileDetailModel customerProfileDetailModel = new CustomerProfileDetailModel();
 		CustomerProfileDetailModel customerProfileDetailModelCheck = new CustomerProfileDetailModel();
 		CustomerProfileUpdateResponse customerProfileUpdateResponse = new CustomerProfileUpdateResponse();
-		customerProfileDetailModelCheck = personalDetailsDao.getProfileDetails(userSession.getCivilId() , userSession.getUserType() , userSession.getCustomerSequenceNumber());
+		customerProfileDetailModelCheck = personalDetailsDao.getProfileDetails(userSession.getCivilId() , metaData.getUserType() , userSession.getCustomerSequenceNumber());
 		if (null != customerProfileUpdateRequest.getIdExpiryDate())
 		{
 			String dateFromDb = customerProfileUpdateRequest.getIdExpiryDate();
@@ -136,7 +137,7 @@ public class PersonalDetailsService
 				return emailIdExists;
 			}
 
-			AmxApiResponse<?, Object> validateDOTP = otpService.validateDOTP(eOtp, mOtp, customerProfileUpdateRequest.getEmail(), customerProfileUpdateRequest.getMobile());
+			AmxApiResponse<?, Object> validateDOTP = otpService.validateDOTP(eOtp, mOtp, customerProfileUpdateRequest.getEmail(), customerProfileUpdateRequest.getMobile() , DetailsConstants.UPDATE_PROFILE_OTP);
 			if (null != validateDOTP)
 			{
 				return validateDOTP;
@@ -159,7 +160,7 @@ public class PersonalDetailsService
 			}
 			
 			logger.info(TAG + " updateProfileDetails :: Email "+customerProfileDetailModelCheck.getEmail());
-			AmxApiResponse<?, Object> validateEOTP = otpService.validateEotp(eOtp, customerProfileUpdateRequest.getEmail());
+			AmxApiResponse<?, Object> validateEOTP = otpService.validateEotp(eOtp, customerProfileUpdateRequest.getEmail() , DetailsConstants.UPDATE_PROFILE_OTP);
 			if (null != validateEOTP)
 			{
 				return validateEOTP;
@@ -202,7 +203,7 @@ public class PersonalDetailsService
 		customerProfileDetailModel.setMobile(customerProfileUpdateRequest.getMobile());
 		customerProfileDetailModel.setEmail(customerProfileUpdateRequest.getEmail());
 		
-		customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel , userSession.getCivilId() , userSession.getUserType() , userSession.getCustomerSequenceNumber());
+		customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel , userSession.getCivilId() , metaData.getUserType() , userSession.getCustomerSequenceNumber());
 		userSession.setCustomerSequenceNumber(customerProfileDetailModel.getCustSequenceNumber());
 		
 		customerProfileUpdateResponse.setStatus(customerProfileDetailModel.getStatus());

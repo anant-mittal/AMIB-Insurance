@@ -16,6 +16,7 @@ import com.amx.jax.models.ActivePolicyModel;
 import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.PersonalDetails;
+import com.amx.jax.models.PolicyReceiptDetails;
 import com.amx.jax.models.RequestQuoteInfo;
 import com.amx.jax.models.RequestQuoteModel;
 import com.amx.jax.models.VehicleDetails;
@@ -47,7 +48,7 @@ public class MyPolicyService
 		AmxApiResponse<ActivePolicyModel, Object> resp = new AmxApiResponse<ActivePolicyModel, Object>();
 		try
 		{
-			resp.setResults(myPolicyDao.getUserActivePolicy(userSession.getUserAmibCustRef(), userSession.getCivilId() , userSession.getUserType() , userSession.getCustomerSequenceNumber()));
+			resp.setResults(myPolicyDao.getUserActivePolicy(userSession.getUserAmibCustRef(), userSession.getCivilId() , metaData.getUserType() , userSession.getCustomerSequenceNumber()));
 			resp.setStatusKey(ApiConstants.SUCCESS);
 			
 		}
@@ -146,4 +147,20 @@ public class MyPolicyService
 		}
 		return resp;
 	}
+	
+	public PolicyReceiptDetails downloadPolicyReceipt(BigDecimal docNumber)
+	{
+		PolicyReceiptDetails policyReceiptDetails = null;
+		try
+		{
+			policyReceiptDetails = myPolicyDao.downloadPolicyReceipt(docNumber);
+			logger.info(TAG + " downloadPolicyReceipt :: policyReceiptDetails :" + policyReceiptDetails.toString());
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return policyReceiptDetails;
+	}
+	
 }
