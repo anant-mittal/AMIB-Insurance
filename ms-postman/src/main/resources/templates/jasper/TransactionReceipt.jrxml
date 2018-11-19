@@ -127,7 +127,7 @@
                                           pdfFontName="fonts/all/arial.ttf"/>
                                 </textElement>
                                 <textFieldExpression class="java.lang.String">
-                                    <![CDATA[$F{tranx}.get("paymentDate")]]>
+                                    <![CDATA[$F{tranx}.get("paymentDate","-")]]>
                                 </textFieldExpression>
                             </textField>
                           </frame>
@@ -165,7 +165,7 @@
                                           pdfFontName="fonts/all/arial.ttf"/>
                                 </textElement>
                                 <textFieldExpression class="java.lang.String">
-                                    <![CDATA[$F{tranx}.get("paymentId")]]>
+                                    <![CDATA[$F{tranx}.get("paymentId","-")]]>
                                 </textFieldExpression>
                             </textField>
                             
@@ -201,7 +201,7 @@
                                           pdfFontName="fonts/all/arial.ttf"/>
                                 </textElement>
                                 <textFieldExpression class="java.lang.String">
-                                    <![CDATA[$F{tranx}.get("applicationId")]]>
+                                    <![CDATA[$F{tranx}.get("applicationId","-")]]>
                                 </textFieldExpression>
                             </textField>
 
@@ -235,7 +235,7 @@
                                           pdfFontName="fonts/all/arial.ttf"/>
                                 </textElement>
                                 <textFieldExpression class="java.lang.String">
-                                    <![CDATA[$F{tranx}.get("paymentMode")]]>
+                                    <![CDATA[$F{tranx}.get("paymentMode","-")]]>
                                 </textFieldExpression>
                             </textField>
 
@@ -268,7 +268,7 @@
                                           pdfFontName="fonts/all/arial.ttf"/>
                                 </textElement>
                                 <textFieldExpression class="java.lang.String">
-                                    <![CDATA[$F{tranx}.get("amountPaidNumber")]]>
+                                    <![CDATA[$F{tranx}.get("amountPaidNumber","-")]]>
                                 </textFieldExpression>
                             </textField>
 
@@ -301,7 +301,7 @@
                                           pdfFontName="fonts/all/arial.ttf"/>
                                 </textElement>
                                 <textFieldExpression class="java.lang.String">
-                                    <![CDATA[$F{tranx}.get("amountPaidWord")]]>
+                                    <![CDATA[$F{tranx}.get("amountPaidWord","-")]]>
                                 </textFieldExpression>
                             </textField>
 
@@ -357,7 +357,7 @@
                                           pdfFontName="fonts/all/arial.ttf"/>
                                 </textElement>
                                 <textFieldExpression class="java.lang.String">
-                                    <![CDATA[$F{tranx}.get("customerId")]]>
+                                    <![CDATA[$F{tranx}.get("customerId","-")]]>
                                 </textFieldExpression>
                             </textField>
 
@@ -392,7 +392,7 @@
                                           pdfFontName="fonts/all/arial.ttf"/>
                                 </textElement>
                                 <textFieldExpression class="java.lang.String">
-                                    <![CDATA[$F{tranx}.get("customerName")]]>
+                                    <![CDATA[$F{tranx}.get("customerName","-")]]>
                                 </textFieldExpression>
                             </textField>
 
@@ -425,7 +425,7 @@
                                           pdfFontName="fonts/all/arial.ttf"/>
                                 </textElement>
                                 <textFieldExpression class="java.lang.String">
-                                    <![CDATA[$F{tranx}.get("civilId")]]>
+                                    <![CDATA[$F{tranx}.get("civilId","-")]]>
                                 </textFieldExpression>
                             </textField>
 
@@ -458,7 +458,7 @@
                                           pdfFontName="fonts/all/arial.ttf"/>
                                 </textElement>
                                 <textFieldExpression class="java.lang.String">
-                                    <![CDATA[$F{tranx}.get("address")]]>
+                                    <![CDATA[$F{tranx}.get("address","-")]]>
                                 </textFieldExpression>
                             </textField>
 
@@ -491,7 +491,7 @@
                                           pdfFontName="fonts/all/arial.ttf"/>
                                 </textElement>
                                 <textFieldExpression class="java.lang.String">
-                                    <![CDATA[$F{tranx}.get("mobileNumber")]]>
+                                    <![CDATA[$F{tranx}.get("mobileNumber","-")]]>
                                 </textFieldExpression>
                             </textField>
 
@@ -525,7 +525,7 @@
                                           pdfFontName="fonts/all/arial.ttf"/>
                                 </textElement>
                                 <textFieldExpression class="java.lang.String">
-                                    <![CDATA[$F{tranx}.get("trnsReceiptRef")]]>
+                                    <![CDATA[$F{tranx}.get("trnsReceiptRef","-")]]>
                                 </textFieldExpression>
                             </textField>
 
@@ -580,7 +580,7 @@
                                           pdfFontName="fonts/all/arial.ttf"/>
                                 </textElement>
                                 <textFieldExpression class="java.lang.String">
-                                    <![CDATA[$F{tranx}.get("make")]]>
+                                    <![CDATA[$F{tranx}.get("make","-")]]>
                                 </textFieldExpression>
                             </textField>
 
@@ -614,7 +614,7 @@
                                           pdfFontName="fonts/all/arial.ttf"/>
                                 </textElement>
                                 <textFieldExpression class="java.lang.String">
-                                    <![CDATA[$F{tranx}.get("subMake")]]>
+                                    <![CDATA[$F{tranx}.get("subMake","-")]]>
                                 </textFieldExpression>
                             </textField>
 
@@ -647,7 +647,7 @@
                                           pdfFontName="fonts/all/arial.ttf"/>
                                 </textElement>
                                 <textFieldExpression class="java.lang.String">
-                                    <![CDATA[$F{tranx}.get("modelYear")]]>
+                                    <![CDATA[$F{tranx}.get("modelYear","-")]]>
                                 </textFieldExpression>
                             </textField>
 
@@ -681,7 +681,7 @@
                                           pdfFontName="fonts/all/arial.ttf"/>
                                 </textElement>
                                 <textFieldExpression class="java.lang.String">
-                                    <![CDATA[$F{tranx}.get("chasisNumber")]]>
+                                    <![CDATA[$F{tranx}.get("chasisNumber","-")]]>
                                 </textFieldExpression>
                             </textField>
 
@@ -715,7 +715,7 @@
                                           pdfFontName="fonts/all/arial.ttf"/>
                                 </textElement>
                                 <textFieldExpression class="java.lang.String">
-                                    <![CDATA[$F{tranx}.get("ktNumber")]]>
+                                    <![CDATA[$F{tranx}.get("ktNumber","-")]]>
                                 </textFieldExpression>
                             </textField>
 
@@ -752,7 +752,7 @@
                                           pdfFontName="fonts/all/arial.ttf"/>
                                 </textElement>
                                 <textFieldExpression class="java.lang.String">
-                                    <![CDATA[$F{tranx}.get("policyDuration")]]>
+                                    <![CDATA[$F{tranx}.get("policyDuration","-")]]>
                                 </textFieldExpression>
                             </textField>
 
@@ -760,7 +760,29 @@
                         </frame>
                        
                    <!--##################Policy Duration END####################-->
-					
+                   
+                  <!--##################FOOTER START####################-->
+                   
+					<frame>
+                        <reportElement x="0" y="725" width="595" height="90"
+                                       forecolor="blue"/>
+
+                        <image evaluationTime="Now" hyperlinkType="None" hyperlinkTarget="Self">
+                            <reportElement
+                                    x="0"
+                                    y="0"
+                                    width="595"
+                                    height="110"
+                                    key="image-1"
+                                    stretchType="NoStretch"/>
+                            <graphicElement/>
+                            <imageExpression class="java.lang.String">
+                                <![CDATA[$P{TU}.prop("company.promotion.img")]]>
+                            </imageExpression>
+                        </image>
+                    </frame>
+                  <!--##################FOOTER END####################-->
+                    
                     </c:listContents>
                 </c:list>
             </componentElement>
