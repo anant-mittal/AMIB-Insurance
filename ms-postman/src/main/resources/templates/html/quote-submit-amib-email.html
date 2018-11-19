@@ -226,6 +226,9 @@ a {
 	border-bottom: 2px solid #333;
 	font-weight: 700;
 }
+.upper{
+    text-transform: uppercase;
+}
 
 @media only screen and (max-width: 640px) {
 	body {
@@ -289,7 +292,7 @@ a {
 									
 									<tr>
 										<td class="content-block">Thanks and Regards,<br/>
-											<strong><span th:text="${data.companyName}" th:remove="tag"></span>,</strong><br/>
+											<strong class="upper"><span th:text="${data.companyName}" th:remove="tag"></span>,</strong><br/>
 											<span th:text="${data.country}" th:remove="tag"></span><br/>
 											<span th:text="${data.contactUsEmail}" th:remove="tag"></span><br/>
 											<a th:href="@{'https://' +${data.amibWebLink}}"><span th:text="${data.amibWebLink}"></span></a>

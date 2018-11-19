@@ -191,6 +191,13 @@ a {
 	font-size: 16px;
 }
 
+.upper{
+    text-transform: uppercase;
+}
+.capitalize{
+	text-transform: capitalize;
+}
+
 .alert.alert-warning {
 	background-color: #000000;
 }
@@ -226,6 +233,7 @@ a {
 	border-bottom: 2px solid #333;
 	font-weight: 700;
 }
+
 
 @media only screen and (max-width: 640px) {
 	body {
@@ -280,7 +288,8 @@ a {
 										</td>
 									</tr>
 									<tr>
-										<td class="content-block">Welcome to <span th:text="${data.companyName}" th:remove="tag"></span>!</td>
+										<td class="content-block">Welcome to 
+										<span class="capitalize"><span th:text="${data.companyName}" th:remove="tag"></span>!</span></td>
 									</tr>
 									<tr>
 										<td class="content-block">Your <span th:text="${data.makeDesc}" th:remove="tag"></span> - <span th:text="${data.subMakeDesc}" th:remove="tag"></span> 
@@ -289,7 +298,7 @@ a {
 									</tr>
 									<tr>
 										<td class="content-block">Thanks and Regards,<br/>
-											<strong><span th:text="${data.companyName}" th:remove="tag"></span>,</strong><br/>
+											<strong class="upper"><span th:text="${data.companyName}" th:remove="tag"></span>,</strong><br/>
 											<span th:text="${data.country}" th:remove="tag"></span><br/>
 											<span th:text="${data.contactUsEmail}" th:remove="tag"></span><br/>
 											<a th:href="@{'https://' +${data.amibWebLink}}"><span th:text="${data.amibWebLink}"></span></a>
