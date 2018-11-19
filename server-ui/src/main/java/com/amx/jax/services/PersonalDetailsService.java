@@ -44,7 +44,7 @@ public class PersonalDetailsService
 	UserSession userSession;
 
 	@Autowired
-	private EmailSmsService otpService;
+	private EmailSmsService emailSmsService;
 
 	public AmxApiResponse<CustomerProfileDetailResponse, Object> getProfileDetails()
 	{
@@ -137,7 +137,7 @@ public class PersonalDetailsService
 				return emailIdExists;
 			}
 
-			AmxApiResponse<?, Object> validateDOTP = otpService.validateDOTP(eOtp, mOtp, customerProfileUpdateRequest.getEmail(), customerProfileUpdateRequest.getMobile() , DetailsConstants.UPDATE_PROFILE_OTP);
+			AmxApiResponse<?, Object> validateDOTP = emailSmsService.validateDOTP(eOtp, mOtp, customerProfileUpdateRequest.getEmail(), customerProfileUpdateRequest.getMobile() , DetailsConstants.UPDATE_PROFILE_OTP);
 			if (null != validateDOTP)
 			{
 				return validateDOTP;
@@ -160,7 +160,7 @@ public class PersonalDetailsService
 			}
 			
 			logger.info(TAG + " updateProfileDetails :: Email "+customerProfileDetailModelCheck.getEmail());
-			AmxApiResponse<?, Object> validateEOTP = otpService.validateEotp(eOtp, customerProfileUpdateRequest.getEmail() , DetailsConstants.UPDATE_PROFILE_OTP);
+			AmxApiResponse<?, Object> validateEOTP = emailSmsService.validateEotp(eOtp, customerProfileUpdateRequest.getEmail() , DetailsConstants.UPDATE_PROFILE_OTP);
 			if (null != validateEOTP)
 			{
 				return validateEOTP;
@@ -185,7 +185,7 @@ public class PersonalDetailsService
 				return mobileNumberExists;
 			}
 
-			AmxApiResponse<?, Object> validateMOTP = otpService.validateMotp(mOtp, customerProfileUpdateRequest.getMobile());
+			AmxApiResponse<?, Object> validateMOTP = emailSmsService.validateMotp(mOtp, customerProfileUpdateRequest.getMobile());
 			if (null != validateMOTP)
 			{
 				return validateMOTP;

@@ -100,6 +100,7 @@ public class PayMentService
 			else
 			{
 				resp.setMessageKey(paymentDetails.getErrorCode());
+				resp.setMessage(paymentDetails.getErrorMessage());
 				resp.setStatusKey(ApiConstants.FAILURE);
 			}
 		}

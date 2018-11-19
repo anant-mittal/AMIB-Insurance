@@ -20,13 +20,10 @@ import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.dict.Language;
 import com.amx.jax.models.CustomerDetailModel;
 import com.amx.jax.models.MetaData;
-import com.amx.jax.models.PaymentReceipt;
 import com.amx.jax.models.PaymentStatus;
 import com.amx.jax.models.RequestOtpModel;
 import com.amx.jax.models.ResponseOtpModel;
 import com.amx.jax.models.ResponseInfo;
-import com.amx.jax.postman.PostManException;
-import com.amx.jax.postman.PostManService;
 import com.amx.jax.postman.client.PostManClient;
 import com.amx.jax.postman.model.Email;
 import com.amx.jax.postman.model.File;
@@ -58,9 +55,6 @@ public class EmailSmsService
 
 	@Autowired
 	CustomerRegistrationDao customerRegistrationDao;
-	
-	@Autowired
-	private PostManService postManService;
 	
 	@Autowired
 	PayMentService payMentService;
@@ -98,26 +92,29 @@ public class EmailSmsService
 		model.put(DetailsConstants.COMPANY_NAME, getCompanyName());
 		model.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
 		
+		
+		
 		if(otpType.equalsIgnoreCase(DetailsConstants.REGISTRATION_OTP))
 		{
+			logger.info(TAG + " sendEmailOtp :: REGISTRATION_OTP :: otpType :" + otpType);
 			model.put(DetailsConstants.PROCESS, "registration process");
 			model.put(DetailsConstants.OTP_USED_FOR, "registration");
 		}
-		else if(otpType.equalsIgnoreCase(DetailsConstants.RESET_PASSOWRD_OTP))
+		
+		if(otpType.equalsIgnoreCase(DetailsConstants.RESET_PASSOWRD_OTP))
 		{
+			logger.info(TAG + " sendEmailOtp :: RESET_PASSOWRD_OTP :: otpType :" + otpType);
 			model.put(DetailsConstants.PROCESS, "reset password process");
 			model.put(DetailsConstants.OTP_USED_FOR, "password reset");
 		}
-		else if(otpType.equalsIgnoreCase(DetailsConstants.UPDATE_PROFILE_OTP))
+		
+		if(otpType.equalsIgnoreCase(DetailsConstants.UPDATE_PROFILE_OTP))
 		{
+			logger.info(TAG + " sendEmailOtp :: UPDATE_PROFILE_OTP :: otpType :" + otpType);
 			model.put(DetailsConstants.PROCESS, "update profile");
 			model.put(DetailsConstants.OTP_USED_FOR, "updating details");
 		}
-		else
-		{
-			model.put(DetailsConstants.PROCESS, "");
-			model.put(DetailsConstants.OTP_USED_FOR, "");
-		}
+		
 		
 		wrapper.put("data", model);
 		
@@ -918,7 +915,7 @@ public class EmailSmsService
 	
 	public String getCompanyName()
 	{
-		if(null != metaData.getCompanyName() && metaData.getCompanyName().toString().equals(""))
+		if(null != metaData.getCompanyName() && !metaData.getCompanyName().toString().equals(""))
 		{
 			return metaData.getCompanyName().toLowerCase();
 		}

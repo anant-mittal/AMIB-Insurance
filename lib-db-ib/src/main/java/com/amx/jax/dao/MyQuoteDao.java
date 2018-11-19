@@ -3,7 +3,6 @@ package com.amx.jax.dao;
 import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -15,12 +14,8 @@ import org.springframework.stereotype.Repository;
 import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.MyQuoteModel;
-import com.amx.jax.models.QuoteAddPolicyDetails;
-import com.amx.jax.models.ReplacementTypeList;
 import com.amx.jax.utility.Calc;
-
 import oracle.jdbc.OracleTypes;
-import scala.annotation.meta.setter;
 
 @Repository
 public class MyQuoteDao
@@ -106,6 +101,7 @@ public class MyQuoteDao
 				myQuoteModel.setPolCondition(rs.getString(40));
 				myQuoteModel.setVehicleType(rs.getString(41));
 				activePolicyArray.add(myQuoteModel);
+				
 				logger.info(TAG + " getUserQuote :: myQuoteModel :" + myQuoteModel.toString());
 			}
 		}

@@ -101,6 +101,7 @@ public class CustomerRegistrationService
 	{
 		boolean isValidCivilId = customerRegistrationDao.isValidCivilId(civilid);
 		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
+		
 		if (isValidCivilId)
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
@@ -326,6 +327,7 @@ public class CustomerRegistrationService
 
 			AmxApiResponse<?, Object> validateDOTP = emailSmsService.validateDOTP(eOtp, mOtp,
 					requestOtpModel.getEmailId(), requestOtpModel.getMobileNumber(), DetailsConstants.REGISTRATION_OTP);
+			
 			if (null != validateDOTP)
 			{
 				return validateDOTP;
@@ -352,12 +354,11 @@ public class CustomerRegistrationService
 		customerRegistrationModel.setUserType(metaData.getUserType());
 		customerRegistrationModel.setMobile(userSession.getCustomerMobileNumber());
 		customerRegistrationModel.setEmail(userSession.getCustomerEmailId());
-		logger.info(TAG + " addNewCustomer :: getCustomerEmailId :" + userSession.getCustomerEmailId());
 		customerRegistrationModel.setLanguageId(metaData.getLanguageId());
-		logger.info(TAG + " addNewCustomer :: civilId :" + userSession.getCivilId());
 		customerRegistrationModel.setCivilId(userSession.getCivilId());
 		customerRegistrationModel.setCreatedDeviceId(metaData.getDeviceId());
 		customerRegistrationModel.setDeviceType(metaData.getDeviceType());
+		
 		customerRegistrationModel = customerRegistrationDao.addNewCustomer(customerRegistrationModel);
 
 		if (customerRegistrationModel.getStatus())

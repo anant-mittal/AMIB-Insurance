@@ -10,11 +10,11 @@ import com.amx.jax.models.QuotationDetails;
 import com.amx.jax.models.QuoteAddPolicyDetails;
 import com.amx.jax.models.TotalPremium;
 
-public class CustomizeQuoteUtility
+public class CalculateUtility
 {
-	static String TAG = "com.amx.jax.utility :: CustomizeQuoteUtility :: ";
+	static String TAG = "com.amx.jax.utility :: CalculateUtility :: ";
 
-	private static final Logger logger = LoggerFactory.getLogger(CustomizeQuoteUtility.class);
+	private static final Logger logger = LoggerFactory.getLogger(CalculateUtility.class);
 
 	public static CustomizeQuoteModel calculateCustomizeQuote(CustomizeQuoteModel customizeQuoteModel)
 	{
@@ -29,6 +29,10 @@ public class CustomizeQuoteUtility
 			ArrayList<QuoteAddPolicyDetails> quoteAddPolicyDetailsArray = customizeQuoteModel.getQuoteAddPolicyDetails();
 			TotalPremium totalPremium = customizeQuoteModel.getTotalPremium();
 
+			
+			
+			
+			
 			/* Get Policy Duration First */
 			policyDuration = quotationDetails.getPolicyDuration();
 			logger.info(TAG + " calculateCustomizeQuote :: policyDuration :" + policyDuration);
@@ -40,11 +44,23 @@ public class CustomizeQuoteUtility
 				{
 					BigDecimal yearlyPremiumAmount = quoteAddPolicyDetails.getYearlyPremium();
 					logger.info(TAG + " calculateCustomizeQuote :: yearlyPremiumAmount :" + yearlyPremiumAmount);
-					yearlyAddCovPremium = yearlyAddCovPremium.add(yearlyPremiumAmount);
-					logger.info(TAG + " calculateCustomizeQuote :: yearlyAddCovPremium :" + yearlyAddCovPremium);
+					
+					if(null != yearlyPremiumAmount)
+					{
+						yearlyAddCovPremium = yearlyAddCovPremium.add(yearlyPremiumAmount);
+						logger.info(TAG + " calculateCustomizeQuote :: yearlyAddCovPremium :" + yearlyAddCovPremium);
+					}
 				}
 			}
 
+			
+			
+			
+			
+			
+			
+			
+			
 			/*
 			 * Additional Coverage Premium Multiplie with Number Of Years Of
 			 * Policy Duration
@@ -55,17 +71,35 @@ public class CustomizeQuoteUtility
 			totalPremium.setAddCoveragePremium(addCovPremium);
 			logger.info(TAG + " calculateCustomizeQuote :: totalPremium :" + totalPremium);
 
+			
+			
+			
+			
+			
+			
+			
+			
 			/* Update Total Premium Block */
-			totalPremiumAmount = totalPremiumAmount.add(totalPremium.getBasicPremium());
+			totalPremiumAmount = totalPremiumAmount.add(getNumericValue(totalPremium.getBasicPremium()));
 			logger.info(TAG + " calculateCustomizeQuote :: totalPremiumAmount1 :" + totalPremiumAmount);
-			totalPremiumAmount = totalPremiumAmount.add(addCovPremium);
+		
+			totalPremiumAmount = totalPremiumAmount.add(getNumericValue(addCovPremium));
 			logger.info(TAG + " calculateCustomizeQuote :: totalPremiumAmount2 :" + totalPremiumAmount);
-			totalPremiumAmount = totalPremiumAmount.add(totalPremium.getIssueFee());
+		
+			totalPremiumAmount = totalPremiumAmount.add(getNumericValue(totalPremium.getIssueFee()));
 			logger.info(TAG + " calculateCustomizeQuote :: totalPremiumAmount3 :" + totalPremiumAmount);
-			totalPremiumAmount = totalPremiumAmount.add(totalPremium.getSupervisionFees());
+		
+			totalPremiumAmount = totalPremiumAmount.add(getNumericValue(totalPremium.getSupervisionFees()));
 			logger.info(TAG + " calculateCustomizeQuote :: totalPremiumAmount4 :" + totalPremiumAmount);
+		
 			totalPremium.setTotalAmount(totalPremiumAmount);
 
+			
+			
+			
+			
+			
+			
 			/* Set Details Back To Front End */
 			customizeQuoteModel.setQuotationDetails(quotationDetails);
 			logger.info(TAG + " calculateCustomizeQuote :: quotationDetails :" + quotationDetails);
@@ -76,4 +110,14 @@ public class CustomizeQuoteUtility
 		}
 		return customizeQuoteModel;
 	}
+	
+	public static BigDecimal getNumericValue(BigDecimal value)
+	{
+		if(null != value && !value.toString().equals(""))
+		{
+			return value;
+		}
+		return new BigDecimal(0);
+	}
+	
 }

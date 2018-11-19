@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
+import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.constants.Message;
 import com.amx.jax.http.CommonHttpRequest;
 import com.amx.jax.models.ChangePasswordOtpRequest;
@@ -186,6 +187,13 @@ public class CustomerRegistrationController
 		c.setPassword("Amx@1234");
 		customerRegistrationService.validateUserLogin(c);
 
+		
+		//emailSmsService.emailToCustomerOnCompilitionRequestQuote("Make1","SubMake2",new BigDecimal("1"));
+		
+		emailSmsService.validateDOTP("", "" , "abhishek.tiwari@mobicule.com" , "66678788" , DetailsConstants.REGISTRATION_OTP);
+		emailSmsService.validateDOTP("", "" , "abhishek.tiwari@mobicule.com" , "66678788" , DetailsConstants.RESET_PASSOWRD_OTP);
+		emailSmsService.validateDOTP("", "" , "abhishek.tiwari@mobicule.com" , "66678788" , DetailsConstants.UPDATE_PROFILE_OTP);
+		
 		/*emailSmsService.sendEmailOtp("abhishektiwaribecse@gmail.com");
 		emailSmsService.sendMobileOtp("8796589233");
 		emailSmsService.emailToCustomerOnCompilitionRequestQuote("Make1","SubMake2",new BigDecimal("1"));

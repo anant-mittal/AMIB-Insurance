@@ -287,6 +287,10 @@ public class CustomizeQuoteDao
 			callableStatement.registerOutParameter(13, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(14, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
+			
+			logger.info(TAG + " saveCustomizeQuoteAddPol :: getErrorCode() :" + callableStatement.getString(13));
+			logger.info(TAG + " saveCustomizeQuoteAddPol :: getErrorMessage() :" + callableStatement.getString(14));
+			
 			validate.setErrorCode(callableStatement.getString(13));
 			validate.setErrorMessage(callableStatement.getString(14));
 		}

@@ -132,8 +132,8 @@ public class PayMentDao
 			insertPaymentDetails.setErrorCode(callableStatement.getString(14));
 			insertPaymentDetails.setErrorMessage(callableStatement.getString(15));
 
-			logger.info(TAG + " insertPaymentDetals :: Error Code :" + callableStatement.getString(14));
-			logger.info(TAG + " insertPaymentDetals :: Error Msg  :" + callableStatement.getString(15));
+			logger.info(TAG + " updatePaymentDetals :: Error Code :" + callableStatement.getString(14));
+			logger.info(TAG + " updatePaymentDetals :: Error Msg  :" + callableStatement.getString(15));
 			
 		}
 		catch (Exception e)
