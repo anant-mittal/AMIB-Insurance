@@ -100,6 +100,7 @@ public class MyQuoteDao
 				myQuoteModel.setNetAmount(Calc.round(rs.getBigDecimal(39), metaData.getDecplc()));
 				myQuoteModel.setPolCondition(rs.getString(40));
 				myQuoteModel.setVehicleType(rs.getString(41));
+				myQuoteModel.setPaymentProcessError(rs.getString(42));
 				activePolicyArray.add(myQuoteModel);
 				
 				logger.info(TAG + " getUserQuote :: myQuoteModel :" + myQuoteModel.toString());

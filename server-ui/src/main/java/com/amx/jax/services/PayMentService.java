@@ -56,9 +56,6 @@ public class PayMentService
 	@Autowired
 	EmailSmsService emailSmsService;
 	
-	@Autowired
-	private PostManService postManService;
-
 	public AmxApiResponse<PaymentDetails, Object> insertPaymentDetals(BigDecimal quoteSeqNum , BigDecimal paymentAmount)
 	{
 		AmxApiResponse<PaymentDetails, Object> resp = new AmxApiResponse<PaymentDetails, Object>();

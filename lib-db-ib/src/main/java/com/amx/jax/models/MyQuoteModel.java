@@ -85,6 +85,18 @@ public class MyQuoteModel
 	private String polCondition;
 
 	private String vehicleType;
+	
+	private String paymentProcessError;
+
+	public String getPaymentProcessError() 
+	{
+		return paymentProcessError;
+	}
+
+	public void setPaymentProcessError(String paymentProcessError) 
+	{
+		this.paymentProcessError = paymentProcessError;
+	}
 
 	public BigDecimal getCountryId()
 	{

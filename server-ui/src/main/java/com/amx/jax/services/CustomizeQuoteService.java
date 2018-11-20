@@ -62,13 +62,7 @@ public class CustomizeQuoteService
 
 	@Autowired
 	PayMentService payMentService;
-
-	@Autowired
-	private WebConfig webConfig;
 	
-	@Autowired
-	private AppConfig appConfig;
-
 	public AmxApiResponse<?, Object> getCustomizedQuoteDetails(BigDecimal quoteSeqNumber)
 	{
 		logger.info(TAG + " getCustomizedQuoteDetails :: quoteSeqNumber :" + quoteSeqNumber);
@@ -413,10 +407,6 @@ public class CustomizeQuoteService
 				logger.info(TAG + " saveCustomizeQuoteAddPol :: customizeQuoteAddPol :" + customizeQuoteAddPol.toString());
 
 				ResponseInfo validate = customizeQuoteDao.saveCustomizeQuoteAddPol(customizeQuoteAddPol , userSession.getCivilId());
-				logger.info(TAG + " saveCustomizeQuoteAddPol :: getErrorCode() :" + validate.getErrorCode());
-				logger.info(TAG + " saveCustomizeQuoteAddPol :: getErrorMessage() :" + validate.getErrorMessage());
-				
-				
 				if (validate.getErrorCode() != null)
 				{
 					resp.setMessageKey(validate.getErrorCode());

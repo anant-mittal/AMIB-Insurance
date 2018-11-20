@@ -51,10 +51,7 @@ public class CustomerRegistrationService
 	
 	@Autowired
 	UserSession userSession;
-
-	@Autowired
-	private WebConfig webConfig;
-
+	
 	@Autowired
 	private EmailSmsService emailSmsService;
 
