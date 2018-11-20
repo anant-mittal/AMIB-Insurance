@@ -64,11 +64,11 @@ public class MyPolicyService
 	
 	public AmxApiResponse<?, Object> renewInsuranceOldPolicy(BigDecimal oldDocNumber)
 	{
+		logger.info(TAG + " getRenewPolicyDetails :: oldDocNumber :" + oldDocNumber);
 		BigDecimal insuranceCompCode = null;
 		BigDecimal appSeqNumber = null;
-		logger.info(TAG + " getRenewPolicyDetails :: oldDocNumber :" + oldDocNumber);
-
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
+
 		try
 		{
 			AmxApiResponse<?, Object> respPersonalDetails = requestQuoteService.getProfileDetails();
@@ -78,24 +78,28 @@ public class MyPolicyService
 			}
 			else
 			{
+				String checkRenewableApplicable = myPolicyDao.checkRenewableApplicable(oldDocNumber , userSession.getCivilId() , metaData.getUserType() , userSession.getCustomerSequenceNumber());
+				logger.info(TAG + " renewInsuranceOldPolicy :: checkRenewableApplicable :" + checkRenewableApplicable);
+				if(null != checkRenewableApplicable && !checkRenewableApplicable.equals(""))
+				{
+					resp.setStatusKey(ApiConstants.FAILURE);
+					resp.setMessageKey(checkRenewableApplicable);
+					return resp;
+				}
+				
 				PersonalDetails personalDetails = (PersonalDetails) respPersonalDetails.getData();
-				logger.info(TAG + " renewInsuranceOldPolicy :: personalDetails :" + personalDetails.toString());
 				if (null != personalDetails.getIdExpiryDate())
 				{
 					String dateFromDb = personalDetails.getIdExpiryDate();
-					logger.info(TAG + " renewInsuranceOldPolicy :: checkExpiryDate :" + DateFormats.checkExpiryDate(dateFromDb));
 					if (DateFormats.checkExpiryDate(dateFromDb))
 					{
-						logger.info(TAG + " renewInsuranceOldPolicy :: checkExpiryDate : TRUE");
 						resp.setStatusKey(ApiConstants.FAILURE);
 						resp.setMessageKey(MessageKey.KEY_CIVIL_ID_EXPIRED);
 						return resp;
 					}
 				}
-				
-				
+
 				AmxApiResponse<?, Object> getVehicleDetails = requestQuoteService.getRenewPolicyVehicleDetails(oldDocNumber);
-				logger.info(TAG + " getRenewPolicyDetails :: getVehicleDetails :" + getVehicleDetails.getStatusKey());
 				if (getVehicleDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 				{
 					return getVehicleDetails;
@@ -105,11 +109,9 @@ public class MyPolicyService
 					if (null != getVehicleDetails.getMeta())
 					{
 						insuranceCompCode = (BigDecimal) getVehicleDetails.getMeta();
-						logger.info(TAG + " getRenewPolicyDetails :: insuranceCompCode :" + insuranceCompCode);
 					}
 
 					AmxApiResponse<?, Object> submitVehicleDetails = requestQuoteService.setAppVehicleDetails(appSeqNumber, (VehicleDetails) getVehicleDetails.getData(), oldDocNumber);
-					logger.info(TAG + " getRenewPolicyDetails :: submitVehicleDetails :" + submitVehicleDetails.getStatusKey());
 					if (submitVehicleDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 					{
 						return submitVehicleDetails;
@@ -119,24 +121,20 @@ public class MyPolicyService
 						RequestQuoteModel requestQuoteModel = (RequestQuoteModel) submitVehicleDetails.getData();
 						RequestQuoteInfo requestQuoteInfo = requestQuoteModel.getRequestQuoteInfo();
 						appSeqNumber = requestQuoteInfo.getAppSeqNumber();
-						logger.info(TAG + " getRenewPolicyDetails :: appSeqNumber1 :" + appSeqNumber);
 					}
 					
 					AmxApiResponse<?, Object> setPersonalDetails = requestQuoteService.setProfileDetails(appSeqNumber, (PersonalDetails) respPersonalDetails.getData());
-					logger.info(TAG + " getRenewPolicyDetails :: setPersonalDetails :" + setPersonalDetails.getStatusKey());
 					if (setPersonalDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 					{
 						return setPersonalDetails;
 					}
 					
 					AmxApiResponse<?, Object> updateInsuranceProvider = requestQuoteService.updateInsuranceProvider(appSeqNumber, insuranceCompCode , userSession.getCivilId());
-					logger.info(TAG + " getRenewPolicyDetails :: updateInsuranceProvider :" + updateInsuranceProvider.getStatusKey());
 					if (updateInsuranceProvider.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 					{
 						return updateInsuranceProvider;
 					}
 				}
-				
 			}
 		}
 		catch (Exception e)
@@ -154,7 +152,6 @@ public class MyPolicyService
 		try
 		{
 			policyReceiptDetails = myPolicyDao.downloadPolicyReceipt(docNumber);
-			logger.info(TAG + " downloadPolicyReceipt :: policyReceiptDetails :" + policyReceiptDetails.toString());
 		}
 		catch (Exception e)
 		{

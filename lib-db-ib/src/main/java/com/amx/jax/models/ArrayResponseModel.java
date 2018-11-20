@@ -16,11 +16,13 @@ public class ArrayResponseModel
 	
 	private Object object;
 	
-	public Object getObject() {
+	public Object getObject() 
+	{
 		return object;
 	}
 
-	public void setObject(Object object) {
+	public void setObject(Object object) 
+	{
 		this.object = object;
 	}
 

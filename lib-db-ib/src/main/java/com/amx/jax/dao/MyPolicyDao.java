@@ -44,7 +44,6 @@ public class MyPolicyDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			callableStatement.setBigDecimal(3, userAmibCustRef);
@@ -60,11 +59,9 @@ public class MyPolicyDao
 			{
 
 				ActivePolicyModel activePolicyModel = new ActivePolicyModel();
-				logger.info(TAG + " getUserActivePolicy :: rs :"+rs.getRow());
 				activePolicyModel.setCountryId(rs.getBigDecimal(1));
 				activePolicyModel.setCompCd(rs.getBigDecimal(2));
 				activePolicyModel.setDocNumber(rs.getBigDecimal(3));
-				logger.info(TAG + " getUserActivePolicy :: DocNumber :"+rs.getBigDecimal(3));
 				activePolicyModel.setDocDate(DateFormats.uiFormattedDate(rs.getDate(4)));
 				activePolicyModel.setFinance(rs.getBigDecimal(5));
 				activePolicyModel.setShowRoom(rs.getBigDecimal(6));
@@ -104,19 +101,22 @@ public class MyPolicyDao
 				activePolicyModel.setIssueFee(Calc.round(rs.getBigDecimal(40), metaData.getDecplc()));
 				activePolicyModel.setPremium(Calc.round(rs.getBigDecimal(41), metaData.getDecplc()));
 				activePolicyModel.setDiscount(rs.getBigDecimal(42));
-				activePolicyModel.setRenewalIndic(rs.getString(43));
+				activePolicyModel.setRenewalIndic(rs.getString(43));//Not Used On UI
 				activePolicyModel.setFuelCode(rs.getString(44));
 				activePolicyModel.setFuelDesc(rs.getString(45));
-				if (null != rs.getString(43) && rs.getString(43).equalsIgnoreCase("N"))
+				
+				logger.info(TAG + " getUserActivePolicy :: setRenewalIndic :"+rs.getString(43));
+				if (null != rs.getString(43) && rs.getString(43).equalsIgnoreCase("N"))// Action is based on this
 				{
 					activePolicyModel.setRenewableApplCheck("N");
 				}
 				else
 				{
-					activePolicyModel.setRenewableApplCheck(checkRenewableApplicable(rs.getBigDecimal(3) , civilId , userType , custSeqNum));
+					activePolicyModel.setRenewableApplCheck("Y");
 				}
-				activePolicyArray.add(activePolicyModel);
 				logger.info(TAG + " getUserActivePolicy :: activePolicyModel :" + activePolicyModel.toString());
+				activePolicyArray.add(activePolicyModel);
+				
 			}
 		}
 		catch (Exception e)
@@ -144,8 +144,8 @@ public class MyPolicyDao
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
-		String callProcedure = "{call IRB_CHECK_RENEW_APPLICABLE(?,?,?,?,?,?,?,?,?)}";
-		String renewableApplCheck = null;
+		String callProcedure = "{call IRB_CHECK_RENEW_APPLICABLE(?,?,?,?,?,?,?,?)}";
+		String renewableApplError = null;
 
 		try
 		{
@@ -158,12 +158,12 @@ public class MyPolicyDao
 			callableStatement.setBigDecimal(6, oldDocNumber);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
-			callableStatement.registerOutParameter(9, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
-			renewableApplCheck = callableStatement.getString(7);
+			renewableApplError = callableStatement.getString(7);
 
 			logger.info(TAG + " checkRenewableApplicable :: oldDocNumber       :" + oldDocNumber);
-			logger.info(TAG + " checkRenewableApplicable :: renewableApplCheck :" + renewableApplCheck);
+			logger.info(TAG + " checkRenewableApplicable :: error code    :" + renewableApplError);
+			logger.info(TAG + " checkRenewableApplicable :: error message :" + callableStatement.getString(8));
 		}
 		catch (Exception e)
 		{
@@ -173,7 +173,7 @@ public class MyPolicyDao
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return renewableApplCheck;
+		return renewableApplError;
 	}
 	
 	public PolicyReceiptDetails downloadPolicyReceipt(BigDecimal docNumber)
@@ -188,7 +188,6 @@ public class MyPolicyDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			
 			
 			callableStatement.setBigDecimal(1, metaData.getCountryId());
 			callableStatement.setBigDecimal(2, metaData.getCompCd());

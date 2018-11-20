@@ -555,5 +555,26 @@ public class ActivePolicyModel
 	{
 		this.fuelDesc = fuelDesc;
 	}
+	
+	@Override
+	public String toString() {
+		return "ActivePolicyModel [countryId=" + countryId + ", compCd=" + compCd + ", docNumber=" + docNumber
+				+ ", docDate=" + docDate + ", finance=" + finance + ", showRoom=" + showRoom + ", salesman=" + salesman
+				+ ", userAmibCustRef=" + userAmibCustRef + ", insuredEnglishName=" + insuredEnglishName
+				+ ", insuredArabicName=" + insuredArabicName + ", idNumber=" + idNumber + ", insCompanyCode="
+				+ insCompanyCode + ", insCompanyDesc=" + insCompanyDesc + ", insCompanyPrefix=" + insCompanyPrefix
+				+ ", dbcust=" + dbcust + ", makeCode=" + makeCode + ", makeDesc=" + makeDesc + ", subMakeCode="
+				+ subMakeCode + ", subMakeDesc=" + subMakeDesc + ", modelYear=" + modelYear + ", shapeCode=" + shapeCode
+				+ ", shapeDesc=" + shapeDesc + ", colourCode=" + colourCode + ", colourDesc=" + colourDesc + ", noPass="
+				+ noPass + ", chassis=" + chassis + ", ktNumber=" + ktNumber + ", vehicleConditionCode="
+				+ vehicleConditionCode + ", vehicleConditionDesc=" + vehicleConditionDesc + ", purposeCode="
+				+ purposeCode + ", purposeDesc=" + purposeDesc + ", vehicleSrNumber=" + vehicleSrNumber
+				+ ", policyTypeCode=" + policyTypeCode + ", policyTypeDesc=" + policyTypeDesc + ", policyNumber="
+				+ policyNumber + ", maxInsuredAmount=" + maxInsuredAmount + ", startDate=" + startDate + ", endDate="
+				+ endDate + ", supervisionKey=" + supervisionKey + ", issueFee=" + issueFee + ", premium=" + premium
+				+ ", discount=" + discount + ", renewalIndic=" + renewalIndic + ", fuelCode=" + fuelCode + ", fuelDesc="
+				+ fuelDesc + ", renewableApplCheck=" + renewableApplCheck
+				+ "]";
+	}
 }
 
