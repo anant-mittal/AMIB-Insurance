@@ -3,6 +3,7 @@ package com.amx.jax.controllers;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.models.DownloadImageModel;
 import com.amx.jax.models.PersonalDetails;
@@ -172,11 +174,10 @@ public class RequestQuoteController
 		}
 
 		BigDecimal insuranceCompDet = null;
-		if (null != insuranceCompCode && !appSeqNumber.equals("") && !insuranceCompCode.equalsIgnoreCase("null"))
+		if (null != insuranceCompCode && !insuranceCompCode.equals("") && !insuranceCompCode.equalsIgnoreCase("null"))
 		{
 			insuranceCompDet = ArgUtil.parseAsBigDecimal(insuranceCompCode, null);
 		}
-
 		return requestQuoteService.submitRequestQuote(appSeqNumberDet, insuranceCompDet);
 	}
 }

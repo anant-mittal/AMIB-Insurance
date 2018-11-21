@@ -1,16 +1,11 @@
 
 package com.amx.jax;
 
-import java.lang.reflect.Field;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-
-import com.amx.utils.ArgUtil;
 
 @Configuration
 @PropertySource("classpath:application-lib.properties")
@@ -37,6 +32,11 @@ public class WebConfig {
 	public static final String APP_COMP = "${app.company.code}";
 
 	//public static final String CONFIG_EMAIL = "${spring.mail.username}";
+	
+	public static final String PAYMENT_URL = "${jax.payment.url}";
+	
+	public static final String APP_URL = "${jax.app.url}";
+	
 
 	@Value(APP_NAME)
 	@AppParamKey(AppParam.APP_NAME)
@@ -47,6 +47,7 @@ public class WebConfig {
 
 	@Value(APP_COMP)
 	private String appComp;
+	
 
 	/*@Value(CONFIG_EMAIL)
 	private String configEmail;
@@ -55,6 +56,24 @@ public class WebConfig {
 		return configEmail;
 	}*/
 
+	@Value(PAYMENT_URL)
+	private String paymentUrl;
+
+	public String getPaymentUrl() 
+	{
+		return paymentUrl;
+	}
+	
+	
+	@Value(APP_URL)
+	private String appUrl;
+
+	public String getAppUrl() 
+	{
+		return appUrl;
+	}
+	
+	
 	public String getAppCompCode() {
 		return appComp;
 	}
@@ -62,6 +81,8 @@ public class WebConfig {
 	public String getAppTitle() {
 		return appTitle;
 	}
+	
+	
 
 	@Value(APP_PROD)
 	@AppParamKey(AppParam.APP_PROD)

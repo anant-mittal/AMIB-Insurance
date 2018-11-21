@@ -173,9 +173,6 @@ public class DateFormats
 		return false;
 	}
 	
-	
-	
-
 	public static java.sql.Date setDbSqlFormatDate(String idExpiryDate)
 	{
 		if (null != idExpiryDate && !idExpiryDate.equals(""))

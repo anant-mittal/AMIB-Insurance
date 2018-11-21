@@ -15,7 +15,7 @@ public class MetaData implements Serializable
 	private static final long serialVersionUID = 4265567700694960490L;
 
 	private MetaData metaData;
-
+	
 	private BigDecimal countryId;
 
 	private BigDecimal compCd;
@@ -30,13 +30,23 @@ public class MetaData implements Serializable
 
 	private String contactUsHelpLineNumber;
 
-	//String emailFromConfigured;
-
 	private String amibWebsiteLink;
 
+	private String currency;
+	
 	private BigDecimal decplc;
 
 	private String companyName;
+	
+	private String userType;
+
+	public String getUserType() {
+		return userType;
+	}
+
+	public void setUserType(String userType) {
+		this.userType = userType;
+	}
 
 	public String getCompanyName()
 	{
@@ -161,4 +171,25 @@ public class MetaData implements Serializable
 	{
 		this.metaData = metaData;
 	}
+	
+	public String getCurrency() 
+	{
+		return currency;
+	}
+
+	public void setCurrency(String currency) 
+	{
+		this.currency = currency;
+	}
+
+	@Override
+	public String toString() 
+	{
+		return "MetaData [metaData=" + metaData + ", countryId=" + countryId + ", compCd=" + compCd + ", deviceType="
+				+ deviceType + ", deviceId=" + deviceId + ", languageId=" + languageId + ", contactUsEmail="
+				+ contactUsEmail + ", contactUsHelpLineNumber=" + contactUsHelpLineNumber + ", amibWebsiteLink="
+				+ amibWebsiteLink + ", currency=" + currency + ", decplc=" + decplc + ", companyName=" + companyName
+				+ "]";
+	}
+
 }

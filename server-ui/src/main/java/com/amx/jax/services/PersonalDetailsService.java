@@ -5,8 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
+import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.dao.PersonalDetailsDao;
@@ -16,7 +18,7 @@ import com.amx.jax.models.CustomerProfileUpdateRequest;
 import com.amx.jax.models.CustomerProfileUpdateResponse;
 import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.MetaData;
-import com.amx.jax.models.Validate;
+import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.ui.session.UserSession;
 
 @Service
@@ -42,7 +44,7 @@ public class PersonalDetailsService
 	UserSession userSession;
 
 	@Autowired
-	private EmailSmsService otpService;
+	private EmailSmsService emailSmsService;
 
 	public AmxApiResponse<CustomerProfileDetailResponse, Object> getProfileDetails()
 	{
@@ -50,7 +52,7 @@ public class PersonalDetailsService
 		CustomerProfileDetailResponse customerProfileDetailResponse = new CustomerProfileDetailResponse();
 		CustomerProfileDetailModel customerProfileDetailModel = new CustomerProfileDetailModel();
 
-		customerProfileDetailModel = personalDetailsDao.getProfileDetails(userSession.getCivilId() , userSession.getUserType() , userSession.getCustomerSequenceNumber());
+		customerProfileDetailModel = personalDetailsDao.getProfileDetails(userSession.getCivilId() , metaData.getUserType() , userSession.getCustomerSequenceNumber());
 
 		customerProfileDetailResponse.setAreaCode(customerProfileDetailModel.getAreaCode());
 		customerProfileDetailResponse.setAreaDesc(customerProfileDetailModel.getAreaDesc());
@@ -89,7 +91,7 @@ public class PersonalDetailsService
 		CustomerProfileDetailModel customerProfileDetailModel = new CustomerProfileDetailModel();
 		CustomerProfileDetailModel customerProfileDetailModelCheck = new CustomerProfileDetailModel();
 		CustomerProfileUpdateResponse customerProfileUpdateResponse = new CustomerProfileUpdateResponse();
-		customerProfileDetailModelCheck = personalDetailsDao.getProfileDetails(userSession.getCivilId() , userSession.getUserType() , userSession.getCustomerSequenceNumber());
+		customerProfileDetailModelCheck = personalDetailsDao.getProfileDetails(userSession.getCivilId() , metaData.getUserType() , userSession.getCustomerSequenceNumber());
 		if (null != customerProfileUpdateRequest.getIdExpiryDate())
 		{
 			String dateFromDb = customerProfileUpdateRequest.getIdExpiryDate();
@@ -107,19 +109,19 @@ public class PersonalDetailsService
 		{
 			logger.info(TAG + " updateProfileDetails :: Both Chnaged");
 
-			AmxApiResponse<Validate, Object> isValidMobileNumber = customerRegistrationService.isValidMobileNumber(customerProfileUpdateRequest.getMobile());
+			AmxApiResponse<ResponseInfo, Object> isValidMobileNumber = customerRegistrationService.isValidMobileNumber(customerProfileUpdateRequest.getMobile());
 			if (isValidMobileNumber.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 			{
 				return isValidMobileNumber;
 			}
 
-			AmxApiResponse<Validate, Object> validateEmailID = customerRegistrationService.isValidEmailId(customerProfileUpdateRequest.getEmail());
+			AmxApiResponse<ResponseInfo, Object> validateEmailID = customerRegistrationService.isValidEmailId(customerProfileUpdateRequest.getEmail());
 			if (validateEmailID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 			{
 				return validateEmailID;
 			}
 
-			AmxApiResponse<Validate, Object> mobileNumberExists = customerRegistrationService.isMobileNumberExist(customerProfileUpdateRequest.getMobile());
+			AmxApiResponse<ResponseInfo, Object> mobileNumberExists = customerRegistrationService.isMobileNumberExist(customerProfileUpdateRequest.getMobile());
 			if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				mobileNumberExists.setMessageKey(MessageKey.KEY_MOBILE_NO_ALREADY_REGISTER);
@@ -127,7 +129,7 @@ public class PersonalDetailsService
 				return mobileNumberExists;
 			}
 
-			AmxApiResponse<Validate, Object> emailIdExists = customerRegistrationService.isEmailIdExist(customerProfileUpdateRequest.getEmail());
+			AmxApiResponse<ResponseInfo, Object> emailIdExists = customerRegistrationService.isEmailIdExist(customerProfileUpdateRequest.getEmail());
 			if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				emailIdExists.setMessageKey(MessageKey.KEY_EMAID_ALREADY_REGISTER);
@@ -135,7 +137,7 @@ public class PersonalDetailsService
 				return emailIdExists;
 			}
 
-			AmxApiResponse<?, Object> validateDOTP = otpService.validateDOTP(eOtp, mOtp, customerProfileUpdateRequest.getEmail(), customerProfileUpdateRequest.getMobile());
+			AmxApiResponse<?, Object> validateDOTP = emailSmsService.validateDOTP(eOtp, mOtp, customerProfileUpdateRequest.getEmail(), customerProfileUpdateRequest.getMobile() , DetailsConstants.UPDATE_PROFILE_OTP);
 			if (null != validateDOTP)
 			{
 				return validateDOTP;
@@ -143,13 +145,13 @@ public class PersonalDetailsService
 		}
 		else if (null != customerProfileDetailModelCheck.getEmail() && !customerProfileDetailModelCheck.getEmail().equals(customerProfileUpdateRequest.getEmail()))
 		{
-			AmxApiResponse<Validate, Object> validateEmailID = customerRegistrationService.isValidEmailId(customerProfileUpdateRequest.getEmail());
+			AmxApiResponse<ResponseInfo, Object> validateEmailID = customerRegistrationService.isValidEmailId(customerProfileUpdateRequest.getEmail());
 			if (validateEmailID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 			{
 				return validateEmailID;
 			}
 
-			AmxApiResponse<Validate, Object> emailIdExists = customerRegistrationService.isEmailIdExist(customerProfileUpdateRequest.getEmail());
+			AmxApiResponse<ResponseInfo, Object> emailIdExists = customerRegistrationService.isEmailIdExist(customerProfileUpdateRequest.getEmail());
 			if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				emailIdExists.setMessageKey(MessageKey.KEY_EMAID_ALREADY_REGISTER);
@@ -158,7 +160,7 @@ public class PersonalDetailsService
 			}
 			
 			logger.info(TAG + " updateProfileDetails :: Email "+customerProfileDetailModelCheck.getEmail());
-			AmxApiResponse<?, Object> validateEOTP = otpService.validateEotp(eOtp, customerProfileUpdateRequest.getEmail());
+			AmxApiResponse<?, Object> validateEOTP = emailSmsService.validateEotp(eOtp, customerProfileUpdateRequest.getEmail() , DetailsConstants.UPDATE_PROFILE_OTP);
 			if (null != validateEOTP)
 			{
 				return validateEOTP;
@@ -169,13 +171,13 @@ public class PersonalDetailsService
 		{
 			logger.info(TAG + " updateProfileDetails :: Mobile Chnaged");
 
-			AmxApiResponse<Validate, Object> isValidMobileNumber = customerRegistrationService.isValidMobileNumber(customerProfileUpdateRequest.getMobile());
+			AmxApiResponse<ResponseInfo, Object> isValidMobileNumber = customerRegistrationService.isValidMobileNumber(customerProfileUpdateRequest.getMobile());
 			if (isValidMobileNumber.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 			{
 				return isValidMobileNumber;
 			}
 
-			AmxApiResponse<Validate, Object> mobileNumberExists = customerRegistrationService.isMobileNumberExist(customerProfileUpdateRequest.getMobile());
+			AmxApiResponse<ResponseInfo, Object> mobileNumberExists = customerRegistrationService.isMobileNumberExist(customerProfileUpdateRequest.getMobile());
 			if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				mobileNumberExists.setMessageKey(MessageKey.KEY_MOBILE_NO_ALREADY_REGISTER);
@@ -183,7 +185,7 @@ public class PersonalDetailsService
 				return mobileNumberExists;
 			}
 
-			AmxApiResponse<?, Object> validateMOTP = otpService.validateMotp(mOtp, customerProfileUpdateRequest.getMobile());
+			AmxApiResponse<?, Object> validateMOTP = emailSmsService.validateMotp(mOtp, customerProfileUpdateRequest.getMobile());
 			if (null != validateMOTP)
 			{
 				return validateMOTP;
@@ -201,7 +203,7 @@ public class PersonalDetailsService
 		customerProfileDetailModel.setMobile(customerProfileUpdateRequest.getMobile());
 		customerProfileDetailModel.setEmail(customerProfileUpdateRequest.getEmail());
 		
-		customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel , userSession.getCivilId() , userSession.getUserType() , userSession.getCustomerSequenceNumber());
+		customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel , userSession.getCivilId() , metaData.getUserType() , userSession.getCustomerSequenceNumber());
 		userSession.setCustomerSequenceNumber(customerProfileDetailModel.getCustSequenceNumber());
 		
 		customerProfileUpdateResponse.setStatus(customerProfileDetailModel.getStatus());

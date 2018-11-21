@@ -3,11 +3,10 @@ package com.amx.jax;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeMap;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.json.JSONObject;
@@ -19,23 +18,19 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import com.amx.jax.AppConfig;
-import com.amx.jax.WebConfig;
+
 import com.amx.jax.api.AmxApiResponse;
-import com.amx.jax.constants.ApiConstants;
-import com.amx.jax.constants.Message;
-import com.amx.jax.models.ActivePolicyModel;
+import com.amx.jax.http.CommonHttpRequest;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.rest.RestService;
-import com.amx.jax.service.HttpService;
 import com.amx.jax.services.CustomerRegistrationService;
 import com.amx.jax.services.CustomizeQuoteService;
 import com.amx.jax.ui.response.ResponseMessage;
 import com.amx.jax.ui.response.ResponseWrapper;
 import com.amx.jax.ui.response.WebResponseStatus;
-import com.amx.jax.ui.session.UIConstants;
 import com.amx.jax.ui.session.UserSession;
 import com.amx.utils.JsonUtil;
+
 import io.swagger.annotations.Api;
 
 /**
@@ -59,7 +54,7 @@ public class HomeController
 
 	/** The http service. */
 	@Autowired
-	HttpService httpService;
+	CommonHttpRequest httpService;
 
 	@Autowired
 	RestService restService;
@@ -172,7 +167,7 @@ public class HomeController
 	public String termsAndCondition(Model model)
 	{
 		JSONObject dataJson = new JSONObject();
-		JSONObject termsDataJson = new JSONObject();
+		ArrayList<String> dataList = new ArrayList<>();
 		try
 		{
 			TreeMap<Integer, String> data = customizeQuoteService.getTermsAndConditionTest();
@@ -181,13 +176,12 @@ public class HomeController
 			{
 				Map.Entry pair = (Map.Entry) it.next();
 				System.out.println(pair.getKey() + " = " + pair.getValue());
-				termsDataJson.put(pair.getKey().toString(), pair.getValue().toString());
+				dataList.add(pair.getValue().toString());
 				it.remove();
 			}
-			dataJson.put("data", termsDataJson);
-			System.out.println("HomeController :: termsAndCondition :: dataJson :" + dataJson.toString());
-			model.addAttribute(dataJson);
-			System.out.println("HomeController :: termsAndCondition :: model :" + model.asMap());
+			model.addAttribute("terms",dataList);
+			System.out.println("HomeController :: termsAndCondition :: dataJson :" + dataList.toString());
+			System.out.println("HomeController :: termsAndCondition :: model    :" + model.asMap());
 		}
 		catch(Exception e)
 		{
@@ -195,6 +189,7 @@ public class HomeController
 		}
 		return "terms";
 	}
+
 
 	public void laguageSetUp()
 	{
@@ -204,4 +199,5 @@ public class HomeController
 			customerRegistrationService.getCompanySetUp();
 		}
 	}
+
 }
