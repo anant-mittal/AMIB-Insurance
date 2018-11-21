@@ -93,6 +93,9 @@ public class HomeController
 		{
 			try 
 			{
+				//System.out.println("getVersion Exception getCdnURL :"+ appConfig.getCdnURL() + "/dist/build.json?_=" + checkTimeNew);
+				//System.out.println("getVersion Exception restService.ajax(getCdnURL) :"+ restService.ajax(appConfig.getCdnURL() + "/dist/build.json?_=" + checkTimeNew).get().asObject());
+				
 				Map<String, Object> map = JsonUtil.toMap(restService.ajax(appConfig.getCdnURL() + "/dist/build.json?_=" + checkTimeNew).get().asObject());
 				if (map.containsKey("version")) 
 				{
@@ -107,9 +110,8 @@ public class HomeController
 		}
 		System.out.println("getVersion Exception versionNew :"+ versionNew);
 		return versionNew;*/
-
-		return "1.0.1";
 		
+		return "1.0.1";
 	}
 
 	/**
