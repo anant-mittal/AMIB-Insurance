@@ -86,29 +86,29 @@ public class HomeController
 
 	public String getVersion()
 	{
-
-		
 		/*long checkTimeNew = System.currentTimeMillis() / (1000 * 60 * 5);
 		if (checkTimeNew != checkTime) 
 		{
 			try 
 			{
-				//System.out.println("getVersion Exception getCdnURL :"+ appConfig.getCdnURL() + "/dist/build.json?_=" + checkTimeNew);
-				//System.out.println("getVersion Exception restService.ajax(getCdnURL) :"+ restService.ajax(appConfig.getCdnURL() + "/dist/build.json?_=" + checkTimeNew).get().asObject());
+				System.out.println("HomeController :: getVersion() :: getCdnURL1 :"+ appConfig.getCdnURL() + "/dist/build.json?_=" + checkTimeNew);
+				System.out.println("HomeController :: getVersion() :: getCdnURL2 :"+ appConfig.getCdnURL() + "/dist/build.json?_=" + checkTimeNew);
 				
 				Map<String, Object> map = JsonUtil.toMap(restService.ajax(appConfig.getCdnURL() + "/dist/build.json?_=" + checkTimeNew).get().asObject());
 				if (map.containsKey("version")) 
 				{
 					versionNew = ArgUtil.parseAsString(map.get("version"));
+					System.out.println("HomeController :: getVersion() :: versionNew :"+ versionNew);
 				}
 				checkTime = checkTimeNew;
 			} 
 			catch (Exception e) 
 			{
-				System.out.println("getVersion Exception"+ e);
+				System.out.println("HomeController :: getVersion() :: Exception :"+ e);
 			}
 		}
-		System.out.println("getVersion Exception versionNew :"+ versionNew);
+		System.out.println("HomeController :: getVersion() :: versionNew :"+ versionNew);
+		
 		return versionNew;*/
 		
 		return "1.0.1";
