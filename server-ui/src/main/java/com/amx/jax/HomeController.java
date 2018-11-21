@@ -29,6 +29,7 @@ import com.amx.jax.ui.response.ResponseMessage;
 import com.amx.jax.ui.response.ResponseWrapper;
 import com.amx.jax.ui.response.WebResponseStatus;
 import com.amx.jax.ui.session.UserSession;
+import com.amx.utils.ArgUtil;
 import com.amx.utils.JsonUtil;
 
 import io.swagger.annotations.Api;
@@ -86,19 +87,31 @@ public class HomeController
 	public String getVersion()
 	{
 
-		/*
-		 * long checkTimeNew = System.currentTimeMillis() / (1000 * 60 * 5); if
-		 * (checkTimeNew != checkTime) { try { Map<String, Object> map =
-		 * JsonUtil.toMap(restService.ajax(webConfig.getCdnURL() +
-		 * "/dist/build.json?_=" + checkTimeNew).get().asObject()); if
-		 * (map.containsKey("version")) { versionNew =
-		 * ArgUtil.parseAsString(map.get("version")); } checkTime =
-		 * checkTimeNew; } catch (Exception e) {
-		 * LOGGER.error("getVersion Exception", e); } } return versionNew;
-		 */
-
+		
+		/*long checkTimeNew = System.currentTimeMillis() / (1000 * 60 * 5);
+		if (checkTimeNew != checkTime) 
+		{
+			try 
+			{
+				//System.out.println("getVersion Exception getCdnURL :"+ appConfig.getCdnURL() + "/dist/build.json?_=" + checkTimeNew);
+				//System.out.println("getVersion Exception restService.ajax(getCdnURL) :"+ restService.ajax(appConfig.getCdnURL() + "/dist/build.json?_=" + checkTimeNew).get().asObject());
+				
+				Map<String, Object> map = JsonUtil.toMap(restService.ajax(appConfig.getCdnURL() + "/dist/build.json?_=" + checkTimeNew).get().asObject());
+				if (map.containsKey("version")) 
+				{
+					versionNew = ArgUtil.parseAsString(map.get("version"));
+				}
+				checkTime = checkTimeNew;
+			} 
+			catch (Exception e) 
+			{
+				System.out.println("getVersion Exception"+ e);
+			}
+		}
+		System.out.println("getVersion Exception versionNew :"+ versionNew);
+		return versionNew;*/
+		
 		return "1.0.1";
-
 	}
 
 	/**
@@ -118,7 +131,7 @@ public class HomeController
 	}
 
 	//@Timed
-	@RequestMapping(value = "/login/**", method = { RequestMethod.GET })
+	@RequestMapping(value = {"/login/**" , "/resetPwd"}, method = { RequestMethod.GET })
 	public String loginJPage(Model model)
 	{
 		System.out.println("HomeController :: loginJPage 1 :: getLanguage : " + httpService.getLanguage());

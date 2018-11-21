@@ -1070,7 +1070,7 @@
                                     stretchType="NoStretch"/>
                             <graphicElement/>
                             <imageExpression class="java.lang.String">
-                                <![CDATA[$P{TU}.prop("company.promotion.img")]]>
+                                <![CDATA[$P{TU}.prop("company.insurance.img")]]>
                             </imageExpression>
                         </image>
                     </frame>
