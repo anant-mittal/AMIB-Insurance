@@ -188,13 +188,11 @@ public class CustomerRegistrationController
 		customerRegistrationService.validateUserLogin(c);
 
 		
-		//emailSmsService.emailToCustomerOnCompilitionRequestQuote("Make1","SubMake2",new BigDecimal("1"));
-		
+		/*emailSmsService.emailToCustomerOnCompilitionRequestQuote("Make1","SubMake2",new BigDecimal("1"));
 		emailSmsService.validateDOTP("", "" , "abhishek.tiwari@mobicule.com" , "66678788" , DetailsConstants.REGISTRATION_OTP);
 		emailSmsService.validateDOTP("", "" , "abhishek.tiwari@mobicule.com" , "66678788" , DetailsConstants.RESET_PASSOWRD_OTP);
 		emailSmsService.validateDOTP("", "" , "abhishek.tiwari@mobicule.com" , "66678788" , DetailsConstants.UPDATE_PROFILE_OTP);
-		
-		/*emailSmsService.sendEmailOtp("abhishektiwaribecse@gmail.com");
+		emailSmsService.sendEmailOtp("abhishektiwaribecse@gmail.com");
 		emailSmsService.sendMobileOtp("8796589233");
 		emailSmsService.emailToCustomerOnCompilitionRequestQuote("Make1","SubMake2",new BigDecimal("1"));
 		emailSmsService.emailToAmibOnCompilitionRequestQuote("Make1","SubMake2",new BigDecimal("2"));
