@@ -204,6 +204,7 @@ public class PersonalDetailsService
 		customerProfileDetailModel.setEmail(customerProfileUpdateRequest.getEmail());
 		
 		customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel , userSession.getCivilId() , metaData.getUserType() , userSession.getCustomerSequenceNumber());
+		logger.info(TAG + " updateProfileDetails :: getCivilId :" + customerProfileDetailModel.getCustSequenceNumber());
 		userSession.setCustomerSequenceNumber(customerProfileDetailModel.getCustSequenceNumber());
 		
 		customerProfileUpdateResponse.setStatus(customerProfileDetailModel.getStatus());

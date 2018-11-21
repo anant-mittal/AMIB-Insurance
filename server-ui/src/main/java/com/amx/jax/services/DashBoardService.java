@@ -38,6 +38,11 @@ public class DashBoardService
 		
 		try
 		{
+			
+			logger.info(TAG + " getIncompleteApplication :: getCivilId :" + userSession.getCivilId());
+			logger.info(TAG + " getIncompleteApplication :: getUserType :" + metaData.getUserType());
+			logger.info(TAG + " getIncompleteApplication :: getCustomerSequenceNumber :" + userSession.getCustomerSequenceNumber());
+			
 			IncompleteApplModel incompleteApplModel = dashBoardDao.getIncompleteApplication(userSession.getCivilId() , metaData.getUserType(), userSession.getCustomerSequenceNumber());
 			incompleteApplResponse.setAppSeqNumber(incompleteApplModel.getAppSeqNumber());
 			incompleteApplResponse.setAppStage(incompleteApplModel.getAppStage());
