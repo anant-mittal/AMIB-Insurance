@@ -66,11 +66,6 @@ public class PaymentService {
 		return paymentResponseDto;
 	}
 
-	@Autowired
-	RestService restService;
-	@Autowired
-	AppConfig appConfig;
-
 	public AmxApiResponse<PaymentResponseDto, Object> saveRemittanceTransaction(PaymentResponseDto paymentResponseDto)
 			throws Exception {
 		try {
