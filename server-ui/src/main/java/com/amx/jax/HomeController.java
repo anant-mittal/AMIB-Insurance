@@ -87,6 +87,10 @@ public class HomeController
 	public String getVersion()
 	{
 		long checkTimeNew = System.currentTimeMillis() / (1000 * 60 * 5);
+		
+		System.out.println("HomeController :: getVersion() :: checkTimeNew :"+ checkTimeNew);
+		System.out.println("HomeController :: getVersion() :: checkTime    :"+ checkTime);
+		
 		if (checkTimeNew != checkTime) 
 		{
 			try 
