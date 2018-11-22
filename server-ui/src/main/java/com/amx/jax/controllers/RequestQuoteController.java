@@ -124,14 +124,14 @@ public class RequestQuoteController
 		if (null != appSeqNumber && !appSeqNumber.equals("") && !appSeqNumber.equalsIgnoreCase("null"))
 		{
 			appSeqNumberDet = ArgUtil.parseAsBigDecimal(appSeqNumber);
-		}
+	}
 
 		BigDecimal docSeqNumberDet = null;
 		if (null != docSeqNumber && !docSeqNumber.equals("") && !docSeqNumber.equalsIgnoreCase("null"))
-		{
+	{
 			docSeqNumberDet = ArgUtil.parseAsBigDecimal(docSeqNumber);
-		}
-		
+	}
+	
 		logger.info(TAG + " uploadVehicleImage :: appSeqNumberDet :" + appSeqNumberDet);
 		logger.info(TAG + " uploadVehicleImage :: docSeqNumberDet :" + docSeqNumberDet);
 		logger.info(TAG + " uploadVehicleImage :: file :" + file.getSize());
@@ -146,15 +146,15 @@ public class RequestQuoteController
 		if (null != docSeqNumber && !docSeqNumber.equals("") && !docSeqNumber.equalsIgnoreCase("null"))
 		{
 			docSeqNumberDet = ArgUtil.parseAsBigDecimal(docSeqNumber);
-		}
-
+	}
+	
 		DownloadImageModel downloadImageModel = requestQuoteService.downloadVehicleImage(docSeqNumberDet);
 		byte[] imageByteArray = downloadImageModel.getImageByteArray();
 		String imageType = downloadImageModel.getImageType();
 		MediaType mediaType = null;
 		logger.info(TAG + " downloadVehicleImage :: imageType :" + imageType);
 		if (imageType.contains("jpeg"))
-		{
+	{
 			mediaType = MediaType.IMAGE_JPEG;
 		}
 		else if (imageType.contains("png"))
