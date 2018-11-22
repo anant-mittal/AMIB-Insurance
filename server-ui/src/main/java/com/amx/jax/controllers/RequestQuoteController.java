@@ -3,12 +3,9 @@ package com.amx.jax.controllers;
 
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,9 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.http.MediaType;
+
 import com.amx.jax.api.AmxApiResponse;
-import com.amx.jax.models.ImageInitInfo;
 import com.amx.jax.models.RequestQuoteModel;
 import com.amx.jax.services.RequestQuoteService;
 import com.amx.utils.ArgUtil;

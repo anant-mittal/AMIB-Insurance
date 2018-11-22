@@ -1,10 +1,6 @@
 
 package com.amx.jax.services;
 
-import java.sql.Blob;
-import java.sql.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import org.slf4j.Logger;
@@ -20,13 +16,8 @@ import com.amx.jax.dao.PersonalDetailsDao;
 import com.amx.jax.dao.RequestQuoteDao;
 import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CustomerProfileDetailModel;
-import com.amx.jax.models.CustomerProfileDetailResponse;
-import com.amx.jax.models.CustomerProfileUpdateRequest;
-import com.amx.jax.models.CustomerProfileUpdateResponse;
 import com.amx.jax.models.DateFormats;
-import com.amx.jax.models.ImageInitInfo;
 import com.amx.jax.models.ImageModel;
-import com.amx.jax.models.ImageToBlob;
 import com.amx.jax.models.IncompleteApplModel;
 import com.amx.jax.models.PersonalDetails;
 import com.amx.jax.models.RequestQuoteInfo;

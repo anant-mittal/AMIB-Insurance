@@ -5,13 +5,17 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.amx.jax.WebConfig;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
-import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.constants.DatabaseErrorKey;
+import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.constants.Message;
 import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.CustomerRegistrationDao;
@@ -32,16 +36,11 @@ import com.amx.jax.models.MetaData;
 import com.amx.jax.models.RegSession;
 import com.amx.jax.models.Validate;
 import com.amx.jax.service.HttpService;
-import com.amx.utils.Random;
-import com.insurance.model.Email;
 import com.insurance.model.RequestOtpModel;
 import com.insurance.model.ResponseOtpModel;
 import com.insurance.services.EmailService;
 import com.insurance.services.OtpService;
 import com.insurance.services.SMService;
-
-import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Service
 public class CustomerRegistrationService
