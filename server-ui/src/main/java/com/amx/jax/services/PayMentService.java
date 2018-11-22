@@ -1,7 +1,6 @@
 package com.amx.jax.services;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,11 +23,6 @@ import com.amx.jax.models.PaymentDetails;
 import com.amx.jax.models.PaymentReceipt;
 import com.amx.jax.models.PaymentStatus;
 import com.amx.jax.models.ResponseInfo;
-import com.amx.jax.postman.PostManException;
-import com.amx.jax.postman.PostManService;
-import com.amx.jax.postman.model.Email;
-import com.amx.jax.postman.model.File;
-import com.amx.jax.postman.model.TemplatesIB;
 import com.amx.jax.ui.session.UserSession;
 
 @Service

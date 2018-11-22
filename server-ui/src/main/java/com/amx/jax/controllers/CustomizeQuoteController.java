@@ -17,32 +17,24 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.amx.jax.AppConfig;
-import com.amx.jax.WebConfig;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.DetailsConstants;
-import com.amx.jax.constants.Message;
-import com.amx.jax.constants.MessageKey;
-import com.amx.jax.dict.Language;
 import com.amx.jax.http.CommonHttpRequest;
 import com.amx.jax.models.CustomizeQuoteModel;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.PaymentDetails;
 import com.amx.jax.models.PaymentReceipt;
-import com.amx.jax.payg.PayGService;
 import com.amx.jax.payg.PaymentResponseDto;
+import com.amx.jax.postman.PostManService;
+import com.amx.jax.postman.model.File;
 import com.amx.jax.postman.model.TemplatesIB;
 import com.amx.jax.services.CustomerRegistrationService;
 import com.amx.jax.services.CustomizeQuoteService;
 import com.amx.jax.services.PayMentService;
-import com.amx.jax.ui.response.ResponseWrapper;
 import com.amx.jax.ui.session.UserSession;
 import com.amx.jax.utility.Utility;
 import com.amx.utils.ArgUtil;
-import com.amx.utils.JsonUtil;
-import com.amx.jax.postman.PostManService;
-import com.amx.jax.postman.model.File;
 
 @RestController
 public class CustomizeQuoteController

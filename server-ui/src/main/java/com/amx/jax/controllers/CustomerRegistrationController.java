@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
-import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.constants.Message;
 import com.amx.jax.http.CommonHttpRequest;
 import com.amx.jax.models.ChangePasswordOtpRequest;
