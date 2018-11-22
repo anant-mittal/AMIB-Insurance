@@ -80,18 +80,18 @@ public class CalculateUtility
 			
 			
 			/* Update Total Premium Block */
-			totalPremiumAmount = totalPremiumAmount.add(getNumericValue(totalPremium.getBasicPremium()));
+			totalPremiumAmount = totalPremiumAmount.add(Utility.getNumericValue(totalPremium.getBasicPremium()));
 			logger.info(TAG + " calculateCustomizeQuote :: totalPremiumAmount1 :" + totalPremiumAmount);
 		
-			totalPremiumAmount = totalPremiumAmount.add(getNumericValue(addCovPremium));
+			totalPremiumAmount = totalPremiumAmount.add(Utility.getNumericValue(addCovPremium));
 			logger.info(TAG + " calculateCustomizeQuote :: totalPremiumAmount2 :" + totalPremiumAmount);
 		
-			totalPremiumAmount = totalPremiumAmount.add(getNumericValue(totalPremium.getIssueFee()));
+			totalPremiumAmount = totalPremiumAmount.add(Utility.getNumericValue(totalPremium.getIssueFee()));
 			logger.info(TAG + " calculateCustomizeQuote :: totalPremiumAmount3 :" + totalPremiumAmount);
 		
-			totalPremiumAmount = totalPremiumAmount.add(getNumericValue(totalPremium.getSupervisionFees()));
+			totalPremiumAmount = totalPremiumAmount.add(Utility.getNumericValue(totalPremium.getSupervisionFees()));
 			logger.info(TAG + " calculateCustomizeQuote :: totalPremiumAmount4 :" + totalPremiumAmount);
-		
+			
 			totalPremium.setTotalAmount(totalPremiumAmount);
 
 			
@@ -110,14 +110,4 @@ public class CalculateUtility
 		}
 		return customizeQuoteModel;
 	}
-	
-	public static BigDecimal getNumericValue(BigDecimal value)
-	{
-		if(null != value && !value.toString().equals(""))
-		{
-			return value;
-		}
-		return new BigDecimal(0);
-	}
-	
 }

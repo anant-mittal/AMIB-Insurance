@@ -37,6 +37,7 @@ import com.amx.jax.payg.PayGService;
 import com.amx.jax.payg.Payment;
 import com.amx.jax.ui.session.UserSession;
 import com.amx.jax.utility.CalculateUtility;
+import com.amx.jax.utility.Utility;
 
 @Service
 public class CustomizeQuoteService
@@ -115,11 +116,11 @@ public class CustomizeQuoteService
 			
 			
 			// SET TotalPremium Details
-			totalPremium.setBasicPremium(CalculateUtility.getNumericValue(myQuoteModel.getBasicPremium()));
-			totalPremium.setAddCoveragePremium(CalculateUtility.getNumericValue(myQuoteModel.getAddCoveragePremium()));
-			totalPremium.setIssueFee(CalculateUtility.getNumericValue(myQuoteModel.getIssueFee()));
-			totalPremium.setSupervisionFees(CalculateUtility.getNumericValue(myQuoteModel.getSupervisionFees()));
-			totalPremium.setTotalAmount(CalculateUtility.getNumericValue(myQuoteModel.getNetAmount()));
+			totalPremium.setBasicPremium(Utility.getNumericValue(myQuoteModel.getBasicPremium()));
+			totalPremium.setAddCoveragePremium(Utility.getNumericValue(myQuoteModel.getAddCoveragePremium()));
+			totalPremium.setIssueFee(Utility.getNumericValue(myQuoteModel.getIssueFee()));
+			totalPremium.setSupervisionFees(Utility.getNumericValue(myQuoteModel.getSupervisionFees()));
+			totalPremium.setTotalAmount(Utility.getNumericValue(myQuoteModel.getNetAmount()));
 			logger.info(TAG + " getCustomizedQuoteDetails :: totalPremium :" + totalPremium.toString());
 
 			

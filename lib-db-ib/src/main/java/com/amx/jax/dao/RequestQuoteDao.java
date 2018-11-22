@@ -41,7 +41,7 @@ import com.amx.jax.models.VehicleDetails;
 import com.amx.jax.models.VehicleDetailsGetModel;
 import com.amx.jax.models.VehicleDetailsHeaderModel;
 import com.amx.jax.models.VehicleDetailsUpdateModel;
-import com.amx.jax.utility.Calc;
+import com.amx.jax.utility.Utility;
 
 import oracle.jdbc.OracleTypes;
 
@@ -542,7 +542,7 @@ public class RequestQuoteDao
 				vehicleDetailsModel.setNoPass(rs.getBigDecimal(32));
 				vehicleDetailsModel.setReplacementType(rs.getString(33));
 				vehicleDetailsModel.setReplacementTypeDesc(rs.getString(34));
-				vehicleDetailsModel.setMaxInsmat(Calc.round(rs.getBigDecimal(35), metaData.getDecplc()));
+				vehicleDetailsModel.setMaxInsmat(Utility.round(rs.getBigDecimal(35), metaData.getDecplc()));
 				vehicleDetailsModel.setVehicleTypeDesc(rs.getString(36));
 				logger.info(TAG + " getAppVehicleDetails :: vehicleDetailsModel :" + vehicleDetailsModel.toString());
 				vehicleDetailsArray.add(vehicleDetailsModel);
@@ -643,7 +643,7 @@ public class RequestQuoteDao
 			callableStatement.setBigDecimal(16, null);// As Per AshokSir
 			callableStatement.setBigDecimal(17, null);// As Per AshokSir
 			callableStatement.setString(18, null);// Hard Coded As Per Ashok Sir
-			callableStatement.setBigDecimal(19, Calc.round(vehicleDetails.getVehicleValue(), metaData.getDecplc()));
+			callableStatement.setBigDecimal(19, Utility.round(vehicleDetails.getVehicleValue(), metaData.getDecplc()));
 			callableStatement.setString(20, metaData.getDeviceType());
 			callableStatement.setString(21, metaData.getDeviceId());
 			callableStatement.setString(22, civilId);

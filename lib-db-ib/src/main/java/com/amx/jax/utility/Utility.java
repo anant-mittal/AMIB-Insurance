@@ -7,11 +7,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Calc
+public class Utility
 {
 	static String TAG = "com.amx.jax.services :: CalculateUtil :: ";
 
-	private static final Logger logger = LoggerFactory.getLogger(Calc.class);
+	private static final Logger logger = LoggerFactory.getLogger(Utility.class);
 
 	public static BigDecimal round(BigDecimal inValue , BigDecimal upToDecimal)
 	{
@@ -22,5 +22,14 @@ public class Calc
 			return out;
 		}
 		return inValue;
+	}
+	
+	public static BigDecimal getNumericValue(BigDecimal value)
+	{
+		if(null != value && !value.toString().equals(""))
+		{
+			return value;
+		}
+		return new BigDecimal(0);
 	}
 }

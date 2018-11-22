@@ -38,6 +38,7 @@ import com.amx.jax.services.CustomizeQuoteService;
 import com.amx.jax.services.PayMentService;
 import com.amx.jax.ui.response.ResponseWrapper;
 import com.amx.jax.ui.session.UserSession;
+import com.amx.jax.utility.Utility;
 import com.amx.utils.ArgUtil;
 import com.amx.utils.JsonUtil;
 import com.amx.jax.postman.PostManService;
@@ -199,14 +200,25 @@ public class CustomizeQuoteController
 			model.put(DetailsConstants.customerId, paymentReceipt.getCustomerId());
 			model.put(DetailsConstants.paymentDate, paymentReceipt.getPaymentDate());
 			model.put(DetailsConstants.paymentMode, paymentReceipt.getPaymentMode());
-			model.put(DetailsConstants.amountPaidNumber, paymentReceipt.getAmountPaidNumber());
+			
+			BigDecimal amountValue = Utility.getNumericValue(paymentReceipt.getAmountPaidNumber());
+			BigDecimal amountWithDecimal = Utility.round(amountValue ,new BigDecimal(3));
+			String amountWithCurrency = metaData.getCurrency()+" "+amountWithDecimal.toString();
+			logger.info(TAG + " paymentReceiptDataExt :: amountValue  :" + amountValue);
+			logger.info(TAG + " paymentReceiptDataExt :: amountWithDecimal  :" + amountWithDecimal);
+			logger.info(TAG + " paymentReceiptDataExt :: amountWithCurrency  :" + amountWithCurrency);
+			
+			model.put(DetailsConstants.amountPaidNumber, amountWithCurrency);
+			
 			model.put(DetailsConstants.amountPaidWord, paymentReceipt.getAmountPaidWord());
 			model.put(DetailsConstants.paymentId, paymentReceipt.getPaymentId());
 			model.put(DetailsConstants.customerName, paymentReceipt.getCustomerName());
 			model.put(DetailsConstants.civilId, paymentReceipt.getCivilId());
 			model.put(DetailsConstants.mobileNumber, paymentReceipt.getMobileNumber());
 			model.put(DetailsConstants.emialId, paymentReceipt.getEmialId());
+			
 			model.put(DetailsConstants.policyDuration, paymentReceipt.getPolicyDuration());
+			
 			model.put(DetailsConstants.governate, paymentReceipt.getGovernate());
 			model.put(DetailsConstants.areaDesc, paymentReceipt.getAreaDesc());
 			model.put(DetailsConstants.address, paymentReceipt.getAddress());

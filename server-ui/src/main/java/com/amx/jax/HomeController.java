@@ -86,7 +86,7 @@ public class HomeController
 
 	public String getVersion()
 	{
-		/*long checkTimeNew = System.currentTimeMillis() / (1000 * 60 * 5);
+		long checkTimeNew = System.currentTimeMillis() / (1000 * 60 * 5);
 		if (checkTimeNew != checkTime) 
 		{
 			try 
@@ -97,8 +97,9 @@ public class HomeController
 				Map<String, Object> map = JsonUtil.toMap(restService.ajax(appConfig.getCdnURL() + "/dist/build.json?_=" + checkTimeNew).get().asObject());
 				if (map.containsKey("version")) 
 				{
+					System.out.println("HomeController :: getVersion() :: map :"+ map.values());
 					versionNew = ArgUtil.parseAsString(map.get("version"));
-					System.out.println("HomeController :: getVersion() :: versionNew :"+ versionNew);
+					System.out.println("HomeController :: getVersion() :: versionNew 1 :"+ versionNew);
 				}
 				checkTime = checkTimeNew;
 			} 
@@ -107,11 +108,11 @@ public class HomeController
 				System.out.println("HomeController :: getVersion() :: Exception :"+ e);
 			}
 		}
-		System.out.println("HomeController :: getVersion() :: versionNew :"+ versionNew);
+		System.out.println("HomeController :: getVersion() :: versionNew 2 :"+ versionNew);
 		
-		return versionNew;*/
+		return versionNew;
 		
-		return "1.0.1";
+		//return "1.0.1";
 	}
 
 	/**
