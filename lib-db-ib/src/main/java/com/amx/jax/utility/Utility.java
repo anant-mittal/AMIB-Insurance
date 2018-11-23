@@ -16,15 +16,11 @@ public class Utility
 
 	private static final Logger logger = LoggerFactory.getLogger(Utility.class);
 	
-	@Autowired
-	static
-	MetaData metaData;
-
-	public static BigDecimal round(BigDecimal inValue)
+	public static BigDecimal round(BigDecimal inValue , BigDecimal decimalPlace)
 	{
-		if (null != inValue && null != metaData.getDecplc() && metaData.getDecplc().compareTo(BigDecimal.ZERO) > 0)
+		if (null != inValue && null != decimalPlace && decimalPlace.compareTo(BigDecimal.ZERO) > 0)
 		{
-			int tillDecimalPlace = metaData.getDecplc().intValue();
+			int tillDecimalPlace = decimalPlace.intValue();
 			BigDecimal out = new BigDecimal(inValue.toString()).setScale(tillDecimalPlace, BigDecimal.ROUND_DOWN);
 			return out;
 		}
@@ -41,11 +37,11 @@ public class Utility
 	}
 	
 	
-	public static String getAmountInCurrency(BigDecimal amount)
+	public static String getAmountInCurrency(BigDecimal amount , BigDecimal decimalPlace , String currency)
 	{
 		BigDecimal amountValue = getNumericValue(amount);
-		BigDecimal amountValueWithDecimal = Utility.round(amountValue);
-		String amountValueWithCurrency = metaData.getCurrency()+" "+amountValueWithDecimal.toString();
+		BigDecimal amountValueWithDecimal = Utility.round(amountValue , decimalPlace);
+		String amountValueWithCurrency = currency +" "+amountValueWithDecimal.toString();
 		return amountValueWithCurrency;
 	}
 }

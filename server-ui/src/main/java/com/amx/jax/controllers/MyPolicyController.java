@@ -107,11 +107,11 @@ public class MyPolicyController
 			model.put("insuredAddress", policyReceiptDetails.getInsuredAddress());
 			model.put("insuredMobileNo", policyReceiptDetails.getInsuredMobileNo());
 			model.put("policyContribution", policyReceiptDetails.getPolicyContribution());
-			model.put("supervisionFees",Utility.getAmountInCurrency(policyReceiptDetails.getSupervisionFees()));
-			model.put("issueFees", Utility.getAmountInCurrency(policyReceiptDetails.getIssueFees()));
-			model.put("endrosMentFees",Utility.getAmountInCurrency(policyReceiptDetails.getEndrosMentFees()));
-			model.put("discountAmount", Utility.getAmountInCurrency(policyReceiptDetails.getDiscountAmount()));
-			model.put("amountPaidInNum", Utility.getAmountInCurrency(policyReceiptDetails.getAmountPaidInNum()));
+			model.put("supervisionFees",Utility.getAmountInCurrency(policyReceiptDetails.getSupervisionFees(), metaData.getDecplc() , metaData.getCurrency()));
+			model.put("issueFees", Utility.getAmountInCurrency(policyReceiptDetails.getIssueFees(), metaData.getDecplc() , metaData.getCurrency()));
+			model.put("endrosMentFees",Utility.getAmountInCurrency(policyReceiptDetails.getEndrosMentFees(), metaData.getDecplc() , metaData.getCurrency()));
+			model.put("discountAmount", Utility.getAmountInCurrency(policyReceiptDetails.getDiscountAmount(), metaData.getDecplc() , metaData.getCurrency()));
+			model.put("amountPaidInNum", Utility.getAmountInCurrency(policyReceiptDetails.getAmountPaidInNum(), metaData.getDecplc() , metaData.getCurrency()));
 			model.put("amountPaidInWord", (metaData.getCurrency() +" "+ policyReceiptDetails.getAmountPaidInWord()));
 			
 			dataList.add(model);

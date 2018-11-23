@@ -322,7 +322,7 @@ public class PayMentService
 		model.put(DetailsConstants.customerId, paymentReceipt.getCustomerId());
 		model.put(DetailsConstants.paymentDate, paymentReceipt.getPaymentDate());
 		model.put(DetailsConstants.paymentMode, paymentReceipt.getPaymentMode());
-		model.put(DetailsConstants.amountPaidNumber, Utility.getAmountInCurrency(paymentReceipt.getAmountPaidNumber()));
+		model.put(DetailsConstants.amountPaidNumber, Utility.getAmountInCurrency(paymentReceipt.getAmountPaidNumber(), metaData.getDecplc() , metaData.getCurrency()));
 		model.put(DetailsConstants.amountPaidWord, paymentReceipt.getAmountPaidWord());
 		model.put(DetailsConstants.paymentId, paymentReceipt.getPaymentId());
 		model.put(DetailsConstants.customerName, paymentReceipt.getCustomerName());
