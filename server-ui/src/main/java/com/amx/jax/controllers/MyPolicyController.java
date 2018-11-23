@@ -16,10 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.amx.jax.api.AmxApiResponse;
-import com.amx.jax.constants.ApiConstants;
-import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.models.ActivePolicyModel;
-import com.amx.jax.models.PaymentReceipt;
 import com.amx.jax.models.PolicyReceiptDetails;
 import com.amx.jax.postman.PostManService;
 import com.amx.jax.postman.model.File;

@@ -47,62 +47,43 @@ public class PaymentService {
 	 *            - populated response recieved from PayMentgateWaye service
 	 * @return
 	 */
-	public PaymentResponseDto capturePayment(PayGResponse payGServiceResponse) 
-	{
+	public PaymentResponseDto capturePayment(PayGResponse payGServiceResponse) {
 		PaymentResponseDto paymentResponseDto = null;
-		try 
-		{
+		try {
 			paymentResponseDto = generatePaymentResponseDTO(payGServiceResponse);
 			LOGGER.info("Calling saveRemittanceTransaction with ...  " + paymentResponseDto.toString());
-			
-			
 			AmxApiResponse<PaymentResponseDto, Object> resp = saveRemittanceTransaction(paymentResponseDto);
-			LOGGER.info("Calling saveRemittanceTransaction with resp  " + resp);
-			
-			if (resp.getResult() != null)
-			{
+			if (resp.getResult() != null) {
 				LOGGER.info("PaymentResponseDto values -- CollectionDocumentCode : "
 						+ resp.getResult().getCollectionDocumentCode() + " CollectionDocumentNumber : "
 						+ resp.getResult().getCollectionDocumentNumber() + " CollectionFinanceYear : "
 						+ resp.getResult().getCollectionFinanceYear());
 				return resp.getResult();
 			}
-		} 
-		catch (Exception e) 
-		{
+		} catch (Exception e) {
 			LOGGER.error("Exception while capture payment. : ", e);
 		}
 		return paymentResponseDto;
 	}
-	
-	
-	
+
 	public AmxApiResponse<PaymentResponseDto, Object> saveRemittanceTransaction(PaymentResponseDto paymentResponseDto)
 			throws Exception {
-		try 
-		{
+		try {
 			RestMetaInfo metaInfo = new RestMetaInfo();
 			HttpHeaders headers = new HttpHeaders();
 			metaInfo.setTenant(TenantContextHolder.currentSite());
-			LOGGER.info("Calling saveRemittanceTransaction getApplicationCountryId() :" + paymentResponseDto.getApplicationCountryId());
 			metaInfo.setCountryId(paymentResponseDto.getApplicationCountryId());
-			LOGGER.info("Calling saveRemittanceTransaction getCustomerId :" + paymentResponseDto.getCustomerId());
 			metaInfo.setCustomerId(paymentResponseDto.getCustomerId());
 			headers.add("meta-info", new ObjectMapper().writeValueAsString(metaInfo));
-			
-			LOGGER.info("Calling saveRemittanceTransaction appConfig.getJaxURL() : " + appConfig.getJaxURL());
-			LOGGER.info("Calling saveRemittanceTransaction paymentResponseDto : " + paymentResponseDto);
-			LOGGER.info("Calling saveRemittanceTransaction headers : " + headers);
-			
 			return restService.ajax(appConfig.getJaxURL() + "/remit/save-remittance/")
 					.post(new HttpEntity<PaymentResponseDto>(paymentResponseDto, headers))
 					.as(new ParameterizedTypeReference<AmxApiResponse<PaymentResponseDto, Object>>() {
 					});
-		
 		} catch (Exception e) {
 			LOGGER.error("exception in saveRemittanceTransaction : ", e);
 			return AmxApiException.evaluate(e);
 		} // end of try-catch
+
 	}
 
 	/**

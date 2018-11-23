@@ -17,7 +17,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 
 import com.amx.jax.config.CustomerAuthProvider;
-import com.amx.jax.dao.MyQuoteDao;
 import com.amx.jax.http.CommonHttpRequest;
 
 @Component
@@ -63,6 +62,16 @@ public class UserSession
 
 	private BigDecimal userAmibCustRef;
 	
+	private String returnUrl;
+	
+	public String getReturnUrl() {
+		return returnUrl;
+	}
+
+	public void setReturnUrl(String returnUrl) {
+		this.returnUrl = returnUrl;
+	}
+
 	public String getCivilId()
 	{
 		return civilId;

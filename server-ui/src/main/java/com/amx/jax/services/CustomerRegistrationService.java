@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.amx.jax.WebConfig;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.DatabaseErrorKey;
@@ -35,8 +34,8 @@ import com.amx.jax.models.CustomerRegistrationResponse;
 import com.amx.jax.models.FailureException;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.RequestOtpModel;
-import com.amx.jax.models.ResponseOtpModel;
 import com.amx.jax.models.ResponseInfo;
+import com.amx.jax.models.ResponseOtpModel;
 import com.amx.jax.ui.session.UserSession;
 
 @Service
@@ -48,19 +47,19 @@ public class CustomerRegistrationService
 
 	@Autowired
 	private MetaData metaData;
-	
+
 	@Autowired
 	UserSession userSession;
-	
+
 	@Autowired
 	private EmailSmsService emailSmsService;
 
 	@Autowired
 	CommonHttpRequest httpService;
-	
+
 	@Autowired
 	private CustomerRegistrationDao customerRegistrationDao;
-	
+
 	public AmxApiResponse<CompanySetUp, Object> getCompanySetUp()
 	{
 		logger.info(TAG + " getCompanySetUp ::");
@@ -69,7 +68,7 @@ public class CustomerRegistrationService
 		try
 		{
 			ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao.getCompanySetUp(metaData.getLanguageId());
-			
+
 			metaData.setCountryId(getCompanySetUp.get(0).getCntryCd());
 			metaData.setCompCd(getCompanySetUp.get(0).getCompCd());
 			metaData.setContactUsHelpLineNumber(getCompanySetUp.get(0).getHelpLineNumber());
@@ -82,7 +81,7 @@ public class CustomerRegistrationService
 			logger.info(TAG + " getCompanySetUp :: getIPAddress :"+httpService.getIPAddress());
 			metaData.setCurrency(getCompanySetUp.get(0).getCurrency());
 			metaData.setUserType("D");
-			
+
 			resp.setResults(getCompanySetUp);
 			resp.setStatusKey(ApiConstants.SUCCESS);
 		}
@@ -93,12 +92,12 @@ public class CustomerRegistrationService
 		}
 		return resp;
 	}
-	
+
 	public AmxApiResponse<ResponseInfo, Object> isValidCivilId(String civilid)
 	{
 		boolean isValidCivilId = customerRegistrationDao.isValidCivilId(civilid);
 		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
-		
+
 		if (isValidCivilId)
 		{
 			resp.setStatusKey(ApiConstants.SUCCESS);
@@ -197,7 +196,7 @@ public class CustomerRegistrationService
 		resp.setData(validate);
 		return resp;
 	}
-	
+
 	public static boolean validateEmail(String emailStr)
 	{
 		Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
@@ -314,10 +313,10 @@ public class CustomerRegistrationService
 			{
 				return validateForRegistration;
 			}
-			
+
 			logger.info(TAG + " registrationOtp :: civilId    :" + requestOtpModel.getCivilId());
 			logger.info(TAG + " registrationOtp :: getEmailId :" + requestOtpModel.getEmailId());
-			
+
 			userSession.setCivilId(requestOtpModel.getCivilId());
 			userSession.setCustomerEmailId(requestOtpModel.getEmailId());
 			userSession.setCustomerMobileNumber(requestOtpModel.getMobileNumber());
@@ -355,7 +354,7 @@ public class CustomerRegistrationService
 		customerRegistrationModel.setCivilId(userSession.getCivilId());
 		customerRegistrationModel.setCreatedDeviceId(metaData.getDeviceId());
 		customerRegistrationModel.setDeviceType(metaData.getDeviceType());
-		
+
 		customerRegistrationModel = customerRegistrationDao.addNewCustomer(customerRegistrationModel);
 
 		if (customerRegistrationModel.getStatus())
@@ -474,10 +473,10 @@ public class CustomerRegistrationService
 	public AmxApiResponse<?, Object> changePasswordOtpInitiate(String eOtp, String mOtp, ChangePasswordOtpRequest changePasswordOtpRequest)
 	{
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
-		
+
 		logger.info(TAG + " changePasswordOtpInitiate :: getCivilId :"+changePasswordOtpRequest.getCivilId());
 		userSession.setCivilId(changePasswordOtpRequest.getCivilId());
-		
+
 		
 		AmxApiResponse<ResponseInfo, Object> validateCivilID = isValidCivilId(changePasswordOtpRequest.getCivilId());
 		if (validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))

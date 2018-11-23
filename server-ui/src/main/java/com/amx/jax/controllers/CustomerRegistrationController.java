@@ -39,7 +39,7 @@ public class CustomerRegistrationController
 	String TAG = "com.amx.jax.userregistration.controller :: CustomerRegistrationController :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(CustomerRegistrationController.class);
-	
+
 	@Autowired
 	CommonHttpRequest httpService;
 	
@@ -175,6 +175,7 @@ public class CustomerRegistrationController
 		
 		return resp;
 	}
+	
 	
 
 	@RequestMapping(value = "/pub/reg/sms-email-test", method = RequestMethod.POST, produces = "application/json")
