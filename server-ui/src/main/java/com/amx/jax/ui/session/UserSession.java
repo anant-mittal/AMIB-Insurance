@@ -62,6 +62,16 @@ public class UserSession
 
 	private BigDecimal userAmibCustRef;
 	
+	private String returnUrl;
+	
+	public String getReturnUrl() {
+		return returnUrl;
+	}
+
+	public void setReturnUrl(String returnUrl) {
+		this.returnUrl = returnUrl;
+	}
+
 	public String getCivilId()
 	{
 		return civilId;
