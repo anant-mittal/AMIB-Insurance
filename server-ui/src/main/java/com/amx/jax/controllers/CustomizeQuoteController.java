@@ -209,7 +209,9 @@ public class CustomizeQuoteController
 			model.put(DetailsConstants.mobileNumber, paymentReceipt.getMobileNumber());
 			model.put(DetailsConstants.emialId, paymentReceipt.getEmialId());
 			
-			model.put(DetailsConstants.policyDuration, paymentReceipt.getPolicyDuration());
+			String year = paymentReceipt.getPolicyDuration() + " Year";
+			logger.info(TAG + " paymentReceiptDataExt :: year  :" + year);
+			model.put(DetailsConstants.policyDuration, year);
 			
 			model.put(DetailsConstants.governate, paymentReceipt.getGovernate());
 			model.put(DetailsConstants.areaDesc, paymentReceipt.getAreaDesc());

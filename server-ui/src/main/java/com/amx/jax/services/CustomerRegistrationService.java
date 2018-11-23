@@ -411,11 +411,11 @@ public class CustomerRegistrationService
 
 		if (customerLoginModel.getStatus())
 		{
-
 			onSuccessLogin(customerLoginRequest, customerLoginModel);
 			getCustomerDetails();
 			resp.setStatusKey(ApiConstants.SUCCESS);
 			userSession.authorize(customerLoginRequest.getCivilId(), customerLoginRequest.getPassword());
+			resp.setRedirectUrl(userSession.getReturnUrl());
 		}
 		else
 		{
