@@ -114,7 +114,7 @@ public class CustomizeQuoteController
 	@RequestMapping(value = "/remit/save-remittance", method = { RequestMethod.POST })
 	public PaymentResponseDto onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse) 
 	{
-		logger.info(TAG + " onPaymentCallback :: userSession  :" + userSession.toString());
+		logger.debug(TAG + " onPaymentCallback :: userSession  :" + userSession.toString());
 		logger.info(TAG + " onPaymentCallback :: metaData     :" + metaData.toString());
 		logger.info(TAG + " onPaymentCallback :: paymentResponse  :" + paymentResponse.toString());
 		

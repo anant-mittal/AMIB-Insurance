@@ -176,7 +176,6 @@ public class CustomerRegistrationController
 		return resp;
 	}
 	
-	
 
 	@RequestMapping(value = "/pub/reg/sms-email-test", method = RequestMethod.POST, produces = "application/json")
 	public String testEmailPostman()

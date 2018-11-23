@@ -87,36 +87,24 @@ public class HomeController
 	public String getVersion()
 	{
 		long checkTimeNew = System.currentTimeMillis() / (1000 * 60 * 5);
-		
-		System.out.println("HomeController :: getVersion() :: checkTimeNew :"+ checkTimeNew);
-		System.out.println("HomeController :: getVersion() :: checkTime    :"+ checkTime);
-		
 		if (checkTimeNew != checkTime) 
 		{
 			try 
 			{
-				System.out.println("HomeController :: getVersion() :: getCdnURL1 :"+ appConfig.getCdnURL() + "/dist/build.json?_=" + checkTimeNew);
-				System.out.println("HomeController :: getVersion() :: getCdnURL2 :"+ appConfig.getCdnURL() + "/dist/build.json?_=" + checkTimeNew);
-				
 				Map<String, Object> map = JsonUtil.toMap(restService.ajax(appConfig.getCdnURL() + "/dist/build.json?_=" + checkTimeNew).get().asObject());
 				if (map.containsKey("version")) 
 				{
-					System.out.println("HomeController :: getVersion() :: map :"+ map.values());
 					versionNew = ArgUtil.parseAsString(map.get("version"));
-					System.out.println("HomeController :: getVersion() :: versionNew 1 :"+ versionNew);
 				}
 				checkTime = checkTimeNew;
 			} 
 			catch (Exception e) 
 			{
-				System.out.println("HomeController :: getVersion() :: Exception :"+ e);
+				logger.debug("HomeController :: getVersion() :: Exception :"+ e);
 			}
 		}
-		System.out.println("HomeController :: getVersion() :: versionNew 2 :"+ versionNew);
-		
+		logger.debug("HomeController :: getVersion() :: versionNew 2 :"+ versionNew);
 		return versionNew;
-		
-		//return "1.0.1";
 	}
 
 	/**
@@ -130,16 +118,14 @@ public class HomeController
 	@ResponseBody
 	public String loginPing(HttpServletRequest request)
 	{
-		System.out.println("HomeController :: loginPing :: getLanguage : " + httpService.getLanguage());
 		AmxApiResponse<Object, Object> wrapper = new AmxApiResponse<Object, Object>();
 		return JsonUtil.toJson(wrapper);
 	}
 
 	//@Timed
 	@RequestMapping(value = {"/login/**" , "/resetPwd"}, method = { RequestMethod.GET })
-	public String loginJPage(Model model)
+	public String loginJPage(Model model , HttpServletRequest request)
 	{
-		System.out.println("HomeController :: loginJPage 1 :: getLanguage : " + httpService.getLanguage());
 		model.addAttribute("lang", httpService.getLanguage());
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
 		model.addAttribute("cdnUrl", appConfig.getCdnURL());
@@ -153,11 +139,8 @@ public class HomeController
 	@ResponseBody
 	public String loginPJson()
 	{
-		System.out.println("HomeController :: loginJPage 2 :: getLanguage : " + httpService.getLanguage());
 		ResponseWrapper<Object> wrapper = new ResponseWrapper<Object>(null);
 		wrapper.setMessage(WebResponseStatus.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED);
-		System.out.println("HomeController :: loginJPage 2 :: JsonUtil.toJson(wrapper): " + JsonUtil.toJson(wrapper));
-		
 		return JsonUtil.toJson(wrapper);
 	}
 		
@@ -198,8 +181,6 @@ public class HomeController
 				it.remove();
 			}
 			model.addAttribute("terms",dataList);
-			System.out.println("HomeController :: termsAndCondition :: dataJson :" + dataList.toString());
-			System.out.println("HomeController :: termsAndCondition :: model    :" + model.asMap());
 		}
 		catch(Exception e)
 		{

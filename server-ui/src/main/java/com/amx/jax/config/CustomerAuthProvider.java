@@ -25,5 +25,4 @@ public class CustomerAuthProvider implements AuthenticationProvider {
 	public boolean supports(Class<?> auth) {
 		return auth.equals(UsernamePasswordAuthenticationToken.class);
 	}
-
 }

@@ -2,12 +2,6 @@ package com.amx.jax.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-/*import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;*/
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -21,7 +15,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
 {
 	@Autowired
 	CustomerAuthProvider customAuthProvider;
-
+	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception 
 	{
@@ -46,7 +40,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
 				.and().logout().permitAll().logoutSuccessUrl("/login?logout").deleteCookies("JSESSIONID")
 				.invalidateHttpSession(true).permitAll().and().exceptionHandling().accessDeniedPage("/403").and().csrf()
 				.disable().headers().disable();
-		
+			
 	}
 
 	@Autowired
@@ -56,7 +50,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
 		
 		auth.authenticationProvider(customAuthProvider).inMemoryAuthentication().withUser("user").password("password").roles("USER");
 	}
-
+	
 	@Override
 	public void configure(WebSecurity web) throws Exception 
 	{
@@ -64,5 +58,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
 		
 		web.ignoring().antMatchers("/resources/**", "/static/**", "/css/**", "/js/**", "/images/** ,/reg/** ");
 	}
-
 }
