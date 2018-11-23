@@ -125,7 +125,7 @@ public class HomeController
 	}
 
 	//@Timed
-	@RequestMapping(value = {"/login/**" , "/resetPwd" , "/register"}, method = { RequestMethod.GET })
+	@RequestMapping(value = {"/login/**" , "/resetPwd" }, method = { RequestMethod.GET })
 	public String loginJPage(Model model , HttpServletRequest request)
 	{
 		model.addAttribute("lang", httpService.getLanguage());
