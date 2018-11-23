@@ -39,6 +39,7 @@ import com.amx.jax.payg.Payment;
 import com.amx.jax.ui.session.UserSession;
 import com.amx.jax.utility.CalculateUtility;
 import com.amx.jax.utility.Utility;
+import com.amx.utils.HttpUtils;
 
 @Service
 public class CustomizeQuoteService
@@ -350,7 +351,8 @@ public class CustomizeQuoteService
 					
 					
 					logger.info(TAG + " saveCustomizeQuoteDetails :: request.getSession().getId() :" + request.getSession().getId());
-					String redirctUrl = payGService.getPaymentUrl(payment , "https://"+request.getServerName()+"/app/landing/myquotes/payment");
+					//String redirctUrl = payGService.getPaymentUrl(payment , "https://"+request.getServerName()+"/app/landing/myquotes/payment");
+					String redirctUrl = payGService.getPaymentUrl(payment , "https://"+HttpUtils.getServerName(request)+"/app/landing/myquotes/payment");
 					logger.info(TAG + " saveCustomizeQuoteDetails :: redirctUrl :" + redirctUrl);
 					
 					resp.setRedirectUrl(redirctUrl);
