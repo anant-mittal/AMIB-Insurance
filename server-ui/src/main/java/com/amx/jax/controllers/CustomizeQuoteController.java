@@ -106,10 +106,6 @@ public class CustomizeQuoteController
 	@RequestMapping(value = "/remit/save-remittance", method = { RequestMethod.POST })
 	public PaymentResponseDto onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse) 
 	{
-		logger.debug(TAG + " onPaymentCallback :: userSession  :" + userSession.toString());
-		logger.info(TAG + " onPaymentCallback :: metaData     :" + metaData.toString());
-		logger.info(TAG + " onPaymentCallback :: paymentResponse  :" + paymentResponse.toString());
-		
 		try 
 		{
 			metaDataSetup();
@@ -136,7 +132,6 @@ public class CustomizeQuoteController
 				paymentDetails.setPaySeqNum(null);
 			}
 
-			logger.info(TAG + " onPaymentCallback :: paymentDetails  :" + paymentDetails.toString());
 			PaymentDetails updateStatus = payMentService.updatePaymentDetals(paymentDetails);
 			logger.info(TAG + " onPaymentCallback :: updateStatus  :" + updateStatus.toString());
 			
@@ -192,27 +187,14 @@ public class CustomizeQuoteController
 			model.put(DetailsConstants.customerId, paymentReceipt.getCustomerId());
 			model.put(DetailsConstants.paymentDate, paymentReceipt.getPaymentDate());
 			model.put(DetailsConstants.paymentMode, paymentReceipt.getPaymentMode());
-			
-			BigDecimal amountValue = Utility.getNumericValue(paymentReceipt.getAmountPaidNumber());
-			BigDecimal amountWithDecimal = Utility.round(amountValue ,new BigDecimal(3));
-			String amountWithCurrency = metaData.getCurrency()+" "+amountWithDecimal.toString();
-			logger.info(TAG + " paymentReceiptDataExt :: amountValue  :" + amountValue);
-			logger.info(TAG + " paymentReceiptDataExt :: amountWithDecimal  :" + amountWithDecimal);
-			logger.info(TAG + " paymentReceiptDataExt :: amountWithCurrency  :" + amountWithCurrency);
-			
-			model.put(DetailsConstants.amountPaidNumber, amountWithCurrency);
-			
+			model.put(DetailsConstants.amountPaidNumber, Utility.getAmountInCurrency(paymentReceipt.getAmountPaidNumber()));
 			model.put(DetailsConstants.amountPaidWord, paymentReceipt.getAmountPaidWord());
 			model.put(DetailsConstants.paymentId, paymentReceipt.getPaymentId());
 			model.put(DetailsConstants.customerName, paymentReceipt.getCustomerName());
 			model.put(DetailsConstants.civilId, paymentReceipt.getCivilId());
 			model.put(DetailsConstants.mobileNumber, paymentReceipt.getMobileNumber());
 			model.put(DetailsConstants.emialId, paymentReceipt.getEmialId());
-			
-			String year = paymentReceipt.getPolicyDuration() + " Year";
-			logger.info(TAG + " paymentReceiptDataExt :: year  :" + year);
-			model.put(DetailsConstants.policyDuration, year);
-			
+			model.put(DetailsConstants.policyDuration, (paymentReceipt.getPolicyDuration() + " Year"));
 			model.put(DetailsConstants.governate, paymentReceipt.getGovernate());
 			model.put(DetailsConstants.areaDesc, paymentReceipt.getAreaDesc());
 			model.put(DetailsConstants.address, paymentReceipt.getAddress());

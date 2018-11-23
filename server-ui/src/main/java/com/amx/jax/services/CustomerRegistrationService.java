@@ -74,6 +74,7 @@ public class CustomerRegistrationService
 			metaData.setContactUsHelpLineNumber(getCompanySetUp.get(0).getHelpLineNumber());
 			metaData.setContactUsEmail(getCompanySetUp.get(0).getEmail());
 			metaData.setAmibWebsiteLink(getCompanySetUp.get(0).getWebSite());
+			logger.info(TAG + " getCompanySetUp :: setDecplc :"+getCompanySetUp.get(0).getDecimalPlaceUpTo());
 			metaData.setDecplc(getCompanySetUp.get(0).getDecimalPlaceUpTo());
 			metaData.setCompanyName(getCompanySetUp.get(0).getCompanyName());
 			metaData.setDeviceType("ONLINE");
@@ -415,6 +416,7 @@ public class CustomerRegistrationService
 			getCustomerDetails();
 			resp.setStatusKey(ApiConstants.SUCCESS);
 			userSession.authorize(customerLoginRequest.getCivilId(), customerLoginRequest.getPassword());
+			logger.info(TAG + " validateUserLogin :: getReturnUrl() :" + userSession.getReturnUrl());
 			resp.setRedirectUrl(userSession.getReturnUrl());
 		}
 		else
@@ -424,8 +426,6 @@ public class CustomerRegistrationService
 
 		if (null != customerLoginModel.getErrorMessage() && customerLoginModel.getErrorCode().toString().equalsIgnoreCase(DatabaseErrorKey.INVALID_USER_LOGIN))
 		{
-			logger.info(TAG + " validateUserLogin :: Invalid Attempts :");
-
 			String countData = "";
 			int count = Integer.parseInt(customerLoginModel.getErrorMessage());
 			int userInvalidCountRemaining = 3 - count;

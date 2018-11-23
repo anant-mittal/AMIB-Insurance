@@ -4,7 +4,10 @@ import java.math.BigDecimal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.amx.jax.models.MetaData;
 
 @Component
 public class Utility
@@ -12,12 +15,16 @@ public class Utility
 	static String TAG = "com.amx.jax.services :: CalculateUtil :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(Utility.class);
+	
+	@Autowired
+	static
+	MetaData metaData;
 
-	public static BigDecimal round(BigDecimal inValue , BigDecimal upToDecimal)
+	public static BigDecimal round(BigDecimal inValue)
 	{
-		if (null != inValue && null != upToDecimal && upToDecimal.compareTo(BigDecimal.ZERO) > 0)
+		if (null != inValue && null != metaData.getDecplc() && metaData.getDecplc().compareTo(BigDecimal.ZERO) > 0)
 		{
-			int tillDecimalPlace = upToDecimal.intValue();
+			int tillDecimalPlace = metaData.getDecplc().intValue();
 			BigDecimal out = new BigDecimal(inValue.toString()).setScale(tillDecimalPlace, BigDecimal.ROUND_DOWN);
 			return out;
 		}
@@ -31,5 +38,14 @@ public class Utility
 			return value;
 		}
 		return new BigDecimal(0);
+	}
+	
+	
+	public static String getAmountInCurrency(BigDecimal amount)
+	{
+		BigDecimal amountValue = getNumericValue(amount);
+		BigDecimal amountValueWithDecimal = Utility.round(amountValue);
+		String amountValueWithCurrency = metaData.getCurrency()+" "+amountValueWithDecimal.toString();
+		return amountValueWithCurrency;
 	}
 }

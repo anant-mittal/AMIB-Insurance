@@ -94,12 +94,12 @@ public class MyPolicyDao
 				activePolicyModel.setPolicyTypeCode(rs.getString(33));
 				activePolicyModel.setPolicyTypeDesc(rs.getString(34));
 				activePolicyModel.setPolicyNumber(rs.getString(35));
-				activePolicyModel.setMaxInsuredAmount(Utility.round(rs.getBigDecimal(36), metaData.getDecplc()));
+				activePolicyModel.setMaxInsuredAmount(Utility.round(rs.getBigDecimal(36)));
 				activePolicyModel.setStartDate(DateFormats.uiFormattedDate(rs.getDate(37)));
 				activePolicyModel.setEndDate(DateFormats.uiFormattedDate(rs.getDate(38)));
 				activePolicyModel.setSupervisionKey(rs.getBigDecimal(39));
-				activePolicyModel.setIssueFee(Utility.round(rs.getBigDecimal(40), metaData.getDecplc()));
-				activePolicyModel.setPremium(Utility.round(rs.getBigDecimal(41), metaData.getDecplc()));
+				activePolicyModel.setIssueFee(Utility.round(rs.getBigDecimal(40)));
+				activePolicyModel.setPremium(Utility.round(rs.getBigDecimal(41)));
 				activePolicyModel.setDiscount(rs.getBigDecimal(42));
 				activePolicyModel.setRenewalIndic(rs.getString(43));//Not Used On UI
 				activePolicyModel.setFuelCode(rs.getString(44));

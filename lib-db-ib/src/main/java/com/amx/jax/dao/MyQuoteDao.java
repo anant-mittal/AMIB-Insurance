@@ -94,10 +94,10 @@ public class MyQuoteDao
 				myQuoteModel.setVehicleValue(rs.getBigDecimal(33));
 				myQuoteModel.setBasicPremium(rs.getBigDecimal(34));
 				myQuoteModel.setSupervisionFees(rs.getBigDecimal(35));
-				myQuoteModel.setIssueFee(Utility.round(rs.getBigDecimal(36), metaData.getDecplc()));
-				myQuoteModel.setDiscount(Utility.round(rs.getBigDecimal(37), metaData.getDecplc()));
+				myQuoteModel.setIssueFee(Utility.round(rs.getBigDecimal(36)));
+				myQuoteModel.setDiscount(Utility.round(rs.getBigDecimal(37)));
 				myQuoteModel.setAddCoveragePremium(rs.getBigDecimal(38));
-				myQuoteModel.setNetAmount(Utility.round(rs.getBigDecimal(39), metaData.getDecplc()));
+				myQuoteModel.setNetAmount(Utility.round(rs.getBigDecimal(39)));
 				myQuoteModel.setPolCondition(rs.getString(40));
 				myQuoteModel.setVehicleType(rs.getString(41));
 				myQuoteModel.setPaymentProcessError(rs.getString(42));
