@@ -31,12 +31,15 @@ import com.amx.jax.models.PaymentDetails;
 import com.amx.jax.models.PgRedirectUrl;
 import com.amx.jax.models.QuotationDetails;
 import com.amx.jax.models.QuoteAddPolicyDetails;
+import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.models.TotalPremium;
 import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.payg.PayGService;
 import com.amx.jax.payg.Payment;
 import com.amx.jax.ui.session.UserSession;
 import com.amx.jax.utility.CalculateUtility;
+import com.amx.jax.utility.Utility;
+import com.amx.utils.HttpUtils;
 
 @Service
 public class CustomizeQuoteService
@@ -115,11 +118,11 @@ public class CustomizeQuoteService
 			
 			
 			// SET TotalPremium Details
-			totalPremium.setBasicPremium(CalculateUtility.getNumericValue(myQuoteModel.getBasicPremium()));
-			totalPremium.setAddCoveragePremium(CalculateUtility.getNumericValue(myQuoteModel.getAddCoveragePremium()));
-			totalPremium.setIssueFee(CalculateUtility.getNumericValue(myQuoteModel.getIssueFee()));
-			totalPremium.setSupervisionFees(CalculateUtility.getNumericValue(myQuoteModel.getSupervisionFees()));
-			totalPremium.setTotalAmount(CalculateUtility.getNumericValue(myQuoteModel.getNetAmount()));
+			totalPremium.setBasicPremium(Utility.getNumericValue(myQuoteModel.getBasicPremium()));
+			totalPremium.setAddCoveragePremium(Utility.getNumericValue(myQuoteModel.getAddCoveragePremium()));
+			totalPremium.setIssueFee(Utility.getNumericValue(myQuoteModel.getIssueFee()));
+			totalPremium.setSupervisionFees(Utility.getNumericValue(myQuoteModel.getSupervisionFees()));
+			totalPremium.setTotalAmount(Utility.getNumericValue(myQuoteModel.getNetAmount()));
 			logger.info(TAG + " getCustomizedQuoteDetails :: totalPremium :" + totalPremium.toString());
 
 			
@@ -348,7 +351,8 @@ public class CustomizeQuoteService
 					
 					
 					logger.info(TAG + " saveCustomizeQuoteDetails :: request.getSession().getId() :" + request.getSession().getId());
-					String redirctUrl = payGService.getPaymentUrl(payment , "https://"+request.getServerName()+"/app/landing/myquotes/payment");
+					//String redirctUrl = payGService.getPaymentUrl(payment , "https://"+request.getServerName()+"/app/landing/myquotes/payment");
+					String redirctUrl = payGService.getPaymentUrl(payment , HttpUtils.getServerName(request)+"/app/landing/myquotes/payment");
 					logger.info(TAG + " saveCustomizeQuoteDetails :: redirctUrl :" + redirctUrl);
 					
 					resp.setRedirectUrl(redirctUrl);

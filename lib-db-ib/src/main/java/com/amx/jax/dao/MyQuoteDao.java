@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.MetaData;
 import com.amx.jax.models.MyQuoteModel;
-import com.amx.jax.utility.Calc;
+import com.amx.jax.utility.Utility;
 import oracle.jdbc.OracleTypes;
 
 @Repository
@@ -94,10 +94,10 @@ public class MyQuoteDao
 				myQuoteModel.setVehicleValue(rs.getBigDecimal(33));
 				myQuoteModel.setBasicPremium(rs.getBigDecimal(34));
 				myQuoteModel.setSupervisionFees(rs.getBigDecimal(35));
-				myQuoteModel.setIssueFee(Calc.round(rs.getBigDecimal(36), metaData.getDecplc()));
-				myQuoteModel.setDiscount(Calc.round(rs.getBigDecimal(37), metaData.getDecplc()));
+				myQuoteModel.setIssueFee(Utility.round(rs.getBigDecimal(36), metaData.getDecplc()));
+				myQuoteModel.setDiscount(Utility.round(rs.getBigDecimal(37), metaData.getDecplc()));
 				myQuoteModel.setAddCoveragePremium(rs.getBigDecimal(38));
-				myQuoteModel.setNetAmount(Calc.round(rs.getBigDecimal(39), metaData.getDecplc()));
+				myQuoteModel.setNetAmount(Utility.round(rs.getBigDecimal(39), metaData.getDecplc()));
 				myQuoteModel.setPolCondition(rs.getString(40));
 				myQuoteModel.setVehicleType(rs.getString(41));
 				myQuoteModel.setPaymentProcessError(rs.getString(42));

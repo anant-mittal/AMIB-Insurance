@@ -16,15 +16,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.amx.jax.api.AmxApiResponse;
-import com.amx.jax.constants.ApiConstants;
-import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.models.ActivePolicyModel;
-import com.amx.jax.models.PaymentReceipt;
+import com.amx.jax.models.MetaData;
 import com.amx.jax.models.PolicyReceiptDetails;
 import com.amx.jax.postman.PostManService;
 import com.amx.jax.postman.model.File;
 import com.amx.jax.postman.model.TemplatesIB;
 import com.amx.jax.services.MyPolicyService;
+import com.amx.jax.utility.Utility;
 import com.amx.utils.ArgUtil;
 
 @RestController
@@ -42,6 +41,9 @@ public class MyPolicyController
 	
 	@Autowired
 	private HttpServletResponse response;
+	
+	@Autowired
+	MetaData metaData;
 	
 
 	@RequestMapping(value = "/api/mypolicy/get-activepolicy", method = RequestMethod.POST, produces = "application/json")
@@ -105,12 +107,12 @@ public class MyPolicyController
 			model.put("insuredAddress", policyReceiptDetails.getInsuredAddress());
 			model.put("insuredMobileNo", policyReceiptDetails.getInsuredMobileNo());
 			model.put("policyContribution", policyReceiptDetails.getPolicyContribution());
-			model.put("supervisionFees", policyReceiptDetails.getSupervisionFees());
-			model.put("issueFees", policyReceiptDetails.getIssueFees());
-			model.put("endrosMentFees", policyReceiptDetails.getEndrosMentFees());
-			model.put("discountAmount", policyReceiptDetails.getDiscountAmount());
-			model.put("amountPaidInNum", policyReceiptDetails.getAmountPaidInNum());
-			model.put("amountPaidInWord", policyReceiptDetails.getAmountPaidInWord());
+			model.put("supervisionFees",Utility.getAmountInCurrency(policyReceiptDetails.getSupervisionFees(), metaData.getDecplc() , metaData.getCurrency()));
+			model.put("issueFees", Utility.getAmountInCurrency(policyReceiptDetails.getIssueFees(), metaData.getDecplc() , metaData.getCurrency()));
+			model.put("endrosMentFees",Utility.getAmountInCurrency(policyReceiptDetails.getEndrosMentFees(), metaData.getDecplc() , metaData.getCurrency()));
+			model.put("discountAmount", Utility.getAmountInCurrency(policyReceiptDetails.getDiscountAmount(), metaData.getDecplc() , metaData.getCurrency()));
+			model.put("amountPaidInNum", Utility.getAmountInCurrency(policyReceiptDetails.getAmountPaidInNum(), metaData.getDecplc() , metaData.getCurrency()));
+			model.put("amountPaidInWord", (metaData.getCurrency() +" "+ policyReceiptDetails.getAmountPaidInWord()));
 			
 			dataList.add(model);
 			wrapper.put("results", dataList);

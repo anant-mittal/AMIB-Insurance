@@ -36,10 +36,10 @@ public class PersonalDetailsService
 
 	@Autowired
 	private CustomerRegistrationService customerRegistrationService;
-	
+
 	@Autowired
 	MetaData metaData;
-	
+
 	@Autowired
 	UserSession userSession;
 

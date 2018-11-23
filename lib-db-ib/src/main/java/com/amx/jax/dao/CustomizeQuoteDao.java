@@ -23,7 +23,7 @@ import com.amx.jax.models.QuoteAddPolicyDetails;
 import com.amx.jax.models.ReplacementTypeList;
 import com.amx.jax.models.TermsCondition;
 import com.amx.jax.models.ResponseInfo;
-import com.amx.jax.utility.Calc;
+import com.amx.jax.utility.Utility;
 
 import oracle.jdbc.OracleTypes;
 
@@ -236,12 +236,12 @@ public class CustomizeQuoteDao
 			callableStatement.setBigDecimal(2, metaData.getCompCd());
 			callableStatement.setBigDecimal(3, customizeQuoteSave.getQuotSeqNumber());
 			callableStatement.setBigDecimal(4, customizeQuoteSave.getVerNumber());
-			callableStatement.setBigDecimal(5, Calc.round(customizeQuoteSave.getBasicPremium(), metaData.getDecplc()));
-			callableStatement.setBigDecimal(6, Calc.round(customizeQuoteSave.getSupervisionFees(), metaData.getDecplc()));
-			callableStatement.setBigDecimal(7, Calc.round(customizeQuoteSave.getIssueFee(), metaData.getDecplc()));
-			callableStatement.setBigDecimal(8, Calc.round(customizeQuoteSave.getDisscountAmt(), metaData.getDecplc()));
-			callableStatement.setBigDecimal(9, Calc.round(customizeQuoteSave.getAddCoveragePremium(), metaData.getDecplc()));
-			callableStatement.setBigDecimal(10,Calc.round(customizeQuoteSave.getTotalAmount(), metaData.getDecplc()));
+			callableStatement.setBigDecimal(5, Utility.round(customizeQuoteSave.getBasicPremium(), metaData.getDecplc()));
+			callableStatement.setBigDecimal(6, Utility.round(customizeQuoteSave.getSupervisionFees(), metaData.getDecplc()));
+			callableStatement.setBigDecimal(7, Utility.round(customizeQuoteSave.getIssueFee(), metaData.getDecplc()));
+			callableStatement.setBigDecimal(8, Utility.round(customizeQuoteSave.getDisscountAmt(), metaData.getDecplc()));
+			callableStatement.setBigDecimal(9, Utility.round(customizeQuoteSave.getAddCoveragePremium(), metaData.getDecplc()));
+			callableStatement.setBigDecimal(10,Utility.round(customizeQuoteSave.getTotalAmount(), metaData.getDecplc()));
 			callableStatement.setString(11, metaData.getDeviceType());
 			callableStatement.setString(12, metaData.getDeviceId());
 			callableStatement.setString(13, civilId);
@@ -279,7 +279,7 @@ public class CustomizeQuoteDao
 			callableStatement.setString(5, customizeQuoteAddPol.getAddPolicyTypeCode());
 			callableStatement.setBigDecimal(6, customizeQuoteAddPol.getYearlyPremium());
 			callableStatement.setString(7, customizeQuoteAddPol.getOptIndex());
-			callableStatement.setBigDecimal(8, Calc.round(customizeQuoteAddPol.getYearMultiplePremium(), metaData.getDecplc()));
+			callableStatement.setBigDecimal(8, Utility.round(customizeQuoteAddPol.getYearMultiplePremium(), metaData.getDecplc()));
 			callableStatement.setString(9, customizeQuoteAddPol.getReplacementTypeCode());
 			callableStatement.setString(10, metaData.getDeviceType());
 			callableStatement.setString(11, metaData.getDeviceId());

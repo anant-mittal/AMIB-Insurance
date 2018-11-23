@@ -1,7 +1,6 @@
 package com.amx.jax.services;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,12 +23,8 @@ import com.amx.jax.models.PaymentDetails;
 import com.amx.jax.models.PaymentReceipt;
 import com.amx.jax.models.PaymentStatus;
 import com.amx.jax.models.ResponseInfo;
-import com.amx.jax.postman.PostManException;
-import com.amx.jax.postman.PostManService;
-import com.amx.jax.postman.model.Email;
-import com.amx.jax.postman.model.File;
-import com.amx.jax.postman.model.TemplatesIB;
 import com.amx.jax.ui.session.UserSession;
+import com.amx.jax.utility.Utility;
 
 @Service
 public class PayMentService
@@ -327,14 +322,14 @@ public class PayMentService
 		model.put(DetailsConstants.customerId, paymentReceipt.getCustomerId());
 		model.put(DetailsConstants.paymentDate, paymentReceipt.getPaymentDate());
 		model.put(DetailsConstants.paymentMode, paymentReceipt.getPaymentMode());
-		model.put(DetailsConstants.amountPaidNumber, paymentReceipt.getAmountPaidNumber());
+		model.put(DetailsConstants.amountPaidNumber, Utility.getAmountInCurrency(paymentReceipt.getAmountPaidNumber(), metaData.getDecplc() , metaData.getCurrency()));
 		model.put(DetailsConstants.amountPaidWord, paymentReceipt.getAmountPaidWord());
 		model.put(DetailsConstants.paymentId, paymentReceipt.getPaymentId());
 		model.put(DetailsConstants.customerName, paymentReceipt.getCustomerName());
 		model.put(DetailsConstants.civilId, paymentReceipt.getCivilId());
 		model.put(DetailsConstants.mobileNumber, paymentReceipt.getMobileNumber());
 		model.put(DetailsConstants.emialId, paymentReceipt.getEmialId());
-		model.put(DetailsConstants.policyDuration, paymentReceipt.getPolicyDuration());
+		model.put(DetailsConstants.policyDuration, (paymentReceipt.getPolicyDuration() + " Year"));
 		model.put(DetailsConstants.governate, paymentReceipt.getGovernate());
 		model.put(DetailsConstants.areaDesc, paymentReceipt.getAreaDesc());
 		model.put(DetailsConstants.address, paymentReceipt.getAddress());

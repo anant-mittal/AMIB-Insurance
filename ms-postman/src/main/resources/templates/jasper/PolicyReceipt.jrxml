@@ -635,7 +635,7 @@
                                     <font fontName="Arial" size="8" isItalic="true"
                                           pdfFontName="fonts/all/arialbd.ttf"/>
                                 </textElement>
-                                <text><![CDATA[KT No.]]></text>
+                                <text><![CDATA[Seating Capacity]]></text>
                             </staticText>
                             <textField isStretchWithOverflow="true">
                                 <reportElement x="160" y="4" width="400" height="15"

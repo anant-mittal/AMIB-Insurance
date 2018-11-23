@@ -17,16 +17,15 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter 
-{
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	CustomerAuthProvider customAuthProvider;
 
+	@Autowired
+	WebLoginUrlEntry loginUrlEntry;
+
 	@Override
-	protected void configure(HttpSecurity http) throws Exception 
-	{
-		System.out.println("WebSecurityConfig :: configure :: check ");
-		
+	protected void configure(HttpSecurity http) throws Exception {
 		http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
 				// Register Calls
 				.and().authorizeRequests().antMatchers("/register/**").permitAll()
@@ -39,29 +38,27 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
 				// API Calls
 				.and().authorizeRequests().antMatchers("/api/**").authenticated()
 				// App Pages
-				.and().authorizeRequests().antMatchers("/app/**").authenticated().and().authorizeRequests().antMatchers("/.**").authenticated()
+				.and().authorizeRequests().antMatchers("/app/**").authenticated().and().authorizeRequests()
+				.antMatchers("/.**").authenticated()
 				// Login Formas
 				.and().formLogin().loginPage("/login").permitAll().failureUrl("/login?error").permitAll()
 				// LogOut Pages
 				.and().logout().permitAll().logoutSuccessUrl("/login?logout").deleteCookies("JSESSIONID")
 				.invalidateHttpSession(true).permitAll().and().exceptionHandling().accessDeniedPage("/403").and().csrf()
 				.disable().headers().disable();
-		
+
+		http.exceptionHandling().authenticationEntryPoint(loginUrlEntry);
+
 	}
 
 	@Autowired
-	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception 
-	{
-		System.out.println("WebSecurityConfig :: configureGlobal ");
-		
-		auth.authenticationProvider(customAuthProvider).inMemoryAuthentication().withUser("user").password("password").roles("USER");
+	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+		auth.authenticationProvider(customAuthProvider).inMemoryAuthentication().withUser("user").password("password")
+				.roles("USER");
 	}
 
 	@Override
-	public void configure(WebSecurity web) throws Exception 
-	{
-		System.out.println("WebSecurityConfig :: configure ");
-		
+	public void configure(WebSecurity web) throws Exception {
 		web.ignoring().antMatchers("/resources/**", "/static/**", "/css/**", "/js/**", "/images/** ,/reg/** ");
 	}
 
