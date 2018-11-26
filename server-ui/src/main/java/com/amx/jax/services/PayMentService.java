@@ -237,6 +237,7 @@ public class PayMentService
 	{
 		AmxApiResponse<PaymentStatus, Object> resp = new AmxApiResponse<>();
 		PaymentStatus paymentStatus = new PaymentStatus();
+		paymentStatus.setPaymentProcedureStatus("N");
 		
 		try
 		{
@@ -256,6 +257,7 @@ public class PayMentService
 					if (createAmibResp.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 					{
 						emailSmsService.failedPGProcedureAfterCapture(paymentStatus , createAmibResp.getMessageKey() , createAmibResp.getMessage() , "CREATE AMIB PROCEDURE" , paySeqNum.toString());
+						paymentStatus.setPaymentProcedureStatus("Y");
 					}
 					else
 					{
@@ -263,6 +265,7 @@ public class PayMentService
 						if (processTeceiptResp.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 						{
 							emailSmsService.failedPGProcedureAfterCapture(paymentStatus , processTeceiptResp.getMessageKey() , processTeceiptResp.getMessage() , "PROCESS RECEIPT PROCEDURE" , paySeqNum.toString());
+							paymentStatus.setPaymentProcedureStatus("Y");
 						}
 						else
 						{
@@ -270,6 +273,7 @@ public class PayMentService
 							if (createAmibPolicyResp.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 							{
 								emailSmsService.failedPGProcedureAfterCapture(paymentStatus , createAmibPolicyResp.getMessageKey() , createAmibPolicyResp.getMessage() , "CREATE AMIB PLOICY PROCEDURE" , paySeqNum.toString());
+								paymentStatus.setPaymentProcedureStatus("Y");
 							}
 							else
 							{

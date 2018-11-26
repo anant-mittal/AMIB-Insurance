@@ -49,6 +49,8 @@ public class BrokerService {
 
 		int totalEvents = event_list.size();
 
+		logger.info("BrokerService :: pushNewEventNotifications :: totalEvents :"+totalEvents);
+		
 		// Increase Print Delay if its been long waiting for events
 		if (totalEvents > 0 || TimeUtils.isDead(printStamp, printDelay)) {
 			logger.info("Total {} Events fetched from DB, after waiting {} secs", totalEvents,printDelay);
@@ -84,6 +86,8 @@ public class BrokerService {
 				logger.debug("------------------ Event Data to push to Message Queue --------------------");
 				logger.debug(event.toString());
 
+				logger.info("BrokerService :: pushNewEventNotifications :: event :"+event.toString());
+				
 				tunnelService.task(current_event_record.getEvent_code(), event);
 
 				// Mark event record as success

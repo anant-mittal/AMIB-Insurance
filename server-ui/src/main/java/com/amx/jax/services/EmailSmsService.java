@@ -32,6 +32,7 @@ import com.amx.jax.postman.model.Notipy.Channel;
 import com.amx.jax.postman.model.SMS;
 import com.amx.jax.postman.model.TemplatesIB;
 import com.amx.jax.ui.session.UserSession;
+import com.amx.jax.utility.Utility;
 import com.amx.utils.Random;
 
 @Service
@@ -91,8 +92,6 @@ public class EmailSmsService
 		model.put(DetailsConstants.EMAIL_OTP, emailOtpToSend);
 		model.put(DetailsConstants.COMPANY_NAME, getCompanyName());
 		model.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
-		
-		
 		
 		if(otpType.equalsIgnoreCase(DetailsConstants.REGISTRATION_OTP))
 		{
@@ -425,7 +424,8 @@ public class EmailSmsService
 		model.put(DetailsConstants.COMPANY_NAME, getCompanyName());
 		model.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
 		model.put(DetailsConstants.URL_DETAILS, "");//TODO
-		model.put(DetailsConstants.POLICY_AMOUNT, amount);
+		String amountWithCurrency = Utility.getAmountInCurrency(amount, metaData.getDecplc() , metaData.getCurrency());
+		model.put(DetailsConstants.POLICY_AMOUNT, amountWithCurrency);
 		model.put(DetailsConstants.TRANSACTION_ID, transecionId);
 		model.put(DetailsConstants.POLICY_APP_NO, policyAppNo);
 		wrapper.put("data", model);

@@ -8,12 +8,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import org.springframework.data.annotation.Id;
-
+//import org.springframework.data.annotation.Id;
+import javax.persistence.Id;
 import com.amx.jax.ProjectConfig;
 
 @Entity
-@Table(name = ProjectConfig.TABLE_EVENT_NOTIFICATION) // This view created from the table EX_EVENT_NOTIFICATION and EX_EVENT_MASTER
+//@Table(name = ProjectConfig.TABLE_EVENT_NOTIFICATION) // This view created from the table EX_EVENT_NOTIFICATION and EX_EVENT_MASTER
+@Table(name = ProjectConfig.VIEW_EVENT_NOTIFICATION) // This view created from the table EX_EVENT_NOTIFICATION and EX_EVENT_MASTER
 public class EventNotificationView implements Serializable {
 	private static final long serialVersionUID = 1L;
 

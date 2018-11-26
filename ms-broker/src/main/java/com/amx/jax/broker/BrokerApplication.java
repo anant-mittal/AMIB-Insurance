@@ -16,7 +16,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableAsync(proxyTargetClass = true)
 @EnableScheduling
 @EntityScan("com.amx.jax")
-@EnableJpaRepositories("com.amx.jax.service.repository")
+//@EnableJpaRepositories("com.amx.jax.service.repository")
+@EnableJpaRepositories("com.amx.jax.mx.repository")
 public class BrokerApplication {
 
 	/**

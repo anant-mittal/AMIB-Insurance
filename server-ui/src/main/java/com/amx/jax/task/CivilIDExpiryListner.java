@@ -50,7 +50,7 @@ public class CivilIDExpiryListner implements ITunnelSubscriber<TunnelEvent> {
 
 	@Override
 	public void onMessage(String channel, TunnelEvent event) {
-		LOGGER.info("CivilIDExpiryListner :: onMessage :: ", channel, JsonUtil.toJson(event));
+		System.out.println("CivilIDExpiryListner :: onMessage :: "+ JsonUtil.toJson(event));
 		LOGGER.info("======onMessage1==={} ==== {}", channel, JsonUtil.toJson(event));
 
 		String applId = ArgUtil.parseAsString(event.getData().get(APPL_ID));

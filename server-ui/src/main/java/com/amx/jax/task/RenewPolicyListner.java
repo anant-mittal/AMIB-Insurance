@@ -53,7 +53,8 @@ public class RenewPolicyListner implements ITunnelSubscriber<TunnelEvent> {
 	@Override
 	public void onMessage(String channel, TunnelEvent event) {
 
-		LOGGER.info("RenewPolicyListner :: onMessage :: ", channel, JsonUtil.toJson(event));
+		System.out.println("RenewPolicyListner :: onMessage :: "+ JsonUtil.toJson(event));
+
 		LOGGER.info("======onMessage1==={} ====  {}", channel, JsonUtil.toJson(event));
 
 		String custCd = ArgUtil.parseAsString(event.getData().get(CUST_NAME));
