@@ -290,9 +290,15 @@ a {
 									</tr>
 									<tr>
 										<td class="content-block">The quotation for your <span th:text="${data.makeDesc}" th:remove="tag"></span> <span th:text="${data.subMakeDesc}" th:remove="tag"></span> has been provided. 
-										<br/>Please click the <a th:href="@{'https://' +${data.urlDetails}}"><span th:text="${data.urlDetails}"></span></a> for details.
+										<br/>
+										<!-- Please click the <a th:href="@{'https://' +${data.urlDetails}}"><span th:text="${data.urlDetails}"></span></a> for details. -->
 										</td>
 									</tr>
+									<tr>
+                                        <td class="content-block" align="center" style="padding:20px">
+                                            <a th:href="${_tu.prop('company.app.url')     + '/app/landing/myquotes/quote?quoteSeqNumber=' + data.quoteSeqNumber}" style="width:273px" class="btn-primary" target="_blank">CLICK HERE TO VIEW QUOTE</a>
+                                        </td>
+                                    </tr>
 									<tr>
 										<td class="content-block">Thanks and Regards,<br/>
 											<strong  class="upper"><span th:text="${data.companyName}" th:remove="tag"></span>,</strong><br/>
