@@ -106,7 +106,7 @@ public class MyPolicyController
 			model.put("insuredName", policyReceiptDetails.getInsuredName());
 			model.put("insuredAddress", policyReceiptDetails.getInsuredAddress());
 			model.put("insuredMobileNo", policyReceiptDetails.getInsuredMobileNo());
-			model.put("policyContribution", policyReceiptDetails.getPolicyContribution());
+			model.put("policyContribution", Utility.getAmountInCurrency(policyReceiptDetails.getPolicyContribution(), metaData.getDecplc() , metaData.getCurrency()));
 			model.put("supervisionFees",Utility.getAmountInCurrency(policyReceiptDetails.getSupervisionFees(), metaData.getDecplc() , metaData.getCurrency()));
 			model.put("issueFees", Utility.getAmountInCurrency(policyReceiptDetails.getIssueFees(), metaData.getDecplc() , metaData.getCurrency()));
 			model.put("endrosMentFees",Utility.getAmountInCurrency(policyReceiptDetails.getEndrosMentFees(), metaData.getDecplc() , metaData.getCurrency()));

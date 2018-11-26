@@ -85,6 +85,18 @@ public class DetailsConstants
 	
 	public static String OTP_USED_FOR = "otpUsedFor";
 	
+	public static String QUOTE_ID = "quoteId";
+	
+	public static String QUOTE_VER_NUMBER = "quoteVerNumber";
+	
+	public static String LANGUAGE_INFO = "languageId";
+	
+	public static String CUSTOMER_CD = "customerCd";
+	
+	public static String EXPIRY_DATE = "expiryDate";
+	
+	public static String QUOTE_SEQ_NUM = "quoteSeqNumber";
+	
 	/******************************PG RECEIPT CONSTANTS***************************/
 	
 	public static String applicationId = "applicationId";

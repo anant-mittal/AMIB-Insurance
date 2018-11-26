@@ -349,10 +349,9 @@ public class CustomizeQuoteService
 					payment.setNetPayableAmount(totalPremium.getTotalAmount());
 					payment.setPgCode(PayGServiceCode.KNET);
 					
-					
 					logger.info(TAG + " saveCustomizeQuoteDetails :: request.getSession().getId() :" + request.getSession().getId());
-					//String redirctUrl = payGService.getPaymentUrl(payment , "https://"+request.getServerName()+"/app/landing/myquotes/payment");
-					String redirctUrl = payGService.getPaymentUrl(payment , HttpUtils.getServerName(request)+"/app/landing/myquotes/payment");
+					//String redirctUrl = payGService.getPaymentUrl(payment , HttpUtils.getServerName(request)+"/app/landing/myquotes/payment");
+					String redirctUrl = payGService.getPaymentUrl(payment , HttpUtils.getServerName(request)+"/app/landing/myquotes/quote");
 					logger.info(TAG + " saveCustomizeQuoteDetails :: redirctUrl :" + redirctUrl);
 					
 					resp.setRedirectUrl(redirctUrl);
