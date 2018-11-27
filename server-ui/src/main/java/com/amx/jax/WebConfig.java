@@ -81,7 +81,7 @@ public class WebConfig {
 		logger.info(" getTenantProfile :: tenantProfile.getContactUsEmail :"+tenantProfile.getContactUsEmail());
 		if (tenantProfile.getContactUsEmail() == null) {
 			ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao.getCompanySetUp(laguageSetUp());
-			logger.info(" getTenantProfile :: getCntryCd :" + getCompanySetUp.get(0).getCntryCd());
+			logger.info(" getTenantProfile :: getCntryCd :" + getCompanySetUp.get(0).getCntryCd());//check
 			
 			tenantProfile.setCountryId(getCompanySetUp.get(0).getCntryCd());
 			tenantProfile.setCompCd(getCompanySetUp.get(0).getCompCd());
