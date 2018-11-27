@@ -77,8 +77,9 @@ public class WebConfig {
 
 	@CacheForThis
 	public TenantProfile getTenantProfile() {
-		logger.info(" getTenantProfile :: tenantProfile "+tenantProfile);
-		if (tenantProfile == null) {
+		
+		logger.info(" getTenantProfile :: tenantProfile.getContactUsEmail :"+tenantProfile.getContactUsEmail());
+		if (tenantProfile.getContactUsEmail() == null) {
 			ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao.getCompanySetUp(laguageSetUp());
 			logger.info(" getTenantProfile :: getCntryCd :" + getCompanySetUp.get(0).getCntryCd());
 			
