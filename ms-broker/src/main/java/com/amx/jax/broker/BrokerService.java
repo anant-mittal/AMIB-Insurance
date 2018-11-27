@@ -18,6 +18,7 @@ import com.amx.jax.broker.entity.EventNotificationEntity;
 import com.amx.jax.broker.entity.EventNotificationView;
 import com.amx.jax.dict.Tenant;
 import com.amx.jax.logger.LoggerService;
+import com.amx.jax.tunnel.TunnelEvent;
 import com.amx.jax.tunnel.TunnelService;
 import com.amx.utils.StringUtils;
 import com.amx.utils.TimeUtils;
@@ -77,11 +78,11 @@ public class BrokerService {
 				);
 
 				// Push to Message Queue
-				DBEvents event = new DBEvents();
+				TunnelEvent event = new DBEvents();
 				event.setEventCode(current_event_record.getEvent_code());
-				event.setPriority(current_event_record.getEvent_priority());
+				//event.setPriority(current_event_record.getEvent_priority());
 				event.setData(event_data_map);
-				event.setDescription(current_event_record.getEvent_desc());
+				//event.setDescription(current_event_record.getEvent_desc());
 
 				logger.debug("------------------ Event Data to push to Message Queue --------------------");
 				logger.debug(event.toString());

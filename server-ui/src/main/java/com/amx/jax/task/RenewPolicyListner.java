@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.amx.jax.WebConfig;
 import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.dict.AmibTunnelEvents;
 import com.amx.jax.dict.Language;
@@ -36,6 +37,9 @@ public class RenewPolicyListner implements ITunnelSubscriber<TunnelEvent> {
 
 	@Autowired
 	MetaData metaData;
+	
+	@Autowired
+	private WebConfig webConfig;
 
 	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
@@ -76,12 +80,13 @@ public class RenewPolicyListner implements ITunnelSubscriber<TunnelEvent> {
 		modeldata.put(DetailsConstants.CUSTOMER_EMAIL_ID, emailId);
 		modeldata.put(DetailsConstants.CUSTOMER_MOBILE_NO, mobile);
 		modeldata.put(DetailsConstants.LANGUAGE_INFO, langId);
-		modeldata.put(DetailsConstants.COMPANY_NAME, metaData.getCompanyName().toLowerCase());
+		modeldata.put(DetailsConstants.COMPANY_NAME, "AMIB");
 		modeldata.put(DetailsConstants.URL_DETAILS, "");
-		modeldata.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
-		modeldata.put(DetailsConstants.CONTACT_US_MOBILE, metaData.getContactUsHelpLineNumber());
-		modeldata.put(DetailsConstants.AMIB_WEBSITE_LINK, metaData.getAmibWebsiteLink());
+		modeldata.put(DetailsConstants.CONTACT_US_EMAIL, webConfig.getTenantProfile().getContactUsEmail());
+		modeldata.put(DetailsConstants.CONTACT_US_MOBILE, webConfig.getTenantProfile().getContactUsHelpLineNumber());
+		modeldata.put(DetailsConstants.AMIB_WEBSITE_LINK, webConfig.getTenantProfile().getAmibWebsiteLink());
 		modeldata.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
+
 
 		if (!ArgUtil.isEmpty(emailId)) {
 			Email email = new Email();

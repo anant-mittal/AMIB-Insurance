@@ -74,12 +74,10 @@ public class CustomerRegistrationService
 			metaData.setContactUsHelpLineNumber(getCompanySetUp.get(0).getHelpLineNumber());
 			metaData.setContactUsEmail(getCompanySetUp.get(0).getEmail());
 			metaData.setAmibWebsiteLink(getCompanySetUp.get(0).getWebSite());
-			logger.info(TAG + " getCompanySetUp :: setDecplc :"+getCompanySetUp.get(0).getDecimalPlaceUpTo());
 			metaData.setDecplc(getCompanySetUp.get(0).getDecimalPlaceUpTo());
 			metaData.setCompanyName(getCompanySetUp.get(0).getCompanyName());
 			metaData.setDeviceType("ONLINE");
 			metaData.setDeviceId(httpService.getIPAddress());
-			logger.info(TAG + " getCompanySetUp :: getIPAddress :"+httpService.getIPAddress());
 			metaData.setCurrency(getCompanySetUp.get(0).getCurrency());
 			metaData.setUserType("D");
 

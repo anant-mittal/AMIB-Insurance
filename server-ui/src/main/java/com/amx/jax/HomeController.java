@@ -132,7 +132,7 @@ public class HomeController
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
 		model.addAttribute("cdnUrl", appConfig.getCdnURL());
 		model.addAttribute("cdnVerion", getVersion());
-		logger.info("HomeController :: loginJPage :: getVersion : " + getVersion());
+		logger.info("HomeController :: loginJPage :: getAppCompCode : " + webConfig.getAppCompCode());
 		//model.addAttribute(AppConstants.DEVICE_ID_KEY, userDevice.getFingerprint());
 		//model.addAttribute("fcmSenderId", fcmSenderId);
 		return "app";
@@ -162,9 +162,8 @@ public class HomeController
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
 		model.addAttribute("cdnUrl", appConfig.getCdnURL());
 		model.addAttribute("cdnVerion", getVersion());
-
-		logger.info("HomeController :: defaultPage :: getVersion : " + getVersion());
 		
+		logger.info("HomeController :: loginJPage :: getAppCompCode : " + webConfig.getAppCompCode());		
 		laguageSetUp();
 		return "app";
 	}

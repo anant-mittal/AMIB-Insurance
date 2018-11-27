@@ -5,7 +5,10 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.amx.jax.WebConfig;
 import com.amx.jax.constants.DetailsConstants;
+import com.amx.jax.dao.CustomizeQuoteDao;
 import com.amx.jax.dict.AmibTunnelEvents;
 import com.amx.jax.dict.Language;
 import com.amx.jax.models.MetaData;
@@ -25,11 +28,16 @@ import com.amx.utils.JsonUtil;
 @TunnelEventMapping(topic = AmibTunnelEvents.Names.QUOTE_READY, scheme = TunnelEventXchange.TASK_WORKER)
 public class CivilIDExpiryListner implements ITunnelSubscriber<TunnelEvent> {
 
+	private static final Logger logger = LoggerFactory.getLogger(CivilIDExpiryListner.class);
+	
 	@Autowired
 	PostManClient postManClient;
 
 	@Autowired
 	private PushNotifyClient pushNotifyClient;
+	
+	@Autowired
+	private WebConfig webConfig;
 
 	@Autowired
 	MetaData metaData;
@@ -50,8 +58,7 @@ public class CivilIDExpiryListner implements ITunnelSubscriber<TunnelEvent> {
 
 	@Override
 	public void onMessage(String channel, TunnelEvent event) {
-		System.out.println("CivilIDExpiryListner :: onMessage :: "+ JsonUtil.toJson(event));
-		LOGGER.info("======onMessage1==={} ==== {}", channel, JsonUtil.toJson(event));
+		logger.info(" onMessage :: "+ JsonUtil.toJson(event));
 
 		String applId = ArgUtil.parseAsString(event.getData().get(APPL_ID));
 		String quoteId = ArgUtil.parseAsString(event.getData().get(QUOTE_ID));
@@ -74,11 +81,12 @@ public class CivilIDExpiryListner implements ITunnelSubscriber<TunnelEvent> {
 		modeldata.put(DetailsConstants.CUSTOMER_EMAIL_ID, emailId);
 		modeldata.put(DetailsConstants.CUSTOMER_MOBILE_NO, mobile);
 		modeldata.put(DetailsConstants.LANGUAGE_INFO, langId);
-		modeldata.put(DetailsConstants.COMPANY_NAME, metaData.getCompanyName().toLowerCase());
+		modeldata.put(DetailsConstants.COMPANY_NAME, webConfig.getAppCompCode());
 		modeldata.put(DetailsConstants.URL_DETAILS, "");
-		modeldata.put(DetailsConstants.CONTACT_US_EMAIL, metaData.getContactUsEmail());
-		modeldata.put(DetailsConstants.CONTACT_US_MOBILE, metaData.getContactUsHelpLineNumber());
-		modeldata.put(DetailsConstants.AMIB_WEBSITE_LINK, metaData.getAmibWebsiteLink());
+		logger.info("getTenantProfile :: getContactUsEmail :" + webConfig.getTenantProfile().getContactUsEmail());
+		modeldata.put(DetailsConstants.CONTACT_US_EMAIL, webConfig.getTenantProfile().getContactUsEmail());
+		modeldata.put(DetailsConstants.CONTACT_US_MOBILE, webConfig.getTenantProfile().getContactUsHelpLineNumber());
+		modeldata.put(DetailsConstants.AMIB_WEBSITE_LINK, webConfig.getTenantProfile().getAmibWebsiteLink());
 		modeldata.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
 
 		if (!ArgUtil.isEmpty(emailId)) {

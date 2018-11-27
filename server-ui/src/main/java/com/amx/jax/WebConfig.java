@@ -1,16 +1,29 @@
 
 package com.amx.jax;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+
+import com.amx.jax.config.TenantProfile;
+import com.amx.jax.dao.CustomerRegistrationDao;
+import com.amx.jax.def.CacheForThis;
+import com.amx.jax.http.CommonHttpRequest;
+import com.amx.jax.models.CompanySetUp;
 
 @Configuration
 @PropertySource("classpath:application-lib.properties")
 public class WebConfig {
 
+	private static final Logger logger = LoggerFactory.getLogger(WebConfig.class);
+	
 	public static final Pattern pattern = Pattern.compile("^\\$\\{(.*)\\}$");
 
 	public static final String APP_NAME = "${app.name}";
@@ -47,11 +60,38 @@ public class WebConfig {
 	@Value(APP_COMP)
 	private String appComp;
 
+	@Autowired
+	private TenantProfile tenantProfile;
+	
+	@Autowired
+	private CustomerRegistrationDao customerRegistrationDao;
+	
+	@Autowired
+	CommonHttpRequest httpService;
+
 	/*
 	 * @Value(CONFIG_EMAIL) private String configEmail;
 	 * 
 	 * public String getConfigEmail() { return configEmail; }
 	 */
+
+	@CacheForThis
+	public TenantProfile getTenantProfile() {
+		logger.info(" getTenantProfile :: tenantProfile "+tenantProfile);
+		if (tenantProfile == null) {
+			ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao.getCompanySetUp(laguageSetUp());
+			logger.info(" getTenantProfile :: getCntryCd :" + getCompanySetUp.get(0).getCntryCd());
+			
+			tenantProfile.setCountryId(getCompanySetUp.get(0).getCntryCd());
+			tenantProfile.setCompCd(getCompanySetUp.get(0).getCompCd());
+			tenantProfile.setContactUsHelpLineNumber(getCompanySetUp.get(0).getHelpLineNumber());
+			tenantProfile.setContactUsEmail(getCompanySetUp.get(0).getEmail());
+			tenantProfile.setAmibWebsiteLink(getCompanySetUp.get(0).getWebSite());
+			tenantProfile.setDecplc(getCompanySetUp.get(0).getDecimalPlaceUpTo());
+			tenantProfile.setCurrency(getCompanySetUp.get(0).getCurrency());
+		}
+		return tenantProfile;
+	}
 
 	@Value(PAYMENT_URL)
 	private String paymentUrl;
@@ -123,5 +163,13 @@ public class WebConfig {
 	public Boolean isCache() {
 		return cache;
 	}
-
+	
+	public BigDecimal laguageSetUp()
+	{
+		/*if (httpService.getLanguage().toString().equalsIgnoreCase("EN"))
+		{
+			return new BigDecimal(0);
+		}*/
+		return new BigDecimal(0);
+	}
 }
