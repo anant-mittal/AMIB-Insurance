@@ -96,7 +96,7 @@ public class MyPolicyController
 			model.put("modelYear", policyReceiptDetails.getModelYear());
 			model.put("chaisisNumber", policyReceiptDetails.getChaisisNumber());
 			model.put("ktNumber", policyReceiptDetails.getKtNumber());
-			model.put("vehicleValue", policyReceiptDetails.getVehicleValue());
+			model.put("vehicleValue", Utility.getAmountInCurrency(policyReceiptDetails.getVehicleValue(), metaData.getDecplc() , metaData.getCurrency()));
 			model.put("purpose", policyReceiptDetails.getPurpose());
 			model.put("colour", policyReceiptDetails.getColour());
 			model.put("shape", policyReceiptDetails.getShape());
