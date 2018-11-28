@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.http.CommonHttpRequest;
-import com.amx.jax.models.MetaData;
+import com.amx.jax.meta.IMetaService;
 import com.amx.jax.rest.RestService;
 import com.amx.jax.services.CustomerRegistrationService;
 import com.amx.jax.services.CustomizeQuoteService;
@@ -60,9 +60,6 @@ public class HomeController
 	@Autowired
 	RestService restService;
 
-	@Autowired
-	private MetaData metaData;
-
 	/** The check time. */
 	private long checkTime = 0L;
 
@@ -77,6 +74,9 @@ public class HomeController
 
 	@Autowired
 	UserSession userSession;
+	
+	@Autowired
+	IMetaService metaService;
 
 	/**
 	 * Gets the version.
@@ -103,10 +103,7 @@ public class HomeController
 				logger.info("HomeController :: getVersion() :: Exception :"+ e);
 			}
 		}
-		logger.info("HomeController :: getVersion() :: versionNew 2 :"+ versionNew);
 		return versionNew;
-		
-		//return "1.0.1";
 	}
 
 	/**
@@ -132,7 +129,6 @@ public class HomeController
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
 		model.addAttribute("cdnUrl", appConfig.getCdnURL());
 		model.addAttribute("cdnVerion", getVersion());
-		logger.info("HomeController :: loginJPage :: getAppCompCode : " + webConfig.getAppCompCode());
 		//model.addAttribute(AppConstants.DEVICE_ID_KEY, userDevice.getFingerprint());
 		//model.addAttribute("fcmSenderId", fcmSenderId);
 		return "app";
@@ -162,9 +158,6 @@ public class HomeController
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
 		model.addAttribute("cdnUrl", appConfig.getCdnURL());
 		model.addAttribute("cdnVerion", getVersion());
-		
-		logger.info("HomeController :: loginJPage :: getAppCompCode : " + webConfig.getAppCompCode());		
-		laguageSetUp();
 		return "app";
 	}
 
@@ -194,13 +187,13 @@ public class HomeController
 	}
 
 
-	public void laguageSetUp()
+	/*public void laguageSetUp()
 	{
 		if (httpService.getLanguage().toString().equalsIgnoreCase("EN"))
 		{
-			metaData.setLanguageId(new BigDecimal(0));
+			metaService.getTenantProfile().setLanguageId(new BigDecimal(0));
 			customerRegistrationService.getCompanySetUp();
 		}
-	}
+	}*/
 
 }

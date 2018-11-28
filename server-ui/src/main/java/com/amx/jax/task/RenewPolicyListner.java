@@ -3,16 +3,14 @@ package com.amx.jax.task;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import com.amx.jax.WebConfig;
 import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.dict.AmibTunnelEvents;
 import com.amx.jax.dict.Language;
-import com.amx.jax.models.MetaData;
+import com.amx.jax.meta.IMetaService;
 import com.amx.jax.postman.client.PostManClient;
 import com.amx.jax.postman.client.PushNotifyClient;
 import com.amx.jax.postman.model.Email;
@@ -36,10 +34,10 @@ public class RenewPolicyListner implements ITunnelSubscriber<TunnelEvent> {
 	private PushNotifyClient pushNotifyClient;
 
 	@Autowired
-	MetaData metaData;
+	private WebConfig webConfig;
 	
 	@Autowired
-	private WebConfig webConfig;
+	IMetaService metaService;
 
 	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
@@ -80,11 +78,11 @@ public class RenewPolicyListner implements ITunnelSubscriber<TunnelEvent> {
 		modeldata.put(DetailsConstants.CUSTOMER_EMAIL_ID, emailId);
 		modeldata.put(DetailsConstants.CUSTOMER_MOBILE_NO, mobile);
 		modeldata.put(DetailsConstants.LANGUAGE_INFO, langId);
-		modeldata.put(DetailsConstants.COMPANY_NAME, "AMIB");
+		modeldata.put(DetailsConstants.COMPANY_NAME, metaService.getTenantProfile().getCompanyName());
 		modeldata.put(DetailsConstants.URL_DETAILS, "");
-		modeldata.put(DetailsConstants.CONTACT_US_EMAIL, webConfig.getTenantProfile().getContactUsEmail());
-		modeldata.put(DetailsConstants.CONTACT_US_MOBILE, webConfig.getTenantProfile().getContactUsHelpLineNumber());
-		modeldata.put(DetailsConstants.AMIB_WEBSITE_LINK, webConfig.getTenantProfile().getAmibWebsiteLink());
+		modeldata.put(DetailsConstants.CONTACT_US_EMAIL, metaService.getTenantProfile().getContactUsEmail());
+		modeldata.put(DetailsConstants.CONTACT_US_MOBILE, metaService.getTenantProfile().getContactUsHelpLineNumber());
+		modeldata.put(DetailsConstants.AMIB_WEBSITE_LINK, metaService.getTenantProfile().getAmibWebsiteLink());
 		modeldata.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
 
 

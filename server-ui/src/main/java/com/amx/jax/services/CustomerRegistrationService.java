@@ -4,20 +4,21 @@ package com.amx.jax.services;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.amx.jax.WebConfig;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.DatabaseErrorKey;
 import com.amx.jax.constants.DetailsConstants;
+import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.constants.Message;
 import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.http.CommonHttpRequest;
+import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.ChangePasswordOtpRequest;
 import com.amx.jax.models.ChangePasswordRequest;
 import com.amx.jax.models.ChangePasswordResponse;
@@ -32,7 +33,6 @@ import com.amx.jax.models.CustomerRegistrationModel;
 import com.amx.jax.models.CustomerRegistrationRequest;
 import com.amx.jax.models.CustomerRegistrationResponse;
 import com.amx.jax.models.FailureException;
-import com.amx.jax.models.MetaData;
 import com.amx.jax.models.RequestOtpModel;
 import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.models.ResponseOtpModel;
@@ -46,9 +46,6 @@ public class CustomerRegistrationService
 	private static final Logger logger = LoggerFactory.getLogger(CustomerRegistrationService.class);
 
 	@Autowired
-	private MetaData metaData;
-
-	@Autowired
 	UserSession userSession;
 
 	@Autowired
@@ -56,31 +53,36 @@ public class CustomerRegistrationService
 
 	@Autowired
 	CommonHttpRequest httpService;
+	
+	@Autowired
+	private WebConfig webConfig;
+	
+	@Autowired
+	IMetaService metaService;
 
 	@Autowired
 	private CustomerRegistrationDao customerRegistrationDao;
 
 	public AmxApiResponse<CompanySetUp, Object> getCompanySetUp()
 	{
-		logger.info(TAG + " getCompanySetUp ::");
+		logger.info(TAG + " getCompanySetUp :: "+metaService.getTenantProfile().getLanguageId());
 		
 		AmxApiResponse<CompanySetUp, Object> resp = new AmxApiResponse<CompanySetUp, Object>();
 		try
 		{
-			ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao.getCompanySetUp(metaData.getLanguageId());
-
-			metaData.setCountryId(getCompanySetUp.get(0).getCntryCd());
-			metaData.setCompCd(getCompanySetUp.get(0).getCompCd());
-			metaData.setContactUsHelpLineNumber(getCompanySetUp.get(0).getHelpLineNumber());
-			metaData.setContactUsEmail(getCompanySetUp.get(0).getEmail());
-			metaData.setAmibWebsiteLink(getCompanySetUp.get(0).getWebSite());
-			metaData.setDecplc(getCompanySetUp.get(0).getDecimalPlaceUpTo());
-			metaData.setCompanyName(getCompanySetUp.get(0).getCompanyName());
-			metaData.setDeviceType("ONLINE");
-			metaData.setDeviceId(httpService.getIPAddress());
-			metaData.setCurrency(getCompanySetUp.get(0).getCurrency());
-			metaData.setUserType("D");
-
+			ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao.getCompanySetUp(metaService.getTenantProfile().getLanguageId() , webConfig.getAppCompCode());
+			
+			/*metaService.getTenantProfile().setCountryId(getCompanySetUp.get(0).getCntryCd());
+			metaService.getTenantProfile().setCompCd(getCompanySetUp.get(0).getCompCd());
+			metaService.getTenantProfile().setContactUsHelpLineNumber(getCompanySetUp.get(0).getHelpLineNumber());
+			metaService.getTenantProfile().setContactUsEmail(getCompanySetUp.get(0).getEmail());
+			metaService.getTenantProfile().setAmibWebsiteLink(getCompanySetUp.get(0).getWebSite());
+			metaService.getTenantProfile().setDecplc(getCompanySetUp.get(0).getDecimalPlaceUpTo());
+			metaService.getTenantProfile().setCompanyName(getCompanySetUp.get(0).getCompanyName());
+			metaService.getTenantProfile().setCurrency(getCompanySetUp.get(0).getCurrency());
+			metaService.getUserDeviceInfo().setDeviceType("ONLINE");
+			metaService.getUserDeviceInfo().setDeviceId(httpService.getIPAddress());*/
+			
 			resp.setResults(getCompanySetUp);
 			resp.setStatusKey(ApiConstants.SUCCESS);
 		}
@@ -114,9 +116,7 @@ public class CustomerRegistrationService
 
 	public AmxApiResponse<ResponseInfo, Object> isCivilIdExist(String civilid)
 	{
-		boolean civilIdExistCheck = customerRegistrationDao.isCivilIdExist(civilid , metaData.getUserType());
-		logger.info(TAG + " isCivilIdExist :: civilIdExistCheck :" + civilIdExistCheck);
-		
+		boolean civilIdExistCheck = customerRegistrationDao.isCivilIdExist(civilid , HardCodedValues.USER_TYPE);
 		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
 		if (civilIdExistCheck)
 		{
@@ -154,7 +154,7 @@ public class CustomerRegistrationService
 
 	public AmxApiResponse<ResponseInfo, Object> isMobileNumberExist(String mobileNumber)
 	{
-		boolean mobileNumberExists = customerRegistrationDao.isMobileNumberExist(mobileNumber , metaData.getUserType());
+		boolean mobileNumberExists = customerRegistrationDao.isMobileNumberExist(mobileNumber , HardCodedValues.USER_TYPE);
 		AmxApiResponse<ResponseInfo, Object> validMobileNumber = new AmxApiResponse<ResponseInfo, Object>();
 		if (mobileNumberExists)
 		{
@@ -168,8 +168,8 @@ public class CustomerRegistrationService
 			validMobileNumber.setMessage(Message.MOBILE_NO_NOT_REGISTER);
 			validMobileNumber.setMessageKey(MessageKey.KEY_MOBILE_NO_NOT_REGISTER);
 			ResponseInfo validate = new ResponseInfo();
-			validate.setContactUsHelpLineNumber(metaData.getContactUsHelpLineNumber());
-			validate.setContactUsEmail(metaData.getContactUsEmail());
+			validate.setContactUsHelpLineNumber(metaService.getTenantProfile().getContactUsHelpLineNumber());
+			validate.setContactUsEmail(metaService.getTenantProfile().getContactUsEmail());
 		}
 		return validMobileNumber;
 	}
@@ -206,8 +206,7 @@ public class CustomerRegistrationService
 
 	public AmxApiResponse<ResponseInfo, Object> isEmailIdExist(String emailId)
 	{
-		boolean emailIdExistCheck = customerRegistrationDao.isEmailIdExist(emailId , metaData.getUserType());
-		logger.info(TAG + " isCivilIdExist :: civilIdExistCheck :" + emailIdExistCheck);
+		boolean emailIdExistCheck = customerRegistrationDao.isEmailIdExist(emailId , HardCodedValues.USER_TYPE);
 		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
 		if (emailIdExistCheck)
 		{
@@ -221,8 +220,8 @@ public class CustomerRegistrationService
 			resp.setMessage(Message.EMAIL_ALREDAY_NOT_REGISTER);
 			resp.setMessageKey(MessageKey.KEY_EMAID_NOT_REGISTER);
 			ResponseInfo validate = new ResponseInfo();
-			validate.setContactUsHelpLineNumber(metaData.getContactUsHelpLineNumber());
-			validate.setContactUsEmail(metaData.getContactUsEmail());
+			validate.setContactUsHelpLineNumber(metaService.getTenantProfile().getContactUsHelpLineNumber());
+			validate.setContactUsEmail(metaService.getTenantProfile().getContactUsEmail());
 		}
 		return resp;
 	}
@@ -235,7 +234,7 @@ public class CustomerRegistrationService
 
 		if (null != userSession.getCivilId() && !userSession.getCivilId().equals(""))
 		{
-			CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(userSession.getCivilId() , metaData.getUserType() , userSession.getUserSequenceNumber());
+			CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getUserSequenceNumber());
 			customerDetails.setCivilId(userSession.getCivilId());
 			customerDetails.setCustSeqNumber(customerDetailModel.getCustSequenceNumber());
 			customerDetails.setDeviceId(customerDetailModel.getDeviceId());
@@ -259,7 +258,7 @@ public class CustomerRegistrationService
 			customerDetailResponse.setCustomerDetails(null);
 		}
 
-		ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao.getCompanySetUp(metaData.getLanguageId());
+		ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao.getCompanySetUp(metaService.getTenantProfile().getLanguageId(), webConfig.getAppCompCode());
 		CompanySetUp companySetUp = getCompanySetUp.get(0);
 
 		customerDetailResponse.setCompanySetUp(companySetUp);
@@ -312,10 +311,6 @@ public class CustomerRegistrationService
 			{
 				return validateForRegistration;
 			}
-
-			logger.info(TAG + " registrationOtp :: civilId    :" + requestOtpModel.getCivilId());
-			logger.info(TAG + " registrationOtp :: getEmailId :" + requestOtpModel.getEmailId());
-
 			userSession.setCivilId(requestOtpModel.getCivilId());
 			userSession.setCustomerEmailId(requestOtpModel.getEmailId());
 			userSession.setCustomerMobileNumber(requestOtpModel.getMobileNumber());
@@ -344,15 +339,15 @@ public class CustomerRegistrationService
 		CustomerRegistrationResponse customerRegistrationResponse = new CustomerRegistrationResponse();
 		CustomerRegistrationModel customerRegistrationModel = new CustomerRegistrationModel();
 		customerRegistrationModel.setPassword(userRegistartionRequest.getPassword());
-		customerRegistrationModel.setCountryId(metaData.getCountryId());
-		customerRegistrationModel.setCompCd(metaData.getCompCd());
-		customerRegistrationModel.setUserType(metaData.getUserType());
+		customerRegistrationModel.setCountryId(metaService.getTenantProfile().getCountryId());
+		customerRegistrationModel.setCompCd(metaService.getTenantProfile().getCompCd());
+		customerRegistrationModel.setUserType(HardCodedValues.USER_TYPE);
 		customerRegistrationModel.setMobile(userSession.getCustomerMobileNumber());
 		customerRegistrationModel.setEmail(userSession.getCustomerEmailId());
-		customerRegistrationModel.setLanguageId(metaData.getLanguageId());
+		customerRegistrationModel.setLanguageId(metaService.getTenantProfile().getLanguageId());
 		customerRegistrationModel.setCivilId(userSession.getCivilId());
-		customerRegistrationModel.setCreatedDeviceId(metaData.getDeviceId());
-		customerRegistrationModel.setDeviceType(metaData.getDeviceType());
+		customerRegistrationModel.setCreatedDeviceId(metaService.getUserDeviceInfo().getDeviceId());
+		customerRegistrationModel.setDeviceType(metaService.getUserDeviceInfo().getDeviceType());
 
 		customerRegistrationModel = customerRegistrationDao.addNewCustomer(customerRegistrationModel);
 
@@ -406,7 +401,7 @@ public class CustomerRegistrationService
 
 		customerLoginModel.setCivilId(customerLoginRequest.getCivilId());
 		customerLoginModel.setPassword(customerLoginRequest.getPassword());
-		customerLoginModel = customerRegistrationDao.validateUserLogin(customerLoginModel , metaData.getUserType());
+		customerLoginModel = customerRegistrationDao.validateUserLogin(customerLoginModel , HardCodedValues.USER_TYPE);
 
 		if (customerLoginModel.getStatus())
 		{
@@ -414,7 +409,6 @@ public class CustomerRegistrationService
 			getCustomerDetails();
 			resp.setStatusKey(ApiConstants.SUCCESS);
 			userSession.authorize(customerLoginRequest.getCivilId(), customerLoginRequest.getPassword());
-			logger.info(TAG + " validateUserLogin :: getReturnUrl() :" + userSession.getReturnUrl());
 			resp.setRedirectUrl(userSession.getReturnUrl());
 		}
 		else
@@ -443,8 +437,8 @@ public class CustomerRegistrationService
 			logger.info(TAG + " validateUserLogin :: Lock Account :");
 			resp.setMessageKey(customerLoginModel.getErrorCode());
 			resp.setMessage(customerLoginModel.getErrorCode());
-			customerLoginResponse.setContactUsHelpLineNumber(metaData.getContactUsHelpLineNumber());
-			customerLoginResponse.setContactUsEmail(metaData.getContactUsEmail());
+			customerLoginResponse.setContactUsHelpLineNumber(metaService.getTenantProfile().getContactUsHelpLineNumber());
+			customerLoginResponse.setContactUsEmail(metaService.getTenantProfile().getContactUsEmail());
 		}
 		else
 		{
@@ -455,8 +449,6 @@ public class CustomerRegistrationService
 		customerLoginResponse.setAmibRef(customerLoginModel.getAmibRef());
 		customerLoginResponse.setUserSeqNum(customerLoginModel.getUserSeqNum());
 		resp.setData(customerLoginResponse);
-		logger.info(TAG + " validateUserLogin :: customerLoginResponse :" + customerLoginResponse.toString());
-
 		return resp;
 	}
 
@@ -489,7 +481,7 @@ public class CustomerRegistrationService
 			return civilIdExistCheck;
 		}
 
-		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(changePasswordOtpRequest.getCivilId() , metaData.getUserType() , userSession.getUserSequenceNumber());
+		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(changePasswordOtpRequest.getCivilId() , HardCodedValues.USER_TYPE , userSession.getUserSequenceNumber());
 		if (null == customerDetailModel || customerDetailModel.getErrorCode() != null)
 		{
 			resp.setMessageKey(customerDetailModel.getErrorCode());
@@ -524,7 +516,7 @@ public class CustomerRegistrationService
 	{
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
 
-		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(userSession.getCivilId() , metaData.getUserType() , userSession.getUserSequenceNumber());
+		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getUserSequenceNumber());
 		if (null == customerDetailModel || customerDetailModel.getErrorCode() != null)
 		{
 			resp.setMessageKey(customerDetailModel.getErrorCode());
@@ -551,7 +543,7 @@ public class CustomerRegistrationService
 		CustomerDetailModel customerDetailModel = new CustomerDetailModel();
 		customerDetailModel.setPassword(changePasswordRequest.getNewPassword());
 
-		customerDetailModel = customerRegistrationDao.updatePassword(customerDetailModel , userSession.getCivilId() , metaData.getUserType());
+		customerDetailModel = customerRegistrationDao.updatePassword(customerDetailModel , userSession.getCivilId() , HardCodedValues.USER_TYPE);
 
 		if (customerDetailModel.getStatus())
 		{
@@ -575,7 +567,7 @@ public class CustomerRegistrationService
 		AmxApiResponse<ChangePasswordResponse, Object> resp = new AmxApiResponse<ChangePasswordResponse, Object>();
 		CustomerDetailModel customerDetailModel = new CustomerDetailModel();
 		customerDetailModel.setPassword(changePasswordRequest.getNewPassword());
-		customerDetailModel = customerRegistrationDao.updatePassword(customerDetailModel , userSession.getCivilId() , metaData.getUserType());
+		customerDetailModel = customerRegistrationDao.updatePassword(customerDetailModel , userSession.getCivilId() , HardCodedValues.USER_TYPE);
 		if (customerDetailModel.getStatus())
 		{
 			resp.setMessageKey(customerDetailModel.getErrorCode());
@@ -599,17 +591,15 @@ public class CustomerRegistrationService
 		failureException.setCivilId(requestOtpModel.getCivilId());
 		failureException.setMobileNumber(requestOtpModel.getMobileNumber());
 		failureException.setEmailId(requestOtpModel.getEmailId());
-		failureException.setCountryId(metaData.getCountryId());
-		failureException.setCompCd(metaData.getCompCd());
-		failureException.setDeviceId(metaData.getDeviceId());
-		failureException.setDeviceType(metaData.getDeviceType());
-		failureException.setLanguageId(metaData.getLanguageId());
+		failureException.setCountryId(metaService.getTenantProfile().getCountryId());
+		failureException.setCompCd(metaService.getTenantProfile().getCompCd());
+		failureException.setDeviceId(metaService.getUserDeviceInfo().getDeviceId());
+		failureException.setDeviceType(metaService.getUserDeviceInfo().getDeviceType());
+		failureException.setLanguageId(metaService.getTenantProfile().getLanguageId());
 		failureException.setExceptionType("REGISTER");
-		failureException.setUserType(metaData.getUserType());
+		failureException.setUserType(HardCodedValues.USER_TYPE);
 		failureException.setExceptionMsg(exceptionMessage);
-
 		emailSmsService.sendFailedRegEmail(requestOtpModel);
-
 		customerRegistrationDao.setFailedException(type, failureException);
 
 	}

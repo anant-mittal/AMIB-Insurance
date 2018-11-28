@@ -1,4 +1,4 @@
-package com.amx.jax.config;
+package com.amx.jax.meta;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -23,6 +23,16 @@ public class TenantProfile implements Serializable {
 
 	private BigDecimal decplc;
 	
+	private String companyName;
+	
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
 	public BigDecimal getCountryId() {
 		return countryId;
 	}

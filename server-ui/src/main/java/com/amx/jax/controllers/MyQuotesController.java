@@ -13,8 +13,6 @@ import com.amx.jax.services.MyQuotesService;
 @RestController
 public class MyQuotesController
 {
-	String TAG = "com.amx.jax.controllers :: MyQuotesController :: ";
-
 	private static final Logger logger = LoggerFactory.getLogger(MyQuotesController.class);
 
 	@Autowired
@@ -23,7 +21,6 @@ public class MyQuotesController
 	@RequestMapping(value = "/api/myquote/get-myquotes", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> getUserQuote()
 	{
-		logger.info(TAG + " getUserQuote :: ");
 		return myQuotesService.getUserQuote();
 	}
 }

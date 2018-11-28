@@ -2,19 +2,17 @@
 package com.amx.jax.services;
 
 import java.math.BigDecimal;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
+import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.MyPolicyDao;
 import com.amx.jax.models.ActivePolicyModel;
 import com.amx.jax.models.DateFormats;
-import com.amx.jax.models.MetaData;
 import com.amx.jax.models.PersonalDetails;
 import com.amx.jax.models.PolicyReceiptDetails;
 import com.amx.jax.models.RequestQuoteInfo;
@@ -28,9 +26,6 @@ public class MyPolicyService
 	String TAG = "com.amx.jax.services :: MyPolicyService :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(MyPolicyService.class);
-
-	@Autowired
-	MetaData metaData;
 
 	@Autowired
 	UserSession userSession;
@@ -48,7 +43,7 @@ public class MyPolicyService
 		AmxApiResponse<ActivePolicyModel, Object> resp = new AmxApiResponse<ActivePolicyModel, Object>();
 		try
 		{
-			resp.setResults(myPolicyDao.getUserActivePolicy(userSession.getUserAmibCustRef(), userSession.getCivilId() , metaData.getUserType() , userSession.getCustomerSequenceNumber()));
+			resp.setResults(myPolicyDao.getUserActivePolicy(userSession.getUserAmibCustRef(), userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber()));
 			resp.setStatusKey(ApiConstants.SUCCESS);
 			
 		}
@@ -78,7 +73,7 @@ public class MyPolicyService
 			}
 			else
 			{
-				String checkRenewableApplicable = myPolicyDao.checkRenewableApplicable(oldDocNumber , userSession.getCivilId() , metaData.getUserType() , userSession.getCustomerSequenceNumber());
+				String checkRenewableApplicable = myPolicyDao.checkRenewableApplicable(oldDocNumber , userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber());
 				logger.info(TAG + " renewInsuranceOldPolicy :: checkRenewableApplicable :" + checkRenewableApplicable);
 				if(null != checkRenewableApplicable && !checkRenewableApplicable.equals(""))
 				{

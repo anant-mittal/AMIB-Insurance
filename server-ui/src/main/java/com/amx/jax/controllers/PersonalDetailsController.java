@@ -21,9 +21,7 @@ import com.amx.utils.ArgUtil;
 public class PersonalDetailsController
 {
 	private static final Logger logger = LoggerFactory.getLogger(PersonalDetailsController.class);
-
-	String TAG = "com.amx.jax.personaldetails.controller.PersonalDetailsCuntroller :- ";
-
+	
 	@Autowired
 	public PersonalDetailsService personalDetailsService;
 

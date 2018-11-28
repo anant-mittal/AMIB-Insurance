@@ -5,16 +5,11 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.TreeMap;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.amx.jax.AppConfig;
-import com.amx.jax.WebConfig;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.dao.CustomizeQuoteDao;
@@ -25,15 +20,12 @@ import com.amx.jax.models.CustomizeQuoteInfo;
 import com.amx.jax.models.CustomizeQuoteModel;
 import com.amx.jax.models.CustomizeQuoteSave;
 import com.amx.jax.models.DateFormats;
-import com.amx.jax.models.MetaData;
 import com.amx.jax.models.MyQuoteModel;
 import com.amx.jax.models.PaymentDetails;
-import com.amx.jax.models.PgRedirectUrl;
 import com.amx.jax.models.QuotationDetails;
 import com.amx.jax.models.QuoteAddPolicyDetails;
 import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.models.TotalPremium;
-import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.payg.PayGService;
 import com.amx.jax.payg.Payment;
 import com.amx.jax.ui.session.UserSession;
@@ -44,13 +36,8 @@ import com.amx.utils.HttpUtils;
 @Service
 public class CustomizeQuoteService
 {
-	String TAG = "com.amx.jax.services :: CustomizeQuoteService :: ";
-
 	private static final Logger logger = LoggerFactory.getLogger(CustomizeQuoteService.class);
 
-	@Autowired
-	MetaData metaData;
-	
 	@Autowired
 	UserSession userSession;
 
@@ -68,7 +55,6 @@ public class CustomizeQuoteService
 	
 	public AmxApiResponse<?, Object> getCustomizedQuoteDetails(BigDecimal quoteSeqNumber)
 	{
-		logger.info(TAG + " getCustomizedQuoteDetails :: quoteSeqNumber :" + quoteSeqNumber);
 		AmxApiResponse<CustomizeQuoteModel, Object> resp = new AmxApiResponse<CustomizeQuoteModel, Object>();
 		CustomizeQuoteModel customizeQuoteModel = new CustomizeQuoteModel();
 		CustomizeQuoteInfo customizeQuoteInfo = new CustomizeQuoteInfo();
@@ -94,8 +80,6 @@ public class CustomizeQuoteService
 				}
 			}
 			
-			logger.info(TAG + " getCustomizedQuoteDetails :: myQuoteModel :" + myQuoteModel.toString());
-			
 
 			// SET Quotation Details
 			quotationDetails.setMakeCode(myQuoteModel.getMakeCode());
@@ -107,14 +91,12 @@ public class CustomizeQuoteService
 			quotationDetails.setCompanyShortCode(myQuoteModel.getCompanyShortCode());
 			quotationDetails.setChassisNumber(myQuoteModel.getChassisNumber());
 			quotationDetails.setPolicyDuration(myQuoteModel.getPolicyDuration());
-			logger.info(TAG + " getCustomizedQuoteDetails :: quotationDetails :" + quotationDetails.toString());
-
+			
 			
 			
 			// SET QuoteAddPolicy Details
 			quoteAddPolicyDetails = customizeQuoteDao.getQuoteAdditionalPolicy(myQuoteModel.getQuoteSeqNumber(), myQuoteModel.getVerNumber());
-			logger.info(TAG + " getCustomizedQuoteDetails :: quoteAddPolicyDetails :" + quoteAddPolicyDetails.toString());
-
+			
 			
 			
 			// SET TotalPremium Details
@@ -123,7 +105,7 @@ public class CustomizeQuoteService
 			totalPremium.setIssueFee(Utility.getNumericValue(myQuoteModel.getIssueFee()));
 			totalPremium.setSupervisionFees(Utility.getNumericValue(myQuoteModel.getSupervisionFees()));
 			totalPremium.setTotalAmount(Utility.getNumericValue(myQuoteModel.getNetAmount()));
-			logger.info(TAG + " getCustomizedQuoteDetails :: totalPremium :" + totalPremium.toString());
+			
 
 			
 			
@@ -321,26 +303,20 @@ public class CustomizeQuoteService
 				customizeQuoteSave.setAddCoveragePremium(totalPremium.getAddCoveragePremium());
 				customizeQuoteSave.setTotalAmount(totalPremium.getTotalAmount());
 				
-				logger.info(TAG + " saveCustomizeQuoteAddPol :: customizeQuoteSave :" + customizeQuoteSave.toString());
 				ResponseInfo validate = customizeQuoteDao.saveCustomizeQuote(customizeQuoteSave , userSession.getCivilId());
-				logger.info(TAG + " saveCustomizeQuoteAddPol :: getErrorCode() :" + validate.getErrorCode());
-				logger.info(TAG + " saveCustomizeQuoteAddPol :: getErrorMessage() :" + validate.getErrorMessage());
-				
-				
 				if (validate.getErrorCode() == null)
 				{
 					resp.setStatusKey(ApiConstants.SUCCESS);
 					
 					/******************************************************PAYMENT GATEWAY***********************************************************/
 					
-					logger.info(TAG + " saveCustomizeQuoteDetails :: getQuoteSeqNumber :" + customizeQuoteInfo.getQuoteSeqNumber());
-					logger.info(TAG + " saveCustomizeQuoteDetails :: getTotalAmount    :" + totalPremium.getTotalAmount());
-					logger.info(TAG + " saveCustomizeQuoteDetails :: getTotalAmount    :" + totalPremium.getTotalAmount());
+					logger.info("saveCustomizeQuoteDetails :: getQuoteSeqNumber :" + customizeQuoteInfo.getQuoteSeqNumber());
+					logger.info("saveCustomizeQuoteDetails :: getTotalAmount    :" + totalPremium.getTotalAmount());
 					
 					AmxApiResponse<PaymentDetails, Object> respInsertPayment = payMentService.insertPaymentDetals(customizeQuoteInfo.getQuoteSeqNumber(),totalPremium.getTotalAmount());
 					PaymentDetails paymentDetails = respInsertPayment.getData();
 					
-					logger.info(TAG + " saveCustomizeQuoteDetails :: paymentDetails :" + paymentDetails.toString());
+					logger.info("saveCustomizeQuoteDetails :: paymentDetails :" + paymentDetails.toString());
 					
 					Payment payment = new Payment();
 					payment.setDocFinYear(1123);
@@ -349,10 +325,8 @@ public class CustomizeQuoteService
 					payment.setNetPayableAmount(totalPremium.getTotalAmount());
 					payment.setPgCode(PayGServiceCode.KNET);
 					
-					logger.info(TAG + " saveCustomizeQuoteDetails :: request.getSession().getId() :" + request.getSession().getId());
-					//String redirctUrl = payGService.getPaymentUrl(payment , HttpUtils.getServerName(request)+"/app/landing/myquotes/payment");
 					String redirctUrl = payGService.getPaymentUrl(payment , HttpUtils.getServerName(request)+"/app/landing/myquotes/quote");
-					logger.info(TAG + " saveCustomizeQuoteDetails :: redirctUrl :" + redirctUrl);
+					logger.info("saveCustomizeQuoteDetails :: redirctUrl :" + redirctUrl);
 					
 					resp.setRedirectUrl(redirctUrl);
 					
@@ -408,8 +382,7 @@ public class CustomizeQuoteService
 					customizeQuoteAddPol.setYearMultiplePremium(yearMultiplePremium);
 				}
 				customizeQuoteAddPol.setReplacementTypeCode(quoteAddPolicyDetails.getReplacementTypeCode());
-				logger.info(TAG + " saveCustomizeQuoteAddPol :: customizeQuoteAddPol :" + customizeQuoteAddPol.toString());
-
+				
 				ResponseInfo validate = customizeQuoteDao.saveCustomizeQuoteAddPol(customizeQuoteAddPol , userSession.getCivilId());
 				if (validate.getErrorCode() != null)
 				{

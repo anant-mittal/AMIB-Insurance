@@ -4,10 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,13 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.http.CommonHttpRequest;
+import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.CustomizeQuoteModel;
-import com.amx.jax.models.MetaData;
 import com.amx.jax.models.PaymentDetails;
 import com.amx.jax.models.PaymentReceipt;
 import com.amx.jax.payg.PaymentResponseDto;
@@ -39,8 +36,6 @@ import com.amx.utils.ArgUtil;
 @RestController
 public class CustomizeQuoteController
 {
-	String TAG = "com.amx.jax.controllers :: CustomizeQuoteController :: ";
-
 	private static final Logger logger = LoggerFactory.getLogger(CustomizeQuoteController.class);
 
 	@Autowired
@@ -53,7 +48,7 @@ public class CustomizeQuoteController
 	CommonHttpRequest httpService;
 	
 	@Autowired
-	MetaData metaData;
+	IMetaService metaService;
 	
 	@Autowired
 	UserSession userSession;
@@ -108,12 +103,12 @@ public class CustomizeQuoteController
 	{
 		try 
 		{
-			metaDataSetup();
+			setMetaData();
 			
 			PaymentDetails paymentDetails = new PaymentDetails();
 			paymentDetails.setPaymentId(paymentResponse.getPaymentId());
 			paymentDetails.setApprovalNo(paymentResponse.getAuth_appNo());
-			logger.info(TAG + " onPaymentCallback :: getPostDate  :" + paymentResponse.getPostDate());
+			logger.info(" onPaymentCallback :: getPostDate  :" + paymentResponse.getPostDate());
 			paymentDetails.setApprovalDate(null);
 			paymentDetails.setResultCd(paymentResponse.getResultCode());
 			paymentDetails.setTransId(paymentResponse.getTransactionId());
@@ -123,7 +118,7 @@ public class CustomizeQuoteController
 			if (null != paymentResponse.getTrackId()) 
 			{
 				BigDecimal paySeqNumber = new BigDecimal(paymentResponse.getTrackId().toString());
-				logger.info(TAG + " onPaymentCallback :: paySeqNumber  :" + paySeqNumber);
+				logger.info(" onPaymentCallback :: paySeqNumber  :" + paySeqNumber);
 				paymentDetails.setPaySeqNum(paySeqNumber);
 				paymentDetails.setPaymentToken(paySeqNumber.toString());
 			} 
@@ -133,7 +128,7 @@ public class CustomizeQuoteController
 			}
 
 			PaymentDetails updateStatus = payMentService.updatePaymentDetals(paymentDetails);
-			logger.info(TAG + " onPaymentCallback :: updateStatus  :" + updateStatus.toString());
+			logger.info(" onPaymentCallback :: updateStatus  :" + updateStatus.toString());
 			
 		} 
 				
@@ -147,7 +142,7 @@ public class CustomizeQuoteController
 	@RequestMapping(value = "/api/payment-status", method = { RequestMethod.POST })
 	public AmxApiResponse<?, Object> getPaymentStatus(@RequestParam String paySeqNum) 
 	{
-		logger.info(TAG + " getPaymentStatus :: paySeqNum  :" + paySeqNum);
+		logger.info(" getPaymentStatus :: paySeqNum  :" + paySeqNum);
 		
 		BigDecimal paySeqNumDet = null;
 		if (null != paySeqNum && !paySeqNum.equals("") && !paySeqNum.equalsIgnoreCase("null"))
@@ -176,7 +171,7 @@ public class CustomizeQuoteController
 			if (receiptData.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				paymentReceipt = (PaymentReceipt) receiptData.getData();
-				logger.info(TAG + " getPaymentStatus :: paymentReceipt  :" + paymentReceipt.toString());
+				logger.info(" getPaymentStatus :: paymentReceipt  :" + paymentReceipt.toString());
 			}
 			
 			Map<String, Object> wrapper = new HashMap<String, Object>();
@@ -187,7 +182,7 @@ public class CustomizeQuoteController
 			model.put(DetailsConstants.customerId, paymentReceipt.getCustomerId());
 			model.put(DetailsConstants.paymentDate, paymentReceipt.getPaymentDate());
 			model.put(DetailsConstants.paymentMode, paymentReceipt.getPaymentMode());
-			model.put(DetailsConstants.amountPaidNumber, Utility.getAmountInCurrency(paymentReceipt.getAmountPaidNumber(), metaData.getDecplc() , metaData.getCurrency()));
+			model.put(DetailsConstants.amountPaidNumber, Utility.getAmountInCurrency(paymentReceipt.getAmountPaidNumber(), metaService.getTenantProfile().getDecplc() , metaService.getTenantProfile().getCurrency()));
 			model.put(DetailsConstants.amountPaidWord, paymentReceipt.getAmountPaidWord());
 			model.put(DetailsConstants.paymentId, paymentReceipt.getPaymentId());
 			model.put(DetailsConstants.customerName, paymentReceipt.getCustomerName());
@@ -219,15 +214,15 @@ public class CustomizeQuoteController
 	}
 	
 	
-	public void metaDataSetup()
+	private void setMetaData()
 	{
-		if(null == metaData.getCountryId())
+		if(null == metaService.getTenantProfile().getCountryId() || null == metaService.getUserDeviceInfo().getDeviceId())
 		{
 			if (httpService.getLanguage().toString().equalsIgnoreCase("EN"))
 			{
-				metaData.setLanguageId(new BigDecimal(0));
-				customerRegistrationService.getCompanySetUp();
+				metaService.getTenantProfile().setLanguageId(new BigDecimal(0));
 			}
+			customerRegistrationService.getCompanySetUp();
 		}
 	}
 }

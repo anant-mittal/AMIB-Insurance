@@ -3,19 +3,18 @@ package com.amx.jax.services;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.PersonalDetailsDao;
 import com.amx.jax.dao.RequestQuoteDao;
+import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CustomerProfileDetailModel;
 import com.amx.jax.models.DateFormats;
@@ -23,7 +22,6 @@ import com.amx.jax.models.DownloadImageModel;
 import com.amx.jax.models.ImageModel;
 import com.amx.jax.models.IncompleteApplModel;
 import com.amx.jax.models.InsuranceCompanyDetails;
-import com.amx.jax.models.MetaData;
 import com.amx.jax.models.PersonalDetails;
 import com.amx.jax.models.RequestQuoteInfo;
 import com.amx.jax.models.RequestQuoteModel;
@@ -52,9 +50,6 @@ public class RequestQuoteService
 	private EmailSmsService emailSmsService;
 
 	@Autowired
-	MetaData metaData;
-
-	@Autowired
 	UserSession userSession;
 
 
@@ -66,7 +61,7 @@ public class RequestQuoteService
 
 		try
 		{
-			IncompleteApplModel incompleteApplModel = requestQuoteDao.getIncompleteApplication(userSession.getCivilId() , metaData.getUserType() , userSession.getCustomerSequenceNumber());
+			IncompleteApplModel incompleteApplModel = requestQuoteDao.getIncompleteApplication(userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber());
 			requestQuoteInfo.setAppSeqNumber(incompleteApplModel.getAppSeqNumber());
 			requestQuoteModel.setRequestQuoteInfo(requestQuoteInfo);
 
@@ -339,7 +334,7 @@ public class RequestQuoteService
 
 		try
 		{
-			IncompleteApplModel incompleteApplModel = requestQuoteDao.getIncompleteApplication(userSession.getCivilId() , metaData.getUserType() , userSession.getCustomerSequenceNumber());
+			IncompleteApplModel incompleteApplModel = requestQuoteDao.getIncompleteApplication(userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber());
 			BigDecimal appSeqNumber = incompleteApplModel.getAppSeqNumber();
 			logger.info(TAG + " getRequestQuoteDetails :: appSeqNumber :" + appSeqNumber);
 
@@ -557,7 +552,7 @@ public class RequestQuoteService
 		AmxApiResponse<PersonalDetails, Object> resp = new AmxApiResponse<PersonalDetails, Object>();
 		PersonalDetails personalDetails = new PersonalDetails();
 		CustomerProfileDetailModel customerProfileDetailModel = new CustomerProfileDetailModel();
-		customerProfileDetailModel = personalDetailsDao.getProfileDetails(userSession.getCivilId() , metaData.getUserType() , userSession.getCustomerSequenceNumber());
+		customerProfileDetailModel = personalDetailsDao.getProfileDetails(userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber());
 
 		logger.info(TAG + " getProfileDetails :: customerProfileDetailModel :" + customerProfileDetailModel.toString());
 
@@ -626,7 +621,7 @@ public class RequestQuoteService
 		}
 
 		logger.info(TAG + " setProfileDetails :: custSeqNumberAvailable :" + custSeqNumberAvailable);
-		customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel , userSession.getCivilId() , metaData.getUserType() , userSession.getCustomerSequenceNumber());
+		customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel , userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber());
 		userSession.setCustomerSequenceNumber(customerProfileDetailModel.getCustSequenceNumber());
 		
 		if (!custSeqNumberAvailable)

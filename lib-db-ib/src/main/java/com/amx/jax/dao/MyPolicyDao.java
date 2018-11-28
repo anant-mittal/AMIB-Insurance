@@ -10,12 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.ActivePolicyModel;
 import com.amx.jax.models.DateFormats;
-import com.amx.jax.models.MetaData;
 import com.amx.jax.models.PolicyReceiptDetails;
 import com.amx.jax.utility.Utility;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import oracle.jdbc.OracleTypes;
 
@@ -30,8 +29,8 @@ public class MyPolicyDao
 	JdbcTemplate jdbcTemplate;
 
 	@Autowired
-	MetaData metaData;
-
+	IMetaService metaService;
+	
 	Connection connection;
 
 	public ArrayList<ActivePolicyModel> getUserActivePolicy(BigDecimal userAmibCustRef , String civilId , String userType , BigDecimal custSeqNum)
@@ -44,10 +43,10 @@ public class MyPolicyDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, userAmibCustRef);
-			callableStatement.setBigDecimal(4, metaData.getLanguageId());
+			callableStatement.setBigDecimal(4, metaService.getTenantProfile().getLanguageId());
 			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
@@ -94,12 +93,12 @@ public class MyPolicyDao
 				activePolicyModel.setPolicyTypeCode(rs.getString(33));
 				activePolicyModel.setPolicyTypeDesc(rs.getString(34));
 				activePolicyModel.setPolicyNumber(rs.getString(35));
-				activePolicyModel.setMaxInsuredAmount(Utility.round(rs.getBigDecimal(36), metaData.getDecplc()));
+				activePolicyModel.setMaxInsuredAmount(Utility.round(rs.getBigDecimal(36), metaService.getTenantProfile().getDecplc()));
 				activePolicyModel.setStartDate(DateFormats.uiFormattedDate(rs.getDate(37)));
 				activePolicyModel.setEndDate(DateFormats.uiFormattedDate(rs.getDate(38)));
 				activePolicyModel.setSupervisionKey(rs.getBigDecimal(39));
-				activePolicyModel.setIssueFee(Utility.round(rs.getBigDecimal(40), metaData.getDecplc()));
-				activePolicyModel.setPremium(Utility.round(rs.getBigDecimal(41), metaData.getDecplc()));
+				activePolicyModel.setIssueFee(Utility.round(rs.getBigDecimal(40), metaService.getTenantProfile().getDecplc()));
+				activePolicyModel.setPremium(Utility.round(rs.getBigDecimal(41), metaService.getTenantProfile().getDecplc()));
 				activePolicyModel.setDiscount(rs.getBigDecimal(42));
 				activePolicyModel.setRenewalIndic(rs.getString(43));//Not Used On UI
 				activePolicyModel.setFuelCode(rs.getString(44));
@@ -150,8 +149,8 @@ public class MyPolicyDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(3, userType);
 			callableStatement.setString(4, civilId);
 			callableStatement.setBigDecimal(5, custSeqNum);
@@ -189,10 +188,10 @@ public class MyPolicyDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 			
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, docNumber);
-			callableStatement.setBigDecimal(4, metaData.getLanguageId());
+			callableStatement.setBigDecimal(4, metaService.getTenantProfile().getLanguageId());
 			callableStatement.registerOutParameter(5, java.sql.Types.DATE);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(7, java.sql.Types.DATE);
