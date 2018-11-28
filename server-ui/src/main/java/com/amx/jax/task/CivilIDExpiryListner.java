@@ -42,9 +42,6 @@ public class CivilIDExpiryListner implements ITunnelSubscriber<TunnelEvent> {
 	private WebConfig webConfig;
 
 	@Autowired
-	IMetaService metaService;
-	
-	@Autowired
 	private CustomerRegistrationDao customerRegistrationDao;
 
 
@@ -97,7 +94,7 @@ public class CivilIDExpiryListner implements ITunnelSubscriber<TunnelEvent> {
 		modeldata.put(DetailsConstants.CUSTOMER_EMAIL_ID, emailId);
 		modeldata.put(DetailsConstants.CUSTOMER_MOBILE_NO, mobile);
 		modeldata.put(DetailsConstants.LANGUAGE_INFO, langId);
-		modeldata.put(DetailsConstants.COMPANY_NAME, metaService.getTenantProfile().getCompanyName());
+		modeldata.put(DetailsConstants.COMPANY_NAME, getCompanySetUp.get(0).getCompanyName());
 		modeldata.put(DetailsConstants.URL_DETAILS, "");
 		logger.info("getTenantProfile :: getContactUsEmail :" + getCompanySetUp.get(0).getEmail());
 		modeldata.put(DetailsConstants.CONTACT_US_EMAIL, getCompanySetUp.get(0).getEmail());

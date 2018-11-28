@@ -1,6 +1,7 @@
 package com.amx.jax.task;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import org.slf4j.Logger;
@@ -8,9 +9,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.amx.jax.WebConfig;
 import com.amx.jax.constants.DetailsConstants;
+import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.dict.AmibTunnelEvents;
 import com.amx.jax.dict.Language;
 import com.amx.jax.meta.IMetaService;
+import com.amx.jax.models.CompanySetUp;
 import com.amx.jax.postman.client.PostManClient;
 import com.amx.jax.postman.client.PushNotifyClient;
 import com.amx.jax.postman.model.Email;
@@ -27,18 +30,20 @@ import com.amx.utils.JsonUtil;
 @TunnelEventMapping(topic = AmibTunnelEvents.Names.RENEW_POLICY, scheme = TunnelEventXchange.TASK_WORKER)
 public class RenewPolicyListner implements ITunnelSubscriber<TunnelEvent> {
 
+	private static final Logger logger = LoggerFactory.getLogger(RenewPolicyListner.class);
+	
 	@Autowired
 	PostManClient postManClient;
 
 	@Autowired
 	private PushNotifyClient pushNotifyClient;
+	
+	@Autowired
+	private CustomerRegistrationDao customerRegistrationDao;
 
 	@Autowired
 	private WebConfig webConfig;
 	
-	@Autowired
-	IMetaService metaService;
-
 	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
 	public static final String CUST_CD = "CUST_CD";
@@ -55,8 +60,6 @@ public class RenewPolicyListner implements ITunnelSubscriber<TunnelEvent> {
 	@Override
 	public void onMessage(String channel, TunnelEvent event) {
 
-		System.out.println("RenewPolicyListner :: onMessage :: "+ JsonUtil.toJson(event));
-
 		LOGGER.info("======onMessage1==={} ====  {}", channel, JsonUtil.toJson(event));
 
 		String custCd = ArgUtil.parseAsString(event.getData().get(CUST_NAME));
@@ -68,6 +71,18 @@ public class RenewPolicyListner implements ITunnelSubscriber<TunnelEvent> {
 		String mobile = ArgUtil.parseAsString(event.getData().get(MOBILE));
 		String langId = ArgUtil.parseAsString(event.getData().get(LANG_ID));
 
+		BigDecimal languageId;
+		if (null != langId && !langId.equals("")) {
+			languageId = new BigDecimal(langId);
+		} else {
+			languageId = new BigDecimal(0);
+		}
+		logger.info(" onMessage :: langId :"+ langId);
+		logger.info(" onMessage :: languageId :"+ languageId);
+		
+		ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao.getCompanySetUp(languageId , webConfig.getAppCompCode());
+		
+		
 		Map<String, Object> wrapper = new HashMap<String, Object>();
 		Map<String, Object> modeldata = new HashMap<String, Object>();
 		modeldata.put(DetailsConstants.CUSTOMER_CD, custCd);
@@ -78,13 +93,13 @@ public class RenewPolicyListner implements ITunnelSubscriber<TunnelEvent> {
 		modeldata.put(DetailsConstants.CUSTOMER_EMAIL_ID, emailId);
 		modeldata.put(DetailsConstants.CUSTOMER_MOBILE_NO, mobile);
 		modeldata.put(DetailsConstants.LANGUAGE_INFO, langId);
-		modeldata.put(DetailsConstants.COMPANY_NAME, metaService.getTenantProfile().getCompanyName());
+		modeldata.put(DetailsConstants.COMPANY_NAME, getCompanySetUp.get(0).getCompanyName());
 		modeldata.put(DetailsConstants.URL_DETAILS, "");
-		modeldata.put(DetailsConstants.CONTACT_US_EMAIL, metaService.getTenantProfile().getContactUsEmail());
-		modeldata.put(DetailsConstants.CONTACT_US_MOBILE, metaService.getTenantProfile().getContactUsHelpLineNumber());
-		modeldata.put(DetailsConstants.AMIB_WEBSITE_LINK, metaService.getTenantProfile().getAmibWebsiteLink());
+		logger.info("getTenantProfile :: getContactUsEmail :" + getCompanySetUp.get(0).getEmail());
+		modeldata.put(DetailsConstants.CONTACT_US_EMAIL, getCompanySetUp.get(0).getEmail());
+		modeldata.put(DetailsConstants.CONTACT_US_MOBILE, getCompanySetUp.get(0).getHelpLineNumber());
+		modeldata.put(DetailsConstants.AMIB_WEBSITE_LINK, getCompanySetUp.get(0).getWebSite());
 		modeldata.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
-
 
 		if (!ArgUtil.isEmpty(emailId)) {
 			Email email = new Email();
