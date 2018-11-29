@@ -4,20 +4,18 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.dao.MyQuoteDao;
 import com.amx.jax.dao.PayMentDao;
+import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.ArrayResponseModel;
-import com.amx.jax.models.MetaData;
 import com.amx.jax.models.MyQuoteModel;
 import com.amx.jax.models.PaymentDetails;
 import com.amx.jax.models.PaymentReceipt;
@@ -34,7 +32,7 @@ public class PayMentService
 	private static final Logger logger = LoggerFactory.getLogger(PayMentService.class);
 	
 	@Autowired
-	MetaData metaData;
+	IMetaService metaService;
 	
 	@Autowired
 	PayMentDao payMentDao;
@@ -237,6 +235,7 @@ public class PayMentService
 	{
 		AmxApiResponse<PaymentStatus, Object> resp = new AmxApiResponse<>();
 		PaymentStatus paymentStatus = new PaymentStatus();
+		paymentStatus.setPaymentProcedureStatus("N");
 		
 		try
 		{
@@ -256,6 +255,7 @@ public class PayMentService
 					if (createAmibResp.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 					{
 						emailSmsService.failedPGProcedureAfterCapture(paymentStatus , createAmibResp.getMessageKey() , createAmibResp.getMessage() , "CREATE AMIB PROCEDURE" , paySeqNum.toString());
+						paymentStatus.setPaymentProcedureStatus("Y");
 					}
 					else
 					{
@@ -263,6 +263,7 @@ public class PayMentService
 						if (processTeceiptResp.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 						{
 							emailSmsService.failedPGProcedureAfterCapture(paymentStatus , processTeceiptResp.getMessageKey() , processTeceiptResp.getMessage() , "PROCESS RECEIPT PROCEDURE" , paySeqNum.toString());
+							paymentStatus.setPaymentProcedureStatus("Y");
 						}
 						else
 						{
@@ -270,6 +271,7 @@ public class PayMentService
 							if (createAmibPolicyResp.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
 							{
 								emailSmsService.failedPGProcedureAfterCapture(paymentStatus , createAmibPolicyResp.getMessageKey() , createAmibPolicyResp.getMessage() , "CREATE AMIB PLOICY PROCEDURE" , paySeqNum.toString());
+								paymentStatus.setPaymentProcedureStatus("Y");
 							}
 							else
 							{
@@ -322,7 +324,7 @@ public class PayMentService
 		model.put(DetailsConstants.customerId, paymentReceipt.getCustomerId());
 		model.put(DetailsConstants.paymentDate, paymentReceipt.getPaymentDate());
 		model.put(DetailsConstants.paymentMode, paymentReceipt.getPaymentMode());
-		model.put(DetailsConstants.amountPaidNumber, Utility.getAmountInCurrency(paymentReceipt.getAmountPaidNumber(), metaData.getDecplc() , metaData.getCurrency()));
+		model.put(DetailsConstants.amountPaidNumber, Utility.getAmountInCurrency(paymentReceipt.getAmountPaidNumber(), metaService.getTenantProfile().getDecplc() , metaService.getTenantProfile().getCurrency()));
 		model.put(DetailsConstants.amountPaidWord, paymentReceipt.getAmountPaidWord());
 		model.put(DetailsConstants.paymentId, paymentReceipt.getPaymentId());
 		model.put(DetailsConstants.customerName, paymentReceipt.getCustomerName());

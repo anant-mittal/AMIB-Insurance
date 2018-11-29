@@ -28,15 +28,12 @@ public class RequestQuoteController
 {
 	private static final Logger logger = LoggerFactory.getLogger(RequestQuoteController.class);
 
-	String TAG = "com.amx.jax.controllers.RequestQuoteController :- ";
-
 	@Autowired
 	public RequestQuoteService requestQuoteService;
 
 	@RequestMapping(value = "/api/vehicledetails/make", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getMake()
 	{
-		logger.info(TAG + " getMake :: ");
 		return requestQuoteService.getMake();
 	}
 
@@ -49,7 +46,6 @@ public class RequestQuoteController
 	@RequestMapping(value = "/api/vehicledetails/fueltype", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getFuleType()
 	{
-		logger.info(TAG + " getFuleType :: ");
 		return requestQuoteService.getFuleType();
 	}
 
@@ -124,18 +120,13 @@ public class RequestQuoteController
 		if (null != appSeqNumber && !appSeqNumber.equals("") && !appSeqNumber.equalsIgnoreCase("null"))
 		{
 			appSeqNumberDet = ArgUtil.parseAsBigDecimal(appSeqNumber);
-	}
+		}
 
 		BigDecimal docSeqNumberDet = null;
 		if (null != docSeqNumber && !docSeqNumber.equals("") && !docSeqNumber.equalsIgnoreCase("null"))
-	{
+		{
 			docSeqNumberDet = ArgUtil.parseAsBigDecimal(docSeqNumber);
-	}
-	
-		logger.info(TAG + " uploadVehicleImage :: appSeqNumberDet :" + appSeqNumberDet);
-		logger.info(TAG + " uploadVehicleImage :: docSeqNumberDet :" + docSeqNumberDet);
-		logger.info(TAG + " uploadVehicleImage :: file :" + file.getSize());
-		
+		}
 		return requestQuoteService.uploadVehicleImage(file, appSeqNumberDet, docTypeCode, docSeqNumberDet);
 	}
 
@@ -146,15 +137,14 @@ public class RequestQuoteController
 		if (null != docSeqNumber && !docSeqNumber.equals("") && !docSeqNumber.equalsIgnoreCase("null"))
 		{
 			docSeqNumberDet = ArgUtil.parseAsBigDecimal(docSeqNumber);
-	}
+		}
 	
 		DownloadImageModel downloadImageModel = requestQuoteService.downloadVehicleImage(docSeqNumberDet);
 		byte[] imageByteArray = downloadImageModel.getImageByteArray();
 		String imageType = downloadImageModel.getImageType();
 		MediaType mediaType = null;
-		logger.info(TAG + " downloadVehicleImage :: imageType :" + imageType);
 		if (imageType.contains("jpeg"))
-	{
+		{
 			mediaType = MediaType.IMAGE_JPEG;
 		}
 		else if (imageType.contains("png"))

@@ -10,8 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.IncompleteApplModel;
-import com.amx.jax.models.MetaData;
 
 @Component
 public class DashBoardDao
@@ -26,7 +26,7 @@ public class DashBoardDao
 	Connection connection;
 
 	@Autowired
-	MetaData metaData;
+	IMetaService metaService;
 	
 	
 	public IncompleteApplModel getIncompleteApplication(String civilId, String userType , BigDecimal custSeqNum)
@@ -38,11 +38,9 @@ public class DashBoardDao
 
 		try
 		{
-			logger.info(TAG + " getIncompleteApplication :: metaData :" + metaData.toString());
-
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(3, userType);
 			callableStatement.setString(4, civilId);
 			callableStatement.setBigDecimal(5, custSeqNum);

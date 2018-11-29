@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.DateFormats;
-import com.amx.jax.models.MetaData;
 import com.amx.jax.models.MyQuoteModel;
 import com.amx.jax.utility.Utility;
 import oracle.jdbc.OracleTypes;
@@ -28,7 +28,7 @@ public class MyQuoteDao
 	JdbcTemplate jdbcTemplate;
 
 	@Autowired
-	MetaData metaData;
+	IMetaService metaService;
 
 	Connection connection;
 
@@ -41,13 +41,12 @@ public class MyQuoteDao
 
 		try
 		{
-			logger.info(TAG + " getUserQuote :: metaData :" + metaData.toString());
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, customerSeqNum);
-			callableStatement.setBigDecimal(4, metaData.getLanguageId());
+			callableStatement.setBigDecimal(4, metaService.getTenantProfile().getLanguageId());
 			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
@@ -94,10 +93,10 @@ public class MyQuoteDao
 				myQuoteModel.setVehicleValue(rs.getBigDecimal(33));
 				myQuoteModel.setBasicPremium(rs.getBigDecimal(34));
 				myQuoteModel.setSupervisionFees(rs.getBigDecimal(35));
-				myQuoteModel.setIssueFee(Utility.round(rs.getBigDecimal(36), metaData.getDecplc()));
-				myQuoteModel.setDiscount(Utility.round(rs.getBigDecimal(37), metaData.getDecplc()));
+				myQuoteModel.setIssueFee(Utility.round(rs.getBigDecimal(36), metaService.getTenantProfile().getDecplc()));
+				myQuoteModel.setDiscount(Utility.round(rs.getBigDecimal(37), metaService.getTenantProfile().getDecplc()));
 				myQuoteModel.setAddCoveragePremium(rs.getBigDecimal(38));
-				myQuoteModel.setNetAmount(Utility.round(rs.getBigDecimal(39), metaData.getDecplc()));
+				myQuoteModel.setNetAmount(Utility.round(rs.getBigDecimal(39), metaService.getTenantProfile().getDecplc()));
 				myQuoteModel.setPolCondition(rs.getString(40));
 				myQuoteModel.setVehicleType(rs.getString(41));
 				myQuoteModel.setPaymentProcessError(rs.getString(42));

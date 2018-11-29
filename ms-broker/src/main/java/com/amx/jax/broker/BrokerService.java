@@ -1,4 +1,4 @@
-package com.amx.jax.service;
+package com.amx.jax.broker;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -13,12 +13,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.amx.jax.AppContextUtil;
-import com.amx.jax.broker.BrokerConstants;
+import com.amx.jax.broker.dao.EventNotificationDao;
+import com.amx.jax.broker.entity.EventNotificationEntity;
+import com.amx.jax.broker.entity.EventNotificationView;
 import com.amx.jax.dict.Tenant;
 import com.amx.jax.logger.LoggerService;
-import com.amx.jax.service.dao.EventNotificationDao;
-import com.amx.jax.service.entity.EventNotificationEntity;
-import com.amx.jax.service.entity.EventNotificationView;
+import com.amx.jax.tunnel.TunnelEvent;
 import com.amx.jax.tunnel.TunnelService;
 import com.amx.utils.StringUtils;
 import com.amx.utils.TimeUtils;
@@ -50,6 +50,8 @@ public class BrokerService {
 
 		int totalEvents = event_list.size();
 
+		logger.info("BrokerService :: pushNewEventNotifications :: totalEvents :"+totalEvents);
+		
 		// Increase Print Delay if its been long waiting for events
 		if (totalEvents > 0 || TimeUtils.isDead(printStamp, printDelay)) {
 			logger.info("Total {} Events fetched from DB, after waiting {} secs", totalEvents,printDelay);
@@ -76,15 +78,17 @@ public class BrokerService {
 				);
 
 				// Push to Message Queue
-				DBEvents event = new DBEvents();
+				TunnelEvent event = new DBEvents();
 				event.setEventCode(current_event_record.getEvent_code());
-				event.setPriority(current_event_record.getEvent_priority());
+				//event.setPriority(current_event_record.getEvent_priority());
 				event.setData(event_data_map);
-				event.setDescription(current_event_record.getEvent_desc());
+				//event.setDescription(current_event_record.getEvent_desc());
 
 				logger.debug("------------------ Event Data to push to Message Queue --------------------");
 				logger.debug(event.toString());
 
+				logger.info("BrokerService :: pushNewEventNotifications :: event :"+event.toString());
+				
 				tunnelService.task(current_event_record.getEvent_code(), event);
 
 				// Mark event record as success

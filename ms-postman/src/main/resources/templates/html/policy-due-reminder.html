@@ -293,7 +293,7 @@ a {
 									</tr>
 									<tr>
 										<td class="content-block">Your <span th:text="${data.makeDesc}" th:remove="tag"></span> - <span th:text="${data.subMakeDesc}" th:remove="tag"></span> 
-										Insurance Policy is due for renewal on 15-Nov-2018.<br/> <span>Please log into the app or contact AMIB team </span>
+										Insurance Policy is due for renewal on <span th:text="${data.expiryDate}" th:remove="tag"></span>. <br/> <span>Please log into the app or contact AMIB team </span>
 										<span th:text="${data.contactUsMobile}" th:remove="tag"></span> or <br/><span th:text="${data.contactUsEmail}" th:remove="tag">or</span></td>
 									</tr>
 									<tr>
