@@ -276,7 +276,7 @@ public class CustomizeQuoteService
 
 			AmxApiResponse<?, Object> respQuoteAddModel = saveCustomizeQuoteAddPol(customizeQuoteModel, myQuoteModel);
 			logger.info("saveCustomizeQuote :: getStatus :" + respQuoteAddModel.getStatus());
-			if (!respQuoteAddModel.getStatus().equals(ApiConstants.SUCCESS))
+			if (!respQuoteAddModel.getStatusKey().equals(ApiConstants.SUCCESS))
 			{
 				return respQuoteAddModel;
 			}
