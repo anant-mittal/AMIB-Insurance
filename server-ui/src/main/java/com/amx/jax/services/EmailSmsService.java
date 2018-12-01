@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.amx.jax.AppConfig;
+import com.amx.jax.WebAppStatus.WebAppStatusCodes;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.DetailsConstants;
@@ -527,7 +528,7 @@ public class EmailSmsService
 
 		AmxApiResponse<ResponseInfo, Object> civilIdExistCheck = isCivilIdExist(userSession.getCivilId());
 		AmxApiResponse<ResponseInfo, Object> isOtpEnabled = isOtpEnabled(userSession.getCivilId());
-		if (isOtpEnabled.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+		if (!isOtpEnabled.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return isOtpEnabled;
 		}
@@ -547,7 +548,7 @@ public class EmailSmsService
 		resp.setMessageKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED);
 
 		AmxApiResponse<ResponseInfo, Object> setOtpCount = setOtpCount(userSession.getCivilId());
-		if (setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+		if (!setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return setOtpCount;
 		}
@@ -611,7 +612,7 @@ public class EmailSmsService
 
 		AmxApiResponse<ResponseInfo, Object> civilIdExistCheck = isCivilIdExist(userSession.getCivilId());
 		AmxApiResponse<ResponseInfo, Object> isOtpEnabled = isOtpEnabled(userSession.getCivilId());
-		if (isOtpEnabled.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+		if (!isOtpEnabled.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return isOtpEnabled;
 		}
@@ -627,7 +628,7 @@ public class EmailSmsService
 		resp.setMessageKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
 
 		AmxApiResponse<ResponseInfo, Object> setOtpCount = setOtpCount(userSession.getCivilId());
-		if (setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+		if (!setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return setOtpCount;
 		}
@@ -689,7 +690,7 @@ public class EmailSmsService
 
 		AmxApiResponse<ResponseInfo, Object> civilIdExistCheck = isCivilIdExist(userSession.getCivilId());
 		AmxApiResponse<ResponseInfo, Object> isOtpEnabled = isOtpEnabled(userSession.getCivilId());
-		if (isOtpEnabled.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+		if (!isOtpEnabled.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return isOtpEnabled;
 		}
@@ -705,7 +706,7 @@ public class EmailSmsService
 		resp.setMessageKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
 
 		AmxApiResponse<ResponseInfo, Object> setOtpCount = setOtpCount(userSession.getCivilId());
-		if (setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+		if (!setOtpCount.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS) && civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			return setOtpCount;
 		}
@@ -764,15 +765,15 @@ public class EmailSmsService
 		boolean isOtpEnable = customerRegistrationDao.isOtpEnabled(civilId , HardCodedValues.USER_TYPE);
 		if (isOtpEnable)
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			resp.setMessage(Message.CUST_OTP_ENABLED);
-			resp.setMessageKey(MessageKey.KEY_USER_OTP_ENABLED);
+			resp.setMessageKey(WebAppStatusCodes.USER_OTP_ENABLED.toString());
 		}
 		else
 		{
-			resp.setStatusKey(ApiConstants.FAILURE);
+			resp.setStatusEnum(WebAppStatusCodes.USER_OTP_DISABLED);
 			resp.setMessage(Message.CUST_OTP_NOT_ENABLED);
-			resp.setMessageKey(MessageKey.KEY_USER_OTP_NOT_ENABLED);
+			resp.setMessageKey(WebAppStatusCodes.USER_OTP_DISABLED.toString());
 			ResponseInfo validate = new ResponseInfo();
 			validate.setContactUsHelpLineNumber(metaService.getTenantProfile().getContactUsHelpLineNumber());
 			validate.setContactUsEmail(metaService.getTenantProfile().getContactUsEmail());
@@ -798,13 +799,13 @@ public class EmailSmsService
 
 		ResponseInfo setOtpCount = customerRegistrationDao.setOtpCount(civilId , HardCodedValues.USER_TYPE);
 
-		if (setOtpCount.isValid())
+		if (setOtpCount.getErrorCode() == null)
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 		}
 		else
 		{
-			resp.setStatusKey(ApiConstants.FAILURE);
+			resp.setStatusKey(setOtpCount.getErrorCode());
 			resp.setMessage(setOtpCount.getErrorMessage());
 			resp.setMessageKey(setOtpCount.getErrorCode());
 		}
@@ -829,15 +830,15 @@ public class EmailSmsService
 		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
 		if (civilIdExistCheck)
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			resp.setMessage(Message.CIVILID_ALREDAY_REGISTER);
-			resp.setMessageKey(MessageKey.KEY_CIVIL_ID_ALREADY_REGISTER);
+			resp.setMessageKey(WebAppStatusCodes.CIVIL_ID_ALREADY_REGISTERED.toString());
 		}
 		else
 		{
-			resp.setStatusKey(ApiConstants.FAILURE);
+			resp.setStatusEnum(WebAppStatusCodes.CIVIL_ID_NOT_REGESTERED);
 			resp.setMessage(Message.CIVILID_ALREDAY_NOT_REGISTER);
-			resp.setMessageKey(MessageKey.KEY_CIVIL_ID_NOT_REGISTERED);// Commit
+			resp.setMessageKey(WebAppStatusCodes.CIVIL_ID_NOT_REGESTERED.toString());// Commit
 		}
 		return resp;
 	}

@@ -1,16 +1,20 @@
 
 package com.amx.jax.models;
 
+import com.amx.jax.swagger.ApiMockModelProperty;
+
 public class ResponseInfo
 {
-	public boolean valid;
-
+	@ApiMockModelProperty(example = "TECHNICAL ERROR", value = "technical error")
 	public String errorCode;
 
+	@ApiMockModelProperty(example = "AMIB customer not created", value = "")
 	public String errorMessage;
 
+	@ApiMockModelProperty(example = "amibmotor@almullagroup.com", value = "AMIB email ID")
 	private String contactUsEmail;
 
+	@ApiMockModelProperty(example = "22250888", value = "AMIB helpline number")
 	private String contactUsHelpLineNumber;
 
 	public String getContactUsEmail()
@@ -31,16 +35,6 @@ public class ResponseInfo
 	public void setContactUsHelpLineNumber(String contactUsHelpLineNumber)
 	{
 		this.contactUsHelpLineNumber = contactUsHelpLineNumber;
-	}
-
-	public boolean isValid()
-	{
-		return valid;
-	}
-
-	public void setValid(boolean valid)
-	{
-		this.valid = valid;
 	}
 
 	public String getErrorCode()
@@ -65,7 +59,7 @@ public class ResponseInfo
 
 	@Override
 	public String toString() {
-		return "Validate [valid=" + valid + ", errorCode=" + errorCode + ", errorMessage=" + errorMessage
+		return "Validate [errorCode=" + errorCode + ", errorMessage=" + errorMessage
 				+ ", contactUsEmail=" + contactUsEmail + ", contactUsHelpLineNumber=" + contactUsHelpLineNumber + "]";
 	}
 

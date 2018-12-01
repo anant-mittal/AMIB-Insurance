@@ -23,149 +23,158 @@ import com.amx.jax.models.VehicleDetails;
 import com.amx.jax.services.RequestQuoteService;
 import com.amx.utils.ArgUtil;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
-public class RequestQuoteController
-{
+public class RequestQuoteController {
 	private static final Logger logger = LoggerFactory.getLogger(RequestQuoteController.class);
 
 	@Autowired
 	public RequestQuoteService requestQuoteService;
 
-	@RequestMapping(value = "/api/vehicledetails/make", method = RequestMethod.GET, produces = "application/json")
-	public AmxApiResponse<?, Object> getMake()
-	{
+	@ApiOperation(value = "returns vehicle details make meta info")
+	@RequestMapping(value = "/api/vehicledetails/make", method = RequestMethod.GET)
+	public AmxApiResponse<?, Object> getMake() {
 		return requestQuoteService.getMake();
 	}
 
+	@ApiOperation(value = "returns vehicle details submake meta info")
 	@RequestMapping(value = "/api/vehicledetails/sub-make", method = RequestMethod.GET, produces = "application/json")
-	public AmxApiResponse<?, Object> getModel(@RequestParam("make") String make)
-	{
+	public AmxApiResponse<?, Object> getModel(@RequestParam("make") String make) {
 		return requestQuoteService.getModel(make);
 	}
 
+	@ApiOperation(value = "returns vehicle details fuel type meta info")
 	@RequestMapping(value = "/api/vehicledetails/fueltype", method = RequestMethod.GET, produces = "application/json")
-	public AmxApiResponse<?, Object> getFuleType()
-	{
+	public AmxApiResponse<?, Object> getFuleType() {
 		return requestQuoteService.getFuleType();
 	}
 
+	@ApiOperation(value = "returns vehicle details purpose meta info")
 	@RequestMapping(value = "/api/vehicledetails/purpose", method = RequestMethod.GET, produces = "application/json")
-	public AmxApiResponse<?, Object> getPurpose()
-	{
+	public AmxApiResponse<?, Object> getPurpose() {
 		return requestQuoteService.getPurpose();
 	}
 
+	@ApiOperation(value = "returns vehicle details shape meta info")
 	@RequestMapping(value = "/api/vehicledetails/shape", method = RequestMethod.GET, produces = "application/json")
-	public AmxApiResponse<?, Object> getShape()
-	{
+	public AmxApiResponse<?, Object> getShape() {
 		return requestQuoteService.getShape();
 	}
 
+	@ApiOperation(value = "returns vehicle details colour meta info")
 	@RequestMapping(value = "/api/vehicledetails/colour", method = RequestMethod.GET, produces = "application/json")
-	public AmxApiResponse<?, Object> getColour()
-	{
+	public AmxApiResponse<?, Object> getColour() {
 		return requestQuoteService.getColour();
 	}
 
+	@ApiOperation(value = "returns vehicle details vehicle condition meta info")
 	@RequestMapping(value = "/api/vehicledetails/vehicle-condition", method = RequestMethod.GET, produces = "application/json")
-	public AmxApiResponse<?, Object> getVehicleCondition()
-	{
+	public AmxApiResponse<?, Object> getVehicleCondition() {
 		return requestQuoteService.getVehicleCondition();
 	}
 
+	@ApiOperation(value = "returns vehicle details vehicle max vehicle age meta info")
 	@RequestMapping(value = "/api/vehicledetails/model-year", method = RequestMethod.GET, produces = "application/json")
-	public AmxApiResponse<?, Object> getMaxVehicleAgeAllowed()
-	{
+	public AmxApiResponse<?, Object> getMaxVehicleAgeAllowed() {
 		return requestQuoteService.getMaxVehicleAgeAllowed();
 	}
 
+	@ApiOperation(value = "returns vehicle details vehicle policy duration meta info")
 	@RequestMapping(value = "/api/vehicledetails/policy-duartion", method = RequestMethod.GET, produces = "application/json")
-	public AmxApiResponse<?, Object> getPolicyDuration()
-	{
+	public AmxApiResponse<?, Object> getPolicyDuration() {
 		return requestQuoteService.getPolicyDuration();
 	}
 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	@ApiOperation(value = "returns request quote details")
 	@RequestMapping(value = "/api/request-quote/get-requestquote-details", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> getRequestQuoteDetails()
-	{
+	public AmxApiResponse<?, Object> getRequestQuoteDetails() {
 		return requestQuoteService.getRequestQuoteDetails();
 	}
 
+	@ApiOperation(value = "submit vehicle details to db")
 	@RequestMapping(value = "/api/request-quote/set-vehicle-details", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> setAppVehicleDetails(@RequestParam(name = "appSeqNumber", required = false) String appSeqNumber, @RequestBody VehicleDetails vehicleDetails)
-	{
+	public AmxApiResponse<?, Object> setAppVehicleDetails(
+			@RequestParam(name = "appSeqNumber", required = false) String appSeqNumber,
+			@RequestBody VehicleDetails vehicleDetails) {
 		BigDecimal appSeqNumberDet = null;
-		if (null != appSeqNumber && !appSeqNumber.equals("") && !appSeqNumber.equalsIgnoreCase("null"))
-		{
+		if (null != appSeqNumber && !appSeqNumber.equals("") && !appSeqNumber.equalsIgnoreCase("null")) {
 			appSeqNumberDet = ArgUtil.parseAsBigDecimal(appSeqNumber);
 		}
-		return requestQuoteService.setAppVehicleDetails(appSeqNumberDet, vehicleDetails ,null);
+		return requestQuoteService.setAppVehicleDetails(appSeqNumberDet, vehicleDetails, null);
 	}
 
+	@ApiOperation(value = "submit profile details to db")
 	@RequestMapping(value = "/api/request-quote/set-personal-details", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> setProfileDetails(@RequestParam(name = "appSeqNumber", required = false) String appSeqNumber, @RequestBody PersonalDetails personalDetails)
-	{
+	public AmxApiResponse<?, Object> setProfileDetails(
+			@RequestParam(name = "appSeqNumber", required = false) String appSeqNumber,
+			@RequestBody PersonalDetails personalDetails) {
 		BigDecimal appSeqNumberDet = null;
-		if (null != appSeqNumber && !appSeqNumber.equals("") && !appSeqNumber.equalsIgnoreCase("null"))
-		{
+		if (null != appSeqNumber && !appSeqNumber.equals("") && !appSeqNumber.equalsIgnoreCase("null")) {
 			appSeqNumberDet = ArgUtil.parseAsBigDecimal(appSeqNumber, null);
 		}
 		return requestQuoteService.setProfileDetails(appSeqNumberDet, personalDetails);
 	}
 
+	@ApiOperation(value = "submit vehicle image details to db")
 	@RequestMapping(value = "/api/request-quote/upload-vehicle-image", method = RequestMethod.POST)
-	public AmxApiResponse<?, Object> uploadVehicleImage(@RequestParam MultipartFile file, @RequestParam("appSeqNumber") String appSeqNumber, @RequestParam("docTypeCode") String docTypeCode, @RequestParam(name = "docSeqNumber", required = false) String docSeqNumber) throws IOException
-	{
+	public AmxApiResponse<?, Object> uploadVehicleImage(@RequestParam MultipartFile file,
+			@RequestParam("appSeqNumber") String appSeqNumber, @RequestParam("docTypeCode") String docTypeCode,
+			@RequestParam(name = "docSeqNumber", required = false) String docSeqNumber) throws IOException {
 		BigDecimal appSeqNumberDet = null;
-		if (null != appSeqNumber && !appSeqNumber.equals("") && !appSeqNumber.equalsIgnoreCase("null"))
-		{
+		if (null != appSeqNumber && !appSeqNumber.equals("") && !appSeqNumber.equalsIgnoreCase("null")) {
 			appSeqNumberDet = ArgUtil.parseAsBigDecimal(appSeqNumber);
 		}
 
 		BigDecimal docSeqNumberDet = null;
-		if (null != docSeqNumber && !docSeqNumber.equals("") && !docSeqNumber.equalsIgnoreCase("null"))
-		{
+		if (null != docSeqNumber && !docSeqNumber.equals("") && !docSeqNumber.equalsIgnoreCase("null")) {
 			docSeqNumberDet = ArgUtil.parseAsBigDecimal(docSeqNumber);
 		}
 		return requestQuoteService.uploadVehicleImage(file, appSeqNumberDet, docTypeCode, docSeqNumberDet);
 	}
 
+	@ApiOperation(value = "return vehicle image in byte array format")
 	@RequestMapping(value = "/api/request-quote/downlaod-vehicle-images", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
-	public ResponseEntity<byte[]> downloadVehicleImage(@RequestParam(name = "docSeqNumber", required = false) String docSeqNumber) throws IOException
-	{
+	public ResponseEntity<byte[]> downloadVehicleImage(
+			@RequestParam(name = "docSeqNumber", required = false) String docSeqNumber) throws IOException {
 		BigDecimal docSeqNumberDet = null;
-		if (null != docSeqNumber && !docSeqNumber.equals("") && !docSeqNumber.equalsIgnoreCase("null"))
-		{
+		if (null != docSeqNumber && !docSeqNumber.equals("") && !docSeqNumber.equalsIgnoreCase("null")) {
 			docSeqNumberDet = ArgUtil.parseAsBigDecimal(docSeqNumber);
 		}
-	
+
 		DownloadImageModel downloadImageModel = requestQuoteService.downloadVehicleImage(docSeqNumberDet);
 		byte[] imageByteArray = downloadImageModel.getImageByteArray();
 		String imageType = downloadImageModel.getImageType();
 		MediaType mediaType = null;
-		if (imageType.contains("jpeg"))
-		{
+		if (imageType.contains("jpeg")) {
 			mediaType = MediaType.IMAGE_JPEG;
-		}
-		else if (imageType.contains("png"))
-		{
+		} else if (imageType.contains("png")) {
 			mediaType = MediaType.IMAGE_PNG;
 		}
 		return ResponseEntity.ok().contentLength(imageByteArray.length).contentType(mediaType).body(imageByteArray);
 	}
 
+	@ApiOperation(value = "submit request quote")
 	@RequestMapping(value = "/api/request-quote/submit-request-quote", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> submitRequestQuote(@RequestParam String appSeqNumber, @RequestParam String insuranceCompCode)
-	{
+	public AmxApiResponse<?, Object> submitRequestQuote(@RequestParam String appSeqNumber,
+			@RequestParam String insuranceCompCode) {
 		BigDecimal appSeqNumberDet = null;
-		if (null != appSeqNumber && !appSeqNumber.equals("") && !appSeqNumber.equalsIgnoreCase("null"))
-		{
+		if (null != appSeqNumber && !appSeqNumber.equals("") && !appSeqNumber.equalsIgnoreCase("null")) {
 			appSeqNumberDet = ArgUtil.parseAsBigDecimal(appSeqNumber);
 		}
 
 		BigDecimal insuranceCompDet = null;
-		if (null != insuranceCompCode && !insuranceCompCode.equals("") && !insuranceCompCode.equalsIgnoreCase("null"))
-		{
+		if (null != insuranceCompCode && !insuranceCompCode.equals("") && !insuranceCompCode.equalsIgnoreCase("null")) {
 			insuranceCompDet = ArgUtil.parseAsBigDecimal(insuranceCompCode, null);
 		}
 		return requestQuoteService.submitRequestQuote(appSeqNumberDet, insuranceCompDet);

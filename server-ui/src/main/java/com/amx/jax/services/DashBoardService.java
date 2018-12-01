@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.amx.jax.WebAppStatus.WebAppStatusCodes;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.HardCodedValues;
@@ -40,11 +42,11 @@ public class DashBoardService
 			incompleteApplResponse.setAppStage(incompleteApplModel.getAppStage());
 			if (null == incompleteApplModel.getErrorCode())
 			{
-				resp.setStatusKey(ApiConstants.SUCCESS);
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			}
 			else
 			{
-				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setStatusKey(incompleteApplModel.getErrorCode());
 			}
 			dashBoardDetails.setRequestQuoteDetails(incompleteApplResponse);
 			resp.setMessageKey(incompleteApplModel.getErrorCode());
@@ -55,7 +57,6 @@ public class DashBoardService
 		{
 			e.printStackTrace();
 			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}

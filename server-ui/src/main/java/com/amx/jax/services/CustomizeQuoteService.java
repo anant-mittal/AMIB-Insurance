@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.amx.jax.WebAppStatus.WebAppStatusCodes;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.dao.CustomizeQuoteDao;
@@ -55,6 +57,8 @@ public class CustomizeQuoteService
 	
 	public AmxApiResponse<?, Object> getCustomizedQuoteDetails(BigDecimal quoteSeqNumber)
 	{
+		boolean quoteAvailableToCustomer = false;
+		
 		AmxApiResponse<CustomizeQuoteModel, Object> resp = new AmxApiResponse<CustomizeQuoteModel, Object>();
 		CustomizeQuoteModel customizeQuoteModel = new CustomizeQuoteModel();
 		CustomizeQuoteInfo customizeQuoteInfo = new CustomizeQuoteInfo();
@@ -76,11 +80,18 @@ public class CustomizeQuoteService
 					{
 						myQuoteModel = myQuoteModelFromDb;
 						customizeQuoteInfo.setQuoteSeqNumber(quoteSeqNumber);
+						quoteAvailableToCustomer = true;
 					}
 				}
 			}
+			/*if(!quoteAvailableToCustomer)
+			{
+				resp.setStatusKey(WebAppStatusCodes.NO_QUOTE_AVAILABLE.toString());
+				resp.setMessageKey(WebAppStatusCodes.NO_QUOTE_AVAILABLE.toString());
+				return resp;
+			}*/
 			
-
+			
 			// SET Quotation Details
 			quotationDetails.setMakeCode(myQuoteModel.getMakeCode());
 			quotationDetails.setMakeDesc(myQuoteModel.getMakeDesc());
@@ -132,14 +143,13 @@ public class CustomizeQuoteService
 			
 			resp.setData(calculatedQuote);
 			resp.setMeta(repTypeMap);
-			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
@@ -161,14 +171,13 @@ public class CustomizeQuoteService
 				}
 			}
 			resp.setMeta(allQuotes);
-			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
@@ -213,14 +222,13 @@ public class CustomizeQuoteService
 			}
 			
 			resp.setData(CalculateUtility.calculateCustomizeQuote(customizeQuoteModel));
-			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
@@ -230,14 +238,13 @@ public class CustomizeQuoteService
 		AmxApiResponse<String, Object> resp = new AmxApiResponse<String, Object>();
 		try
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			resp.setResults(customizeQuoteDao.getTermsAndCondition());
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
@@ -268,7 +275,7 @@ public class CustomizeQuoteService
 			}
 
 			AmxApiResponse<?, Object> respQuoteAddModel = saveCustomizeQuoteAddPol(customizeQuoteModel, myQuoteModel);
-			if (respQuoteAddModel.getStatus().equals(ApiConstants.FAILURE))
+			if (!respQuoteAddModel.getStatus().equals(ApiConstants.SUCCESS))
 			{
 				return respQuoteAddModel;
 			}
@@ -280,7 +287,6 @@ public class CustomizeQuoteService
 		{
 			e.printStackTrace();
 			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
@@ -306,7 +312,7 @@ public class CustomizeQuoteService
 				ResponseInfo validate = customizeQuoteDao.saveCustomizeQuote(customizeQuoteSave , userSession.getCivilId());
 				if (validate.getErrorCode() == null)
 				{
-					resp.setStatusKey(ApiConstants.SUCCESS);
+					resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 					
 					/******************************************************PAYMENT GATEWAY***********************************************************/
 					
@@ -335,7 +341,7 @@ public class CustomizeQuoteService
 				}
 				else
 				{
-					resp.setStatusKey(ApiConstants.FAILURE);
+					resp.setStatusKey(validate.getErrorCode());
 					resp.setMessageKey(validate.getErrorCode());
 				}
 				
@@ -387,11 +393,11 @@ public class CustomizeQuoteService
 				if (validate.getErrorCode() != null)
 				{
 					resp.setMessageKey(validate.getErrorCode());
-					resp.setStatusKey(ApiConstants.FAILURE);
+					resp.setStatusKey(validate.getErrorCode());
 					return resp;
 				}
 			}
-			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			return resp;
 		}
 		return null;

@@ -17,6 +17,8 @@ import com.amx.jax.models.CustomerProfileUpdateRequest;
 import com.amx.jax.services.PersonalDetailsService;
 import com.amx.utils.ArgUtil;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 public class PersonalDetailsController
 {
@@ -25,12 +27,14 @@ public class PersonalDetailsController
 	@Autowired
 	public PersonalDetailsService personalDetailsService;
 
-	@RequestMapping(value = "/api/personal/profiledetails", method = RequestMethod.POST, produces = "application/json")
+	@ApiOperation(value = "returns customer details")
+	@RequestMapping(value = "/api/personal/profiledetails", method = RequestMethod.POST)
 	public AmxApiResponse<CustomerProfileDetailResponse, Object> getProfileDetails()
 	{
 		return personalDetailsService.getProfileDetails();
 	}
 
+	@ApiOperation(value = "update customer profile details")
 	@RequestMapping(value = "/api/personal/update-profiledetails", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> updateProfileDetails(@RequestHeader(value = "mOtp", required = false) String mOtpHeader, @RequestHeader(value = "eOtp", required = false) String eOtpHeader, @RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp,
 			@RequestBody CustomerProfileUpdateRequest customerProfileUpdateRequest)
@@ -40,31 +44,36 @@ public class PersonalDetailsController
 		return personalDetailsService.updateProfileDetails(mOtp, eOtp, customerProfileUpdateRequest);
 	}
 
-	@RequestMapping(value = "/api/personal/business", method = RequestMethod.GET, produces = "application/json")
+	@ApiOperation(value = "returns business meta info")
+	@RequestMapping(value = "/api/personal/business", method = RequestMethod.GET)
 	public AmxApiResponse<?, Object> getBusiness()
 	{
 		return personalDetailsService.getBusiness();
 	}
 
-	@RequestMapping(value = "/api/personal/nationality", method = RequestMethod.GET, produces = "application/json")
+	@ApiOperation(value = "returns nationality meta info")
+	@RequestMapping(value = "/api/personal/nationality", method = RequestMethod.GET)
 	public AmxApiResponse<?, Object> getNationality()
 	{
 		return personalDetailsService.getNationality();
 	}
 
-	@RequestMapping(value = "/api/personal/governorates", method = RequestMethod.GET, produces = "application/json")
+	@ApiOperation(value = "returns governate meta info")
+	@RequestMapping(value = "/api/personal/governorates", method = RequestMethod.GET)
 	public AmxApiResponse<?, Object> getGovernorates()
 	{
 		return personalDetailsService.getGovernorates();
 	}
 
-	@RequestMapping(value = "/api/personal/area", method = RequestMethod.GET, produces = "application/json")
+	@ApiOperation(value = "returns area meta info")
+	@RequestMapping(value = "/api/personal/area", method = RequestMethod.GET)
 	public AmxApiResponse<?, Object> getArea(@RequestParam("gov") String gov)
 	{
 		return personalDetailsService.getArea(gov);
 	}
 
-	@RequestMapping(value = "/api/personal/gender", method = RequestMethod.GET, produces = "application/json")
+	@ApiOperation(value = "returns gender meta info")
+	@RequestMapping(value = "/api/personal/gender", method = RequestMethod.GET)
 	public AmxApiResponse<?, Object> getGender()
 	{
 		return personalDetailsService.getGender();

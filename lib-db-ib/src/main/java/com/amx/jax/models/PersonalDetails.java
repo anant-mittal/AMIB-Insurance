@@ -1,21 +1,31 @@
 package com.amx.jax.models;
 
+import com.amx.jax.swagger.ApiMockModelProperty;
+
 public class PersonalDetails
 {
+	@ApiMockModelProperty(example = "Amana Devadi", value = "customer english name")
 	private String englishName;
 
+	@ApiMockModelProperty(example = "Adm", value = "customer native arabic name")
 	private String nativeArabicName;
 
+	@ApiMockModelProperty(example = "F", value = "customer gender code")
 	private String genderCode;
 
+	@ApiMockModelProperty(example = "13-Dec-18", value = "civil id expiry date")
 	private String idExpiryDate;
 
+	@ApiMockModelProperty(example = "ACH", value = "customer profession code")
 	private String businessCode;
 
+	@ApiMockModelProperty(example = "IND", value = "customer nationality code")
 	private String natyCode;
 
+	@ApiMockModelProperty(example = "FAR", value = "customer governate code")
 	private String govCode;
 
+	@ApiMockModelProperty(example = "AIR", value = "customer area code")
 	private String areaCode;
 
 	private String mobile;

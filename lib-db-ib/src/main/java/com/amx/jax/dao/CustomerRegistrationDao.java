@@ -196,12 +196,10 @@ public class CustomerRegistrationDao
 
 			if (null == errorCode)
 			{
-				validate.setValid(true);
 				return validate;
 			}
 			else
 			{
-				validate.setValid(false);
 				validate.setErrorCode(errorCode);
 				validate.setErrorMessage(errorMessage);
 				return validate;
@@ -354,14 +352,12 @@ public class CustomerRegistrationDao
 
 			if (null == errorCode)
 			{
-				validate.setValid(true);
 				validate.setErrorCode(errorCode);
 				validate.setErrorMessage(errorMessage);
 				return validate;
 			}
 			else
 			{
-				validate.setValid(false);
 				validate.setErrorCode(errorCode);
 				validate.setErrorMessage(errorMessage);
 				return validate;

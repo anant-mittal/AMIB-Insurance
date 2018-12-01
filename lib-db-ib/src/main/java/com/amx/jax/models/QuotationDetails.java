@@ -2,24 +2,35 @@ package com.amx.jax.models;
 
 import java.math.BigDecimal;
 
+import com.amx.jax.swagger.ApiMockModelProperty;
+
 public class QuotationDetails
 {
+	@ApiMockModelProperty(example = "ACU", value = "Vehicle Details Make Code ")
 	private String makeCode;
 	
+	@ApiMockModelProperty(example = "ACURA", value = "Vehicle Details Make Desc ")
 	private String makeDesc;
 
+	@ApiMockModelProperty(example = "TV6", value = "Vehicle Details Sub Make Code")
 	private String subMakeCode;
 
+	@ApiMockModelProperty(example = "TLX V6", value = "Vehicle Details Sub Make Desc")
 	private String subMakeDesc;
 	
+	@ApiMockModelProperty(example = "GULF TAKAFUL INSURANCE CO KSCC", value = "Insurance Company Name Policy Provider")
 	private String companyName;
 
+	@ApiMockModelProperty(example = "100004", value = "Insurance Company Code Policy Provider")
 	private BigDecimal companyCode;
 
+	@ApiMockModelProperty(example = "GTIC", value = "Insurance Company Short Code Policy Provider for icon")
 	private String companyShortCode;
 	
+	@ApiMockModelProperty(example = "12356451514541554", value = "Vehicle Chasis Number")
 	private String chassisNumber;
 	
+	@ApiMockModelProperty(example = "1", value = "Policy Duration nin Year")
 	private BigDecimal policyDuration;
 
 	public String getMakeCode()

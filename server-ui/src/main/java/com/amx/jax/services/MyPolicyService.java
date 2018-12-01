@@ -6,6 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.amx.jax.WebAppStatus.WebAppStatusCodes;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.HardCodedValues;
@@ -44,14 +46,13 @@ public class MyPolicyService
 		try
 		{
 			resp.setResults(myPolicyDao.getUserActivePolicy(userSession.getUserAmibCustRef(), userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber()));
-			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
@@ -59,7 +60,6 @@ public class MyPolicyService
 	
 	public AmxApiResponse<?, Object> renewInsuranceOldPolicy(BigDecimal oldDocNumber)
 	{
-		logger.info(TAG + " getRenewPolicyDetails :: oldDocNumber :" + oldDocNumber);
 		BigDecimal insuranceCompCode = null;
 		BigDecimal appSeqNumber = null;
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
@@ -67,17 +67,16 @@ public class MyPolicyService
 		try
 		{
 			AmxApiResponse<?, Object> respPersonalDetails = requestQuoteService.getProfileDetails();
-			if (respPersonalDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			if (!respPersonalDetails.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				return respPersonalDetails;
 			}
 			else
 			{
 				String checkRenewableApplicable = myPolicyDao.checkRenewableApplicable(oldDocNumber , userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber());
-				logger.info(TAG + " renewInsuranceOldPolicy :: checkRenewableApplicable :" + checkRenewableApplicable);
 				if(null != checkRenewableApplicable && !checkRenewableApplicable.equals(""))
 				{
-					resp.setStatusKey(ApiConstants.FAILURE);
+					resp.setStatusKey(checkRenewableApplicable);
 					resp.setMessageKey(checkRenewableApplicable);
 					return resp;
 				}
@@ -88,14 +87,14 @@ public class MyPolicyService
 					String dateFromDb = personalDetails.getIdExpiryDate();
 					if (DateFormats.checkExpiryDate(dateFromDb))
 					{
-						resp.setStatusKey(ApiConstants.FAILURE);
-						resp.setMessageKey(MessageKey.KEY_CIVIL_ID_EXPIRED);
+						resp.setStatusKey(WebAppStatusCodes.CIVIL_ID_EXPIRED.toString());
+						resp.setMessageKey(WebAppStatusCodes.CIVIL_ID_EXPIRED.toString());
 						return resp;
 					}
 				}
 
 				AmxApiResponse<?, Object> getVehicleDetails = requestQuoteService.getRenewPolicyVehicleDetails(oldDocNumber);
-				if (getVehicleDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+				if (!getVehicleDetails.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 				{
 					return getVehicleDetails;
 				}
@@ -107,7 +106,7 @@ public class MyPolicyService
 					}
 
 					AmxApiResponse<?, Object> submitVehicleDetails = requestQuoteService.setAppVehicleDetails(appSeqNumber, (VehicleDetails) getVehicleDetails.getData(), oldDocNumber);
-					if (submitVehicleDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+					if (!submitVehicleDetails.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 					{
 						return submitVehicleDetails;
 					}
@@ -119,13 +118,13 @@ public class MyPolicyService
 					}
 					
 					AmxApiResponse<?, Object> setPersonalDetails = requestQuoteService.setProfileDetails(appSeqNumber, (PersonalDetails) respPersonalDetails.getData());
-					if (setPersonalDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+					if (!setPersonalDetails.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 					{
 						return setPersonalDetails;
 					}
 					
 					AmxApiResponse<?, Object> updateInsuranceProvider = requestQuoteService.updateInsuranceProvider(appSeqNumber, insuranceCompCode , userSession.getCivilId());
-					if (updateInsuranceProvider.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+					if (!updateInsuranceProvider.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 					{
 						return updateInsuranceProvider;
 					}

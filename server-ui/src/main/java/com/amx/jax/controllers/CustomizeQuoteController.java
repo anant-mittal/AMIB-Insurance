@@ -29,9 +29,12 @@ import com.amx.jax.postman.model.TemplatesIB;
 import com.amx.jax.services.CustomerRegistrationService;
 import com.amx.jax.services.CustomizeQuoteService;
 import com.amx.jax.services.PayMentService;
+import com.amx.jax.swagger.ApiMockParam;
 import com.amx.jax.ui.session.UserSession;
 import com.amx.jax.utility.Utility;
 import com.amx.utils.ArgUtil;
+
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 public class CustomizeQuoteController
@@ -63,8 +66,10 @@ public class CustomizeQuoteController
 	private HttpServletResponse response;
 	
 
-	@RequestMapping(value = "/api/customize-quote/get-quote-details", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> getCustomizedQuoteDetails(@RequestParam(name = "quoteSeqNumber", required = false) String quoteSeqNumber)
+	@ApiOperation(value = "return customize quote details")
+	@ApiMockParam(example = "124", value = "unique quote sequence number")
+	@RequestMapping(value = "/api/customize-quote/get-quote-details", method = RequestMethod.POST)
+	public AmxApiResponse<?, Object> getCustomizedQuoteDetails(@RequestParam(name = "quoteSeqNumber") String quoteSeqNumber)
 	{
 		BigDecimal quoteSeqNumberDet = null;
 		if (null != quoteSeqNumber && !quoteSeqNumber.equals("") && !quoteSeqNumber.equalsIgnoreCase("null"))
@@ -74,30 +79,35 @@ public class CustomizeQuoteController
 		return customizeQuoteService.getCustomizedQuoteDetails(quoteSeqNumberDet);
 	}
 
-	@RequestMapping(value = "/api/customize-quote/calculate-quote", method = RequestMethod.POST, produces = "application/json")
+	@ApiOperation(value = "return calculated customize quote details")
+	@RequestMapping(value = "/api/customize-quote/calculate-quote", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> calculateCutomizeQuote(@RequestBody CustomizeQuoteModel customizeQuoteModel)
 	{
 		return customizeQuoteService.calculateCutomizeQuote(customizeQuoteModel);
 	}
 
-	@RequestMapping(value = "/api/customize-quote/get-quoteseq-list", method = RequestMethod.GET, produces = "application/json")
+	@ApiOperation(value = "return all quotes with respect to the customer")
+	@RequestMapping(value = "/api/customize-quote/get-quoteseq-list", method = RequestMethod.GET)
 	public AmxApiResponse<?, Object> getQuoteSeqList()
 	{
 		return customizeQuoteService.getQuoteSeqList();
 	}
 
-	@RequestMapping(value = "/api/customize-quote/terms-condition", method = RequestMethod.GET, produces = "application/json")
+	@ApiOperation(value = "return terms and conditions of AMIB")
+	@RequestMapping(value = "/api/customize-quote/terms-condition", method = RequestMethod.GET)
 	public AmxApiResponse<?, Object> getTermsAndCondition()
 	{
 		return customizeQuoteService.getTermsAndCondition();
 	}
 
-	@RequestMapping(value = "/api/customize-quote/submit-quote", method = RequestMethod.POST, produces = "application/json")
+	@ApiOperation(value = "submit the customize quote after calculation to DB")
+	@RequestMapping(value = "/api/customize-quote/submit-quote", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> saveCustomizeQuote(@RequestBody CustomizeQuoteModel customizeQuoteModel , HttpServletRequest request)
 	{
 		return customizeQuoteService.saveCustomizeQuote(customizeQuoteModel , request);
 	}
 	
+	@ApiOperation(value = "payment callback method to set payment info in DB ")
 	@RequestMapping(value = "/remit/save-remittance", method = { RequestMethod.POST })
 	public PaymentResponseDto onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse) 
 	{
@@ -139,6 +149,8 @@ public class CustomizeQuoteController
 		return paymentResponse;
 	}
 	
+	@ApiOperation(value = "return the payment status")
+	@ApiMockParam(example = "123", value = "pay sequence number of transection")
 	@RequestMapping(value = "/api/payment-status", method = { RequestMethod.POST })
 	public AmxApiResponse<?, Object> getPaymentStatus(@RequestParam String paySeqNum) 
 	{
@@ -153,7 +165,8 @@ public class CustomizeQuoteController
 		return payMentService.getPaymentStatus(paySeqNumDet);
 	}
 	
-	
+	@ApiOperation(value = "return the payment receipt model data")
+	@ApiMockParam(example = "123", value = "pay sequence number of transection")
 	@RequestMapping(value = "/api/payment-receipt-data", method = { RequestMethod.GET })
 	public String paymentReceiptDataExt(@RequestParam String paySeqNum) 
 	{

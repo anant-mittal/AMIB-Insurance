@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.services.DashBoardService;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 public class DashBoardController
 {
@@ -18,6 +20,7 @@ public class DashBoardController
 	@Autowired
 	public DashBoardService dashBoardService;
 
+	@ApiOperation(value = "returns the list of incomplete application of the customer")
 	@RequestMapping(value = "/api/dashboard/getdetails", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> getIncompleteApplication()
 	{

@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.services.MyQuotesService;
+import com.amx.jax.swagger.ApiMockParam;
+
+import io.swagger.annotations.ApiOperation;
 
 @RestController
 public class MyQuotesController
@@ -18,6 +21,7 @@ public class MyQuotesController
 	@Autowired
 	private MyQuotesService myQuotesService;
 
+	@ApiOperation(value = "return the list of availabe quote for the customer")
 	@RequestMapping(value = "/api/myquote/get-myquotes", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> getUserQuote()
 	{
