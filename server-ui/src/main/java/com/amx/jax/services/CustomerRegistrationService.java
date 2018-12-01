@@ -273,8 +273,6 @@ public class CustomerRegistrationService {
 
 		try {
 			AmxApiResponse<?, Object> validateForRegistration = validateForRegistration(requestOtpModel);
-			logger.info(
-					"changePasswordOtpInitiate :: validateForRegistration :" + validateForRegistration.getStatusKey());
 			if (null != validateForRegistration) {
 				return validateForRegistration;
 			}
