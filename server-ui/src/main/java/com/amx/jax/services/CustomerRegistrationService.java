@@ -541,10 +541,8 @@ public class CustomerRegistrationService {
 
 		AmxApiResponse<ResponseInfo, Object> validateCivilID = isValidCivilId(requestOtpModel.getCivilId());
 		AmxApiResponse<ResponseInfo, Object> civilIdExistCheck = isCivilIdExist(requestOtpModel.getCivilId());
-		AmxApiResponse<ResponseInfo, Object> isValidMobileNumber = isValidMobileNumber(
-				requestOtpModel.getMobileNumber());
-		AmxApiResponse<ResponseInfo, Object> mobileNumberExists = isMobileNumberExist(
-				requestOtpModel.getMobileNumber());
+		AmxApiResponse<ResponseInfo, Object> isValidMobileNumber = isValidMobileNumber(requestOtpModel.getMobileNumber());
+		AmxApiResponse<ResponseInfo, Object> mobileNumberExists = isMobileNumberExist(requestOtpModel.getMobileNumber());
 		AmxApiResponse<ResponseInfo, Object> validateEmailID = isValidEmailId(requestOtpModel.getEmailId());
 		AmxApiResponse<ResponseInfo, Object> emailIdExists = isEmailIdExist(requestOtpModel.getEmailId());
 
@@ -576,27 +574,29 @@ public class CustomerRegistrationService {
 
 			logger.info("changePasswordOtpInitiate :: mobileNumberExists :" + mobileNumberExists.getStatusKey());
 			logger.info("changePasswordOtpInitiate :: emailIdExists :" + emailIdExists.getStatusKey());
-			if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)
-					&& emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
-				sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_MOBE_MAIL, requestOtpModel,
-						mobileNumberExists.getMessage());
+			
+			if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS) && emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
+				sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_MOBE_MAIL, requestOtpModel, mobileNumberExists.getMessage());
 				resp.setStatusEnum(WebAppStatusCodes.MOBILE_OR_EMAIL_ALREADY_EXISTS);
-				mobileNumberExists.setMessageKey(WebAppStatusCodes.MOBILE_OR_EMAIL_ALREADY_EXISTS.toString());
-				return mobileNumberExists;
-			} else if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
-				sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE, requestOtpModel,
-						mobileNumberExists.getMessage());
-				mobileNumberExists.setMessageKey(WebAppStatusCodes.MOBILE_NUMBER_REGISTERED.toString());
-				mobileNumberExists.setStatusEnum(WebAppStatusCodes.MOBILE_NUMBER_REGISTERED);
-				return mobileNumberExists;
-			} else if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
-				sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL, requestOtpModel,
-						emailIdExists.getMessage());
-				emailIdExists.setMessageKey(WebAppStatusCodes.EMAIL_ID_REGESTERED.toString());
-				emailIdExists.setStatusEnum(WebAppStatusCodes.EMAIL_ID_REGESTERED);
-				return emailIdExists;
+				resp.setMessageKey(WebAppStatusCodes.MOBILE_OR_EMAIL_ALREADY_EXISTS.toString());
+				return resp;
+			} 
+			else if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) 
+			{
+				sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE, requestOtpModel,mobileNumberExists.getMessage());
+				resp.setMessageKey(WebAppStatusCodes.MOBILE_NUMBER_REGISTERED.toString());
+				resp.setStatusEnum(WebAppStatusCodes.MOBILE_NUMBER_REGISTERED);
+				return resp;
+			} 
+			else if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) 
+			{
+				sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL, requestOtpModel,emailIdExists.getMessage());
+				resp.setMessageKey(WebAppStatusCodes.EMAIL_ID_REGESTERED.toString());
+				resp.setStatusEnum(WebAppStatusCodes.EMAIL_ID_REGESTERED);
+				return resp;
 			}
-		} catch (Exception e) {
+		} 
+		catch (Exception e) {
 			e.printStackTrace();
 			resp.setData(null);
 			resp.setException(e.toString());
