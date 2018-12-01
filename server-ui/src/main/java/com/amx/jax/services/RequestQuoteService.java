@@ -560,7 +560,7 @@ public class RequestQuoteService
 		
 		userSession.setCustomerEmailId(customerProfileDetailModel.getEmail());
 
-		if (customerProfileDetailModel.getStatus())
+		if (customerProfileDetailModel.getErrorCode() == null)
 		{
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 		}

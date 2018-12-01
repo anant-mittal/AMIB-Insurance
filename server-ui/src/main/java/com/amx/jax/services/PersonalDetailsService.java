@@ -68,7 +68,8 @@ public class PersonalDetailsService
 		customerProfileDetailResponse.setNatyCode(customerProfileDetailModel.getNatyCode());
 		customerProfileDetailResponse.setNatyDesc(customerProfileDetailModel.getNatyDesc());
 		customerProfileDetailResponse.setNativeArabicName(customerProfileDetailModel.getNativeArabicName());
-		if (customerProfileDetailModel.getStatus())
+		
+		if (customerProfileDetailModel.getErrorCode() == null)
 		{
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 		}
@@ -209,7 +210,7 @@ public class PersonalDetailsService
 		customerProfileUpdateResponse.setStatus(customerProfileDetailModel.getStatus());
 		customerProfileUpdateResponse.setErrorCode(customerProfileDetailModel.getErrorCode());
 		customerProfileUpdateResponse.setErrorMessage(customerProfileDetailModel.getErrorMessage());
-		if (customerProfileUpdateResponse.getStatus())
+		if (customerProfileUpdateResponse.getErrorCode() == null)
 		{
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 		}
