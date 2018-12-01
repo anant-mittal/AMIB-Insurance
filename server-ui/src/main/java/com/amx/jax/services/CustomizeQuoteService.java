@@ -275,11 +275,13 @@ public class CustomizeQuoteService
 			}
 
 			AmxApiResponse<?, Object> respQuoteAddModel = saveCustomizeQuoteAddPol(customizeQuoteModel, myQuoteModel);
+			logger.info("saveCustomizeQuote :: getStatus :" + respQuoteAddModel.getStatus());
 			if (!respQuoteAddModel.getStatus().equals(ApiConstants.SUCCESS))
 			{
 				return respQuoteAddModel;
 			}
 			
+			logger.info("saveCustomizeQuote :: respQuoteAddModel : Done");
 			return saveCustomizeQuoteDetails(customizeQuoteModel, myQuoteModel ,customizeQuoteInfo ,request);
 		
 		}
@@ -296,6 +298,8 @@ public class CustomizeQuoteService
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
 		try
 		{
+			logger.info("saveCustomizeQuoteDetails :: Done");
+			
 			if (null != customizeQuoteModel)
 			{
 				TotalPremium totalPremium = customizeQuoteModel.getTotalPremium();
@@ -310,6 +314,7 @@ public class CustomizeQuoteService
 				customizeQuoteSave.setTotalAmount(totalPremium.getTotalAmount());
 				
 				ResponseInfo validate = customizeQuoteDao.saveCustomizeQuote(customizeQuoteSave , userSession.getCivilId());
+				logger.info("saveCustomizeQuoteDetails :: getErrorCode :" + validate.getErrorCode());
 				if (validate.getErrorCode() == null)
 				{
 					resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
