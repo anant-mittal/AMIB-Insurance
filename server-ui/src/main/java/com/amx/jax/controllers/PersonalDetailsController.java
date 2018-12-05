@@ -22,18 +22,16 @@ import com.amx.utils.ArgUtil;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
-public class PersonalDetailsController
-{
+public class PersonalDetailsController {
 	private static final Logger logger = LoggerFactory.getLogger(PersonalDetailsController.class);
-	
+
 	@Autowired
 	public PersonalDetailsService personalDetailsService;
 
 	@ApiOperation(value = "returns customer personal details")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/personal/profiledetails", method = RequestMethod.POST)
-	public AmxApiResponse<CustomerProfileDetailResponse, Object> getProfileDetails()
-	{
+	public AmxApiResponse<CustomerProfileDetailResponse, Object> getProfileDetails() {
 		return personalDetailsService.getProfileDetails();
 	}
 
@@ -41,54 +39,50 @@ public class PersonalDetailsController
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/personal/update-profiledetails", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> updateProfileDetails(
-			@RequestHeader(value = "mOtp", required = false) String mOtpHeader, 
-			@RequestHeader(value = "eOtp", required = false) String eOtpHeader, 
-			//@RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp,
-			@RequestBody CustomerProfileUpdateRequest customerProfileUpdateRequest)
-	{
-		//mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
-		//eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
-		//return personalDetailsService.updateProfileDetails(mOtp, eOtp, customerProfileUpdateRequest);
+			@RequestHeader(value = "mOtp", required = false) String mOtpHeader,
+			@RequestHeader(value = "eOtp", required = false) String eOtpHeader,
+			// @RequestParam(required = false) String mOtp, @RequestParam(required = false)
+			// String eOtp,
+			@RequestBody CustomerProfileUpdateRequest customerProfileUpdateRequest) {
+		// mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
+		// eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
+		// return personalDetailsService.updateProfileDetails(mOtp, eOtp,
+		// customerProfileUpdateRequest);
 		return personalDetailsService.updateProfileDetails(mOtpHeader, eOtpHeader, customerProfileUpdateRequest);
 	}
 
 	@ApiOperation(value = "returns personal details profession meta info")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/personal/business", method = RequestMethod.GET)
-	public AmxApiResponse<?, Object> getBusiness()
-	{
+	public AmxApiResponse<?, Object> getBusiness() {
 		return personalDetailsService.getBusiness();
 	}
 
 	@ApiOperation(value = "returns personal details nationality meta info")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/personal/nationality", method = RequestMethod.GET)
-	public AmxApiResponse<?, Object> getNationality()
-	{
+	public AmxApiResponse<?, Object> getNationality() {
 		return personalDetailsService.getNationality();
 	}
 
 	@ApiOperation(value = "returns personal details governorate meta info")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/personal/governorates", method = RequestMethod.GET)
-	public AmxApiResponse<?, Object> getGovernorates()
-	{
+	public AmxApiResponse<?, Object> getGovernorates() {
 		return personalDetailsService.getGovernorates();
 	}
 
 	@ApiOperation(value = "returns personal details area meta info")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/personal/area", method = RequestMethod.GET)
-	public AmxApiResponse<?, Object> getArea(@RequestParam("gov") String gov)
-	{
+	public AmxApiResponse<?, Object> getArea(@RequestParam("gov") String gov) {
 		return personalDetailsService.getArea(gov);
 	}
 
 	@ApiOperation(value = "returns personal details gender meta info")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/personal/gender", method = RequestMethod.GET)
-	public AmxApiResponse<?, Object> getGender()
-	{
+	public AmxApiResponse<?, Object> getGender() {
 		return personalDetailsService.getGender();
 	}
 }

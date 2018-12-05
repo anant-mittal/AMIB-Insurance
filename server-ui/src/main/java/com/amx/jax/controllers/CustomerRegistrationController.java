@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.amx.jax.WebAppStatus.ApiWebAppStatus;
 import com.amx.jax.WebAppStatus.WebAppStatusCodes;
 import com.amx.jax.api.AmxApiResponse;
@@ -98,11 +97,13 @@ public class CustomerRegistrationController {
 	public AmxApiResponse<?, Object> registrationOtpInitiate(
 			@RequestHeader(value = "mOtp", required = false) String mOtpHeader,
 			@RequestHeader(value = "eOtp", required = false) String eOtpHeader,
-			//@RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp,
+			// @RequestParam(required = false) String mOtp, @RequestParam(required = false)
+			// String eOtp,
 			@RequestBody RequestOtpModel requestOtpModel) {
-		//mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
-		//eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
-		//return customerRegistrationService.registrationOtp(eOtp, mOtp, requestOtpModel);
+		// mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
+		// eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
+		// return customerRegistrationService.registrationOtp(eOtp, mOtp,
+		// requestOtpModel);
 		return customerRegistrationService.registrationOtp(eOtpHeader, mOtpHeader, requestOtpModel);
 	}
 
@@ -133,11 +134,13 @@ public class CustomerRegistrationController {
 	public AmxApiResponse<?, Object> changePasswordOtpInitiate(
 			@RequestHeader(value = "mOtp", required = false) String mOtpHeader,
 			@RequestHeader(value = "eOtp", required = false) String eOtpHeader,
-			//@RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp,
+			// @RequestParam(required = false) String mOtp, @RequestParam(required = false)
+			// String eOtp,
 			@RequestBody ChangePasswordOtpRequest changePasswordRequest) {
-		//mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
-		//eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
-		//return customerRegistrationService.changePasswordOtpInitiate(eOtp, mOtp, changePasswordRequest);
+		// mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
+		// eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
+		// return customerRegistrationService.changePasswordOtpInitiate(eOtp, mOtp,
+		// changePasswordRequest);
 		return customerRegistrationService.changePasswordOtpInitiate(eOtpHeader, mOtpHeader, changePasswordRequest);
 	}
 
@@ -165,11 +168,13 @@ public class CustomerRegistrationController {
 	public AmxApiResponse<?, Object> changePasswordLogedInUser(
 			@RequestHeader(value = "mOtp", required = false) String mOtpHeader,
 			@RequestHeader(value = "eOtp", required = false) String eOtpHeader,
-			//@RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp,
+			// @RequestParam(required = false) String mOtp, @RequestParam(required = false)
+			// String eOtp,
 			@RequestBody ChangePasswordRequest changePasswordRequest) {
-		//mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
-		//eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
-		//return customerRegistrationService.changePasswordLogedInUser(eOtp, mOtp, changePasswordRequest);
+		// mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
+		// eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
+		// return customerRegistrationService.changePasswordLogedInUser(eOtp, mOtp,
+		// changePasswordRequest);
 		return customerRegistrationService.changePasswordLogedInUser(eOtpHeader, mOtpHeader, changePasswordRequest);
 	}
 

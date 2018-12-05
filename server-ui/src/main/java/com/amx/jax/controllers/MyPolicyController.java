@@ -117,7 +117,7 @@ public class MyPolicyController {
 					metaService.getTenantProfile().getDecplc(), metaService.getTenantProfile().getCurrency()));
 			model.put("amountPaidInNum", Utility.getAmountInCurrency(policyReceiptDetails.getAmountPaidInNum(),
 					metaService.getTenantProfile().getDecplc(), metaService.getTenantProfile().getCurrency()));
-			model.put("amountPaidInWord",policyReceiptDetails.getAmountPaidInWord());
+			model.put("amountPaidInWord", policyReceiptDetails.getAmountPaidInWord());
 
 			dataList.add(model);
 			wrapper.put("results", dataList);

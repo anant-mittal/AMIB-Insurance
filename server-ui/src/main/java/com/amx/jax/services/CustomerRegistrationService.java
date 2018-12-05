@@ -4,6 +4,7 @@ package com.amx.jax.services;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,6 @@ import com.amx.jax.constants.DatabaseErrorKey;
 import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.constants.Message;
-import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.http.CommonHttpRequest;
 import com.amx.jax.meta.IMetaService;
@@ -539,8 +539,10 @@ public class CustomerRegistrationService {
 
 		AmxApiResponse<ResponseInfo, Object> validateCivilID = isValidCivilId(requestOtpModel.getCivilId());
 		AmxApiResponse<ResponseInfo, Object> civilIdExistCheck = isCivilIdExist(requestOtpModel.getCivilId());
-		AmxApiResponse<ResponseInfo, Object> isValidMobileNumber = isValidMobileNumber(requestOtpModel.getMobileNumber());
-		AmxApiResponse<ResponseInfo, Object> mobileNumberExists = isMobileNumberExist(requestOtpModel.getMobileNumber());
+		AmxApiResponse<ResponseInfo, Object> isValidMobileNumber = isValidMobileNumber(
+				requestOtpModel.getMobileNumber());
+		AmxApiResponse<ResponseInfo, Object> mobileNumberExists = isMobileNumberExist(
+				requestOtpModel.getMobileNumber());
 		AmxApiResponse<ResponseInfo, Object> validateEmailID = isValidEmailId(requestOtpModel.getEmailId());
 		AmxApiResponse<ResponseInfo, Object> emailIdExists = isEmailIdExist(requestOtpModel.getEmailId());
 
@@ -572,29 +574,28 @@ public class CustomerRegistrationService {
 
 			logger.info("changePasswordOtpInitiate :: mobileNumberExists :" + mobileNumberExists.getStatusKey());
 			logger.info("changePasswordOtpInitiate :: emailIdExists :" + emailIdExists.getStatusKey());
-			
-			if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS) && emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
-				sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_MOBE_MAIL, requestOtpModel, mobileNumberExists.getMessage());
+
+			if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)
+					&& emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
+				sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_MOBE_MAIL, requestOtpModel,
+						mobileNumberExists.getMessage());
 				resp.setStatusEnum(WebAppStatusCodes.MOBILE_OR_EMAIL_ALREADY_EXISTS);
 				resp.setMessageKey(WebAppStatusCodes.MOBILE_OR_EMAIL_ALREADY_EXISTS.toString());
 				return resp;
-			} 
-			else if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) 
-			{
-				sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE, requestOtpModel,mobileNumberExists.getMessage());
+			} else if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
+				sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE, requestOtpModel,
+						mobileNumberExists.getMessage());
 				resp.setMessageKey(WebAppStatusCodes.MOBILE_NUMBER_REGISTERED.toString());
 				resp.setStatusEnum(WebAppStatusCodes.MOBILE_NUMBER_REGISTERED);
 				return resp;
-			} 
-			else if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) 
-			{
-				sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL, requestOtpModel,emailIdExists.getMessage());
+			} else if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
+				sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL, requestOtpModel,
+						emailIdExists.getMessage());
 				resp.setMessageKey(WebAppStatusCodes.EMAIL_ID_REGESTERED.toString());
 				resp.setStatusEnum(WebAppStatusCodes.EMAIL_ID_REGESTERED);
 				return resp;
 			}
-		} 
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			resp.setData(null);
 			resp.setException(e.toString());

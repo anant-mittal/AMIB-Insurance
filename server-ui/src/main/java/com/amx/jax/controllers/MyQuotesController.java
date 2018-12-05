@@ -16,8 +16,7 @@ import com.amx.jax.swagger.ApiMockParam;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
-public class MyQuotesController
-{
+public class MyQuotesController {
 	private static final Logger logger = LoggerFactory.getLogger(MyQuotesController.class);
 
 	@Autowired
@@ -26,8 +25,7 @@ public class MyQuotesController
 	@ApiOperation(value = "return the list of my quotes created by the customer")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/myquote/get-myquotes", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> getUserQuote()
-	{
+	public AmxApiResponse<?, Object> getUserQuote() {
 		return myQuotesService.getUserQuote();
 	}
 }

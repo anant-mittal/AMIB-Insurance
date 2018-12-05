@@ -15,8 +15,7 @@ import com.amx.jax.services.DashBoardService;
 import io.swagger.annotations.ApiOperation;
 
 @RestController
-public class DashBoardController
-{
+public class DashBoardController {
 	private static final Logger logger = LoggerFactory.getLogger(RequestQuoteController.class);
 
 	@Autowired
@@ -25,8 +24,7 @@ public class DashBoardController
 	@ApiOperation(value = "returns incomplete quote details of the customer")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/dashboard/getdetails", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> getIncompleteApplication()
-	{
+	public AmxApiResponse<?, Object> getIncompleteApplication() {
 		return dashBoardService.getIncompleteApplication();
 	}
 }
