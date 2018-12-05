@@ -23,7 +23,7 @@ public class MyQuotesController
 	@Autowired
 	private MyQuotesService myQuotesService;
 
-	@ApiOperation(value = "return the list of my policy created by the customer")
+	@ApiOperation(value = "return the list of my quotes created by the customer")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/myquote/get-myquotes", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> getUserQuote()

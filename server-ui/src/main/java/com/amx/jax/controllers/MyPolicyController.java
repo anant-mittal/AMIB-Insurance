@@ -64,7 +64,7 @@ public class MyPolicyController {
 		return myPolicyService.renewInsuranceOldPolicy(renewAppDocNumberDet);
 	}
 
-	@ApiOperation(value = "api to download policy receipt of entered doc number")
+	@ApiOperation(value = "api to download policy receipt pdf of entered doc number")
 	@ApiMockParam(example = "1244", value = "doc number of insurance quote")
 	@RequestMapping(value = "/api/mypolicy/policy-receipt", method = { RequestMethod.GET })
 	public String downloadPolicyReceipt(@RequestParam String docNumber) {

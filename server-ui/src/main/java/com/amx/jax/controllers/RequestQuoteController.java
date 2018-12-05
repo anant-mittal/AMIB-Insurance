@@ -97,7 +97,7 @@ public class RequestQuoteController {
 		return requestQuoteService.getPolicyDuration();
 	}
 
-	@ApiOperation(value = "returns request quote details")
+	@ApiOperation(value = "returns request quote details", notes = "this api will return vehicle details , personal details , uploaded images , and insurance provider details")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/request-quote/get-requestquote-details", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> getRequestQuoteDetails() {
@@ -130,7 +130,7 @@ public class RequestQuoteController {
 		return requestQuoteService.setProfileDetails(appSeqNumberDet, personalDetails);
 	}
 
-	@ApiOperation(value = "submit upadted vehicle image details to server")
+	@ApiOperation(value = "submit upadted vehicle image to server")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/request-quote/upload-vehicle-image", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> uploadVehicleImage(@RequestParam MultipartFile file,
@@ -169,7 +169,7 @@ public class RequestQuoteController {
 		return ResponseEntity.ok().contentLength(imageByteArray.length).contentType(mediaType).body(imageByteArray);
 	}
 
-	@ApiOperation(value = "submits updated request quote details to server")
+	@ApiOperation(value = "submits updated request quote details to server", notes = "after successfull submit of request quote a mail will trigger to the customer on his registered emial id ")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/request-quote/submit-request-quote", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> submitRequestQuote(@RequestParam String appSeqNumber,

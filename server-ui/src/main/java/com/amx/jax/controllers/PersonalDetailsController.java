@@ -40,12 +40,16 @@ public class PersonalDetailsController
 	@ApiOperation(value = "update customer personal details")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/personal/update-profiledetails", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> updateProfileDetails(@RequestHeader(value = "mOtp", required = false) String mOtpHeader, @RequestHeader(value = "eOtp", required = false) String eOtpHeader, @RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp,
+	public AmxApiResponse<?, Object> updateProfileDetails(
+			@RequestHeader(value = "mOtp", required = false) String mOtpHeader, 
+			@RequestHeader(value = "eOtp", required = false) String eOtpHeader, 
+			//@RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp,
 			@RequestBody CustomerProfileUpdateRequest customerProfileUpdateRequest)
 	{
-		mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
-		eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
-		return personalDetailsService.updateProfileDetails(mOtp, eOtp, customerProfileUpdateRequest);
+		//mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
+		//eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
+		//return personalDetailsService.updateProfileDetails(mOtp, eOtp, customerProfileUpdateRequest);
+		return personalDetailsService.updateProfileDetails(mOtpHeader, eOtpHeader, customerProfileUpdateRequest);
 	}
 
 	@ApiOperation(value = "returns personal details profession meta info")

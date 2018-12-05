@@ -87,7 +87,7 @@ public class CustomerRegistrationController {
 		return customerRegistrationService.isValidEmailId(emailId);
 	}
 
-	@ApiOperation(value = "api to verify email id and contact number through otp", notes = "email id and contact number enterd by customer while registration gets verified by sending otp on both")
+	@ApiOperation(value = "api to verify email id and contact number through otp", notes = "email id and contact number enterd by customer while registration gets verified by sending otp")
 	@ApiWebAppStatus({ WebAppStatusCodes.CIVIL_ID_INVALID, WebAppStatusCodes.CIVIL_ID_VALID,
 			WebAppStatusCodes.CIVIL_ID_ALREADY_REGISTERED, WebAppStatusCodes.CIVIL_ID_NOT_REGESTERED,
 			WebAppStatusCodes.EMAIL_ID_VALID, WebAppStatusCodes.EMAIL_ID_INVALID,
@@ -98,11 +98,12 @@ public class CustomerRegistrationController {
 	public AmxApiResponse<?, Object> registrationOtpInitiate(
 			@RequestHeader(value = "mOtp", required = false) String mOtpHeader,
 			@RequestHeader(value = "eOtp", required = false) String eOtpHeader,
-			@RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp,
+			//@RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp,
 			@RequestBody RequestOtpModel requestOtpModel) {
-		mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
-		eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
-		return customerRegistrationService.registrationOtp(eOtp, mOtp, requestOtpModel);
+		//mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
+		//eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
+		//return customerRegistrationService.registrationOtp(eOtp, mOtp, requestOtpModel);
+		return customerRegistrationService.registrationOtp(eOtpHeader, mOtpHeader, requestOtpModel);
 	}
 
 	@ApiOperation(value = "api to set password and create new customer", notes = "after successful email id and contact number verfication through otp verification this api to set password and create new customer")
@@ -124,7 +125,7 @@ public class CustomerRegistrationController {
 		return customerRegistrationService.validateUserLogin(customerLoginRequest);
 	}
 
-	@ApiOperation(value = "api to verify email id and contact number while changing password non logged in user", notes = "this api is called when customer is not logged-in and email id and contact number enterd by customer gets verified by sending otp before changing password")
+	@ApiOperation(value = "api to verify email id and contact number while changing password non logged in user", notes = "this api is called when customer is not logged in and tries to change the password. Here customer emial id and contact number get validates through otp.")
 	@ApiWebAppStatus({ WebAppStatusCodes.CIVIL_ID_INVALID, WebAppStatusCodes.CIVIL_ID_VALID,
 			WebAppStatusCodes.CIVIL_ID_ALREADY_REGISTERED, WebAppStatusCodes.CIVIL_ID_NOT_REGESTERED,
 			WebAppStatusCodes.CP_OTP_NOT_GENERATED, WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
@@ -132,11 +133,12 @@ public class CustomerRegistrationController {
 	public AmxApiResponse<?, Object> changePasswordOtpInitiate(
 			@RequestHeader(value = "mOtp", required = false) String mOtpHeader,
 			@RequestHeader(value = "eOtp", required = false) String eOtpHeader,
-			@RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp,
+			//@RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp,
 			@RequestBody ChangePasswordOtpRequest changePasswordRequest) {
-		mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
-		eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
-		return customerRegistrationService.changePasswordOtpInitiate(eOtp, mOtp, changePasswordRequest);
+		//mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
+		//eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
+		//return customerRegistrationService.changePasswordOtpInitiate(eOtp, mOtp, changePasswordRequest);
+		return customerRegistrationService.changePasswordOtpInitiate(eOtpHeader, mOtpHeader, changePasswordRequest);
 	}
 
 	@ApiOperation(value = "api to update new password", notes = "while registration after successful verification of email id and contact number through otp , this api will called and updates the new password")
@@ -158,16 +160,17 @@ public class CustomerRegistrationController {
 	@ApiWebAppStatus({ WebAppStatusCodes.CIVIL_ID_INVALID, WebAppStatusCodes.CIVIL_ID_VALID,
 			WebAppStatusCodes.CIVIL_ID_ALREADY_REGISTERED, WebAppStatusCodes.CIVIL_ID_NOT_REGESTERED,
 			WebAppStatusCodes.CP_OTP_NOT_GENERATED, WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
-	@ApiOperation(value = "api to verify email id and contact number while changing password for logged in user", notes = "this api is called when customer is logged-in and email id and contact number enterd by customer is already verified by otp validation")
+	@ApiOperation(value = "api to verify email id and contact number while changing password for logged in user", notes = "this api is called when customer is logged in and tries to change the password. Here customer emial id and contact number get validates through otp.")
 	@RequestMapping(value = "/pub/login/changepass-loggedin", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> changePasswordLogedInUser(
 			@RequestHeader(value = "mOtp", required = false) String mOtpHeader,
 			@RequestHeader(value = "eOtp", required = false) String eOtpHeader,
-			@RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp,
+			//@RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp,
 			@RequestBody ChangePasswordRequest changePasswordRequest) {
-		mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
-		eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
-		return customerRegistrationService.changePasswordLogedInUser(eOtp, mOtp, changePasswordRequest);
+		//mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
+		//eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
+		//return customerRegistrationService.changePasswordLogedInUser(eOtp, mOtp, changePasswordRequest);
+		return customerRegistrationService.changePasswordLogedInUser(eOtpHeader, mOtpHeader, changePasswordRequest);
 	}
 
 	@ApiOperation(value = "api to logg out customer")

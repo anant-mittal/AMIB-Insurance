@@ -107,7 +107,7 @@ public class CustomizeQuoteController
 		return customizeQuoteService.getTermsAndCondition();
 	}
 
-	@ApiOperation(value = "submits the calculated quote")
+	@ApiOperation(value = "submits the calculated quote and calls payment gateway")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/customize-quote/submit-quote", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> saveCustomizeQuote(@RequestBody CustomizeQuoteModel customizeQuoteModel , HttpServletRequest request)
@@ -158,7 +158,8 @@ public class CustomizeQuoteController
 		return paymentResponse;
 	}
 	
-	@ApiOperation(value = "return the payment status after payment through payment gateway")
+	@ApiOperation(value = "return the payment status after payment through payment gateway" ,notes = "once this api is called and payment "
+			+ "is success it will trigger a emial to customer of successfull payment with transection receipt pdf")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@ApiMockParam(example = "123", value = "pay sequence number of transection")
 	@RequestMapping(value = "/api/payment-status", method = { RequestMethod.POST })

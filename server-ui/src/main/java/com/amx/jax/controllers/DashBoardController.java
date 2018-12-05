@@ -22,7 +22,7 @@ public class DashBoardController
 	@Autowired
 	public DashBoardService dashBoardService;
 
-	@ApiOperation(value = "returns the list of incomplete policy of the customer")
+	@ApiOperation(value = "returns incomplete quote details of the customer")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/dashboard/getdetails", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> getIncompleteApplication()
