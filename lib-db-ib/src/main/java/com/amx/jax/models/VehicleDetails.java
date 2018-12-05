@@ -2,36 +2,53 @@ package com.amx.jax.models;
 
 import java.math.BigDecimal;
 
+import com.amx.jax.swagger.ApiMockModelProperty;
+
 public class VehicleDetails
 {
+	@ApiMockModelProperty(example = "ACU", value = "Vehicle Details Make Code ")
 	private String makeCode;
 
+	@ApiMockModelProperty(example = "TV6", value = "Vehicle Details Sub Make Code")
 	private String subMakeCode;
 
+	@ApiMockModelProperty(example = "MOTOR OWN DAMAGE", value = "Insurance policy type Desc")
 	public String vehicleTypeDesc;
 
+	@ApiMockModelProperty(example = "2017", value = "Vehicle Model Year")
 	private BigDecimal modelYear;
 
+	@ApiMockModelProperty(example = "1200.000", value = "Vehicle Value")
 	private BigDecimal vehicleValue;
 
+	@ApiMockModelProperty(example = "1", value = "Vehicle policy duration")
 	private BigDecimal policyDuration;
 
+	@ApiMockModelProperty(example = "BR", value = "Vehicle Purpose Code")
 	private String purposeCode;
 
+	@ApiMockModelProperty(example = "ADC", value = "Vehicle Colour Code")
 	private String colourCode;
 
+	@ApiMockModelProperty(example = "SAL", value = "Vehicle Shape Code")
 	private String shapeCode;
 
+	@ApiMockModelProperty(example = "4", value = "Vehicle Seating Capacity/ Nubmber of Passanger")
 	private BigDecimal seatingCapacity;
 
+	@ApiMockModelProperty(example = "B", value = "Vehicle Fuel Type Code")
 	private String fuelCode;
 
+	@ApiMockModelProperty(example = "12356451514541554", value = "Vehicle Chasis Number")
 	private String chasis;
 
+	@ApiMockModelProperty(example = "N", value = "Vehicle Condition Code")
 	private String vehicleConditionCode;
 
+	@ApiMockModelProperty(example = "12345", value = "Vehicle KT Number")
 	private String ktNumber;
 	
+	@ApiMockModelProperty(example = "NEW", value = "Vehicle KT Number")
 	private String applicationType;
 
 	public String getApplicationType()

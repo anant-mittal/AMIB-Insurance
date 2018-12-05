@@ -1,19 +1,24 @@
 package com.amx.jax.task;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import com.amx.jax.WebConfig;
+import com.amx.jax.constants.DetailsConstants;
+import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.dict.AmibTunnelEvents;
 import com.amx.jax.dict.Language;
+import com.amx.jax.meta.IMetaService;
+import com.amx.jax.models.CompanySetUp;
 import com.amx.jax.postman.client.PostManClient;
 import com.amx.jax.postman.client.PushNotifyClient;
 import com.amx.jax.postman.model.Email;
 import com.amx.jax.postman.model.PushMessage;
+import com.amx.jax.postman.model.TemplatesIB;
 import com.amx.jax.postman.model.TemplatesMX;
 import com.amx.jax.tunnel.ITunnelSubscriber;
 import com.amx.jax.tunnel.TunnelEvent;
@@ -22,47 +27,80 @@ import com.amx.jax.tunnel.TunnelEventXchange;
 import com.amx.utils.ArgUtil;
 import com.amx.utils.JsonUtil;
 
-@TunnelEventMapping(topic = AmibTunnelEvents.Names.CIVIL_ID_EXPIRY, scheme = TunnelEventXchange.TASK_WORKER)
+@TunnelEventMapping(topic = AmibTunnelEvents.Names.QUOTE_READY, scheme = TunnelEventXchange.TASK_WORKER)
 public class CivilIDExpiryListner implements ITunnelSubscriber<TunnelEvent> {
 
+	private static final Logger logger = LoggerFactory.getLogger(CivilIDExpiryListner.class);
+	
 	@Autowired
 	PostManClient postManClient;
 
 	@Autowired
 	private PushNotifyClient pushNotifyClient;
+	
+	@Autowired
+	private WebConfig webConfig;
+
+	@Autowired
+	private CustomerRegistrationDao customerRegistrationDao;
+
 
 	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
+	private static final String APPL_ID = "APPL_ID";
+	private static final String QUOTE_ID = "QUOTE_ID";
+	private static final String QUOTE_VERNO = "QUOTE_VERNO";
+	public static final String CUST_NAME = "CUST_NAME";
+	private static final String MAKE_NAME = "MAKE_NAME";
+	private static final String SUBMAKE_NAME = "SUBMAKE_NAME";
 	public static final String EMAIL = "EMAIL";
 	public static final String MOBILE = "MOBILE";
-	public static final String CUST_NAME = "CUST_NAME";
-	private static final String CUST_ID = "CUST_ID";
-	public static final String EXP_DATE = "EXP_DATE";
-	public static final String LANG_ID = "LANG_ID";
-	public static final String TEMPLATE = "TEMPLATE";
-	public static final String TENANT = "TENANT";
-	public static final String EXPIRED = "EXPIRED";
+	private static final String LANG_ID = "LANG_ID";
 
-	// {"event_code":"XRATE_BEST_RATE_CHANGE","priority":"H",
-	// "description":"Exchange Rate change","data":
-	// {"FROMAMOUNT":"1","TOAMOUNT":"300000","CNTRYID":"94","CURRID":"4","BANKID":"1256","DRVSELLRATE":".004524"}}
+	// APPL_ID:QUOTE_ID:QUOTE_VERNO:CUST_NAME:MAKE_NAME:SUBMAKE_NAME:EMAIL:MOBILE:LANG_ID
 
 	@Override
 	public void onMessage(String channel, TunnelEvent event) {
-		LOGGER.info("======onMessage1==={} ====  {}", channel, JsonUtil.toJson(event));
+		
+		String applId = ArgUtil.parseAsString(event.getData().get(APPL_ID));
+		String quoteId = ArgUtil.parseAsString(event.getData().get(QUOTE_ID));
+		String quoteVerNumber = ArgUtil.parseAsString(event.getData().get(QUOTE_VERNO));
+		String custName = ArgUtil.parseAsString(event.getData().get(CUST_NAME));
+		String make = ArgUtil.parseAsString(event.getData().get(MAKE_NAME));
+		String subMake = ArgUtil.parseAsString(event.getData().get(SUBMAKE_NAME));
 		String emailId = ArgUtil.parseAsString(event.getData().get(EMAIL));
+		String mobile = ArgUtil.parseAsString(event.getData().get(MOBILE));
 		String langId = ArgUtil.parseAsString(event.getData().get(LANG_ID));
-		String custNname = ArgUtil.parseAsString(event.getData().get(CUST_NAME));
-		BigDecimal custId = ArgUtil.parseAsBigDecimal(event.getData().get(CUST_ID));
-		String expDate = ArgUtil.parseAsString(event.getData().get(EXP_DATE));
-		String expired = ArgUtil.parseAsString(event.getData().get(EXPIRED));
-
+		
+		BigDecimal languageId;
+		if (null != langId && !langId.equals("")) {
+			languageId = new BigDecimal(langId);
+		} else {
+			languageId = new BigDecimal(0);
+		}
+		logger.info(" onMessage :: langId :"+ langId);
+		logger.info(" onMessage :: languageId :"+ languageId);
+		
+		ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao.getCompanySetUp(languageId , webConfig.getAppCompCode());
+		
 		Map<String, Object> wrapper = new HashMap<String, Object>();
 		Map<String, Object> modeldata = new HashMap<String, Object>();
-		modeldata.put("to", emailId);
-		modeldata.put("customer", custNname);
-		modeldata.put("date", expDate);
-		wrapper.put("data", modeldata);
+		modeldata.put(DetailsConstants.APPLICATION_ID, applId);
+		modeldata.put(DetailsConstants.QUOTE_SEQ_NUM, quoteId);
+		modeldata.put(DetailsConstants.QUOTE_VER_NUMBER, quoteVerNumber);
+		modeldata.put(DetailsConstants.CUSTOMER_NAME, custName);
+		modeldata.put(DetailsConstants.MAKE_DESC, make);
+		modeldata.put(DetailsConstants.SUB_MAKE_DESC, subMake);
+		modeldata.put(DetailsConstants.CUSTOMER_EMAIL_ID, emailId);
+		modeldata.put(DetailsConstants.CUSTOMER_MOBILE_NO, mobile);
+		modeldata.put(DetailsConstants.LANGUAGE_INFO, langId);
+		modeldata.put(DetailsConstants.COMPANY_NAME, getCompanySetUp.get(0).getCompanyName());
+		modeldata.put(DetailsConstants.URL_DETAILS, "");
+		logger.info("getTenantProfile :: getContactUsEmail :" + getCompanySetUp.get(0).getEmail());
+		modeldata.put(DetailsConstants.CONTACT_US_EMAIL, getCompanySetUp.get(0).getEmail());
+		modeldata.put(DetailsConstants.CONTACT_US_MOBILE, getCompanySetUp.get(0).getHelpLineNumber());
+		modeldata.put(DetailsConstants.AMIB_WEBSITE_LINK, getCompanySetUp.get(0).getWebSite());
+		modeldata.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
 
 		if (!ArgUtil.isEmpty(emailId)) {
 			Email email = new Email();
@@ -73,31 +111,33 @@ public class CivilIDExpiryListner implements ITunnelSubscriber<TunnelEvent> {
 				email.setLang(Language.EN);
 				modeldata.put("languageid", Language.EN);
 			}
+			wrapper.put("data", modeldata);
+
 			email.setModel(wrapper);
 			email.addTo(emailId);
 			email.setHtml(true);
-
-			if (ArgUtil.areEqual(expired, "0")) {
-				email.setITemplate(TemplatesMX.CIVILID_EXPIRY);
-				email.setSubject("Civil ID Expiry Reminder"); // Given by Umesh
-			} else {
-				email.setSubject("Civil ID has been expired"); // Given by Umesh
-				email.setITemplate(TemplatesMX.CIVILID_EXPIRED);
-			}
+			email.setITemplate(TemplatesIB.QUOTE_READY_AMIB);
+			email.setSubject("Al Mulla Insurance Brokerage Quote for your Motor Policy Application :" + applId);
 			postManClient.sendEmailAsync(email);
+
+			/*
+			 * if (ArgUtil.areEqual(expired, "0")) {
+			 * email.setITemplate(TemplatesMX.CIVILID_EXPIRY);
+			 * email.setSubject("Civil ID Expiry Reminder"); // Given by Umesh } else {
+			 * email.setSubject("Civil ID has been expired"); // Given by Umesh
+			 * email.setITemplate(TemplatesMX.CIVILID_EXPIRED); }
+			 */
+
 		}
 
-		if (!ArgUtil.isEmpty(custId)) {
-			PushMessage pushMessage = new PushMessage();
-			if (ArgUtil.areEqual(expired, "0")) {
-				pushMessage.setITemplate(TemplatesMX.CIVILID_EXPIRY);
-			} else {
-				pushMessage.setITemplate(TemplatesMX.CIVILID_EXPIRED);
-			}
-			pushMessage.addToUser(custId);
-			pushMessage.setModel(wrapper);
-			pushNotifyClient.send(pushMessage);
-		}
+		/*
+		 * if (!ArgUtil.isEmpty(custId)) { PushMessage pushMessage = new PushMessage();
+		 * if (ArgUtil.areEqual(expired, "0")) {
+		 * pushMessage.setITemplate(TemplatesMX.CIVILID_EXPIRY); } else {
+		 * pushMessage.setITemplate(TemplatesMX.CIVILID_EXPIRED); }
+		 * pushMessage.addToUser(custId); pushMessage.setModel(wrapper);
+		 * pushNotifyClient.send(pushMessage); }
+		 */
 
 	}
 }

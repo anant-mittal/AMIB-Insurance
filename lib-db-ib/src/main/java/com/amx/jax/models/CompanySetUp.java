@@ -3,24 +3,32 @@ package com.amx.jax.models;
 
 import java.math.BigDecimal;
 
+import com.amx.jax.swagger.ApiMockModelProperty;
+
 public class CompanySetUp
 {
+	@ApiMockModelProperty(example = "1", value = "Customer country code")
 	private BigDecimal cntryCd;
 
+	@ApiMockModelProperty(example = "10", value = "Customer company code")
 	private BigDecimal compCd;
 
+	@ApiMockModelProperty(example = "AL MULLA INSURANCE BROKERAGE COMPANY W.L.L", value = "Company Name")
 	private String companyName;
 
 	private String cbox;
 
 	private String cpo;
 
+	@ApiMockModelProperty(example = "22250888", value = "AMIB contact number ")
 	private String teli;//
 
+	@ApiMockModelProperty(example = "22250999", value = "AMIB contact number ")
 	private String teli2;
 
 	private String fax;
 
+	@ApiMockModelProperty(example = "amibmotor@almullagroup.com", value = "AMIB email id , help line email ")
 	private String email;
 
 	private String regNumber;
@@ -33,18 +41,25 @@ public class CompanySetUp
 
 	private BigDecimal decimalPlaceUpTo;
 
+	@ApiMockModelProperty(example = "KWD", value = "Current Currency")
 	private String currency;
 
+	@ApiMockModelProperty(example = "0", value = "Language ID 0 for English language")
 	private BigDecimal langId;
 
+	@ApiMockModelProperty(example = "AMIB", value = "APP Name")
 	private String appName;
 
+	@ApiMockModelProperty(example = "AMIB INSURE", value = "SMS Sednder ID")
 	private String smsSenderId;
 
+	@ApiMockModelProperty(example = "+965 60466081/66597236", value = "AMib Help line numebr")
 	private String helpLineNumber;
 
+	@ApiMockModelProperty(example = "www.almullainsurancebrokerage.com", value = "AMIB wesite")
 	private String webSite;
 
+	@ApiMockModelProperty(example = "amibmotor@almullagroup.com", value = "AMib Help line numebr")
 	private String emailSenderId;
 
 	public String getHelpLineNumber()

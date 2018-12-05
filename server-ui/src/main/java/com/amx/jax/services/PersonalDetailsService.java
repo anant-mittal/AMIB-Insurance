@@ -6,9 +6,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.amx.jax.WebAppStatus.WebAppStatusCodes;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.DetailsConstants;
+import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.dao.PersonalDetailsDao;
@@ -17,7 +19,6 @@ import com.amx.jax.models.CustomerProfileDetailResponse;
 import com.amx.jax.models.CustomerProfileUpdateRequest;
 import com.amx.jax.models.CustomerProfileUpdateResponse;
 import com.amx.jax.models.DateFormats;
-import com.amx.jax.models.MetaData;
 import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.ui.session.UserSession;
 
@@ -38,9 +39,6 @@ public class PersonalDetailsService
 	private CustomerRegistrationService customerRegistrationService;
 
 	@Autowired
-	MetaData metaData;
-
-	@Autowired
 	UserSession userSession;
 
 	@Autowired
@@ -52,7 +50,7 @@ public class PersonalDetailsService
 		CustomerProfileDetailResponse customerProfileDetailResponse = new CustomerProfileDetailResponse();
 		CustomerProfileDetailModel customerProfileDetailModel = new CustomerProfileDetailModel();
 
-		customerProfileDetailModel = personalDetailsDao.getProfileDetails(userSession.getCivilId() , metaData.getUserType() , userSession.getCustomerSequenceNumber());
+		customerProfileDetailModel = personalDetailsDao.getProfileDetails(userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber());
 
 		customerProfileDetailResponse.setAreaCode(customerProfileDetailModel.getAreaCode());
 		customerProfileDetailResponse.setAreaDesc(customerProfileDetailModel.getAreaDesc());
@@ -70,13 +68,14 @@ public class PersonalDetailsService
 		customerProfileDetailResponse.setNatyCode(customerProfileDetailModel.getNatyCode());
 		customerProfileDetailResponse.setNatyDesc(customerProfileDetailModel.getNatyDesc());
 		customerProfileDetailResponse.setNativeArabicName(customerProfileDetailModel.getNativeArabicName());
-		if (customerProfileDetailModel.getStatus())
+		
+		if (customerProfileDetailModel.getErrorCode() == null)
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 		}
 		else
 		{
-			resp.setStatusKey(ApiConstants.FAILURE);
+			resp.setStatusKey(customerProfileDetailModel.getErrorCode());
 		}
 		resp.setData(customerProfileDetailResponse);
 		resp.setMessageKey(customerProfileDetailModel.getErrorCode());
@@ -91,14 +90,15 @@ public class PersonalDetailsService
 		CustomerProfileDetailModel customerProfileDetailModel = new CustomerProfileDetailModel();
 		CustomerProfileDetailModel customerProfileDetailModelCheck = new CustomerProfileDetailModel();
 		CustomerProfileUpdateResponse customerProfileUpdateResponse = new CustomerProfileUpdateResponse();
-		customerProfileDetailModelCheck = personalDetailsDao.getProfileDetails(userSession.getCivilId() , metaData.getUserType() , userSession.getCustomerSequenceNumber());
+		
+		customerProfileDetailModelCheck = personalDetailsDao.getProfileDetails(userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber());
 		if (null != customerProfileUpdateRequest.getIdExpiryDate())
 		{
 			String dateFromDb = customerProfileUpdateRequest.getIdExpiryDate();
 			if (DateFormats.checkExpiryDate(dateFromDb))
 			{
-				resp.setStatusKey(ApiConstants.FAILURE);
-				resp.setMessageKey(MessageKey.KEY_CIVIL_ID_EXPIRED);
+				resp.setStatusKey(WebAppStatusCodes.CIVIL_ID_EXPIRED.toString());
+				resp.setMessageKey(WebAppStatusCodes.CIVIL_ID_EXPIRED.toString());
 				return resp;
 			}
 		}
@@ -110,13 +110,13 @@ public class PersonalDetailsService
 			logger.info(TAG + " updateProfileDetails :: Both Chnaged");
 
 			AmxApiResponse<ResponseInfo, Object> isValidMobileNumber = customerRegistrationService.isValidMobileNumber(customerProfileUpdateRequest.getMobile());
-			if (isValidMobileNumber.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			if (!isValidMobileNumber.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				return isValidMobileNumber;
 			}
 
 			AmxApiResponse<ResponseInfo, Object> validateEmailID = customerRegistrationService.isValidEmailId(customerProfileUpdateRequest.getEmail());
-			if (validateEmailID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			if (!validateEmailID.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				return validateEmailID;
 			}
@@ -124,16 +124,16 @@ public class PersonalDetailsService
 			AmxApiResponse<ResponseInfo, Object> mobileNumberExists = customerRegistrationService.isMobileNumberExist(customerProfileUpdateRequest.getMobile());
 			if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
-				mobileNumberExists.setMessageKey(MessageKey.KEY_MOBILE_NO_ALREADY_REGISTER);
-				mobileNumberExists.setStatusKey(ApiConstants.FAILURE);
+				mobileNumberExists.setMessageKey(WebAppStatusCodes.MOBILE_NUMBER_REGISTERED.toString());
+				mobileNumberExists.setStatusKey(WebAppStatusCodes.MOBILE_NUMBER_REGISTERED.toString());
 				return mobileNumberExists;
 			}
 
 			AmxApiResponse<ResponseInfo, Object> emailIdExists = customerRegistrationService.isEmailIdExist(customerProfileUpdateRequest.getEmail());
 			if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
-				emailIdExists.setMessageKey(MessageKey.KEY_EMAID_ALREADY_REGISTER);
-				emailIdExists.setStatusKey(ApiConstants.FAILURE);
+				emailIdExists.setMessageKey(WebAppStatusCodes.EMAIL_ID_REGESTERED.toString());
+				emailIdExists.setStatusKey(WebAppStatusCodes.EMAIL_ID_REGESTERED.toString());
 				return emailIdExists;
 			}
 
@@ -146,7 +146,7 @@ public class PersonalDetailsService
 		else if (null != customerProfileDetailModelCheck.getEmail() && !customerProfileDetailModelCheck.getEmail().equals(customerProfileUpdateRequest.getEmail()))
 		{
 			AmxApiResponse<ResponseInfo, Object> validateEmailID = customerRegistrationService.isValidEmailId(customerProfileUpdateRequest.getEmail());
-			if (validateEmailID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			if (!validateEmailID.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				return validateEmailID;
 			}
@@ -154,8 +154,8 @@ public class PersonalDetailsService
 			AmxApiResponse<ResponseInfo, Object> emailIdExists = customerRegistrationService.isEmailIdExist(customerProfileUpdateRequest.getEmail());
 			if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
-				emailIdExists.setMessageKey(MessageKey.KEY_EMAID_ALREADY_REGISTER);
-				emailIdExists.setStatusKey(ApiConstants.FAILURE);
+				emailIdExists.setMessageKey(WebAppStatusCodes.EMAIL_ID_REGESTERED.toString());
+				emailIdExists.setStatusKey(WebAppStatusCodes.EMAIL_ID_REGESTERED.toString());
 				return emailIdExists;
 			}
 			
@@ -172,7 +172,7 @@ public class PersonalDetailsService
 			logger.info(TAG + " updateProfileDetails :: Mobile Chnaged");
 
 			AmxApiResponse<ResponseInfo, Object> isValidMobileNumber = customerRegistrationService.isValidMobileNumber(customerProfileUpdateRequest.getMobile());
-			if (isValidMobileNumber.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			if (!isValidMobileNumber.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				return isValidMobileNumber;
 			}
@@ -180,8 +180,8 @@ public class PersonalDetailsService
 			AmxApiResponse<ResponseInfo, Object> mobileNumberExists = customerRegistrationService.isMobileNumberExist(customerProfileUpdateRequest.getMobile());
 			if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
-				mobileNumberExists.setMessageKey(MessageKey.KEY_MOBILE_NO_ALREADY_REGISTER);
-				mobileNumberExists.setStatusKey(ApiConstants.FAILURE);
+				mobileNumberExists.setMessageKey(WebAppStatusCodes.MOBILE_NUMBER_REGISTERED.toString());
+				mobileNumberExists.setStatusKey(WebAppStatusCodes.MOBILE_NUMBER_REGISTERED.toString());
 				return mobileNumberExists;
 			}
 
@@ -203,20 +203,20 @@ public class PersonalDetailsService
 		customerProfileDetailModel.setMobile(customerProfileUpdateRequest.getMobile());
 		customerProfileDetailModel.setEmail(customerProfileUpdateRequest.getEmail());
 		
-		customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel , userSession.getCivilId() , metaData.getUserType() , userSession.getCustomerSequenceNumber());
+		customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel , userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber());
 		logger.info(TAG + " updateProfileDetails :: getCivilId :" + customerProfileDetailModel.getCustSequenceNumber());
 		userSession.setCustomerSequenceNumber(customerProfileDetailModel.getCustSequenceNumber());
 		
 		customerProfileUpdateResponse.setStatus(customerProfileDetailModel.getStatus());
 		customerProfileUpdateResponse.setErrorCode(customerProfileDetailModel.getErrorCode());
 		customerProfileUpdateResponse.setErrorMessage(customerProfileDetailModel.getErrorMessage());
-		if (customerProfileUpdateResponse.getStatus())
+		if (customerProfileUpdateResponse.getErrorCode() == null)
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 		}
 		else
 		{
-			resp.setStatusKey(ApiConstants.FAILURE);
+			resp.setStatusKey(customerProfileUpdateResponse.getErrorCode().toString());
 		}
 		resp.setMessageKey(customerProfileUpdateResponse.getErrorCode());
 		resp.setMessage(customerProfileUpdateResponse.getErrorMessage());
@@ -230,7 +230,7 @@ public class PersonalDetailsService
 
 		try
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			resp.setResults(personalDetailsDao.getBusiness());
 
 		}
@@ -238,7 +238,6 @@ public class PersonalDetailsService
 		{
 			e.printStackTrace();
 			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
@@ -249,7 +248,7 @@ public class PersonalDetailsService
 
 		try
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			resp.setResults(personalDetailsDao.getNationality());
 
 		}
@@ -257,7 +256,6 @@ public class PersonalDetailsService
 		{
 			e.printStackTrace();
 			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 
@@ -270,7 +268,7 @@ public class PersonalDetailsService
 
 		try
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			resp.setResults(personalDetailsDao.getGovernorates());
 
 		}
@@ -278,7 +276,6 @@ public class PersonalDetailsService
 		{
 			e.printStackTrace();
 			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
@@ -289,7 +286,7 @@ public class PersonalDetailsService
 
 		try
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			resp.setResults(personalDetailsDao.getArea(gov));
 
 		}
@@ -297,7 +294,6 @@ public class PersonalDetailsService
 		{
 			e.printStackTrace();
 			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 
@@ -309,7 +305,7 @@ public class PersonalDetailsService
 
 		try
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
+			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			resp.setResults(personalDetailsDao.getGender());
 
 		}
@@ -317,7 +313,6 @@ public class PersonalDetailsService
 		{
 			e.printStackTrace();
 			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 

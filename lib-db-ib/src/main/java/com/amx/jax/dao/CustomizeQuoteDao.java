@@ -8,17 +8,14 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.TreeMap;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
-import com.amx.jax.models.AdditionalPolicySave;
+import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.CustomizeQuoteAddPol;
 import com.amx.jax.models.CustomizeQuoteSave;
-import com.amx.jax.models.MetaData;
 import com.amx.jax.models.QuoteAddPolicyDetails;
 import com.amx.jax.models.ReplacementTypeList;
 import com.amx.jax.models.TermsCondition;
@@ -38,7 +35,7 @@ public class CustomizeQuoteDao
 	JdbcTemplate jdbcTemplate;
 
 	@Autowired
-	MetaData metaData;
+	IMetaService metaService;
 
 	Connection connection;
 
@@ -51,11 +48,11 @@ public class CustomizeQuoteDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, quotSeqNumber);
 			callableStatement.setBigDecimal(4, verNumber);
-			callableStatement.setBigDecimal(5, metaData.getLanguageId());
+			callableStatement.setBigDecimal(5, metaService.getTenantProfile().getLanguageId());
 			callableStatement.registerOutParameter(6, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
@@ -111,11 +108,11 @@ public class CustomizeQuoteDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(3, policyTypeCode);
 			callableStatement.setDate(4, policyDate);
-			callableStatement.setBigDecimal(5, metaData.getLanguageId());
+			callableStatement.setBigDecimal(5, metaService.getTenantProfile().getLanguageId());
 			callableStatement.registerOutParameter(6, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
@@ -156,10 +153,10 @@ public class CustomizeQuoteDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(3, "PAY");
-			callableStatement.setBigDecimal(4, metaData.getLanguageId());
+			callableStatement.setBigDecimal(4, metaService.getTenantProfile().getLanguageId());
 			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
@@ -196,10 +193,10 @@ public class CustomizeQuoteDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(3, "PAY");
-			callableStatement.setBigDecimal(4, metaData.getLanguageId());
+			callableStatement.setBigDecimal(4, metaService.getTenantProfile().getLanguageId());
 			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
@@ -232,18 +229,18 @@ public class CustomizeQuoteDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, customizeQuoteSave.getQuotSeqNumber());
 			callableStatement.setBigDecimal(4, customizeQuoteSave.getVerNumber());
-			callableStatement.setBigDecimal(5, Utility.round(customizeQuoteSave.getBasicPremium(), metaData.getDecplc()));
-			callableStatement.setBigDecimal(6, Utility.round(customizeQuoteSave.getSupervisionFees(), metaData.getDecplc()));
-			callableStatement.setBigDecimal(7, Utility.round(customizeQuoteSave.getIssueFee(), metaData.getDecplc()));
-			callableStatement.setBigDecimal(8, Utility.round(customizeQuoteSave.getDisscountAmt(), metaData.getDecplc()));
-			callableStatement.setBigDecimal(9, Utility.round(customizeQuoteSave.getAddCoveragePremium(), metaData.getDecplc()));
-			callableStatement.setBigDecimal(10,Utility.round(customizeQuoteSave.getTotalAmount(), metaData.getDecplc()));
-			callableStatement.setString(11, metaData.getDeviceType());
-			callableStatement.setString(12, metaData.getDeviceId());
+			callableStatement.setBigDecimal(5, Utility.round(customizeQuoteSave.getBasicPremium(), metaService.getTenantProfile().getDecplc()));
+			callableStatement.setBigDecimal(6, Utility.round(customizeQuoteSave.getSupervisionFees(), metaService.getTenantProfile().getDecplc()));
+			callableStatement.setBigDecimal(7, Utility.round(customizeQuoteSave.getIssueFee(), metaService.getTenantProfile().getDecplc()));
+			callableStatement.setBigDecimal(8, Utility.round(customizeQuoteSave.getDisscountAmt(), metaService.getTenantProfile().getDecplc()));
+			callableStatement.setBigDecimal(9, Utility.round(customizeQuoteSave.getAddCoveragePremium(), metaService.getTenantProfile().getDecplc()));
+			callableStatement.setBigDecimal(10,Utility.round(customizeQuoteSave.getTotalAmount(), metaService.getTenantProfile().getDecplc()));
+			callableStatement.setString(11, metaService.getUserDeviceInfo().getDeviceType());
+			callableStatement.setString(12, metaService.getUserDeviceInfo().getDeviceId());
 			callableStatement.setString(13, civilId);
 			callableStatement.registerOutParameter(14, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(15, java.sql.Types.VARCHAR);
@@ -272,17 +269,17 @@ public class CustomizeQuoteDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, customizeQuoteAddPol.getQuoteSeqNumber());
 			callableStatement.setBigDecimal(4, customizeQuoteAddPol.getVerNumber());
 			callableStatement.setString(5, customizeQuoteAddPol.getAddPolicyTypeCode());
 			callableStatement.setBigDecimal(6, customizeQuoteAddPol.getYearlyPremium());
 			callableStatement.setString(7, customizeQuoteAddPol.getOptIndex());
-			callableStatement.setBigDecimal(8, Utility.round(customizeQuoteAddPol.getYearMultiplePremium(), metaData.getDecplc()));
+			callableStatement.setBigDecimal(8, Utility.round(customizeQuoteAddPol.getYearMultiplePremium(), metaService.getTenantProfile().getDecplc()));
 			callableStatement.setString(9, customizeQuoteAddPol.getReplacementTypeCode());
-			callableStatement.setString(10, metaData.getDeviceType());
-			callableStatement.setString(11, metaData.getDeviceId());
+			callableStatement.setString(10, metaService.getUserDeviceInfo().getDeviceType());
+			callableStatement.setString(11, metaService.getUserDeviceInfo().getDeviceId());
 			callableStatement.setString(12, civilId);
 			callableStatement.registerOutParameter(13, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(14, java.sql.Types.VARCHAR);

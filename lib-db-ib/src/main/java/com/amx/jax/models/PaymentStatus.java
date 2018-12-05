@@ -29,6 +29,16 @@ public class PaymentStatus
 	
 	private BigDecimal appSeqNumber;
 	
+	private String paymentProcedureStatus;
+	
+	public String getPaymentProcedureStatus() {
+		return paymentProcedureStatus;
+	}
+
+	public void setPaymentProcedureStatus(String paymentProcedureStatus) {
+		this.paymentProcedureStatus = paymentProcedureStatus;
+	}
+
 	public BigDecimal getAppSeqNumber() {
 		return appSeqNumber;
 	}

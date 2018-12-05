@@ -6,30 +6,27 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import com.amx.jax.constants.DetailsConstants;
+import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.CompanySetUp;
 import com.amx.jax.models.CustomerDetailModel;
 import com.amx.jax.models.CustomerLoginModel;
 import com.amx.jax.models.CustomerRegistrationModel;
 import com.amx.jax.models.FailureException;
-import com.amx.jax.models.MetaData;
 import com.amx.jax.models.ResponseInfo;
 import oracle.jdbc.OracleTypes;
 
 @Repository
 public class CustomerRegistrationDao
 {
-	static String TAG = "com.insurance.user_registartion.dao :: CustomerRegistrationDao :: ";
+	static String TAG = "CustomerRegistrationDao :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(CustomerRegistrationDao.class);
 
@@ -37,25 +34,23 @@ public class CustomerRegistrationDao
 	JdbcTemplate jdbcTemplate;
 
 	@Autowired
-	MetaData metaData;
-
-	
-	
+	IMetaService metaService;
 	
 	Connection connection;
 
-	public ArrayList<CompanySetUp> getCompanySetUp(BigDecimal langId)
+	public ArrayList<CompanySetUp> getCompanySetUp(BigDecimal langId , String companyCode)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_COMPANY_SETUP(?,?,?,?,?)}";
 		ArrayList<CompanySetUp> companySetUpArray = new ArrayList<CompanySetUp>();
+		logger.info(TAG + " getCompanySetUp :: companyCode :" + companyCode);
 
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setString(1, "AMIB");
+			callableStatement.setString(1,companyCode);
 			callableStatement.setBigDecimal(2, langId);
 			callableStatement.registerOutParameter(3, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(4, java.sql.Types.VARCHAR);
@@ -149,16 +144,12 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callFunction);
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
-			logger.info(TAG + " isCivilIdExist :: metaData.getCivilId    :" + metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCountryId());
-			logger.info(TAG + " isCivilIdExist :: metaData.getCivilId    :" + metaData.getCompCd());
-			callableStatement.setBigDecimal(3, metaData.getCompCd());
-			logger.info(TAG + " isCivilIdExist :: userType    :" + userType);
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(4, userType);
 			callableStatement.setString(5, civilid);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
-			logger.info(TAG + " isCivilIdExist :: result    :" + result);
 			
 			if (result.equalsIgnoreCase("Y"))
 			{
@@ -190,8 +181,8 @@ public class CustomerRegistrationDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(3, mobileNumber);
 			callableStatement.registerOutParameter(4, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
@@ -201,12 +192,10 @@ public class CustomerRegistrationDao
 
 			if (null == errorCode)
 			{
-				validate.setValid(true);
 				return validate;
 			}
 			else
 			{
-				validate.setValid(false);
 				validate.setErrorCode(errorCode);
 				validate.setErrorMessage(errorMessage);
 				return validate;
@@ -235,8 +224,8 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callFunction);
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
-			callableStatement.setBigDecimal(2, metaData.getCountryId());
-			callableStatement.setBigDecimal(3, metaData.getCompCd());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(4, userType);
 			callableStatement.setString(5, mobilenumber);
 			callableStatement.executeUpdate();
@@ -273,8 +262,8 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callFunction);
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
-			callableStatement.setBigDecimal(2, metaData.getCountryId());
-			callableStatement.setBigDecimal(3, metaData.getCompCd());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(4, userType);
 			callableStatement.setString(5, email);
 			callableStatement.executeUpdate();
@@ -310,8 +299,8 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callFunction);
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
-			callableStatement.setBigDecimal(2, metaData.getCountryId());
-			callableStatement.setBigDecimal(3, metaData.getCompCd());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(4, userType);
 			callableStatement.setString(5, civilId);
 			callableStatement.executeUpdate();
@@ -347,8 +336,8 @@ public class CustomerRegistrationDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(3, userType);
 			callableStatement.setString(4, civilId);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
@@ -359,14 +348,12 @@ public class CustomerRegistrationDao
 
 			if (null == errorCode)
 			{
-				validate.setValid(true);
 				validate.setErrorCode(errorCode);
 				validate.setErrorMessage(errorMessage);
 				return validate;
 			}
 			else
 			{
-				validate.setValid(false);
 				validate.setErrorCode(errorCode);
 				validate.setErrorMessage(errorMessage);
 				return validate;
@@ -414,7 +401,7 @@ public class CustomerRegistrationDao
 			callableStatement.setString(7, "");
 			callableStatement.setString(8, emailId);
 			callableStatement.setString(9, "");
-			callableStatement.setBigDecimal(10, metaData.getLanguageId());
+			callableStatement.setBigDecimal(10, metaService.getTenantProfile().getLanguageId());
 			callableStatement.setString(11, deviceType);
 			callableStatement.setDate(12, getCurrentDate());
 			callableStatement.setString(13, createdDeviceId);
@@ -465,11 +452,11 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(3, userType);
 			callableStatement.setString(4, civilId);
-			callableStatement.setBigDecimal(5, metaData.getLanguageId());
+			callableStatement.setBigDecimal(5, metaService.getTenantProfile().getLanguageId());
 			callableStatement.setBigDecimal(6, userSeqNum);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
@@ -536,13 +523,13 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(3, userType);
 			callableStatement.setString(4, customerLoginModel.getCivilId());
 			callableStatement.setString(5, customerLoginModel.getPassword());
-			callableStatement.setString(6, metaData.getDeviceId());
-			callableStatement.setString(7, metaData.getDeviceType());
+			callableStatement.setString(6, metaService.getUserDeviceInfo().getDeviceId());
+			callableStatement.setString(7, metaService.getUserDeviceInfo().getDeviceType());
 			callableStatement.registerOutParameter(8, java.sql.Types.INTEGER);
 			callableStatement.registerOutParameter(9, java.sql.Types.INTEGER);
 			callableStatement.registerOutParameter(10, java.sql.Types.VARCHAR);
@@ -590,15 +577,15 @@ public class CustomerRegistrationDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(3, userType);
 			callableStatement.setString(4, civilId);
 			callableStatement.setString(5, customerDetailModel.getPassword());
 			callableStatement.setBigDecimal(6, null);
 			callableStatement.setDate(7, getCurrentDate());
-			callableStatement.setString(8, metaData.getDeviceId());
-			callableStatement.setString(9, metaData.getDeviceType());
+			callableStatement.setString(8, metaService.getUserDeviceInfo().getDeviceId());
+			callableStatement.setString(9, metaService.getUserDeviceInfo().getDeviceType());
 			callableStatement.setString(10, civilId);
 			callableStatement.registerOutParameter(11, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(12, java.sql.Types.VARCHAR);

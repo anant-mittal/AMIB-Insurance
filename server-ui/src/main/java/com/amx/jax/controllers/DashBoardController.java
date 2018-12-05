@@ -7,22 +7,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.amx.jax.WebAppStatus.ApiWebAppStatus;
+import com.amx.jax.WebAppStatus.WebAppStatusCodes;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.services.DashBoardService;
 
-@RestController
-public class DashBoardController
-{
-	private static final Logger logger = LoggerFactory.getLogger(RequestQuoteController.class);
+import io.swagger.annotations.ApiOperation;
 
-	String TAG = "com.amx.jax.controllers.DashBoardController :- ";
+@RestController
+public class DashBoardController {
+	private static final Logger logger = LoggerFactory.getLogger(RequestQuoteController.class);
 
 	@Autowired
 	public DashBoardService dashBoardService;
 
+	@ApiOperation(value = "returns incomplete quote details of the customer")
+	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/dashboard/getdetails", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> getIncompleteApplication()
-	{
+	public AmxApiResponse<?, Object> getIncompleteApplication() {
 		return dashBoardService.getIncompleteApplication();
 	}
 }

@@ -2,16 +2,23 @@ package com.amx.jax.models;
 
 import java.math.BigDecimal;
 
+import com.amx.jax.swagger.ApiMockModelProperty;
+
 public class TotalPremium
 {
+	@ApiMockModelProperty(example = "10", value = "Customize Quote Basic Premium")
 	private BigDecimal basicPremium;
 
+	@ApiMockModelProperty(example = "50", value = "Customize Quote Additional Coverage Premium")
 	private BigDecimal addCoveragePremium;
 
+	@ApiMockModelProperty(example = "30", value = "Customize Quote Issue Fees")
 	private BigDecimal issueFee;
 
+	@ApiMockModelProperty(example = "20", value = "Customize Quote Supervision Fees")
 	private BigDecimal supervisionFees;
 
+	@ApiMockModelProperty(example = "135", value = "Customize Quote Supervision Fees")
 	private BigDecimal totalAmount;
 
 	public BigDecimal getTotalAmount()
