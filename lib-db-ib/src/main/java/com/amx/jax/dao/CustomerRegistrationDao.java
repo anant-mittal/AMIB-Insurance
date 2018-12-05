@@ -144,16 +144,12 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callFunction);
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
-			
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCountryId());
-			logger.info(TAG + " isCivilIdExist :: metaData.getCivilId    :" + metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getCompCd());
-			logger.info(TAG + " isCivilIdExist :: userType    :" + userType);
 			callableStatement.setString(4, userType);
 			callableStatement.setString(5, civilid);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
-			logger.info(TAG + " isCivilIdExist :: result    :" + result);
 			
 			if (result.equalsIgnoreCase("Y"))
 			{

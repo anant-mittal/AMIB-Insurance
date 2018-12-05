@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.amx.jax.WebAppStatus.ApiWebAppStatus;
+import com.amx.jax.WebAppStatus.WebAppStatusCodes;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.ActivePolicyModel;
@@ -49,6 +52,7 @@ public class MyPolicyController {
 	}
 
 	@ApiOperation(value = "this api is to renew the old policy taken by customer")
+	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@ApiMockParam(example = "124", value = "old doc number of insurance quote")
 	@RequestMapping(value = "/api/mypolicy/renew-policy", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> renewInsuranceOldPolicy(

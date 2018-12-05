@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.amx.jax.WebAppStatus.ApiWebAppStatus;
+import com.amx.jax.WebAppStatus.WebAppStatusCodes;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.models.CustomerProfileDetailResponse;
 import com.amx.jax.models.CustomerProfileUpdateRequest;
@@ -28,6 +30,7 @@ public class PersonalDetailsController
 	public PersonalDetailsService personalDetailsService;
 
 	@ApiOperation(value = "returns customer personal details")
+	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/personal/profiledetails", method = RequestMethod.POST)
 	public AmxApiResponse<CustomerProfileDetailResponse, Object> getProfileDetails()
 	{
@@ -35,6 +38,7 @@ public class PersonalDetailsController
 	}
 
 	@ApiOperation(value = "update customer personal details")
+	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/personal/update-profiledetails", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> updateProfileDetails(@RequestHeader(value = "mOtp", required = false) String mOtpHeader, @RequestHeader(value = "eOtp", required = false) String eOtpHeader, @RequestParam(required = false) String mOtp, @RequestParam(required = false) String eOtp,
 			@RequestBody CustomerProfileUpdateRequest customerProfileUpdateRequest)
@@ -45,6 +49,7 @@ public class PersonalDetailsController
 	}
 
 	@ApiOperation(value = "returns personal details profession meta info")
+	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/personal/business", method = RequestMethod.GET)
 	public AmxApiResponse<?, Object> getBusiness()
 	{
@@ -52,6 +57,7 @@ public class PersonalDetailsController
 	}
 
 	@ApiOperation(value = "returns personal details nationality meta info")
+	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/personal/nationality", method = RequestMethod.GET)
 	public AmxApiResponse<?, Object> getNationality()
 	{
@@ -59,6 +65,7 @@ public class PersonalDetailsController
 	}
 
 	@ApiOperation(value = "returns personal details governorate meta info")
+	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/personal/governorates", method = RequestMethod.GET)
 	public AmxApiResponse<?, Object> getGovernorates()
 	{
@@ -66,6 +73,7 @@ public class PersonalDetailsController
 	}
 
 	@ApiOperation(value = "returns personal details area meta info")
+	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/personal/area", method = RequestMethod.GET)
 	public AmxApiResponse<?, Object> getArea(@RequestParam("gov") String gov)
 	{
@@ -73,6 +81,7 @@ public class PersonalDetailsController
 	}
 
 	@ApiOperation(value = "returns personal details gender meta info")
+	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/personal/gender", method = RequestMethod.GET)
 	public AmxApiResponse<?, Object> getGender()
 	{

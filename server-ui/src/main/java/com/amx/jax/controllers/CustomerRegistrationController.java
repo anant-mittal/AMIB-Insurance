@@ -105,8 +105,9 @@ public class CustomerRegistrationController {
 		return customerRegistrationService.registrationOtp(eOtp, mOtp, requestOtpModel);
 	}
 
-	@ApiOperation(value = "api to set password and create new customer", notes = "api to set password and create new customer after successful email id and contact number verfication through otp verification")
-	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
+	@ApiOperation(value = "api to set password and create new customer", notes = "after successful email id and contact number verfication through otp verification this api to set password and create new customer")
+	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS,
+			WebAppStatusCodes.REGISTER_FAILED })
 	@RequestMapping(value = "/pub/reg/customer-registration", method = RequestMethod.POST)
 	public AmxApiResponse<CustomerRegistrationResponse, Object> addNewCustomer(
 			@RequestBody CustomerRegistrationRequest customerRegistrationRequest) {
@@ -116,13 +117,14 @@ public class CustomerRegistrationController {
 	@ApiOperation(value = "api to validate customer id and password for successful login")
 	@ApiWebAppStatus({ WebAppStatusCodes.EMPTY_PASSWORD, WebAppStatusCodes.CIVIL_ID_INVALID,
 			WebAppStatusCodes.CIVIL_ID_VALID, WebAppStatusCodes.CIVIL_ID_ALREADY_REGISTERED,
-			WebAppStatusCodes.CIVIL_ID_NOT_REGESTERED, WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
+			WebAppStatusCodes.CIVIL_ID_NOT_REGESTERED, WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS,
+			WebAppStatusCodes.INVALID_USR_PWD })
 	@RequestMapping(value = "/pub/login/validate-userlogin", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> validateUserLogin(@RequestBody CustomerLoginRequest customerLoginRequest) {
 		return customerRegistrationService.validateUserLogin(customerLoginRequest);
 	}
 
-	@ApiOperation(value = "api to verify email id and contact number while changing password", notes = "this api used when customer is not logged-in and email id and contact number enterd by customer gets verified by sending otp before changing password")
+	@ApiOperation(value = "api to verify email id and contact number while changing password non logged in user", notes = "this api is called when customer is not logged-in and email id and contact number enterd by customer gets verified by sending otp before changing password")
 	@ApiWebAppStatus({ WebAppStatusCodes.CIVIL_ID_INVALID, WebAppStatusCodes.CIVIL_ID_VALID,
 			WebAppStatusCodes.CIVIL_ID_ALREADY_REGISTERED, WebAppStatusCodes.CIVIL_ID_NOT_REGESTERED,
 			WebAppStatusCodes.CP_OTP_NOT_GENERATED, WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
@@ -137,7 +139,7 @@ public class CustomerRegistrationController {
 		return customerRegistrationService.changePasswordOtpInitiate(eOtp, mOtp, changePasswordRequest);
 	}
 
-	@ApiOperation(value = "api to update new password", notes = "after successful verification of email id and contact number through otp , this api updates the new password")
+	@ApiOperation(value = "api to update new password", notes = "while registration after successful verification of email id and contact number through otp , this api will called and updates the new password")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/pub/login/changepass", method = RequestMethod.POST)
 	public AmxApiResponse<ChangePasswordResponse, Object> updatePassword(
@@ -146,7 +148,8 @@ public class CustomerRegistrationController {
 	}
 
 	@ApiOperation(value = "api to return customer details")
-	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
+	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS, WebAppStatusCodes.LIST_POP_ERROR,
+			WebAppStatusCodes.INVLD_LOGIN_CATG, WebAppStatusCodes.INVALID_USR })
 	@RequestMapping(value = "/pub/reg/userdetails", method = RequestMethod.POST)
 	public AmxApiResponse<CustomerDetailResponse, Object> getUserDetails() {
 		return customerRegistrationService.getCustomerDetails();
@@ -155,7 +158,7 @@ public class CustomerRegistrationController {
 	@ApiWebAppStatus({ WebAppStatusCodes.CIVIL_ID_INVALID, WebAppStatusCodes.CIVIL_ID_VALID,
 			WebAppStatusCodes.CIVIL_ID_ALREADY_REGISTERED, WebAppStatusCodes.CIVIL_ID_NOT_REGESTERED,
 			WebAppStatusCodes.CP_OTP_NOT_GENERATED, WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
-	@ApiOperation(value = "api to verify email id and contact number while changing password for logged in user", notes = "this api used when customer is logged-in andemail id and contact number enterd by customer gets verified by sending otp before changing password for logged in user")
+	@ApiOperation(value = "api to verify email id and contact number while changing password for logged in user", notes = "this api is called when customer is logged-in and email id and contact number enterd by customer is already verified by otp validation")
 	@RequestMapping(value = "/pub/login/changepass-loggedin", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> changePasswordLogedInUser(
 			@RequestHeader(value = "mOtp", required = false) String mOtpHeader,

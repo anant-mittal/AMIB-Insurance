@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.amx.jax.WebAppStatus.ApiWebAppStatus;
+import com.amx.jax.WebAppStatus.WebAppStatusCodes;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.DetailsConstants;
@@ -67,6 +70,7 @@ public class CustomizeQuoteController
 	
 
 	@ApiOperation(value = "returns customer created quote", notes = "this api returns quote details created by customer on customize quote page")
+	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@ApiMockParam(example = "124", value = "unique quote sequence number")
 	@RequestMapping(value = "/api/customize-quote/get-quote-details", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> getCustomizedQuoteDetails(@RequestParam(name = "quoteSeqNumber") String quoteSeqNumber)
@@ -80,6 +84,7 @@ public class CustomizeQuoteController
 	}
 
 	@ApiOperation(value = "returns calculated customize quote" , notes = "this api calculate the quote details on the selection of premium")
+	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/customize-quote/calculate-quote", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> calculateCutomizeQuote(@RequestBody CustomizeQuoteModel customizeQuoteModel)
 	{
@@ -87,6 +92,7 @@ public class CustomizeQuoteController
 	}
 
 	@ApiOperation(value = "returns the list of quotation sequence number")
+	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/customize-quote/get-quoteseq-list", method = RequestMethod.GET)
 	public AmxApiResponse<?, Object> getQuoteSeqList()
 	{
@@ -94,6 +100,7 @@ public class CustomizeQuoteController
 	}
 
 	@ApiOperation(value = "return terms and conditions of AMIB before payment")
+	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/customize-quote/terms-condition", method = RequestMethod.GET)
 	public AmxApiResponse<?, Object> getTermsAndCondition()
 	{
@@ -101,6 +108,7 @@ public class CustomizeQuoteController
 	}
 
 	@ApiOperation(value = "submits the calculated quote")
+	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/customize-quote/submit-quote", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> saveCustomizeQuote(@RequestBody CustomizeQuoteModel customizeQuoteModel , HttpServletRequest request)
 	{
@@ -108,6 +116,7 @@ public class CustomizeQuoteController
 	}
 	
 	@ApiOperation(value = "submits payment info to server")
+	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/remit/save-remittance", method = { RequestMethod.POST })
 	public PaymentResponseDto onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse) 
 	{
@@ -150,6 +159,7 @@ public class CustomizeQuoteController
 	}
 	
 	@ApiOperation(value = "return the payment status after payment through payment gateway")
+	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@ApiMockParam(example = "123", value = "pay sequence number of transection")
 	@RequestMapping(value = "/api/payment-status", method = { RequestMethod.POST })
 	public AmxApiResponse<?, Object> getPaymentStatus(@RequestParam String paySeqNum) 
@@ -165,6 +175,7 @@ public class CustomizeQuoteController
 	}
 	
 	@ApiOperation(value = "api to download payment receipt after successfull paymnet")
+	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@ApiMockParam(example = "123", value = "pay-sequence number of payment transection")
 	@RequestMapping(value = "/api/payment-receipt-data", method = { RequestMethod.GET })
 	public String paymentReceiptDataExt(@RequestParam String paySeqNum) 
