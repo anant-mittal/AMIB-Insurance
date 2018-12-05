@@ -74,7 +74,7 @@ public class RequestQuoteController {
 		return requestQuoteService.getVehicleCondition();
 	}
 
-	@ApiOperation(value = "returns vehicle details vehicle max vehicle age meta info")
+	@ApiOperation(value = "returns vehicle details model year meta info")
 	@RequestMapping(value = "/api/vehicledetails/model-year", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getMaxVehicleAgeAllowed() {
 		return requestQuoteService.getMaxVehicleAgeAllowed();
@@ -86,23 +86,13 @@ public class RequestQuoteController {
 		return requestQuoteService.getPolicyDuration();
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	@ApiOperation(value = "returns request quote details")
 	@RequestMapping(value = "/api/request-quote/get-requestquote-details", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> getRequestQuoteDetails() {
 		return requestQuoteService.getRequestQuoteDetails();
 	}
 
-	@ApiOperation(value = "submit vehicle details to db")
+	@ApiOperation(value = "submits updated vehicle details to server")
 	@RequestMapping(value = "/api/request-quote/set-vehicle-details", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> setAppVehicleDetails(
 			@RequestParam(name = "appSeqNumber", required = false) String appSeqNumber,
@@ -114,7 +104,7 @@ public class RequestQuoteController {
 		return requestQuoteService.setAppVehicleDetails(appSeqNumberDet, vehicleDetails, null);
 	}
 
-	@ApiOperation(value = "submit profile details to db")
+	@ApiOperation(value = "submits updated profile details to server")
 	@RequestMapping(value = "/api/request-quote/set-personal-details", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> setProfileDetails(
 			@RequestParam(name = "appSeqNumber", required = false) String appSeqNumber,
@@ -126,7 +116,7 @@ public class RequestQuoteController {
 		return requestQuoteService.setProfileDetails(appSeqNumberDet, personalDetails);
 	}
 
-	@ApiOperation(value = "submit vehicle image details to db")
+	@ApiOperation(value = "submit upadted vehicle image details to server")
 	@RequestMapping(value = "/api/request-quote/upload-vehicle-image", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> uploadVehicleImage(@RequestParam MultipartFile file,
 			@RequestParam("appSeqNumber") String appSeqNumber, @RequestParam("docTypeCode") String docTypeCode,
@@ -143,7 +133,7 @@ public class RequestQuoteController {
 		return requestQuoteService.uploadVehicleImage(file, appSeqNumberDet, docTypeCode, docSeqNumberDet);
 	}
 
-	@ApiOperation(value = "return vehicle image in byte array format")
+	@ApiOperation(value = "returns uploaded vehicle image in byte array format")
 	@RequestMapping(value = "/api/request-quote/downlaod-vehicle-images", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
 	public ResponseEntity<byte[]> downloadVehicleImage(
 			@RequestParam(name = "docSeqNumber", required = false) String docSeqNumber) throws IOException {
@@ -164,7 +154,7 @@ public class RequestQuoteController {
 		return ResponseEntity.ok().contentLength(imageByteArray.length).contentType(mediaType).body(imageByteArray);
 	}
 
-	@ApiOperation(value = "submit request quote")
+	@ApiOperation(value = "submits updated request quote details to server")
 	@RequestMapping(value = "/api/request-quote/submit-request-quote", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> submitRequestQuote(@RequestParam String appSeqNumber,
 			@RequestParam String insuranceCompCode) {

@@ -40,14 +40,11 @@ public class MyPolicyService
 
 	public AmxApiResponse<ActivePolicyModel, Object> getUserActivePolicy()
 	{
-		logger.info(TAG + " MyPolicyService ::");
-		
 		AmxApiResponse<ActivePolicyModel, Object> resp = new AmxApiResponse<ActivePolicyModel, Object>();
 		try
 		{
 			resp.setResults(myPolicyDao.getUserActivePolicy(userSession.getUserAmibCustRef(), userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber()));
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
-			
 		}
 		catch (Exception e)
 		{

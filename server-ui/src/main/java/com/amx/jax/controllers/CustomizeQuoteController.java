@@ -66,7 +66,7 @@ public class CustomizeQuoteController
 	private HttpServletResponse response;
 	
 
-	@ApiOperation(value = "return customize quote details")
+	@ApiOperation(value = "returns customer created quote", notes = "this api returns quote details created by customer on customize quote page")
 	@ApiMockParam(example = "124", value = "unique quote sequence number")
 	@RequestMapping(value = "/api/customize-quote/get-quote-details", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> getCustomizedQuoteDetails(@RequestParam(name = "quoteSeqNumber") String quoteSeqNumber)
@@ -79,35 +79,35 @@ public class CustomizeQuoteController
 		return customizeQuoteService.getCustomizedQuoteDetails(quoteSeqNumberDet);
 	}
 
-	@ApiOperation(value = "return calculated customize quote details")
+	@ApiOperation(value = "returns calculated customize quote" , notes = "this api calculate the quote details on the selection of premium")
 	@RequestMapping(value = "/api/customize-quote/calculate-quote", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> calculateCutomizeQuote(@RequestBody CustomizeQuoteModel customizeQuoteModel)
 	{
 		return customizeQuoteService.calculateCutomizeQuote(customizeQuoteModel);
 	}
 
-	@ApiOperation(value = "return all quotes with respect to the customer")
+	@ApiOperation(value = "returns the list of quotation sequence number")
 	@RequestMapping(value = "/api/customize-quote/get-quoteseq-list", method = RequestMethod.GET)
 	public AmxApiResponse<?, Object> getQuoteSeqList()
 	{
 		return customizeQuoteService.getQuoteSeqList();
 	}
 
-	@ApiOperation(value = "return terms and conditions of AMIB")
+	@ApiOperation(value = "return terms and conditions of AMIB before payment")
 	@RequestMapping(value = "/api/customize-quote/terms-condition", method = RequestMethod.GET)
 	public AmxApiResponse<?, Object> getTermsAndCondition()
 	{
 		return customizeQuoteService.getTermsAndCondition();
 	}
 
-	@ApiOperation(value = "submit the customize quote after calculation to DB")
+	@ApiOperation(value = "submits the calculated quote")
 	@RequestMapping(value = "/api/customize-quote/submit-quote", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> saveCustomizeQuote(@RequestBody CustomizeQuoteModel customizeQuoteModel , HttpServletRequest request)
 	{
 		return customizeQuoteService.saveCustomizeQuote(customizeQuoteModel , request);
 	}
 	
-	@ApiOperation(value = "payment callback method to set payment info in DB ")
+	@ApiOperation(value = "submits payment info to server")
 	@RequestMapping(value = "/remit/save-remittance", method = { RequestMethod.POST })
 	public PaymentResponseDto onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse) 
 	{
@@ -115,10 +115,10 @@ public class CustomizeQuoteController
 		{
 			setMetaData();
 			
+			logger.info("onPaymentCallback :: getPostDate  :" + paymentResponse.getPostDate());
 			PaymentDetails paymentDetails = new PaymentDetails();
 			paymentDetails.setPaymentId(paymentResponse.getPaymentId());
 			paymentDetails.setApprovalNo(paymentResponse.getAuth_appNo());
-			logger.info(" onPaymentCallback :: getPostDate  :" + paymentResponse.getPostDate());
 			paymentDetails.setApprovalDate(null);
 			paymentDetails.setResultCd(paymentResponse.getResultCode());
 			paymentDetails.setTransId(paymentResponse.getTransactionId());
@@ -149,13 +149,12 @@ public class CustomizeQuoteController
 		return paymentResponse;
 	}
 	
-	@ApiOperation(value = "return the payment status")
+	@ApiOperation(value = "return the payment status after payment through payment gateway")
 	@ApiMockParam(example = "123", value = "pay sequence number of transection")
 	@RequestMapping(value = "/api/payment-status", method = { RequestMethod.POST })
 	public AmxApiResponse<?, Object> getPaymentStatus(@RequestParam String paySeqNum) 
 	{
-		logger.info(" getPaymentStatus :: paySeqNum  :" + paySeqNum);
-		
+		logger.info("getPaymentStatus :: paySeqNum  :" + paySeqNum);
 		BigDecimal paySeqNumDet = null;
 		if (null != paySeqNum && !paySeqNum.equals("") && !paySeqNum.equalsIgnoreCase("null"))
 		{
@@ -165,8 +164,8 @@ public class CustomizeQuoteController
 		return payMentService.getPaymentStatus(paySeqNumDet);
 	}
 	
-	@ApiOperation(value = "return the payment receipt model data")
-	@ApiMockParam(example = "123", value = "pay sequence number of transection")
+	@ApiOperation(value = "api to download payment receipt after successfull paymnet")
+	@ApiMockParam(example = "123", value = "pay-sequence number of payment transection")
 	@RequestMapping(value = "/api/payment-receipt-data", method = { RequestMethod.GET })
 	public String paymentReceiptDataExt(@RequestParam String paySeqNum) 
 	{
@@ -225,7 +224,6 @@ public class CustomizeQuoteController
 		}
 		return null;
 	}
-	
 	
 	private void setMetaData()
 	{

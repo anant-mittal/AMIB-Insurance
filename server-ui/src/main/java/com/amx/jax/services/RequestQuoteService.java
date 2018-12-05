@@ -811,13 +811,10 @@ public class RequestQuoteService
 		
 		ArrayResponseModel arrayResponseModel = requestQuoteDao.submitRequestQuote(appSeqNumber , userSession.getCivilId());
 		if (null == arrayResponseModel.getErrorCode())
-			{
-			logger.info(TAG + " submitRequestQuote :: arrayResponseModel.getErrorCode() :" + arrayResponseModel.getErrorCode());
-			
+		{
 			ArrayResponseModel getVehicleDetailsArray = requestQuoteDao.getAppVehicleDetails(appSeqNumber);
 			if (null == getVehicleDetailsArray.getErrorCode())
 			{
-				logger.info(TAG + " submitRequestQuote :: getVehicleDetailsArray.getErrorCode() :" + getVehicleDetailsArray.getErrorCode());
 			
 				ArrayList<VehicleDetailsGetModel> vehicleDetailsArray = getVehicleDetailsArray.getDataArray();
 				if (vehicleDetailsArray.size() >= 1)
@@ -825,18 +822,13 @@ public class RequestQuoteService
 					VehicleDetailsGetModel vehicleDetailsGetModel = vehicleDetailsArray.get(0);
 					makeDesc = vehicleDetailsGetModel.getMakeDesc();
 					subMakeDesc = vehicleDetailsGetModel.getSubMakeDesc();
-					
-					logger.info(TAG + " submitRequestQuote :: makeDesc:" + makeDesc);
-					logger.info(TAG + " submitRequestQuote :: subMakeDesc :" + subMakeDesc);
 				}
 				resp.setStatusKey(ApiConstants.SUCCESS);
 			}
-
-			logger.info(TAG + " submitRequestQuote :: makeDesc :" + makeDesc);
-			logger.info(TAG + " submitRequestQuote :: subMakeDesc :" + subMakeDesc);
 			
 			emailSmsService.emailToCustomerOnCompilitionRequestQuote(makeDesc,subMakeDesc,appSeqNumber);
 			emailSmsService.emailToAmibOnCompilitionRequestQuote(makeDesc,subMakeDesc,appSeqNumber);
+			
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			
 			}
@@ -852,8 +844,6 @@ public class RequestQuoteService
 
 	public AmxApiResponse<?, Object> updateInsuranceProvider(BigDecimal appSeqNumber, BigDecimal insuranceCompCode , String civilId)
 	{
-		logger.info(TAG + " updateInsuranceProvider :: appSeqNumber      :" + appSeqNumber);
-		logger.info(TAG + " updateInsuranceProvider :: insuranceCompCode :" + insuranceCompCode);
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
 
 		AmxApiResponse<?, Object> getInsuranceCompanyDetails = getInsuranceCompanyDetails(appSeqNumber);

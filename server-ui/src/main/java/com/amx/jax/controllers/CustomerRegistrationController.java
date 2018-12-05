@@ -52,14 +52,7 @@ public class CustomerRegistrationController {
 	@Autowired
 	EmailSmsService emailSmsService;
 
-	@ApiOperation(value = "Return Metadata From DB")
-	@ApiWebAppStatus({ WebAppStatusCodes.SUCCESS, WebAppStatusCodes.TECHNICAL_ERROR })
-	@RequestMapping(value = "/pub/reg/companysetup", method = RequestMethod.POST)
-	public AmxApiResponse<?, Object> getCompanySetUp() {
-		return customerRegistrationService.getCompanySetUp();
-	}
-
-	@ApiOperation(value = "Return whether civil id is valid")
+	@ApiOperation(value = "api to validate valid civil id")
 	@ApiWebAppStatus({ WebAppStatusCodes.CIVIL_ID_INVALID, WebAppStatusCodes.CIVIL_ID_VALID,
 			WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@ApiMockParam(example = "284090301401", value = "customer civil id")
@@ -68,7 +61,7 @@ public class CustomerRegistrationController {
 		return customerRegistrationService.isValidCivilId(civilid);
 	}
 
-	@ApiOperation(value = "Return whether civil id is exist")
+	@ApiOperation(value = "api to validate civil id already exist")
 	@ApiWebAppStatus({ WebAppStatusCodes.CIVIL_ID_INVALID, WebAppStatusCodes.CIVIL_ID_VALID,
 			WebAppStatusCodes.CIVIL_ID_ALREADY_REGISTERED, WebAppStatusCodes.CIVIL_ID_NOT_REGESTERED,
 			WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
@@ -78,7 +71,7 @@ public class CustomerRegistrationController {
 		return customerRegistrationService.isCivilIdExistCheck(civilid);
 	}
 
-	@ApiOperation(value = "Return whether mobile number is valid")
+	@ApiOperation(value = "api to validate valid contact number")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@ApiMockParam(example = "98989892", value = "customer contact number")
 	@RequestMapping(value = "/pub/reg/mobile-valid", method = RequestMethod.POST)
@@ -86,15 +79,7 @@ public class CustomerRegistrationController {
 		return customerRegistrationService.isValidMobileNumber(mobile);
 	}
 
-	@ApiOperation(value = "Return whether mobile number is exist")
-	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
-	@ApiMockParam(example = "98989892", value = "customer contact number")
-	@RequestMapping(value = "/pub/reg/mobile-exists", method = RequestMethod.POST)
-	public AmxApiResponse<ResponseInfo, Object> isMobileNumberExistCheck(@RequestParam("mobile") String mobile) {
-		return customerRegistrationService.isMobileNumberExistCheck(mobile);
-	}
-
-	@ApiOperation(value = "Return whether email id is valid")
+	@ApiOperation(value = "api to validate valid email id")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@ApiMockParam(example = "amx@gmail.com", value = "customer email id")
 	@RequestMapping(value = "/pub/reg/email-valid", method = RequestMethod.POST)
@@ -102,15 +87,7 @@ public class CustomerRegistrationController {
 		return customerRegistrationService.isValidEmailId(emailId);
 	}
 
-	@ApiOperation(value = "Return whether email id is exist")
-	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
-	@ApiMockParam(example = "amx@gmail.com", value = "customer email id")
-	@RequestMapping(value = "/pub/reg/email-exists", method = RequestMethod.POST)
-	public AmxApiResponse<ResponseInfo, Object> isEmailIdExistCheck(@RequestParam("emailId") String emailId) {
-		return customerRegistrationService.isEmailIdExistCheck(emailId);
-	}
-
-	@ApiOperation(value = "Validate email id and number through otp while registration")
+	@ApiOperation(value = "api to verify email id and contact number through otp", notes = "email id and contact number enterd by customer while registration gets verified by sending otp on both")
 	@ApiWebAppStatus({ WebAppStatusCodes.CIVIL_ID_INVALID, WebAppStatusCodes.CIVIL_ID_VALID,
 			WebAppStatusCodes.CIVIL_ID_ALREADY_REGISTERED, WebAppStatusCodes.CIVIL_ID_NOT_REGESTERED,
 			WebAppStatusCodes.EMAIL_ID_VALID, WebAppStatusCodes.EMAIL_ID_INVALID,
@@ -128,7 +105,7 @@ public class CustomerRegistrationController {
 		return customerRegistrationService.registrationOtp(eOtp, mOtp, requestOtpModel);
 	}
 
-	@ApiOperation(value = "Create new customer on successful registration")
+	@ApiOperation(value = "api to set password and create new customer", notes = "api to set password and create new customer after successful email id and contact number verfication through otp verification")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/pub/reg/customer-registration", method = RequestMethod.POST)
 	public AmxApiResponse<CustomerRegistrationResponse, Object> addNewCustomer(
@@ -136,7 +113,7 @@ public class CustomerRegistrationController {
 		return customerRegistrationService.addNewCustomer(customerRegistrationRequest);
 	}
 
-	@ApiOperation(value = "Validate User On Login")
+	@ApiOperation(value = "api to validate customer id and password for successful login")
 	@ApiWebAppStatus({ WebAppStatusCodes.EMPTY_PASSWORD, WebAppStatusCodes.CIVIL_ID_INVALID,
 			WebAppStatusCodes.CIVIL_ID_VALID, WebAppStatusCodes.CIVIL_ID_ALREADY_REGISTERED,
 			WebAppStatusCodes.CIVIL_ID_NOT_REGESTERED, WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
@@ -145,7 +122,7 @@ public class CustomerRegistrationController {
 		return customerRegistrationService.validateUserLogin(customerLoginRequest);
 	}
 
-	@ApiOperation(value = "Customer chnage password otp initiate")
+	@ApiOperation(value = "api to verify email id and contact number while changing password", notes = "this api used when customer is not logged-in and email id and contact number enterd by customer gets verified by sending otp before changing password")
 	@ApiWebAppStatus({ WebAppStatusCodes.CIVIL_ID_INVALID, WebAppStatusCodes.CIVIL_ID_VALID,
 			WebAppStatusCodes.CIVIL_ID_ALREADY_REGISTERED, WebAppStatusCodes.CIVIL_ID_NOT_REGESTERED,
 			WebAppStatusCodes.CP_OTP_NOT_GENERATED, WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
@@ -160,7 +137,7 @@ public class CustomerRegistrationController {
 		return customerRegistrationService.changePasswordOtpInitiate(eOtp, mOtp, changePasswordRequest);
 	}
 
-	@ApiOperation(value = "return success after successful password change ")
+	@ApiOperation(value = "api to update new password", notes = "after successful verification of email id and contact number through otp , this api updates the new password")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/pub/login/changepass", method = RequestMethod.POST)
 	public AmxApiResponse<ChangePasswordResponse, Object> updatePassword(
@@ -168,7 +145,7 @@ public class CustomerRegistrationController {
 		return customerRegistrationService.updatePassword(changePasswordRequest);
 	}
 
-	@ApiOperation(value = "return customer details")
+	@ApiOperation(value = "api to return customer details")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/pub/reg/userdetails", method = RequestMethod.POST)
 	public AmxApiResponse<CustomerDetailResponse, Object> getUserDetails() {
@@ -178,7 +155,7 @@ public class CustomerRegistrationController {
 	@ApiWebAppStatus({ WebAppStatusCodes.CIVIL_ID_INVALID, WebAppStatusCodes.CIVIL_ID_VALID,
 			WebAppStatusCodes.CIVIL_ID_ALREADY_REGISTERED, WebAppStatusCodes.CIVIL_ID_NOT_REGESTERED,
 			WebAppStatusCodes.CP_OTP_NOT_GENERATED, WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
-	@ApiOperation(value = "Customer change password otp initiate for logged in user")
+	@ApiOperation(value = "api to verify email id and contact number while changing password for logged in user", notes = "this api used when customer is logged-in andemail id and contact number enterd by customer gets verified by sending otp before changing password for logged in user")
 	@RequestMapping(value = "/pub/login/changepass-loggedin", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> changePasswordLogedInUser(
 			@RequestHeader(value = "mOtp", required = false) String mOtpHeader,
@@ -190,7 +167,7 @@ public class CustomerRegistrationController {
 		return customerRegistrationService.changePasswordLogedInUser(eOtp, mOtp, changePasswordRequest);
 	}
 
-	@ApiOperation(value = "Customer log out from app")
+	@ApiOperation(value = "api to logg out customer")
 	@RequestMapping(value = "/pub/login/log-out", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> logout() {
 		userSession.unauthorize();

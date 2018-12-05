@@ -21,7 +21,7 @@ public class MyQuotesController
 	@Autowired
 	private MyQuotesService myQuotesService;
 
-	@ApiOperation(value = "return the list of availabe quote for the customer")
+	@ApiOperation(value = "return the list of my policy created by the customer")
 	@RequestMapping(value = "/api/myquote/get-myquotes", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> getUserQuote()
 	{

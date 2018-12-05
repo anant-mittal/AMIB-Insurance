@@ -376,10 +376,7 @@ public class PayMentDao
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
 			
-			logger.info(TAG + " paymentReceiptData :: getCountryId   :" + metaService.getTenantProfile().getCountryId());
-			logger.info(TAG + " paymentReceiptData :: getCompCd      :" + metaService.getTenantProfile().getCompCd());
 			logger.info(TAG + " paymentReceiptData :: paySeqNum      :" + paySeqNum);
-			logger.info(TAG + " paymentReceiptData :: getLanguageId  :" + metaService.getTenantProfile().getLanguageId());
 			
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, paySeqNum);
@@ -447,7 +444,6 @@ public class PayMentDao
 			paymentReceiptModel.setChasisNumber(callableStatement.getString(22));
 			paymentReceiptModel.setModelYear(callableStatement.getBigDecimal(23));
 			paymentReceiptModel.setTrnsReceiptRef(callableStatement.getString(24));
-			
 			
 			arrayResponseModel.setErrorCode(callableStatement.getString(25));
 			arrayResponseModel.setErrorMessage(callableStatement.getString(26));

@@ -48,7 +48,7 @@ public class MyPolicyController {
 		return myPolicyService.getUserActivePolicy();
 	}
 
-	@ApiOperation(value = "to renew the old policy")
+	@ApiOperation(value = "this api is to renew the old policy taken by customer")
 	@ApiMockParam(example = "124", value = "old doc number of insurance quote")
 	@RequestMapping(value = "/api/mypolicy/renew-policy", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> renewInsuranceOldPolicy(
@@ -60,7 +60,7 @@ public class MyPolicyController {
 		return myPolicyService.renewInsuranceOldPolicy(renewAppDocNumberDet);
 	}
 
-	@ApiOperation(value = "return policy print details of a quote")
+	@ApiOperation(value = "api to download policy receipt of entered doc number")
 	@ApiMockParam(example = "1244", value = "doc number of insurance quote")
 	@RequestMapping(value = "/api/mypolicy/policy-receipt", method = { RequestMethod.GET })
 	public String downloadPolicyReceipt(@RequestParam String docNumber) {

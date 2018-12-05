@@ -84,12 +84,12 @@ public class CustomizeQuoteService
 					}
 				}
 			}
-			/*if(!quoteAvailableToCustomer)
+			if(!quoteAvailableToCustomer)
 			{
 				resp.setStatusKey(WebAppStatusCodes.NO_QUOTE_AVAILABLE.toString());
 				resp.setMessageKey(WebAppStatusCodes.NO_QUOTE_AVAILABLE.toString());
 				return resp;
-			}*/
+			}
 			
 			
 			// SET Quotation Details
@@ -160,7 +160,6 @@ public class CustomizeQuoteService
 		try
 		{
 			ArrayList<String> allQuotes = new ArrayList<String>();
-
 			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber());
 			for (int i = 0; i < getUserQuote.size(); i++)
 			{

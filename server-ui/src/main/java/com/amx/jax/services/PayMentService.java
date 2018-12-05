@@ -241,40 +241,54 @@ public class PayMentService
 				
 				if(paymentStatus.getPaymentStatus().equalsIgnoreCase("CAPTURED"))
 				{
-					emailSmsService.emialToCustonSuccessPg(paymentStatus.getTotalAmount(),
-							paymentStatus.getTransactionId(), paymentStatus.getAppSeqNumber(), receiptData(paySeqNum));
-
-					AmxApiResponse<? , Object> createAmibResp = payMentService.cretaeAmibCust();
-					if (!createAmibResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+					try
 					{
-						emailSmsService.failedPGProcedureAfterCapture(paymentStatus , createAmibResp.getMessageKey() , createAmibResp.getMessage() , "CREATE AMIB PROCEDURE" , paySeqNum.toString());
-						paymentStatus.setPaymentProcedureStatus("Y");
-					}
-					else
-					{
-						AmxApiResponse<? , Object> processTeceiptResp = payMentService.processReceipt(paySeqNum);
-						if (!processTeceiptResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+						AmxApiResponse<? , Object> createAmibResp = payMentService.cretaeAmibCust();
+						if (!createAmibResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 						{
-							emailSmsService.failedPGProcedureAfterCapture(paymentStatus , processTeceiptResp.getMessageKey() , processTeceiptResp.getMessage() , "PROCESS RECEIPT PROCEDURE" , paySeqNum.toString());
+							emailSmsService.failedPGProcedureAfterCapture(paymentStatus , createAmibResp.getMessageKey() , createAmibResp.getMessage() , "CREATE AMIB PROCEDURE" , paySeqNum.toString());
 							paymentStatus.setPaymentProcedureStatus("Y");
 						}
 						else
 						{
-							AmxApiResponse<? , Object> createAmibPolicyResp = payMentService.createAmibPolicy(paySeqNum);
-							if (!createAmibPolicyResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+							AmxApiResponse<? , Object> processTeceiptResp = payMentService.processReceipt(paySeqNum);
+							if (!processTeceiptResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 							{
-								emailSmsService.failedPGProcedureAfterCapture(paymentStatus , createAmibPolicyResp.getMessageKey() , createAmibPolicyResp.getMessage() , "CREATE AMIB PLOICY PROCEDURE" , paySeqNum.toString());
+								emailSmsService.failedPGProcedureAfterCapture(paymentStatus , processTeceiptResp.getMessageKey() , processTeceiptResp.getMessage() , "PROCESS RECEIPT PROCEDURE" , paySeqNum.toString());
 								paymentStatus.setPaymentProcedureStatus("Y");
 							}
 							else
 							{
-								AmxApiResponse<? , Object> preparePrintData = payMentService.preparePrintData(paySeqNum);
-								if (!preparePrintData.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+								AmxApiResponse<? , Object> createAmibPolicyResp = payMentService.createAmibPolicy(paySeqNum);
+								if (!createAmibPolicyResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 								{
-									emailSmsService.failedPGProcedureAfterCapture(paymentStatus , preparePrintData.getMessageKey() , preparePrintData.getMessage() , "PREPARE STATEMENT PROCEDURE" , paySeqNum.toString());
+									emailSmsService.failedPGProcedureAfterCapture(paymentStatus , createAmibPolicyResp.getMessageKey() , createAmibPolicyResp.getMessage() , "CREATE AMIB PLOICY PROCEDURE" , paySeqNum.toString());
+									paymentStatus.setPaymentProcedureStatus("Y");
+								}
+								else
+								{
+									AmxApiResponse<? , Object> preparePrintData = payMentService.preparePrintData(paySeqNum);
+									if (!preparePrintData.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+									{
+										emailSmsService.failedPGProcedureAfterCapture(paymentStatus , preparePrintData.getMessageKey() , preparePrintData.getMessage() , "PREPARE STATEMENT PROCEDURE" , paySeqNum.toString());
+									}
 								}
 							}
 						}
+					}
+					catch (Exception e)
+					{
+						e.printStackTrace();
+					}
+					
+					try
+					{
+						emailSmsService.emialToCustonSuccessPg(paymentStatus.getTotalAmount(),
+								paymentStatus.getTransactionId(), paymentStatus.getAppSeqNumber(), receiptData(paySeqNum));
+					}
+					catch (Exception e)
+					{
+						e.printStackTrace();
 					}
 				}
 				
@@ -295,7 +309,7 @@ public class PayMentService
 		return resp;
 	}
 	
-	private ArrayList<Map> receiptData(BigDecimal paySeqNum) 
+	public ArrayList<Map> receiptData(BigDecimal paySeqNum) 
 	{
 		PaymentReceipt paymentReceipt = null;
 		
@@ -334,6 +348,8 @@ public class PayMentService
 		model.put(DetailsConstants.modelYear, paymentReceipt.getModelYear());
 		model.put(DetailsConstants.trnsReceiptRef, paymentReceipt.getTrnsReceiptRef());
 		dataList.add(model);
+		
+		//emailSmsService.emialToCustonSuccessPg(new BigDecimal(100),"11111111111", new BigDecimal(2222) , dataList);
 		
 		return dataList;
 	}

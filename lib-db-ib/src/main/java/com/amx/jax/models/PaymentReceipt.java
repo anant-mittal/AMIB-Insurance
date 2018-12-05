@@ -257,13 +257,14 @@ public class PaymentReceipt
 	}
 	
 	@Override
-	public String toString()
-	{
-		return "PaymentReceiptModel [applicationId=" + applicationId + ", customerId=" + customerId + ", paymentDate=" + paymentDate + ", paymentMode=" + paymentMode + ", amountPaidNumber=" + amountPaidNumber + ", amountPaidWord=" + amountPaidWord + ", paymentId=" + paymentId + ", customerName="
-				+ customerName + ", civilId=" + civilId + ", mobileNumber=" + mobileNumber + ", emialId=" + emialId + ", policyDuration=" + policyDuration + ", governate=" + governate + ", areaDesc=" + areaDesc + ", address=" + address + ", make=" + make + ", subMake=" + subMake + ", ktNumber="
-				+ ktNumber + ", chasisNumber=" + chasisNumber + ", modelYear=" + modelYear + "]";
+	public String toString() {
+		return "PaymentReceipt [applicationId=" + applicationId + ", customerId=" + customerId + ", paymentDate="
+				+ paymentDate + ", paymentMode=" + paymentMode + ", amountPaidNumber=" + amountPaidNumber
+				+ ", amountPaidWord=" + amountPaidWord + ", paymentId=" + paymentId + ", customerName=" + customerName
+				+ ", civilId=" + civilId + ", mobileNumber=" + mobileNumber + ", emialId=" + emialId
+				+ ", policyDuration=" + policyDuration + ", governate=" + governate + ", areaDesc=" + areaDesc
+				+ ", address=" + address + ", make=" + make + ", subMake=" + subMake + ", ktNumber=" + ktNumber
+				+ ", chasisNumber=" + chasisNumber + ", modelYear=" + modelYear + ", trnsReceiptRef=" + trnsReceiptRef
+				+ "]";
 	}
-
-	
-	
 }

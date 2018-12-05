@@ -416,11 +416,12 @@ public class EmailSmsService
 		model.put(DetailsConstants.POLICY_AMOUNT, amountWithCurrency);
 		model.put(DetailsConstants.TRANSACTION_ID, transecionId);
 		model.put(DetailsConstants.POLICY_APP_NO, policyAppNo);
+		
 		wrapper.put("data", model);
 		
 		ArrayList<String> emailTo = new ArrayList<String>();
 		emailTo.add(customerEmailId);
-
+		
 		File file = new File();
 		file.setITemplate(TemplatesIB.TRNX_RECEIPT);
 		file.setType(File.Type.PDF);
