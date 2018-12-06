@@ -1025,12 +1025,12 @@
 						</frame>
                         <!--##################Amount Paid (in Numbers) END####################-->
                         
-                        <!--##################Amount Paid (in Words)START####################-->
+                         <!--#################Amount Paid (in Words) START####################-->
                         <frame>
-                            <reportElement x="5" y="690" width="585" height="15"/>
+                            <reportElement x="5" y="690" width="585" height="30"/>
                             <staticText>
-                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "16" backcolor = "#FFFFFF" />
-                                <box><bottomPen lineWidth = "0.25" lineColor = "#CCCCCC" /></box>
+                                <reportElement mode = "Opaque" x = "0" y = "2" width = "585" height = "29" backcolor = "#FFFFFF" />
+                                <box><bottomPen lineWidth = "0.1" lineColor = "#CCCCCC" /></box>
                                 <textElement />
                                 <text><![CDATA[]]></text>
                             </staticText>
@@ -1042,8 +1042,9 @@
                                 </textElement>
                                 <text><![CDATA[Amount Paid (in Words)]]></text>
                             </staticText>
+
                             <textField isStretchWithOverflow="true">
-                                <reportElement x="160" y="4" width="400" height="15"
+                                <reportElement x="160" y="4" width="400" height="30"
                                                forecolor="#000000"
                                                isPrintWhenDetailOverflows="true"/>
                                 <textElement textAlignment="Left">
@@ -1051,11 +1052,17 @@
                                           pdfFontName="fonts/all/arial.ttf"/>
                                 </textElement>
                                 <textFieldExpression class="java.lang.String">
-                                    <![CDATA[$F{tranx}.get("amountPaidInWord","-")]]>
+                                <![CDATA[$F{tranx}.get("amountPaidInWord","-")]]>
+                                    
                                 </textFieldExpression>
                             </textField>
-						</frame>
-                        <!--##################Amount Paid (in Words) END####################-->
+
+                           
+
+                        </frame>
+                        <!--#################Amount Paid (in Words) END####################-->
+                        
+                       
                       <!--##################FOOTER START####################-->
                     <frame>
                         <reportElement x="0" y="725" width="595" height="90"
