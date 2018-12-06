@@ -581,6 +581,7 @@ public class EmailSmsService
 			if (!userSession.getMotp().equals(mOtp) || !userSession.getEotp().equals(eOtp))
 			{
 				resp.setError(Message.REG_INVALID_OTP);
+				resp.setMessage(Message.EMAIL_MOBILE_OTP_REQUIRED);
 				resp.setStatusKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED_INVALID);
 				resp.setMessageKey(MessageKey.KEY_EMAIL_MOBILE_OTP_REQUIRED_INVALID);
 				return resp;
@@ -625,6 +626,7 @@ public class EmailSmsService
 		responseOtpModel.setMotpPrefix(null);
 		userSession.seteOtpEmailId(emailId);
 		resp.setMeta(responseOtpModel);
+		resp.setMessage(Message.EMAIL_OTP_REQUIRED);
 		resp.setStatusKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
 		resp.setMessageKey(MessageKey.KEY_EMAIL_OTP_REQUIRED);
 
@@ -703,6 +705,7 @@ public class EmailSmsService
 		responseOtpModel.setEotpPrefix(null);
 		userSession.setmOtpMobileNumber(mobileNumber);
 		resp.setMeta(responseOtpModel);
+		resp.setMessage(Message.MOBILE_OTP_REQUIRED);
 		resp.setStatusKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
 		resp.setMessageKey(MessageKey.KEY_MOBILE_OTP_REQUIRED);
 

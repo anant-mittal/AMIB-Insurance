@@ -45,13 +45,13 @@ public class MyPolicyController {
 	@Autowired
 	IMetaService metaService;
 
-	@ApiOperation(value = "returns the list of active policy of the customer")
+	@ApiOperation(value = "returns the list of policy of the customer" , notes = "based on customer_sequence_number which you get from user details will return list of policy details, here customer sequence number is taken from session so no need to send it in api.")
 	@RequestMapping(value = "/api/mypolicy/get-activepolicy", method = RequestMethod.POST)
 	public AmxApiResponse<ActivePolicyModel, Object> getUserActivePolicy() {
 		return myPolicyService.getUserActivePolicy();
 	}
 
-	@ApiOperation(value = "this api is to renew the old policy taken by customer")
+	@ApiOperation(value = "this api is to renew the old policy taken by customer" , notes = "this api will renew the old policy taken by the customer")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@ApiMockParam(example = "124", value = "old doc number of insurance quote")
 	@RequestMapping(value = "/api/mypolicy/renew-policy", method = RequestMethod.POST)
@@ -64,7 +64,7 @@ public class MyPolicyController {
 		return myPolicyService.renewInsuranceOldPolicy(renewAppDocNumberDet);
 	}
 
-	@ApiOperation(value = "api to download policy receipt pdf of entered doc number")
+	@ApiOperation(value = "api to download policy receipt pdf of entered doc number" , notes = "this api will download the policy receipt of given doc number")
 	@ApiMockParam(example = "1244", value = "doc number of insurance quote")
 	@RequestMapping(value = "/api/mypolicy/policy-receipt", method = { RequestMethod.GET })
 	public String downloadPolicyReceipt(@RequestParam String docNumber) {

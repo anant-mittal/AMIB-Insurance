@@ -104,7 +104,10 @@ public class RequestQuoteController {
 		return requestQuoteService.getRequestQuoteDetails();
 	}
 
-	@ApiOperation(value = "submits updated vehicle details to server")
+	@ApiOperation(value = "submits updated vehicle details to server" , notes = "for a new quote app sequence number will not present , "
+			+ "but on the success of submit of vehicle details app sequence number will be generated in response and same "
+			+ "will be mandatory and need to be entered after updating the vehicle details of same quote. If for the same quote the "
+			+ "generated app sequence number not entered it will generate a new app sequence number and it will treated as new quote with new app sequence number ")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/request-quote/set-vehicle-details", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> setAppVehicleDetails(
@@ -117,11 +120,11 @@ public class RequestQuoteController {
 		return requestQuoteService.setAppVehicleDetails(appSeqNumberDet, vehicleDetails, null);
 	}
 
-	@ApiOperation(value = "submits updated profile details to server")
+	@ApiOperation(value = "submits updated profile details to server" , notes = "here to update personal details it is mandatory to enter app sequence number")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/request-quote/set-personal-details", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> setProfileDetails(
-			@RequestParam(name = "appSeqNumber", required = false) String appSeqNumber,
+			@RequestParam(name = "appSeqNumber") String appSeqNumber,
 			@RequestBody PersonalDetails personalDetails) {
 		BigDecimal appSeqNumberDet = null;
 		if (null != appSeqNumber && !appSeqNumber.equals("") && !appSeqNumber.equalsIgnoreCase("null")) {
@@ -130,7 +133,10 @@ public class RequestQuoteController {
 		return requestQuoteService.setProfileDetails(appSeqNumberDet, personalDetails);
 	}
 
-	@ApiOperation(value = "submit upadted vehicle image to server")
+	@ApiOperation(value = "submit upadted vehicle image to server" , notes = "image type can be only jpeg and png format while uploading image for the first time "
+			+ "doc sequence number will be null , but after upload it will create a doc dequence number which will "
+			+ "required to enter while updating the same image. Doc sequence number of uploaded image can be get from "
+			+ "/api/request-quote/get-requestquote-details api.")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/request-quote/upload-vehicle-image", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> uploadVehicleImage(@RequestParam MultipartFile file,
@@ -148,7 +154,7 @@ public class RequestQuoteController {
 		return requestQuoteService.uploadVehicleImage(file, appSeqNumberDet, docTypeCode, docSeqNumberDet);
 	}
 
-	@ApiOperation(value = "returns uploaded vehicle image in byte array format")
+	@ApiOperation(value = "returns uploaded vehicle image in byte array format of entered doc number")
 	@RequestMapping(value = "/api/request-quote/downlaod-vehicle-images", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
 	public ResponseEntity<byte[]> downloadVehicleImage(
 			@RequestParam(name = "docSeqNumber", required = false) String docSeqNumber) throws IOException {
@@ -169,7 +175,7 @@ public class RequestQuoteController {
 		return ResponseEntity.ok().contentLength(imageByteArray.length).contentType(mediaType).body(imageByteArray);
 	}
 
-	@ApiOperation(value = "submits updated request quote details to server", notes = "after successfull submit of request quote a mail will trigger to the customer on his registered emial id ")
+	@ApiOperation(value = "submits updated request quote details to server", notes = "after successfull submit of request quote a mail will trigger to the customer on his registered emial id of successful quote creation")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/request-quote/submit-request-quote", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> submitRequestQuote(@RequestParam String appSeqNumber,

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import com.amx.jax.WebAppStatus.WebAppStatusCodes;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
+import com.amx.jax.constants.Message;
 import com.amx.jax.dao.CustomizeQuoteDao;
 import com.amx.jax.dao.MyQuoteDao;
 import com.amx.jax.dict.PayGServiceCode;
@@ -86,6 +87,7 @@ public class CustomizeQuoteService
 			}
 			if(!quoteAvailableToCustomer)
 			{
+				resp.setMessage(Message.NO_QUOTE_AVAILABLE);
 				resp.setStatusKey(WebAppStatusCodes.NO_QUOTE_AVAILABLE.toString());
 				resp.setMessageKey(WebAppStatusCodes.NO_QUOTE_AVAILABLE.toString());
 				return resp;

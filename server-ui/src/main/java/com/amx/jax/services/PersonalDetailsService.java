@@ -1,6 +1,8 @@
 
 package com.amx.jax.services;
 
+import java.util.ArrayList;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.constants.HardCodedValues;
+import com.amx.jax.constants.Message;
 import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.dao.PersonalDetailsDao;
@@ -91,17 +94,39 @@ public class PersonalDetailsService
 		CustomerProfileDetailModel customerProfileDetailModelCheck = new CustomerProfileDetailModel();
 		CustomerProfileUpdateResponse customerProfileUpdateResponse = new CustomerProfileUpdateResponse();
 		
-		customerProfileDetailModelCheck = personalDetailsDao.getProfileDetails(userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber());
+		ArrayList<Object> mandatoryCheck = new ArrayList<>();
+		mandatoryCheck.add(customerProfileUpdateRequest.getEnglishName());
+		mandatoryCheck.add(customerProfileUpdateRequest.getGenderCode());
+		mandatoryCheck.add(customerProfileUpdateRequest.getIdExpiryDate());
+		mandatoryCheck.add(customerProfileUpdateRequest.getBusinessCode());
+		mandatoryCheck.add(customerProfileUpdateRequest.getNatyCode());
+		mandatoryCheck.add(customerProfileUpdateRequest.getGovCode());
+		mandatoryCheck.add(customerProfileUpdateRequest.getAreaCode());
+		mandatoryCheck.add(customerProfileUpdateRequest.getEmail());
+		mandatoryCheck.add(customerProfileUpdateRequest.getMobile());
+		
+		if(!checkMandatory(mandatoryCheck))
+		{
+			logger.info(TAG + " updateProfileDetails :: Mendatory Details Failed");
+			resp.setStatusEnum(WebAppStatusCodes.MANDATORY_FIELDS_MISSING);
+			resp.setMessageKey(WebAppStatusCodes.MANDATORY_FIELDS_MISSING.toString());
+			resp.setMessage(Message.MANDATORY_FIELDS_MISSING);
+			return resp;
+		}
+		
 		if (null != customerProfileUpdateRequest.getIdExpiryDate())
 		{
 			String dateFromDb = customerProfileUpdateRequest.getIdExpiryDate();
 			if (DateFormats.checkExpiryDate(dateFromDb))
 			{
-				resp.setStatusKey(WebAppStatusCodes.CIVIL_ID_EXPIRED.toString());
+				resp.setStatusEnum(WebAppStatusCodes.CIVIL_ID_EXPIRED);
 				resp.setMessageKey(WebAppStatusCodes.CIVIL_ID_EXPIRED.toString());
 				return resp;
 			}
 		}
+		
+		customerProfileDetailModelCheck = personalDetailsDao.getProfileDetails(userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber());
+		
 
 		if (null != customerProfileDetailModelCheck.getMobile() && null != customerProfileDetailModelCheck.getEmail() && !customerProfileDetailModelCheck.getMobile().equals(customerProfileUpdateRequest.getMobile())
 				&& !customerProfileDetailModelCheck.getEmail().equals(customerProfileUpdateRequest.getEmail()))
@@ -120,12 +145,13 @@ public class PersonalDetailsService
 			{
 				return validateEmailID;
 			}
+			
 
 			AmxApiResponse<ResponseInfo, Object> mobileNumberExists = customerRegistrationService.isMobileNumberExist(customerProfileUpdateRequest.getMobile());
 			if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				mobileNumberExists.setMessageKey(WebAppStatusCodes.MOBILE_NUMBER_REGISTERED.toString());
-				mobileNumberExists.setStatusKey(WebAppStatusCodes.MOBILE_NUMBER_REGISTERED.toString());
+				mobileNumberExists.setStatusEnum(WebAppStatusCodes.MOBILE_NUMBER_REGISTERED);
 				return mobileNumberExists;
 			}
 
@@ -133,7 +159,7 @@ public class PersonalDetailsService
 			if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				emailIdExists.setMessageKey(WebAppStatusCodes.EMAIL_ID_REGESTERED.toString());
-				emailIdExists.setStatusKey(WebAppStatusCodes.EMAIL_ID_REGESTERED.toString());
+				emailIdExists.setStatusEnum(WebAppStatusCodes.EMAIL_ID_REGESTERED);
 				return emailIdExists;
 			}
 
@@ -155,7 +181,7 @@ public class PersonalDetailsService
 			if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				emailIdExists.setMessageKey(WebAppStatusCodes.EMAIL_ID_REGESTERED.toString());
-				emailIdExists.setStatusKey(WebAppStatusCodes.EMAIL_ID_REGESTERED.toString());
+				emailIdExists.setStatusEnum(WebAppStatusCodes.EMAIL_ID_REGESTERED);
 				return emailIdExists;
 			}
 			
@@ -181,7 +207,7 @@ public class PersonalDetailsService
 			if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				mobileNumberExists.setMessageKey(WebAppStatusCodes.MOBILE_NUMBER_REGISTERED.toString());
-				mobileNumberExists.setStatusKey(WebAppStatusCodes.MOBILE_NUMBER_REGISTERED.toString());
+				mobileNumberExists.setStatusEnum(WebAppStatusCodes.MOBILE_NUMBER_REGISTERED);
 				return mobileNumberExists;
 			}
 
@@ -204,7 +230,7 @@ public class PersonalDetailsService
 		customerProfileDetailModel.setEmail(customerProfileUpdateRequest.getEmail());
 		
 		customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel , userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber());
-		logger.info(TAG + " updateProfileDetails :: getCivilId :" + customerProfileDetailModel.getCustSequenceNumber());
+		logger.info(TAG + " updateProfileDetails :: getCustSequenceNumber :" + customerProfileDetailModel.getCustSequenceNumber());
 		userSession.setCustomerSequenceNumber(customerProfileDetailModel.getCustSequenceNumber());
 		
 		customerProfileUpdateResponse.setStatus(customerProfileDetailModel.getStatus());
@@ -315,6 +341,26 @@ public class PersonalDetailsService
 			resp.setException(e.toString());
 		}
 		return resp;
-
+	}
+	
+	public boolean checkMandatory(ArrayList<Object> details)
+	{
+		boolean mandatoryFlag = true;
+		try
+		{
+			for(int i = 0 ; i < details.size() ; i++)
+			{
+				logger.info(TAG + " checkMandatory :: details.get(i) :" + details.get(i));
+				if(details.get(i) == null || details.get(i).toString().equals(""))
+				{
+					mandatoryFlag = false;
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		return mandatoryFlag;
 	}
 }

@@ -87,7 +87,7 @@ public class CustomizeQuoteController {
 		return customizeQuoteService.calculateCutomizeQuote(customizeQuoteModel);
 	}
 
-	@ApiOperation(value = "returns the list of quotation sequence number")
+	@ApiOperation(value = "returns the list of quotation sequence number", notes = "this will return you the quote sequence number of all the quote that belongs to customer")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/customize-quote/get-quoteseq-list", method = RequestMethod.GET)
 	public AmxApiResponse<?, Object> getQuoteSeqList() {
@@ -101,7 +101,7 @@ public class CustomizeQuoteController {
 		return customizeQuoteService.getTermsAndCondition();
 	}
 
-	@ApiOperation(value = "submits the calculated quote and calls payment gateway")
+	@ApiOperation(value = "submits the calculated quote and calls payment gateway", notes = "this Api will first submit the customize quote details to server and on success of it, it will call payment gateway")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/customize-quote/submit-quote", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> saveCustomizeQuote(@RequestBody CustomizeQuoteModel customizeQuoteModel,
@@ -109,7 +109,7 @@ public class CustomizeQuoteController {
 		return customizeQuoteService.saveCustomizeQuote(customizeQuoteModel, request);
 	}
 
-	@ApiOperation(value = "submits payment info to server")
+	@ApiOperation(value = "submits payment info to server", notes = "this api is not going to be consumed by ui end. this is internal called api for payment gateway")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/remit/save-remittance", method = { RequestMethod.POST })
 	public PaymentResponseDto onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse) {
@@ -145,8 +145,8 @@ public class CustomizeQuoteController {
 		return paymentResponse;
 	}
 
-	@ApiOperation(value = "return the payment status after payment through payment gateway", notes = "once this api is called and payment "
-			+ "is success it will trigger an email to the customer of successfull payment transaction with transaction receipt pdf")
+	@ApiOperation(value = "return the payment status after payment through payment gateway", notes = "this api is called after payment "
+			+ "gets done by payment gateway and it will return the status of payment done, it will trigger an email to the customer of successfull payment transaction with transaction receipt pdf")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@ApiMockParam(example = "123", value = "pay sequence number of transaction")
 	@RequestMapping(value = "/api/payment-status", method = { RequestMethod.POST })

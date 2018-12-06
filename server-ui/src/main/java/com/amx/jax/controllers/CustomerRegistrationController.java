@@ -97,13 +97,7 @@ public class CustomerRegistrationController {
 	public AmxApiResponse<?, Object> registrationOtpInitiate(
 			@RequestHeader(value = "mOtp", required = false) String mOtpHeader,
 			@RequestHeader(value = "eOtp", required = false) String eOtpHeader,
-			// @RequestParam(required = false) String mOtp, @RequestParam(required = false)
-			// String eOtp,
 			@RequestBody RequestOtpModel requestOtpModel) {
-		// mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
-		// eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
-		// return customerRegistrationService.registrationOtp(eOtp, mOtp,
-		// requestOtpModel);
 		return customerRegistrationService.registrationOtp(eOtpHeader, mOtpHeader, requestOtpModel);
 	}
 
@@ -134,13 +128,7 @@ public class CustomerRegistrationController {
 	public AmxApiResponse<?, Object> changePasswordOtpInitiate(
 			@RequestHeader(value = "mOtp", required = false) String mOtpHeader,
 			@RequestHeader(value = "eOtp", required = false) String eOtpHeader,
-			// @RequestParam(required = false) String mOtp, @RequestParam(required = false)
-			// String eOtp,
 			@RequestBody ChangePasswordOtpRequest changePasswordRequest) {
-		// mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
-		// eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
-		// return customerRegistrationService.changePasswordOtpInitiate(eOtp, mOtp,
-		// changePasswordRequest);
 		return customerRegistrationService.changePasswordOtpInitiate(eOtpHeader, mOtpHeader, changePasswordRequest);
 	}
 
@@ -152,7 +140,7 @@ public class CustomerRegistrationController {
 		return customerRegistrationService.updatePassword(changePasswordRequest);
 	}
 
-	@ApiOperation(value = "api to return customer details")
+	@ApiOperation(value = "api to return customer details" , notes = "this api return customer details once customer is logged in. ")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS, WebAppStatusCodes.LIST_POP_ERROR,
 			WebAppStatusCodes.INVLD_LOGIN_CATG, WebAppStatusCodes.INVALID_USR })
 	@RequestMapping(value = "/pub/reg/userdetails", method = RequestMethod.POST)
@@ -163,26 +151,29 @@ public class CustomerRegistrationController {
 	@ApiWebAppStatus({ WebAppStatusCodes.CIVIL_ID_INVALID, WebAppStatusCodes.CIVIL_ID_VALID,
 			WebAppStatusCodes.CIVIL_ID_ALREADY_REGISTERED, WebAppStatusCodes.CIVIL_ID_NOT_REGESTERED,
 			WebAppStatusCodes.CP_OTP_NOT_GENERATED, WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
-	@ApiOperation(value = "api to verify email id and contact number while changing password for logged in user", notes = "this api is called when customer is logged in and tries to change the password. Here customer emial id and contact number get validates through otp.")
+	@ApiOperation(value = "api to verify email id and contact number while changing password for logged in user", notes = "this api will return company details and if customer is logged in this api will return customer details and company details .")
 	@RequestMapping(value = "/pub/login/changepass-loggedin", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> changePasswordLogedInUser(
 			@RequestHeader(value = "mOtp", required = false) String mOtpHeader,
 			@RequestHeader(value = "eOtp", required = false) String eOtpHeader,
-			// @RequestParam(required = false) String mOtp, @RequestParam(required = false)
-			// String eOtp,
 			@RequestBody ChangePasswordRequest changePasswordRequest) {
-		// mOtp = ArgUtil.ifNotEmpty(mOtp, mOtpHeader);
-		// eOtp = ArgUtil.ifNotEmpty(eOtp, eOtpHeader);
-		// return customerRegistrationService.changePasswordLogedInUser(eOtp, mOtp,
-		// changePasswordRequest);
 		return customerRegistrationService.changePasswordLogedInUser(eOtpHeader, mOtpHeader, changePasswordRequest);
 	}
 
 	@ApiOperation(value = "api to logg out customer")
 	@RequestMapping(value = "/pub/login/log-out", method = RequestMethod.POST)
-	public AmxApiResponse<?, Object> logout() {
-		userSession.unauthorize();
+	public AmxApiResponse<?, Object> logout() 
+	{
 		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
+		/*if(!userSession.validateSessionUnique())
+		{
+			
+			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
+			resp.setMessage(Message.LOGOUT_MESSAGE);
+			resp.setMessageKey(Message.LOGOUT_MESSAGE);
+			return resp;
+		}*/
+		userSession.unauthorize();
 		resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 		resp.setMessage(Message.LOGOUT_MESSAGE);
 		resp.setMessageKey(Message.LOGOUT_MESSAGE);

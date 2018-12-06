@@ -257,6 +257,9 @@ public class MyPolicyDao
 			policyReceiptDetails.setAmountPaidInNum(callableStatement.getBigDecimal(32));
 			policyReceiptDetails.setAmountPaidInWord(callableStatement.getString(33));
 			
+			logger.info(TAG + " downloadPolicyReceipt :: getString(34) :" + callableStatement.getString(34));
+			logger.info(TAG + " downloadPolicyReceipt :: getString(35) :" + callableStatement.getString(35));
+			
 		}
 		catch (Exception e)
 		{

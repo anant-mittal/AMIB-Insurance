@@ -22,7 +22,7 @@ public class MyQuotesController {
 	@Autowired
 	private MyQuotesService myQuotesService;
 
-	@ApiOperation(value = "return the list of my quotes created by the customer")
+	@ApiOperation(value = "return the list of my quotes created by the customer" , notes = "this api can be excessed only after customer gets login, based on customer_sequence_number which you get from user details will return list of quote details, here customer sequence number is taken from session so no need to send it in api.")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/myquote/get-myquotes", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> getUserQuote() {
