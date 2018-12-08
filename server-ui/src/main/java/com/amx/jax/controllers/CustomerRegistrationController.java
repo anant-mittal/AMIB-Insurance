@@ -165,14 +165,6 @@ public class CustomerRegistrationController {
 	public AmxApiResponse<?, Object> logout() 
 	{
 		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
-		/*if(!userSession.validateSessionUnique())
-		{
-			
-			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
-			resp.setMessage(Message.LOGOUT_MESSAGE);
-			resp.setMessageKey(Message.LOGOUT_MESSAGE);
-			return resp;
-		}*/
 		userSession.unauthorize();
 		resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 		resp.setMessage(Message.LOGOUT_MESSAGE);

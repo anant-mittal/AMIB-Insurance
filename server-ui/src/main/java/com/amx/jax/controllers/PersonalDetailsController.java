@@ -48,35 +48,35 @@ public class PersonalDetailsController {
 		return personalDetailsService.updateProfileDetails(mOtpHeader, eOtpHeader, customerProfileUpdateRequest);
 	}
 
-	@ApiOperation(value = "returns personal details profession meta info for dropdown")
+	@ApiOperation(value = "returns personal details profession meta data for dropdown")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/personal/business", method = RequestMethod.GET)
 	public AmxApiResponse<?, Object> getBusiness() {
 		return personalDetailsService.getBusiness();
 	}
 
-	@ApiOperation(value = "returns personal details nationality meta info for dropdown")
+	@ApiOperation(value = "returns personal details nationality meta data for dropdown")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/personal/nationality", method = RequestMethod.GET)
 	public AmxApiResponse<?, Object> getNationality() {
 		return personalDetailsService.getNationality();
 	}
 
-	@ApiOperation(value = "returns personal details governorate meta info for dropdown")
+	@ApiOperation(value = "returns personal details governorate meta data for dropdown")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/personal/governorates", method = RequestMethod.GET)
 	public AmxApiResponse<?, Object> getGovernorates() {
 		return personalDetailsService.getGovernorates();
 	}
 
-	@ApiOperation(value = "returns personal details area meta info for dropdown")
+	@ApiOperation(value = "returns personal details area meta data for dropdown")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/personal/area", method = RequestMethod.GET)
 	public AmxApiResponse<?, Object> getArea(@RequestParam("gov") String gov) {
 		return personalDetailsService.getArea(gov);
 	}
 
-	@ApiOperation(value = "returns personal details gender meta info for dropdown")
+	@ApiOperation(value = "returns personal details gender meta data for dropdown")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/personal/gender", method = RequestMethod.GET)
 	public AmxApiResponse<?, Object> getGender() {

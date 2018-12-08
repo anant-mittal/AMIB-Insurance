@@ -52,7 +52,7 @@ public class MyPolicyController {
 	}
 
 	@ApiOperation(value = "this api is to renew the old policy taken by customer" , notes = "this api will renew the old policy taken by the customer")
-	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
+	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR , WebAppStatusCodes.SUCCESS , WebAppStatusCodes.CIVIL_ID_EXPIRED })
 	@ApiMockParam(example = "124", value = "old doc number of insurance quote")
 	@RequestMapping(value = "/api/mypolicy/renew-policy", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> renewInsuranceOldPolicy(

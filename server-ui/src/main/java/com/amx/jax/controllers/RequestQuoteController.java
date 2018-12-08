@@ -34,63 +34,63 @@ public class RequestQuoteController {
 	@Autowired
 	public RequestQuoteService requestQuoteService;
 
-	@ApiOperation(value = "returns vehicle details make meta info")
+	@ApiOperation(value = "returns vehicle details make meta data for dropdown ")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/vehicledetails/make", method = RequestMethod.GET)
 	public AmxApiResponse<?, Object> getMake() {
 		return requestQuoteService.getMake();
 	}
 
-	@ApiOperation(value = "returns vehicle details submake meta info")
+	@ApiOperation(value = "returns vehicle details submake meta data for dropdown " , notes = "will return the data on basisi of make selected so selected make code need to enter.")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/vehicledetails/sub-make", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getModel(@RequestParam("make") String make) {
 		return requestQuoteService.getModel(make);
 	}
 
-	@ApiOperation(value = "returns vehicle details fuel type meta info")
+	@ApiOperation(value = "returns vehicle details fuel type meta data for dropdown")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/vehicledetails/fueltype", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getFuleType() {
 		return requestQuoteService.getFuleType();
 	}
 
-	@ApiOperation(value = "returns vehicle details purpose meta info")
+	@ApiOperation(value = "returns vehicle details purpose meta data for dropdown")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/vehicledetails/purpose", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getPurpose() {
 		return requestQuoteService.getPurpose();
 	}
 
-	@ApiOperation(value = "returns vehicle details shape meta info")
+	@ApiOperation(value = "returns vehicle details shape meta data for dropdown")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/vehicledetails/shape", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getShape() {
 		return requestQuoteService.getShape();
 	}
 
-	@ApiOperation(value = "returns vehicle details colour meta info")
+	@ApiOperation(value = "returns vehicle details colour meta data for dropdown")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/vehicledetails/colour", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getColour() {
 		return requestQuoteService.getColour();
 	}
 
-	@ApiOperation(value = "returns vehicle details vehicle condition meta info")
+	@ApiOperation(value = "returns vehicle details vehicle condition meta data for dropdown")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/vehicledetails/vehicle-condition", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getVehicleCondition() {
 		return requestQuoteService.getVehicleCondition();
 	}
 
-	@ApiOperation(value = "returns vehicle details model year meta info")
+	@ApiOperation(value = "returns vehicle details model year meta data for dropdown")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/vehicledetails/model-year", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getMaxVehicleAgeAllowed() {
 		return requestQuoteService.getMaxVehicleAgeAllowed();
 	}
 
-	@ApiOperation(value = "returns vehicle details vehicle policy duration meta info")
+	@ApiOperation(value = "returns vehicle details vehicle policy duration meta data for dropdown")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/vehicledetails/policy-duartion", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getPolicyDuration() {

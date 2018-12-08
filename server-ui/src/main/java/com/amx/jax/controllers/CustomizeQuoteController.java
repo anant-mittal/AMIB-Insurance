@@ -101,7 +101,7 @@ public class CustomizeQuoteController {
 		return customizeQuoteService.getTermsAndCondition();
 	}
 
-	@ApiOperation(value = "submits the calculated quote and calls payment gateway", notes = "this Api will first submit the customize quote details to server and on success of it, it will call payment gateway")
+	@ApiOperation(value = "submits the calculated quote and calls payment gateway", notes = "this Api will first submit the customize quote details to server and on success of it, it will return a redirect url which will have Payment gateway url , Application redirect url and also required pay sequence number which will be required for getting payment status and downloading payment transection receipt ")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/customize-quote/submit-quote", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> saveCustomizeQuote(@RequestBody CustomizeQuoteModel customizeQuoteModel,

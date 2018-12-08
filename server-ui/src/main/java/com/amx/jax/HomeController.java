@@ -102,15 +102,17 @@ public class HomeController {
 	 *            the request
 	 * @return the string
 	 */
-	/*@RequestMapping(value = "/pub/meta/**", method = { RequestMethod.GET })
-	@ResponseBody
-	public String loginPing(HttpServletRequest request) {
-		AmxApiResponse<Object, Object> wrapper = new AmxApiResponse<Object, Object>();
-		return JsonUtil.toJson(wrapper);
-	}*/
+	/*
+	 * @RequestMapping(value = "/pub/meta/**", method = { RequestMethod.GET })
+	 * 
+	 * @ResponseBody public String loginPing(HttpServletRequest request) {
+	 * AmxApiResponse<Object, Object> wrapper = new AmxApiResponse<Object,
+	 * Object>(); return JsonUtil.toJson(wrapper); }
+	 */
 
 	// @Timed
-	@RequestMapping(value = { "/", "/register/**", "/login/**", "/app/**", "/resetPwd", "/home/**"}, method = { RequestMethod.GET })
+	@RequestMapping(value = { "/", "/register/**", "/login/**", "/app/**", "/resetPwd", "/home/**" }, method = {
+			RequestMethod.GET })
 	public String loginJPage(Model model, HttpServletRequest request) {
 		model.addAttribute("lang", httpService.getLanguage());
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
@@ -121,14 +123,14 @@ public class HomeController {
 		return "app";
 	}
 
-	/*@RequestMapping(value = "/login/**", method = { RequestMethod.GET, RequestMethod.POST }, headers = {
+	@RequestMapping(value = "/login/**", method = { RequestMethod.GET, RequestMethod.POST }, headers = {
 			"Accept=application/json", "Accept=application/v0+json" })
 	@ResponseBody
 	public String loginPJson() {
 		ResponseWrapper<Object> wrapper = new ResponseWrapper<Object>(null);
 		wrapper.setMessage(WebResponseStatus.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED);
 		return JsonUtil.toJson(wrapper);
-	}*/
+	}
 
 	/**
 	 * Default page.
@@ -137,14 +139,14 @@ public class HomeController {
 	 *            the model
 	 * @return the string
 	 */
-	/*@RequestMapping(value = { "/", "/register/**", "/app/**", "/home/**" }, method = { RequestMethod.GET })
-	public String defaultPage(Model model) {
-		model.addAttribute("lang", httpService.getLanguage());
-		model.addAttribute("applicationTitle", webConfig.getAppTitle());
-		model.addAttribute("cdnUrl", appConfig.getCdnURL());
-		model.addAttribute("cdnVerion", getVersion());
-		return "app";
-	}*/
+	/*
+	 * @RequestMapping(value = { "/", "/register/**", "/app/**", "/home/**" },
+	 * method = { RequestMethod.GET }) public String defaultPage(Model model) {
+	 * model.addAttribute("lang", httpService.getLanguage());
+	 * model.addAttribute("applicationTitle", webConfig.getAppTitle());
+	 * model.addAttribute("cdnUrl", appConfig.getCdnURL());
+	 * model.addAttribute("cdnVerion", getVersion()); return "app"; }
+	 */
 
 	@RequestMapping(value = { "/pub/terms" }, method = { RequestMethod.GET })
 	public String termsAndCondition(Model model) {

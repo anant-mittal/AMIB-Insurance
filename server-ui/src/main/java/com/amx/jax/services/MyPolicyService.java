@@ -2,6 +2,7 @@
 package com.amx.jax.services;
 
 import java.math.BigDecimal;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,6 @@ import com.amx.jax.WebAppStatus.WebAppStatusCodes;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.HardCodedValues;
-import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.MyPolicyDao;
 import com.amx.jax.models.ActivePolicyModel;
 import com.amx.jax.models.DateFormats;
@@ -134,6 +134,8 @@ public class MyPolicyService
 			resp.setMessage(e.toString());
 			return resp;
 		}
+		
+		resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 		return resp;
 	}
 	
@@ -150,5 +152,4 @@ public class MyPolicyService
 		}
 		return policyReceiptDetails;
 	}
-	
 }

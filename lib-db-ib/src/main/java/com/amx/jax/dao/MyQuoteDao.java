@@ -58,7 +58,6 @@ public class MyQuoteDao
 				MyQuoteModel myQuoteModel = new MyQuoteModel();
 				myQuoteModel.setCountryId(rs.getBigDecimal(1));
 				myQuoteModel.setCompCd(rs.getBigDecimal(2));
-				logger.info(TAG + " getUserQuote :: getAppSeqNumber :" + rs.getBigDecimal(3));
 				myQuoteModel.setAppSeqNumber(rs.getBigDecimal(3));
 				myQuoteModel.setAppDate(DateFormats.uiFormattedDate(rs.getDate(4)));
 				myQuoteModel.setAppType(rs.getString(5));
@@ -66,7 +65,6 @@ public class MyQuoteDao
 				myQuoteModel.setAppStatus(rs.getString(7));
 				myQuoteModel.setStatus(rs.getString(8));
 				myQuoteModel.setQuoteDate(DateFormats.uiFormattedDate(rs.getDate(9)));
-				logger.info(TAG + " getUserQuote :: getQuoteSeqNumber :" + rs.getBigDecimal(10));
 				myQuoteModel.setQuoteSeqNumber(rs.getBigDecimal(10));
 				myQuoteModel.setVerNumber(rs.getBigDecimal(11));
 				myQuoteModel.setCompanyCode(rs.getBigDecimal(12));

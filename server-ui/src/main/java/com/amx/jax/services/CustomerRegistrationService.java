@@ -363,14 +363,7 @@ public class CustomerRegistrationService {
 			resp.setMessageKey(WebAppStatusCodes.EMPTY_CIVIL_ID.toString());
 			return resp;
 		}
-
-		if (null == customerLoginRequest.getPassword() || customerLoginRequest.getPassword().equals("")) {
-			resp.setStatusEnum(WebAppStatusCodes.EMPTY_PASSWORD);
-			resp.setMessage(Message.EMPTY_PASSWORD);
-			resp.setMessageKey(WebAppStatusCodes.EMPTY_PASSWORD.toString());
-			return resp;
-		}
-
+		
 		CustomerLoginResponse customerLoginResponse = new CustomerLoginResponse();
 		CustomerLoginModel customerLoginModel = new CustomerLoginModel();
 		AmxApiResponse<ResponseInfo, Object> validateCivilID = isValidCivilId(customerLoginRequest.getCivilId());

@@ -85,6 +85,7 @@ public class CustomizeQuoteService
 					}
 				}
 			}
+			
 			if(!quoteAvailableToCustomer)
 			{
 				resp.setMessage(Message.NO_QUOTE_AVAILABLE);
@@ -106,7 +107,6 @@ public class CustomizeQuoteService
 			quotationDetails.setPolicyDuration(myQuoteModel.getPolicyDuration());
 			
 			
-			
 			// SET QuoteAddPolicy Details
 			quoteAddPolicyDetails = customizeQuoteDao.getQuoteAdditionalPolicy(myQuoteModel.getQuoteSeqNumber(), myQuoteModel.getVerNumber());
 			
@@ -118,7 +118,6 @@ public class CustomizeQuoteService
 			totalPremium.setIssueFee(Utility.getNumericValue(myQuoteModel.getIssueFee()));
 			totalPremium.setSupervisionFees(Utility.getNumericValue(myQuoteModel.getSupervisionFees()));
 			totalPremium.setTotalAmount(Utility.getNumericValue(myQuoteModel.getNetAmount()));
-			
 
 			
 			
