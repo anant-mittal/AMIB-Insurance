@@ -250,11 +250,6 @@ public class CustomerRegistrationService {
 	public AmxApiResponse<ResponseInfo, Object> isCivilIdExistCheck(String civilid) {
 
 		AmxApiResponse<ResponseInfo, Object> validateCivilID = isValidCivilId(civilid);
-		logger.info("isCivilIdExistCheck :: getStatus :" + validateCivilID.getStatus());
-		logger.info("isCivilIdExistCheck :: getStatusKey :" + validateCivilID.getStatusKey());
-		logger.info("isCivilIdExistCheck :: getMessage :" + validateCivilID.getMessage());
-		logger.info("isCivilIdExistCheck :: getMessageKey :" + validateCivilID.getMessageKey());
-
 		if (!validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
 			return validateCivilID;
 		}
@@ -363,7 +358,7 @@ public class CustomerRegistrationService {
 			resp.setMessageKey(WebAppStatusCodes.EMPTY_CIVIL_ID.toString());
 			return resp;
 		}
-		
+
 		CustomerLoginResponse customerLoginResponse = new CustomerLoginResponse();
 		CustomerLoginModel customerLoginModel = new CustomerLoginModel();
 		AmxApiResponse<ResponseInfo, Object> validateCivilID = isValidCivilId(customerLoginRequest.getCivilId());
@@ -376,6 +371,16 @@ public class CustomerRegistrationService {
 		if (!civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
 			return civilIdExistCheck;
 		}
+		/*
+		 * else
+		 * if(civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
+		 * if(null == customerLoginRequest.getPassword() ||
+		 * customerLoginRequest.getPassword().equals("")) {
+		 * resp.setStatusEnum(WebAppStatusCodes.EMPTY_PASSWORD);
+		 * resp.setMessage(Message.EMPTY_PASSWORD);
+		 * resp.setMessageKey(WebAppStatusCodes.EMPTY_PASSWORD.toString()); return resp;
+		 * } }
+		 */
 
 		customerLoginModel.setCivilId(customerLoginRequest.getCivilId());
 		customerLoginModel.setPassword(customerLoginRequest.getPassword());
