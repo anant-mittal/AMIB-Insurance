@@ -162,19 +162,33 @@ public class EmailSmsService
 			
 			SMS sms = new SMS();
 			sms.addTo(mobileNumber);
-			if (!appConfig.isProdMode())
+			
+			sendToSlack("mobile", sms.getTo().get(0), mobileOtpPrefix, mobileOtp);
+			model.put(DetailsConstants.MOBILE_OTP, mobileOtpToSend);
+			wrapper.put("data", model);
+			sms.setModel(wrapper);
+			sms.setITemplate(TemplatesIB.OTP_SMS);
+			sms.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
+			postManClient.sendSMS(sms);
+			
+			
+			/*if (!appConfig.isProdMode())
 			{
+				logger.info("sendMobileOtp :: slack :: appConfig.isProdMode() :" + appConfig.isProdMode());
 				sendToSlack("mobile", sms.getTo().get(0), mobileOtpPrefix, mobileOtp);
 			}
 			else
 			{
+				logger.info("sendMobileOtp :: mobile :: appConfig.isProdMode() :" + appConfig.isProdMode());
+				
 				model.put(DetailsConstants.MOBILE_OTP, mobileOtpToSend);
 				wrapper.put("data", model);
 				sms.setModel(wrapper);
 				sms.setITemplate(TemplatesIB.OTP_SMS);
 				sms.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
 				postManClient.sendSMS(sms);
-			}
+			}*/
+			
 		}
 		catch (Exception e)
 		{

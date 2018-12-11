@@ -25,10 +25,9 @@ public class DashBoardController {
 	@ApiOperation(value = "returns incomplete quote details of the customer", notes = "this api can be excessed only after customer gets login, based on customer_sequence_number which you get from user details will return incomplete quote details, here customer sequence number is taken from session so no need to send it in api.")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/dashboard/getdetails", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> getIncompleteApplication() 
-	{
+	public AmxApiResponse<?, Object> getIncompleteApplication() {
 		logger.info("getIncompleteApplication :: Tets :");
-		
+
 		return dashBoardService.getIncompleteApplication();
 	}
 }

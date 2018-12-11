@@ -37,7 +37,7 @@ public class WebConfig {
 
 	public static final String APP_COMP = "${app.company.code}";
 
-	// public static final String CONFIG_EMAIL = "${spring.mail.username}";
+	public static final String CONFIG_EMAIL = "${spring.mail.username}";
 
 	public static final String PAYMENT_URL = "${jax.payment.url}";
 
