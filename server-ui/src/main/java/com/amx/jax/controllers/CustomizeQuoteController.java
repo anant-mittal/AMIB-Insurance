@@ -116,7 +116,6 @@ public class CustomizeQuoteController {
 		try {
 			setMetaData();
 
-			logger.info("onPaymentCallback :: getPostDate  :" + paymentResponse.getPostDate());
 			PaymentDetails paymentDetails = new PaymentDetails();
 			paymentDetails.setPaymentId(paymentResponse.getPaymentId());
 			paymentDetails.setApprovalNo(paymentResponse.getAuth_appNo());

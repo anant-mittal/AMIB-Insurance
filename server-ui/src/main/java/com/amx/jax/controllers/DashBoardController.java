@@ -26,8 +26,6 @@ public class DashBoardController {
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/dashboard/getdetails", method = RequestMethod.POST, produces = "application/json")
 	public AmxApiResponse<?, Object> getIncompleteApplication() {
-		logger.info("getIncompleteApplication :: Tets :");
-
 		return dashBoardService.getIncompleteApplication();
 	}
 }

@@ -275,13 +275,11 @@ public class CustomizeQuoteService
 			}
 
 			AmxApiResponse<?, Object> respQuoteAddModel = saveCustomizeQuoteAddPol(customizeQuoteModel, myQuoteModel);
-			logger.info("saveCustomizeQuote :: getStatus :" + respQuoteAddModel.getStatusKey());
 			if (!respQuoteAddModel.getStatusKey().equals(ApiConstants.SUCCESS))
 			{
 				return respQuoteAddModel;
 			}
 			
-			logger.info("saveCustomizeQuote :: respQuoteAddModel : Done");
 			return saveCustomizeQuoteDetails(customizeQuoteModel, myQuoteModel ,customizeQuoteInfo ,request);
 		
 		}
@@ -298,8 +296,6 @@ public class CustomizeQuoteService
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
 		try
 		{
-			logger.info("saveCustomizeQuoteDetails :: Done");
-			
 			if (null != customizeQuoteModel)
 			{
 				TotalPremium totalPremium = customizeQuoteModel.getTotalPremium();
@@ -322,12 +318,9 @@ public class CustomizeQuoteService
 					/******************************************************PAYMENT GATEWAY***********************************************************/
 					
 					logger.info("saveCustomizeQuoteDetails :: getQuoteSeqNumber :" + customizeQuoteInfo.getQuoteSeqNumber());
-					logger.info("saveCustomizeQuoteDetails :: getTotalAmount    :" + totalPremium.getTotalAmount());
 					
 					AmxApiResponse<PaymentDetails, Object> respInsertPayment = payMentService.insertPaymentDetals(customizeQuoteInfo.getQuoteSeqNumber(),totalPremium.getTotalAmount());
 					PaymentDetails paymentDetails = respInsertPayment.getData();
-					
-					logger.info("saveCustomizeQuoteDetails :: paymentDetails :" + paymentDetails.toString());
 					
 					Payment payment = new Payment();
 					payment.setDocFinYear(1123);
@@ -337,8 +330,6 @@ public class CustomizeQuoteService
 					payment.setPgCode(PayGServiceCode.KNET);
 					
 					String redirctUrl = payGService.getPaymentUrl(payment , HttpUtils.getServerName(request)+"/app/landing/myquotes/quote");
-					logger.info("saveCustomizeQuoteDetails :: redirctUrl :" + redirctUrl);
-					
 					resp.setRedirectUrl(redirctUrl);
 					
 					/******************************************************PAYMENT GATEWAY***********************************************************/

@@ -61,7 +61,6 @@ public class PayMentService
 			for (int i = 0; i < getUserQuote.size(); i++)
 			{
 				MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
-				logger.info(TAG + " insertPaymentDetals :: myQuoteModelFromDb :" + myQuoteModelFromDb.toString());
 				if (null != quoteSeqNum && !quoteSeqNum.toString().equals(""))
 				{
 					if (null != myQuoteModelFromDb.getQuoteSeqNumber() && myQuoteModelFromDb.getQuoteSeqNumber().equals(quoteSeqNum))
@@ -73,7 +72,6 @@ public class PayMentService
 			
 			logger.info(TAG + " insertPaymentDetals :: quoteSeqNum :" + quoteSeqNum);
 			logger.info(TAG + " insertPaymentDetals :: getAppSeqNumber :" + myQuoteModel.getAppSeqNumber());
-			logger.info(TAG + " insertPaymentDetals :: getVerNumber :" + myQuoteModel.getVerNumber());
 			
 			PaymentDetails insertPaymentDetails = new PaymentDetails();
 			insertPaymentDetails.setAppSeqNum(myQuoteModel.getAppSeqNumber());
@@ -87,7 +85,6 @@ public class PayMentService
 			if(null == paymentDetails.getErrorCode())
 			{
 				resp.setData(paymentDetails);
-				logger.info(TAG + " insertPaymentDetals :: updatePaymentDetailRet :" + paymentDetails);
 			}
 			else
 			{
@@ -145,8 +142,6 @@ public class PayMentService
 		{
 			logger.info(TAG + " processReceipt :: paySeqNum  :" + paySeqNum);
 			ResponseInfo validate = payMentDao.processReceipt(userSession.getCustomerSequenceNumber(), userSession.getCivilId() , paySeqNum);
-			logger.info(TAG + " processReceipt :: validate  :" + validate.toString());
-			
 			if(null == validate.getErrorCode())
 			{
 				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
@@ -172,11 +167,8 @@ public class PayMentService
 		AmxApiResponse<PaymentDetails, Object> resp = new AmxApiResponse<PaymentDetails, Object>();
 		try
 		{
-			
 			logger.info(TAG + " createAmibPolicy :: paySeqNum  :" + paySeqNum);
 			ResponseInfo validate = payMentDao.createAmibPolicy(userSession.getCustomerSequenceNumber(), userSession.getCivilId() , paySeqNum);
-			logger.info(TAG + " createAmibPolicy :: validate  :" + validate.toString());
-			
 			if(null == validate.getErrorCode())
 			{
 				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
@@ -203,8 +195,6 @@ public class PayMentService
 		{
 			logger.info(TAG + " preparePrintData :: paySeqNum  :" + paySeqNum);
 			ResponseInfo validate = payMentDao.preparePrintData(paySeqNum);
-			logger.info(TAG + " preparePrintData :: validate  :" + validate.toString());
-			
 			if(null == validate.getErrorCode())
 			{
 				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);

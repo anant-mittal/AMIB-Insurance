@@ -28,8 +28,6 @@ import com.amx.jax.ui.session.UserSession;
 @Service
 public class PersonalDetailsService
 {
-	String TAG = "com.amx.jax.services :: PersonalDetailsService :: ";
-
 	private static final Logger logger = LoggerFactory.getLogger(CustomerRegistrationService.class);
 
 	@Autowired
@@ -107,7 +105,6 @@ public class PersonalDetailsService
 		
 		if(!checkMandatory(mandatoryCheck))
 		{
-			logger.info(TAG + " updateProfileDetails :: Mendatory Details Failed");
 			resp.setStatusEnum(WebAppStatusCodes.MANDATORY_FIELDS_MISSING);
 			resp.setMessageKey(WebAppStatusCodes.MANDATORY_FIELDS_MISSING.toString());
 			resp.setMessage(Message.MANDATORY_FIELDS_MISSING);
@@ -132,8 +129,6 @@ public class PersonalDetailsService
 				&& !customerProfileDetailModelCheck.getEmail().equals(customerProfileUpdateRequest.getEmail()))
 
 		{
-			logger.info(TAG + " updateProfileDetails :: Both Chnaged");
-
 			AmxApiResponse<ResponseInfo, Object> isValidMobileNumber = customerRegistrationService.isValidMobileNumber(customerProfileUpdateRequest.getMobile());
 			if (!isValidMobileNumber.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
@@ -185,7 +180,6 @@ public class PersonalDetailsService
 				return emailIdExists;
 			}
 			
-			logger.info(TAG + " updateProfileDetails :: Email "+customerProfileDetailModelCheck.getEmail());
 			AmxApiResponse<?, Object> validateEOTP = emailSmsService.validateEotp(eOtp, customerProfileUpdateRequest.getEmail() , DetailsConstants.UPDATE_PROFILE_OTP);
 			if (null != validateEOTP)
 			{
@@ -195,8 +189,6 @@ public class PersonalDetailsService
 		}
 		else if (null != customerProfileDetailModelCheck.getMobile() && !customerProfileDetailModelCheck.getMobile().equals(customerProfileUpdateRequest.getMobile()))
 		{
-			logger.info(TAG + " updateProfileDetails :: Mobile Chnaged");
-
 			AmxApiResponse<ResponseInfo, Object> isValidMobileNumber = customerRegistrationService.isValidMobileNumber(customerProfileUpdateRequest.getMobile());
 			if (!isValidMobileNumber.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
@@ -230,7 +222,6 @@ public class PersonalDetailsService
 		customerProfileDetailModel.setEmail(customerProfileUpdateRequest.getEmail());
 		
 		customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel , userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber());
-		logger.info(TAG + " updateProfileDetails :: getCustSequenceNumber :" + customerProfileDetailModel.getCustSequenceNumber());
 		userSession.setCustomerSequenceNumber(customerProfileDetailModel.getCustSequenceNumber());
 		
 		customerProfileUpdateResponse.setStatus(customerProfileDetailModel.getStatus());
@@ -350,7 +341,6 @@ public class PersonalDetailsService
 		{
 			for(int i = 0 ; i < details.size() ; i++)
 			{
-				logger.info(TAG + " checkMandatory :: details.get(i) :" + details.get(i));
 				if(details.get(i) == null || details.get(i).toString().equals(""))
 				{
 					mandatoryFlag = false;
