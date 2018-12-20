@@ -183,6 +183,7 @@ public class EmailSmsService
 				
 				model.put(DetailsConstants.MOBILE_OTP, mobileOtpToSend);
 				wrapper.put("data", model);
+				
 				sms.setModel(wrapper);
 				sms.setITemplate(TemplatesIB.OTP_SMS);
 				sms.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE

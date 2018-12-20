@@ -43,6 +43,12 @@ public class MyPolicyService
 		AmxApiResponse<ActivePolicyModel, Object> resp = new AmxApiResponse<ActivePolicyModel, Object>();
 		try
 		{
+			
+			logger.info(TAG + " getUserActivePolicy :: userSession.getUserAmibCustRef() :" + userSession.getUserAmibCustRef());
+			logger.info(TAG + " getUserActivePolicy :: userSession.getCivilId() :" + userSession.getCivilId());
+			logger.info(TAG + " getUserActivePolicy :: HardCodedValues.USER_TYPE :" + HardCodedValues.USER_TYPE);
+			logger.info(TAG + " getUserActivePolicy :: userSession.getCustomerSequenceNumber() :" + userSession.getCustomerSequenceNumber());
+			
 			resp.setResults(myPolicyDao.getUserActivePolicy(userSession.getUserAmibCustRef(), userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber()));
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 		}

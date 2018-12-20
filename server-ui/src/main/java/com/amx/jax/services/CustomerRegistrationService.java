@@ -83,8 +83,8 @@ public class CustomerRegistrationService {
 			metaService.getTenantProfile().setCurrency(getCompanySetUp.get(0).getCurrency());
 			metaService.getUserDeviceInfo().setDeviceType("ONLINE");
 			metaService.getUserDeviceInfo().setDeviceId(httpService.getIPAddress());
-			
-			logger.info("getCompanySetUp :: "+metaService.getTenantProfile().getLanguageId());
+
+			logger.info("getCompanySetUp :: " + metaService.getTenantProfile().getLanguageId());
 
 			resp.setResults(getCompanySetUp);
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
@@ -373,17 +373,15 @@ public class CustomerRegistrationService {
 		if (!civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
 			return civilIdExistCheck;
 		}
-		
-		if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
-		{
-			if (null == customerLoginRequest.getPassword() || customerLoginRequest.getPassword().equals(""))
-			{
+
+		if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
+			if (null == customerLoginRequest.getPassword() || customerLoginRequest.getPassword().equals("")) {
 				resp.setStatusEnum(WebAppStatusCodes.EMPTY_PASSWORD);
 				resp.setMessageKey(WebAppStatusCodes.EMPTY_PASSWORD.toString());
 				return resp;
 			}
 		}
-		
+
 		customerLoginModel.setCivilId(customerLoginRequest.getCivilId());
 		customerLoginModel.setPassword(customerLoginRequest.getPassword());
 		customerLoginModel = customerRegistrationDao.validateUserLogin(customerLoginModel, HardCodedValues.USER_TYPE);

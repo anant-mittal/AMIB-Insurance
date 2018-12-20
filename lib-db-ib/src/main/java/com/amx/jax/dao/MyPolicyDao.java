@@ -40,6 +40,12 @@ public class MyPolicyDao
 		String callProcedure = "{call IRB_GET_ACTIVE_POLICIES(?,?,?,?,?,?,?)}";
 		ArrayList<ActivePolicyModel> activePolicyArray = new ArrayList<ActivePolicyModel>();
 
+		logger.info(TAG + " getUserActivePolicy :: userAmibCustRef :" + userAmibCustRef);
+		logger.info(TAG + " getUserActivePolicy :: civilId :" + civilId);
+		logger.info(TAG + " getUserActivePolicy :: userType :" + userType);
+		logger.info(TAG + " getUserActivePolicy :: custSeqNum :" + custSeqNum);
+		
+		
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
