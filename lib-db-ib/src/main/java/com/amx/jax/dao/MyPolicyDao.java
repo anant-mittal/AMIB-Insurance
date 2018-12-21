@@ -163,7 +163,6 @@ public class MyPolicyDao
 	
 	public BigDecimal getCustomerAmibCode(String civilId , String userType , BigDecimal custSeqNum)
 	{
-		getConnection();
 		CallableStatement callableStatement = null;
 		String callFunction = "{ ? = call IRB_GET_AMIB_CUSTCD(?,?,?,?,?)}";
 		BigDecimal userAmibCustRef = null; 
@@ -189,11 +188,6 @@ public class MyPolicyDao
 		{
 			e.printStackTrace();
 		}
-		finally
-		{
-			CloseConnection(callableStatement, connection);
-		}
-		
 		return userAmibCustRef;
 	}
 	
