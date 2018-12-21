@@ -127,6 +127,7 @@ public class MyPolicyDao
 		catch (Exception e)
 		{
 			e.printStackTrace();
+			logger.info(TAG + " getUserActivePolicy :: exception getMessage :" + e.getMessage());
 		}
 		finally
 		{
