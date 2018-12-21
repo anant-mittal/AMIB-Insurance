@@ -165,7 +165,7 @@ public class MyPolicyDao
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
-		String callFunction = "{ ? = call IRB_GET_AMIB_CUSTCD(?)}";
+		String callFunction = "{ ? = call IRB_GET_AMIB_CUSTCD(?,?,?,?,?)}";
 		BigDecimal userAmibCustRef = null; 
 
 		try
