@@ -45,16 +45,9 @@ public class MyPolicyService
 		try
 		{
 			
-			logger.info(TAG + " getUserActivePolicy :: userSession.getUserAmibCustRef() :" + userSession.getUserAmibCustRef());
-			logger.info(TAG + " getUserActivePolicy :: userSession.getCivilId() :" + userSession.getCivilId());
-			logger.info(TAG + " getUserActivePolicy :: HardCodedValues.USER_TYPE :" + HardCodedValues.USER_TYPE);
-			logger.info(TAG + " getUserActivePolicy :: userSession.getCustomerSequenceNumber() :" + userSession.getCustomerSequenceNumber());
-			
-			
 			ArrayResponseModel userActivePolicyDetails =  myPolicyDao.getUserActivePolicy(userSession.getUserAmibCustRef(), userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber()); 
 			if(null == userSession.getUserAmibCustRef())
 			{
-				logger.info(TAG + " getUserActivePolicy :: userActivePolicyDetails.getData() :" + userActivePolicyDetails.getData());
 				if(null != userActivePolicyDetails.getData())
 				{
 					BigDecimal amibRef = new BigDecimal(userActivePolicyDetails.getData());

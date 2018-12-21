@@ -44,11 +44,6 @@ public class MyPolicyDao
 		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 
 		logger.info(TAG + " getUserActivePolicy :: userAmibCustRef :" + userAmibCustRef);
-		logger.info(TAG + " getUserActivePolicy :: civilId :" + civilId);
-		logger.info(TAG + " getUserActivePolicy :: userType :" + userType);
-		logger.info(TAG + " getUserActivePolicy :: custSeqNum :" + custSeqNum);
-		
-		
 		try
 		{
 			if(null == userAmibCustRef)
@@ -143,7 +138,6 @@ public class MyPolicyDao
 				{
 					activePolicyModel.setRenewableApplCheck("Y");
 				}
-				logger.info(TAG + " getUserActivePolicy :: activePolicyModel :" + activePolicyModel.toString());
 				activePolicyArray.add(activePolicyModel);
 			}
 			
@@ -152,15 +146,11 @@ public class MyPolicyDao
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			logger.info(TAG + " getUserActivePolicy :: exception getMessage :" + e.getMessage());
-			logger.info(TAG + " getUserActivePolicy :: e.toString() :" + e.toString());
 		}
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		logger.info(TAG + " getUserActivePolicy :: activePolicyArray :" + activePolicyArray);
-		
 		return arrayResponseModel;
 	}
 	
@@ -173,7 +163,7 @@ public class MyPolicyDao
 
 		try
 		{
-			logger.info(TAG + " getCustomerAmibCode :: userAmibCustRef :" + userAmibCustRef);
+			logger.info(TAG + " getCustomerAmibCode :: userAmibCustRef 1 :" + userAmibCustRef);
 			
 			callableStatement = connection.prepareCall(callFunction);
 			callableStatement.registerOutParameter(1, java.sql.Types.NUMERIC);
@@ -186,7 +176,7 @@ public class MyPolicyDao
 			
 			callableStatement.executeUpdate();
 			userAmibCustRef = callableStatement.getBigDecimal(1);
-			logger.info(TAG + " getCustomerAmibCode :: userAmibCustRef :" + userAmibCustRef);
+			logger.info(TAG + " getCustomerAmibCode :: userAmibCustRef 2 :" + userAmibCustRef);
 		}
 		catch (SQLException e)
 		{
