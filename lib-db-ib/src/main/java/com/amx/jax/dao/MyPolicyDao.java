@@ -133,6 +133,8 @@ public class MyPolicyDao
 		{
 			CloseConnection(callableStatement, connection);
 		}
+		logger.info(TAG + " getUserActivePolicy :: activePolicyArray :" + activePolicyArray);
+		
 		return activePolicyArray;
 	}
 	
