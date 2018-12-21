@@ -14,6 +14,7 @@ import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.dao.MyPolicyDao;
 import com.amx.jax.models.ActivePolicyModel;
+import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.PersonalDetails;
 import com.amx.jax.models.PolicyReceiptDetails;
@@ -49,7 +50,19 @@ public class MyPolicyService
 			logger.info(TAG + " getUserActivePolicy :: HardCodedValues.USER_TYPE :" + HardCodedValues.USER_TYPE);
 			logger.info(TAG + " getUserActivePolicy :: userSession.getCustomerSequenceNumber() :" + userSession.getCustomerSequenceNumber());
 			
-			resp.setResults(myPolicyDao.getUserActivePolicy(userSession.getUserAmibCustRef(), userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber()));
+			
+			ArrayResponseModel userActivePolicyDetails =  myPolicyDao.getUserActivePolicy(userSession.getUserAmibCustRef(), userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber()); 
+			if(null == userSession.getUserAmibCustRef())
+			{
+				logger.info(TAG + " getUserActivePolicy :: userActivePolicyDetails.getData() :" + userActivePolicyDetails.getData());
+				if(null != userActivePolicyDetails.getData())
+				{
+					BigDecimal amibRef = new BigDecimal(userActivePolicyDetails.getData());
+					logger.info(TAG + " getUserActivePolicy :: amibRef :" + amibRef);
+					userSession.setUserAmibCustRef(amibRef);
+				}
+			}
+			resp.setResults(userActivePolicyDetails.getDataArray());
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 		}
 		catch (Exception e)

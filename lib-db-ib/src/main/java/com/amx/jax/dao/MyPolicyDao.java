@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.ActivePolicyModel;
+import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.PolicyReceiptDetails;
 import com.amx.jax.utility.Utility;
@@ -33,17 +35,33 @@ public class MyPolicyDao
 	
 	Connection connection;
 
-	public ArrayList<ActivePolicyModel> getUserActivePolicy(BigDecimal userAmibCustRef , String civilId , String userType , BigDecimal custSeqNum)
+	public ArrayResponseModel getUserActivePolicy(BigDecimal userAmibCustRef , String civilId , String userType , BigDecimal custSeqNum)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_ACTIVE_POLICIES(?,?,?,?,?,?,?)}";
 		ArrayList<ActivePolicyModel> activePolicyArray = new ArrayList<ActivePolicyModel>();
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 
 		logger.info(TAG + " getUserActivePolicy :: userAmibCustRef :" + userAmibCustRef);
 		logger.info(TAG + " getUserActivePolicy :: civilId :" + civilId);
 		logger.info(TAG + " getUserActivePolicy :: userType :" + userType);
 		logger.info(TAG + " getUserActivePolicy :: custSeqNum :" + custSeqNum);
+		
+		
+		try
+		{
+			if(null == userAmibCustRef)
+			{
+				userAmibCustRef = getCustomerAmibCode(civilId ,userType ,custSeqNum);
+				logger.info(TAG + " getUserActivePolicy :: userAmibCustRef received :" + userAmibCustRef);
+				arrayResponseModel.setData(userAmibCustRef.toString());
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 		
 		
 		try
@@ -123,8 +141,9 @@ public class MyPolicyDao
 				}
 				logger.info(TAG + " getUserActivePolicy :: activePolicyModel :" + activePolicyModel.toString());
 				activePolicyArray.add(activePolicyModel);
-				
 			}
+			
+			arrayResponseModel.setDataArray(activePolicyArray);
 		}
 		catch (Exception e)
 		{
@@ -138,19 +157,44 @@ public class MyPolicyDao
 		}
 		logger.info(TAG + " getUserActivePolicy :: activePolicyArray :" + activePolicyArray);
 		
-		return activePolicyArray;
+		return arrayResponseModel;
 	}
 	
-	/**
-	 * 
-	 * 
-	 * 
-	 * @param oldDocNumber
-	 * @param civilId
-	 * @param userType
-	 * @param custSeqNum
-	 * @return
-	 */
+	
+	public BigDecimal getCustomerAmibCode(String civilId , String userType , BigDecimal custSeqNum)
+	{
+		getConnection();
+		CallableStatement callableStatement = null;
+		String callFunction = "{ ? = call IRB_GET_AMIB_CUSTCD(?)}";
+		BigDecimal userAmibCustRef = null; 
+
+		try
+		{
+			callableStatement = connection.prepareCall(callFunction);
+			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getCompCd());
+			callableStatement.setString(4, userType);
+			callableStatement.setString(5, civilId);
+			callableStatement.setBigDecimal(6, custSeqNum);
+			callableStatement.executeUpdate();
+			userAmibCustRef = callableStatement.getBigDecimal(1);
+			logger.info(TAG + " getCustomerAmibCode :: userAmibCustRef :" + userAmibCustRef);
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		
+		return userAmibCustRef;
+	}
+	
+	
+	
 	public String checkRenewableApplicable(BigDecimal oldDocNumber , String civilId , String userType , BigDecimal custSeqNum)
 	{
 		getConnection();
