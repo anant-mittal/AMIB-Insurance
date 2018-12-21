@@ -170,13 +170,17 @@ public class MyPolicyDao
 
 		try
 		{
+			logger.info(TAG + " getCustomerAmibCode :: userAmibCustRef :" + userAmibCustRef);
+			
 			callableStatement = connection.prepareCall(callFunction);
-			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(1, java.sql.Types.NUMERIC);
+			
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCountryId());
 			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(4, userType);
 			callableStatement.setString(5, civilId);
 			callableStatement.setBigDecimal(6, custSeqNum);
+			
 			callableStatement.executeUpdate();
 			userAmibCustRef = callableStatement.getBigDecimal(1);
 			logger.info(TAG + " getCustomerAmibCode :: userAmibCustRef :" + userAmibCustRef);
