@@ -25,7 +25,7 @@ import com.amx.jax.ui.session.UserSession;
 @Service
 public class MyPolicyService
 {
-	String TAG = "com.amx.jax.services :: MyPolicyService :: ";
+	String TAG = "MyPolicyService :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(MyPolicyService.class);
 

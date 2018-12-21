@@ -21,7 +21,7 @@ import oracle.jdbc.OracleTypes;
 @Repository
 public class MyPolicyDao
 {
-	String TAG = "com.amx.jax.dao.ActivePolicyDao :: ";
+	String TAG = "MyPolicyDao :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(MyPolicyDao.class);
 
@@ -59,6 +59,8 @@ public class MyPolicyDao
 			callableStatement.executeUpdate();
 
 			ResultSet rs = (ResultSet) callableStatement.getObject(5);
+			
+			logger.info(TAG + " getUserActivePolicy :: rs :" + rs.getRow());
 
 			while (rs.next())
 			{
@@ -128,6 +130,7 @@ public class MyPolicyDao
 		{
 			e.printStackTrace();
 			logger.info(TAG + " getUserActivePolicy :: exception getMessage :" + e.getMessage());
+			logger.info(TAG + " getUserActivePolicy :: e.toString() :" + e.toString());
 		}
 		finally
 		{
