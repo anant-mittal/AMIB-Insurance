@@ -54,8 +54,12 @@ public class MyPolicyDao
 			if(null == userAmibCustRef)
 			{
 				userAmibCustRef = getCustomerAmibCode(civilId ,userType ,custSeqNum);
-				logger.info(TAG + " getUserActivePolicy :: userAmibCustRef received :" + userAmibCustRef);
-				arrayResponseModel.setData(userAmibCustRef.toString());
+				
+				if(null != userAmibCustRef)
+				{
+					logger.info(TAG + " getUserActivePolicy :: userAmibCustRef received :" + userAmibCustRef);
+					arrayResponseModel.setData(userAmibCustRef.toString());
+				}
 			}
 		}
 		catch(Exception e)
