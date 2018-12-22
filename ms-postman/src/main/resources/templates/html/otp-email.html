@@ -234,7 +234,9 @@ a {
 	text-transform: capitalize;
 }
 
-.email u + a {
+.email a {color:#000000!important; text-decoration:underline!important;}
+
+u + #email-link a {
     color: inherit;
     text-decoration: none;
     font-size: inherit;
@@ -322,7 +324,7 @@ a {
 										<td class="content-block">Thanks and Regards,<br /> <strong class="upper"><span
 												th:text="${data.companyName}" th:remove="tag"></span>,</strong><br />
 											<span th:text="${data.country}" th:remove="tag"></span><br />
-											<span class="email" style="color:#000000; text-decoration:none;" th:text="${data.contactUsEmail}" th:remove="tag"></span><br/>
+											<span class="email" id="email-link" style="color:#000000; text-decoration:none;" th:text="${data.contactUsEmail}" th:remove="tag"></span><br/>
  									<a th:href="@{'https://' +${data.amibWebLink}}"><span
 												th:text="${data.amibWebLink}"></span></a>
 										</td>
