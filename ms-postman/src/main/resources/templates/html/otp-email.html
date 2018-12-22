@@ -245,6 +245,15 @@ u + #link a {
     line-height: inherit;
 }
 
+u + #body a {
+    color: inherit;
+    text-decoration: none;
+    font-size: inherit;
+    font-family: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+}
+
 @media only screen and (max-width: 640px) {
 	body {
 		padding: 0 !important;
@@ -279,7 +288,7 @@ u + #link a {
 }
 </style>
 </head>
-<body itemtype="http://schema.org/EmailMessage">
+<body id="body" itemtype="http://schema.org/EmailMessage">
 
 
 	<table class="body-wrap">
@@ -324,7 +333,7 @@ u + #link a {
 										<td class="content-block">Thanks and Regards,<br /> <strong class="upper"><span
 												th:text="${data.companyName}" th:remove="tag"></span>,</strong><br />
 											<span th:text="${data.country}" th:remove="tag"></span><br />
-											<span class="email" id="link" style="color:#000000; text-decoration:none;" th:text="${data.contactUsEmail}" th:remove="tag"></span><br/>
+											<span class="email" th:text="${data.contactUsEmail}" th:remove="tag"></span><br/>
  									<a th:href="@{'https://' +${data.amibWebLink}}"><span
 												th:text="${data.amibWebLink}"></span></a>
 										</td>
