@@ -14,10 +14,15 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+	
+	public static final Pattern pattern = Pattern.compile("^\\/(register|home|login|pub).*$");
+	
 	@Autowired
 	CustomerAuthProvider customAuthProvider;
 
@@ -62,4 +67,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		web.ignoring().antMatchers("/resources/**", "/static/**", "/css/**", "/js/**", "/images/** ,/reg/** ");
 	}
 
+	public static boolean isPublicUrl(String url) {
+		Matcher matcher = pattern.matcher(url);
+		return matcher.find();
+	}
+	
 }

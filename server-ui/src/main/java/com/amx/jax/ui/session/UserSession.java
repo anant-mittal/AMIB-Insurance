@@ -1,12 +1,9 @@
 package com.amx.jax.ui.session;
 
 import java.math.BigDecimal;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
 import java.util.Map.Entry;
-import java.util.UUID;
 import org.redisson.api.RLocalCachedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,9 +15,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
-
 import com.amx.jax.config.CustomerAuthProvider;
+import com.amx.jax.config.WebSecurityConfig;
 import com.amx.jax.http.CommonHttpRequest;
+import com.amx.jax.logger.AuditService;
 import com.amx.jax.scope.TenantContextHolder;
 import com.sleepycat.je.utilint.Timestamp;
 
@@ -38,6 +36,9 @@ public class UserSession
 	
 	@Autowired
 	LoggedInUsers loggedInUsers;
+	
+	@Autowired
+	private AuditService auditService;
 
 
 	@Autowired
@@ -234,14 +235,28 @@ public class UserSession
 		this.valid = valid;
 	}
 
-	public boolean validateSessionUnique()
+	/*public boolean validateSessionUnique()
 	{
 		if (!isValid())
 		{
 			return false;
 		}
 		return true;
+	}*/
+	
+	public boolean validateSessionUnique() 
+	{
+		logger.info(TAG + " validateSessionUnique");
+		
+		if (isValid() && !this.indexedUser()) 
+		{
+			logger.info(TAG + " validateSessionUnique :: false");
+			return false;
+		}
+		logger.info(TAG + " validateSessionUnique :: true");
+		return true;
 	}
+	
 
 	@Autowired
 	private HttpServletRequest request;
@@ -257,62 +272,12 @@ public class UserSession
 		token.setDetails(new WebAuthenticationDetails(request));
 		Authentication authentication = this.customerAuthProvider.authenticate(token);
 		
-		//this.indexUser(authentication);
+		this.indexUser(authentication);
 		
 		valid = true;
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		logger.info(TAG + " authorize 2");
 	}
-
-	public void indexUser(Authentication authentication) 
-	{
-		
-		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-		
-		String userKeyString = getUserKeyString();
-		if (userKeyString != null) 
-		{
-			RLocalCachedMap<String, String> map = loggedInUsers.map();
-			uuidToken = String.valueOf(timestamp.getTime());
-			
-			for(Entry<String, String> e : map.entrySet()) 
-			{
-		        logger.info(TAG + " indexUser :: Key-Value :  "+e.getKey()+"  :  "+e.getValue());
-		        if(userKeyString.equalsIgnoreCase(e.getKey()))
-		        {
-		        	if(uuidToken.equals(e.getValue()))
-		        	{
-		        		logger.info(TAG + " indexUser :: uuidToken same");
-		        	}
-		        	else
-		        	{
-		        		logger.info(TAG + " indexUser :: uuidToken different:");
-		        	}
-		        }
-			}
-			map.fastPut(userKeyString, uuidToken);
-		}
-	}
-	
-	
-	private String getUserKeyString() {
-		if (civilId == null) {
-			return null;
-		}
-		return String.format(USER_KEY_FORMAT, TenantContextHolder.currentSite().toString(), getCivilId());
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	public void setReferrer(String referrer)
 	{
@@ -357,4 +322,108 @@ public class UserSession
 				+ customerSequenceNumber + ", userSequenceNumber=" + userSequenceNumber + ", userAmibCustRef="
 				+ userAmibCustRef + ", request=" + request + ", customerAuthProvider=" + customerAuthProvider + "]";
 	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/****************************************************************************/
+	
+	public void indexUser(Authentication authentication) 
+	{
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		String userKeyString = getUserKeyString();
+		if (userKeyString != null) 
+		{
+			RLocalCachedMap<String, String> map = loggedInUsers.map();
+			uuidToken = String.valueOf(timestamp.getTime());
+			map.fastPut(userKeyString, uuidToken);
+			for(Entry<String, String> e : map.entrySet()) 
+			{
+		        logger.info(TAG + " indexUser :: Key-Value :  "+e.getKey()+"  :  "+e.getValue());
+		    }
+		}
+	}
+	
+	public Boolean indexedUser() 
+	{
+		String userKeyString = getUserKeyString();
+		if (userKeyString != null) 
+		{
+
+			RLocalCachedMap<String, String> map = loggedInUsers.map();
+			if (map.containsKey(userKeyString) && uuidToken != null) 
+			{
+				String uuidTokenTemp = map.get(userKeyString);
+				return uuidToken.equals(uuidTokenTemp);
+			}
+		}
+		return Boolean.FALSE;
+	}
+	
+	public void unIndexUser() 
+	{
+		if (civilId != null) 
+		{
+			String userKeyString = getUserKeyString();
+			if (userKeyString != null) 
+			{
+				RLocalCachedMap<String, String> map = loggedInUsers.map();
+				map.fastRemove(userKeyString);
+				//auditService.log(new CAuthEvent(AuthFlow.LOGOUT, AuthStep.LOCKED));
+			}
+		}
+	}
+	
+	public boolean isRequestAuthorized() 
+	{
+		logger.info(TAG + " isRequestAuthorized ::");
+		
+		if (WebSecurityConfig.isPublicUrl(request.getRequestURI())) 
+		{
+			logger.info(TAG + " isRequestAuthorized :: isPublicUrl");
+			return true;
+		}
+		
+		/*if (!this.getAppDevice().isAuthorized()) {
+			auditService.log(new CAuthEvent(AuthFlow.LOGOUT, AuthStep.UNAUTH_DEVICE));
+			this.unauthorize();
+			return false;
+		}*/
+		
+		if (!this.validateSessionUnique()) 
+		{
+			logger.info(TAG + " isRequestAuthorized :: this.validateSessionUnique() is False");
+			//auditService.log(new CAuthEvent(AuthFlow.LOGOUT, AuthStep.MISSING));
+			this.unauthorize();
+			return false;
+		}
+		return true;
+	}
+	
+	
+	/**
+	 * Validate session unique.
+	 *
+	 * @return true, if successful
+	 */
+	
+	
+	private String getUserKeyString() {
+		if (civilId == null) {
+			return null;
+		}
+		return String.format(USER_KEY_FORMAT, TenantContextHolder.currentSite().toString(), getCivilId());
+	}
+	
 }
