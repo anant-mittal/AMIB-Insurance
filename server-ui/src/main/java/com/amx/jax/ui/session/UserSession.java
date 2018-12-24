@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import java.util.Map.Entry;
 import java.util.UUID;
 import org.redisson.api.RLocalCachedMap;
 import org.slf4j.Logger;
@@ -272,11 +274,10 @@ public class UserSession
 		{
 			RLocalCachedMap<String, String> map = loggedInUsers.map();
 			
-			for(int i = 0 ; i < map.size() ; i++ )
-			{
-				logger.info(TAG + " indexUser :: map.values() :"+map.values()); 
-				logger.info(TAG + " indexUser :: map.keySet() :"+map.keySet());
-			}
+			for(Entry<String, String> e : map.entrySet()) {
+		        logger.info(TAG + " indexUser :: map.Key  :"+e.getKey());
+				logger.info(TAG + " indexUser :: map.Val  :"+e.getValue());
+		    }
 			
 			//uuidToken = UUID.randomUUID().toString();
 			uuidToken = String.valueOf(timestamp.getTime());
