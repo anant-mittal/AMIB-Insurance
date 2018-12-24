@@ -4,7 +4,8 @@ import java.math.BigDecimal;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-
+import java.util.UUID;
+import org.redisson.api.RLocalCachedMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +19,23 @@ import org.springframework.stereotype.Component;
 
 import com.amx.jax.config.CustomerAuthProvider;
 import com.amx.jax.http.CommonHttpRequest;
+import com.amx.jax.scope.TenantContextHolder;
+import com.sleepycat.je.utilint.Timestamp;
 
 @Component
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class UserSession
 {
 	
-	String TAG = "com.amx.jax.UserSession :: ";
+	String TAG = "UserSession :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(UserSession.class);
+	
+	/** The Constant USER_KEY_FORMAT. */
+	private static final String USER_KEY_FORMAT = "%s#%s";
+	
+	@Autowired
+	LoggedInUsers loggedInUsers;
 
 
 	@Autowired
@@ -64,6 +73,17 @@ public class UserSession
 	
 	private String returnUrl;
 	
+	private String uuidToken = null;
+	
+	
+	public String getUuidToken() {
+		return uuidToken;
+	}
+
+	public void setUuidToken(String uuidToken) {
+		this.uuidToken = uuidToken;
+	}
+
 	public String getReturnUrl() {
 		return returnUrl;
 	}
@@ -234,12 +254,57 @@ public class UserSession
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(civilId, password);
 		token.setDetails(new WebAuthenticationDetails(request));
 		Authentication authentication = this.customerAuthProvider.authenticate(token);
+		
+		this.indexUser(authentication);
+		
 		valid = true;
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		
 		logger.info(TAG + " authorize 2");
 	}
 
+	public void indexUser(Authentication authentication) {
+		
+		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+		
+		String userKeyString = getUserKeyString();
+		logger.info(TAG + " indexUser :: userKeyString :"+userKeyString);
+		if (userKeyString != null) 
+		{
+			RLocalCachedMap<String, String> map = loggedInUsers.map();
+			
+			for(int i = 0 ; i < map.size() ; i++ )
+			{
+				logger.info(TAG + " indexUser :: map.values() :"+map.values()); 
+				logger.info(TAG + " indexUser :: map.keySet() :"+map.keySet());
+			}
+			
+			//uuidToken = UUID.randomUUID().toString();
+			uuidToken = String.valueOf(timestamp.getTime());
+			
+			logger.info(TAG + " indexUser :: uuidToken :"+uuidToken);
+			map.fastPut(userKeyString, uuidToken);
+		}
+	}
+	
+	private String getUserKeyString() {
+		if (civilId == null) {
+			return null;
+		}
+		return String.format(USER_KEY_FORMAT, TenantContextHolder.currentSite().toString(), getCivilId());
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public void setReferrer(String referrer)
 	{
 		this.referrer = referrer;
