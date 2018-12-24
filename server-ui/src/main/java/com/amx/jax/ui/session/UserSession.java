@@ -283,6 +283,8 @@ public class UserSession
 			
 			logger.info(TAG + " indexUser :: uuidToken :"+uuidToken);
 			map.fastPut(userKeyString, uuidToken);
+			
+			logger.info(TAG + " indexUser :: map :"+map.size());
 		}
 	}
 	
