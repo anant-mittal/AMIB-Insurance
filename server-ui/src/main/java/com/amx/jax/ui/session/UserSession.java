@@ -264,30 +264,36 @@ public class UserSession
 		logger.info(TAG + " authorize 2");
 	}
 
-	public void indexUser(Authentication authentication) {
+	public void indexUser(Authentication authentication) 
+	{
 		
 		Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 		
 		String userKeyString = getUserKeyString();
-		logger.info(TAG + " indexUser :: userKeyString :"+userKeyString);
 		if (userKeyString != null) 
 		{
 			RLocalCachedMap<String, String> map = loggedInUsers.map();
-			
-			for(Entry<String, String> e : map.entrySet()) {
-		        logger.info(TAG + " indexUser :: map.Key  :"+e.getKey());
-				logger.info(TAG + " indexUser :: map.Val  :"+e.getValue());
-		    }
-			
-			//uuidToken = UUID.randomUUID().toString();
 			uuidToken = String.valueOf(timestamp.getTime());
-			
-			logger.info(TAG + " indexUser :: uuidToken :"+uuidToken);
 			map.fastPut(userKeyString, uuidToken);
 			
-			logger.info(TAG + " indexUser :: map :"+map.size());
+			for(Entry<String, String> e : map.entrySet()) 
+			{
+		        logger.info(TAG + " indexUser :: Key-Value :  "+e.getKey()+"  :  "+e.getValue());
+		        if(userKeyString.equalsIgnoreCase(e.getKey()))
+		        {
+		        	if(uuidToken.equals(e.getValue()))
+		        	{
+		        		logger.info(TAG + " indexUser :: uuidToken same");
+		        	}
+		        	else
+		        	{
+		        		logger.info(TAG + " indexUser :: uuidToken different:");
+		        	}
+		        }
+			}
 		}
 	}
+	
 	
 	private String getUserKeyString() {
 		if (civilId == null) {
