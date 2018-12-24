@@ -274,7 +274,6 @@ public class UserSession
 		{
 			RLocalCachedMap<String, String> map = loggedInUsers.map();
 			uuidToken = String.valueOf(timestamp.getTime());
-			map.fastPut(userKeyString, uuidToken);
 			
 			for(Entry<String, String> e : map.entrySet()) 
 			{
@@ -291,6 +290,7 @@ public class UserSession
 		        	}
 		        }
 			}
+			map.fastPut(userKeyString, uuidToken);
 		}
 	}
 	
