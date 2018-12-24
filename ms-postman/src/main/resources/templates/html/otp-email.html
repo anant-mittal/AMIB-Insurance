@@ -234,26 +234,6 @@ a {
 	text-transform: capitalize;
 }
 
-.email a {color:#000000!important; text-decoration:underline!important;}
-
-u + #link a {
-    color: inherit;
-    text-decoration: none;
-    font-size: inherit;
-    font-family: inherit;
-    font-weight: inherit;
-    line-height: inherit;
-}
-
-u + #body a {
-    color: inherit;
-    text-decoration: none;
-    font-size: inherit;
-    font-family: inherit;
-    font-weight: inherit;
-    line-height: inherit;
-}
-
 @media only screen and (max-width: 640px) {
 	body {
 		padding: 0 !important;
@@ -333,7 +313,8 @@ u + #body a {
 										<td class="content-block">Thanks and Regards,<br /> <strong class="upper"><span
 												th:text="${data.companyName}" th:remove="tag"></span>,</strong><br />
 											<span th:text="${data.country}" th:remove="tag"></span><br />
-											<span class="email" th:text="${data.contactUsEmail}" ></span><br/>
+											<span th:text="${data.contactUsEmail}" th:remove="tag"></span><br/>
+											
  									<a style="text-decoration:underline;color:#083d8d;"th:href="@{'https://' +${data.amibWebLink}}"><span
 												th:text="${data.amibWebLink}"></span></a>
 										</td>
