@@ -257,7 +257,7 @@ public class UserSession
 		token.setDetails(new WebAuthenticationDetails(request));
 		Authentication authentication = this.customerAuthProvider.authenticate(token);
 		
-		this.indexUser(authentication);
+		//this.indexUser(authentication);
 		
 		valid = true;
 		SecurityContextHolder.getContext().setAuthentication(authentication);
