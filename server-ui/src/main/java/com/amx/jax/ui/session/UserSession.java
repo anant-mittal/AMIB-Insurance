@@ -26,21 +26,15 @@ import com.sleepycat.je.utilint.Timestamp;
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class UserSession
 {
-	
 	String TAG = "UserSession :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(UserSession.class);
 	
-	/** The Constant USER_KEY_FORMAT. */
 	private static final String USER_KEY_FORMAT = "%s#%s";
 	
 	@Autowired
 	LoggedInUsers loggedInUsers;
 	
-	@Autowired
-	private AuditService auditService;
-
-
 	@Autowired
 	private CommonHttpRequest httpService;
 	
@@ -246,8 +240,6 @@ public class UserSession
 	
 	public boolean validateSessionUnique() 
 	{
-		logger.info(TAG + " validateSessionUnique");
-		
 		if (isValid() && !this.indexedUser()) 
 		{
 			logger.info(TAG + " validateSessionUnique :: false");
@@ -266,17 +258,12 @@ public class UserSession
 
 	public void authorize(String civilId, String password)
 	{
-		logger.info(TAG + " authorize 1");
-		
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(civilId, password);
 		token.setDetails(new WebAuthenticationDetails(request));
 		Authentication authentication = this.customerAuthProvider.authenticate(token);
-		
 		this.indexUser(authentication);
-		
 		valid = true;
 		SecurityContextHolder.getContext().setAuthentication(authentication);
-		logger.info(TAG + " authorize 2");
 	}
 	
 	public void setReferrer(String referrer)
@@ -296,8 +283,6 @@ public class UserSession
 	
 	public void invalidate()
 	{
-		logger.info(TAG + " invalidate 1");
-		
 		SecurityContextHolder.getContext().setAuthentication(null);
 		HttpSession session = request.getSession(false);
 		SecurityContextHolder.clearContext();
@@ -306,9 +291,6 @@ public class UserSession
 		{
 			session.invalidate();
 		}
-		
-		logger.info(TAG + " invalidate 2");
-		
 		httpService.clearSessionCookie();
 	}
 	
@@ -348,10 +330,6 @@ public class UserSession
 			RLocalCachedMap<String, String> map = loggedInUsers.map();
 			uuidToken = String.valueOf(timestamp.getTime());
 			map.fastPut(userKeyString, uuidToken);
-			for(Entry<String, String> e : map.entrySet()) 
-			{
-		        logger.info(TAG + " indexUser :: Key-Value :  "+e.getKey()+"  :  "+e.getValue());
-		    }
 		}
 	}
 	
@@ -380,7 +358,6 @@ public class UserSession
 			{
 				RLocalCachedMap<String, String> map = loggedInUsers.map();
 				map.fastRemove(userKeyString);
-				//auditService.log(new CAuthEvent(AuthFlow.LOGOUT, AuthStep.LOCKED));
 			}
 		}
 	}
@@ -391,33 +368,17 @@ public class UserSession
 		
 		if (WebSecurityConfig.isPublicUrl(request.getRequestURI())) 
 		{
-			logger.info(TAG + " isRequestAuthorized :: isPublicUrl");
 			return true;
 		}
-		
-		/*if (!this.getAppDevice().isAuthorized()) {
-			auditService.log(new CAuthEvent(AuthFlow.LOGOUT, AuthStep.UNAUTH_DEVICE));
-			this.unauthorize();
-			return false;
-		}*/
 		
 		if (!this.validateSessionUnique()) 
 		{
 			logger.info(TAG + " isRequestAuthorized :: this.validateSessionUnique() is False");
-			//auditService.log(new CAuthEvent(AuthFlow.LOGOUT, AuthStep.MISSING));
 			this.unauthorize();
 			return false;
 		}
 		return true;
 	}
-	
-	
-	/**
-	 * Validate session unique.
-	 *
-	 * @return true, if successful
-	 */
-	
 	
 	private String getUserKeyString() {
 		if (civilId == null) {

@@ -51,8 +51,6 @@ public class WebAuthFilter implements Filter {
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain)
 			throws IOException, ServletException {
 		
-		logger.info("WebAuthFilter :: doFilter");
-
 		if (!userSession.isRequestAuthorized()) {
 			HttpServletResponse response = ((HttpServletResponse) resp);
 			response.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
