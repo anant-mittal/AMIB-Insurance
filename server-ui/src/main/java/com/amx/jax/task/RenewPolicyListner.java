@@ -77,11 +77,8 @@ public class RenewPolicyListner implements ITunnelSubscriber<TunnelEvent> {
 		} else {
 			languageId = new BigDecimal(0);
 		}
-		logger.info(" onMessage :: langId :"+ langId);
-		logger.info(" onMessage :: languageId :"+ languageId);
 		
 		ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao.getCompanySetUp(languageId , webConfig.getAppCompCode());
-		
 		
 		Map<String, Object> wrapper = new HashMap<String, Object>();
 		Map<String, Object> modeldata = new HashMap<String, Object>();

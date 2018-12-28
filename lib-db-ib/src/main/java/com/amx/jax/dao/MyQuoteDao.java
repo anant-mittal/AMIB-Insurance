@@ -97,7 +97,7 @@ public class MyQuoteDao
 				myQuoteModel.setNetAmount(Utility.round(rs.getBigDecimal(39), metaService.getTenantProfile().getDecplc()));
 				myQuoteModel.setPolCondition(rs.getString(40));
 				myQuoteModel.setVehicleType(rs.getString(41));
-				myQuoteModel.setPaymentProcessError(rs.getString(42));
+				myQuoteModel.setPaymentProcessError(rs.getString(42));// if 'Y' error has occurred while payment and same error message is shown on Quote
 				activePolicyArray.add(myQuoteModel);
 				
 				logger.info(TAG + " getUserQuote :: myQuoteModel :" + myQuoteModel.toString());

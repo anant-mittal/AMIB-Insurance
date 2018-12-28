@@ -77,8 +77,6 @@ public class MyPolicyDao
 
 			ResultSet rs = (ResultSet) callableStatement.getObject(5);
 			
-			logger.info(TAG + " getUserActivePolicy :: rs :" + rs.getRow());
-
 			while (rs.next())
 			{
 
@@ -130,7 +128,7 @@ public class MyPolicyDao
 				activePolicyModel.setFuelDesc(rs.getString(45));
 				
 				logger.info(TAG + " getUserActivePolicy :: setRenewalIndic :"+rs.getString(43));
-				if (null != rs.getString(43) && rs.getString(43).equalsIgnoreCase("N"))// Action is based on this
+				if (null != rs.getString(43) && rs.getString(43).equalsIgnoreCase("N")) // Action is based on this
 				{
 					activePolicyModel.setRenewableApplCheck("N");
 				}

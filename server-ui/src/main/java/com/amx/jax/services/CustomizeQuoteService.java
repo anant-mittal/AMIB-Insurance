@@ -165,7 +165,7 @@ public class CustomizeQuoteService
 			for (int i = 0; i < getUserQuote.size(); i++)
 			{
 				MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
-				if (null != myQuoteModelFromDb.getQuoteSeqNumber())
+				if (null != myQuoteModelFromDb.getQuoteSeqNumber() && myQuoteModelFromDb.getPaymentProcessError() != "Y")
 				{
 					allQuotes.add(myQuoteModelFromDb.getQuoteSeqNumber().toString());
 				}

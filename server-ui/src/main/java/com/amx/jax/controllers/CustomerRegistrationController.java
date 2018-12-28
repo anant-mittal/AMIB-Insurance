@@ -140,7 +140,7 @@ public class CustomerRegistrationController {
 		return customerRegistrationService.updatePassword(changePasswordRequest);
 	}
 
-	@ApiOperation(value = "api to return customer details" , notes = "this api return customer details once customer is logged in. ")
+	@ApiOperation(value = "api to return customer details", notes = "this api return customer details once customer is logged in. ")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS, WebAppStatusCodes.LIST_POP_ERROR,
 			WebAppStatusCodes.INVLD_LOGIN_CATG, WebAppStatusCodes.INVALID_USR })
 	@RequestMapping(value = "/pub/reg/userdetails", method = RequestMethod.POST)
@@ -162,8 +162,7 @@ public class CustomerRegistrationController {
 
 	@ApiOperation(value = "api to logg out customer")
 	@RequestMapping(value = "/pub/login/log-out", method = RequestMethod.POST)
-	public AmxApiResponse<?, Object> logout() 
-	{
+	public AmxApiResponse<?, Object> logout() {
 		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
 		userSession.unauthorize();
 		resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
