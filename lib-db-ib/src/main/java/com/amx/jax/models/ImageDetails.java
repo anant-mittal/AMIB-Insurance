@@ -5,12 +5,17 @@ import java.math.BigDecimal;
 public class ImageDetails
 {
 	private String docTypeCode;
+	
+	private String docTypeDesc;
 
 	private BigDecimal docSeqNumber;
 
 	private String imageSubmittedDate;
 
 	private String isImageMandatory;
+	
+	private BigDecimal displayOrder;
+	
 
 	public String getIsImageMandatory()
 	{
@@ -51,11 +56,28 @@ public class ImageDetails
 	{
 		this.docSeqNumber = docSeqNumber;
 	}
-
-	@Override
-	public String toString()
-	{
-		return "ImageDetails [docTypeCode=" + docTypeCode + ", docSeqNumber=" + docSeqNumber + ", imageSubmittedDate=" + imageSubmittedDate + ", isImageMandatory=" + isImageMandatory + "]";
+	
+	public String getDocTypeDesc() {
+		return docTypeDesc;
 	}
 
+	public void setDocTypeDesc(String docTypeDesc) {
+		this.docTypeDesc = docTypeDesc;
+	}
+
+	public BigDecimal getDisplayOrder() {
+		return displayOrder;
+	}
+
+	public void setDisplayOrder(BigDecimal displayOrder) {
+		this.displayOrder = displayOrder;
+	}
+
+	@Override
+	public String toString() 
+	{
+		return "ImageDetails [docTypeCode=" + docTypeCode + ", docTypeDesc=" + docTypeDesc + ", docSeqNumber="
+				+ docSeqNumber + ", imageSubmittedDate=" + imageSubmittedDate + ", isImageMandatory=" + isImageMandatory
+				+ ", displayOrder=" + displayOrder + "]";
+	}
 }

@@ -727,9 +727,12 @@ public class RequestQuoteDao
 			{
 				ImageDetails imageDetails = new ImageDetails();
 				imageDetails.setDocTypeCode(rs.getString(1));
+				imageDetails.setDocTypeDesc(rs.getString(2));
 				ImageStatus imageStatus = imageUploadedStatus(appSeqNumber, rs.getString(1));
 				imageDetails.setIsImageMandatory(rs.getString(3));
+				imageDetails.setDisplayOrder(rs.getBigDecimal(4));
 				imageDetails.setImageSubmittedDate(imageStatus.getImageDate());
+				
 				if (null != imageStatus.getDocSeqNumber() && !imageStatus.getDocSeqNumber().toString().equals("0") && !imageStatus.getDocSeqNumber().toString().equals(""))
 				{
 					imageDetails.setDocSeqNumber(imageStatus.getDocSeqNumber());
@@ -738,7 +741,6 @@ public class RequestQuoteDao
 				{
 					imageDetails.setDocSeqNumber(null);
 				}
-
 				logger.info(TAG + " getImageDetails :: imageDetails)  :" + imageDetails.toString());
 
 				imageMetaInfoArray.add(imageDetails);
