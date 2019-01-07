@@ -731,6 +731,7 @@ public class RequestQuoteDao
 				ImageStatus imageStatus = imageUploadedStatus(appSeqNumber, rs.getString(1));
 				imageDetails.setIsImageMandatory(rs.getString(3));
 				imageDetails.setDisplayOrder(rs.getBigDecimal(4));
+				imageDetails.setStatus(rs.getString(5));
 				imageDetails.setImageSubmittedDate(imageStatus.getImageDate());
 				
 				if (null != imageStatus.getDocSeqNumber() && !imageStatus.getDocSeqNumber().toString().equals("0") && !imageStatus.getDocSeqNumber().toString().equals(""))

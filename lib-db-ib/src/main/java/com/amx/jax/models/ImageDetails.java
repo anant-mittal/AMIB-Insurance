@@ -16,6 +16,16 @@ public class ImageDetails
 	
 	private BigDecimal displayOrder;
 	
+	private String status;
+	
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
 	public String getIsImageMandatory()
 	{
@@ -74,10 +84,10 @@ public class ImageDetails
 	}
 
 	@Override
-	public String toString() 
-	{
+	public String toString() {
 		return "ImageDetails [docTypeCode=" + docTypeCode + ", docTypeDesc=" + docTypeDesc + ", docSeqNumber="
 				+ docSeqNumber + ", imageSubmittedDate=" + imageSubmittedDate + ", isImageMandatory=" + isImageMandatory
-				+ ", displayOrder=" + displayOrder + "]";
+				+ ", displayOrder=" + displayOrder + ", status=" + status + "]";
 	}
+	
 }
