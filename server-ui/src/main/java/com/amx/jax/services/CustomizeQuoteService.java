@@ -75,7 +75,7 @@ public class CustomizeQuoteService
 			for (int i = 0; i < getUserQuote.size(); i++)
 			{
 				MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
-				if (null != quoteSeqNumber && !quoteSeqNumber.toString().equals(""))
+				if (null != quoteSeqNumber && !quoteSeqNumber.toString().equals("") && !myQuoteModelFromDb.getPaymentProcessError().equalsIgnoreCase("Y"))
 				{
 					if (null != myQuoteModelFromDb.getQuoteSeqNumber() && myQuoteModelFromDb.getQuoteSeqNumber().equals(quoteSeqNumber))
 					{

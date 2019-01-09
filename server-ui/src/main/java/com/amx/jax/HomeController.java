@@ -157,7 +157,6 @@ public class HomeController {
 			Iterator it = data.entrySet().iterator();
 			while (it.hasNext()) {
 				Map.Entry pair = (Map.Entry) it.next();
-				System.out.println(pair.getKey() + " = " + pair.getValue());
 				dataList.add(pair.getValue().toString());
 				it.remove();
 			}

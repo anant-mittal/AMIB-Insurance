@@ -218,10 +218,13 @@ public class CustomizeQuoteController {
 		return null;
 	}
 
-	private void setMetaData() {
+	private void setMetaData() 
+	{
 		if (null == metaService.getTenantProfile().getCountryId()
-				|| null == metaService.getUserDeviceInfo().getDeviceId()) {
-			if (httpService.getLanguage().toString().equalsIgnoreCase("EN")) {
+				|| null == metaService.getUserDeviceInfo().getDeviceId()) 
+		{
+			if (httpService.getLanguage().toString().equalsIgnoreCase("EN")) 
+			{
 				metaService.getTenantProfile().setLanguageId(new BigDecimal(0));
 			}
 			customerRegistrationService.getCompanySetUp();

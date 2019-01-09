@@ -130,14 +130,20 @@ public class CivilIDExpiryListner implements ITunnelSubscriber<TunnelEvent> {
 
 		}
 
-		/*
-		 * if (!ArgUtil.isEmpty(custId)) { PushMessage pushMessage = new PushMessage();
-		 * if (ArgUtil.areEqual(expired, "0")) {
-		 * pushMessage.setITemplate(TemplatesMX.CIVILID_EXPIRY); } else {
-		 * pushMessage.setITemplate(TemplatesMX.CIVILID_EXPIRED); }
-		 * pushMessage.addToUser(custId); pushMessage.setModel(wrapper);
-		 * pushNotifyClient.send(pushMessage); }
-		 */
+		
+		/*if (!ArgUtil.isEmpty(custId)) 
+		{
+			PushMessage pushMessage = new PushMessage();
+			if (ArgUtil.areEqual(expired, "0")) {
+				pushMessage.setITemplate(TemplatesMX.CIVILID_EXPIRY);
+			} else {
+				pushMessage.setITemplate(TemplatesMX.CIVILID_EXPIRED);
+			}
+			pushMessage.addToUser(custId);
+			pushMessage.setModel(wrapper);
+			pushNotifyClient.send(pushMessage);
+		}*/
+		 
 
 	}
 }
