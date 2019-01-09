@@ -114,6 +114,11 @@ public class HomeController {
 	@RequestMapping(value = { "/", "/register/**", "/login/**", "/app/**", "/resetPwd", "/home/**" }, method = {
 			RequestMethod.GET })
 	public String loginJPage(Model model, HttpServletRequest request) {
+		
+		logger.info("HomeController :: loginJPage() :: getUserDevice getType     :" + httpService.getUserDevice().getType());
+		logger.info("HomeController :: loginJPage() :: getUserDevice getPlatform :" + httpService.getUserDevice().getPlatform());
+		logger.info("HomeController :: loginJPage() :: getUserDevice getAppType  :" + httpService.getUserDevice().getAppType());
+		
 		model.addAttribute("lang", httpService.getLanguage());
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
 		model.addAttribute("cdnUrl", appConfig.getCdnURL());

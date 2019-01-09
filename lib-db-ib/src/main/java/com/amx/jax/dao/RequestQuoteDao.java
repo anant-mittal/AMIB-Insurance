@@ -85,8 +85,6 @@ public class RequestQuoteDao
 			incompleteApplModel.setErrorCode(callableStatement.getString(8));
 			incompleteApplModel.setErrorMessage(callableStatement.getString(9));
 
-			logger.info(TAG + " getIncompleteApplication :: callableStatement.getBigDecimal(6) :" + callableStatement.getBigDecimal(6));
-
 			if (callableStatement.getString(8) == null)
 			{
 				incompleteApplModel.setStatus(true);
@@ -99,7 +97,6 @@ public class RequestQuoteDao
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			logger.info(TAG + " getIncompleteApplication :: e.printStackTrace() :" + e);
 		}
 		finally
 		{
@@ -779,8 +776,6 @@ public class RequestQuoteDao
 			callableStatement.registerOutParameter(6, java.sql.Types.TIMESTAMP);
 			callableStatement.executeUpdate();
 
-			logger.info(TAG + " setUploadImage :: DocSeqNum)  :" + callableStatement.getBigDecimal(5));
-			logger.info(TAG + " setUploadImage :: DocSeqNum)  :" + callableStatement.getTimestamp(6));
 			if (null != callableStatement.getTimestamp(6))
 			{
 				epochDate = DateFormats.convertTimeStampToEpoc(callableStatement.getTimestamp(6).toString());
@@ -804,8 +799,6 @@ public class RequestQuoteDao
 
 	public DownloadImageModel downloadVehicleImage(BigDecimal docSeqNumber)
 	{
-		logger.info(TAG + " downloadVehicleImage :: docSeqNumber :" + docSeqNumber);
-
 		getConnection();
 		Blob imageBlob = null;
 		String imageType;
@@ -842,9 +835,7 @@ public class RequestQuoteDao
 				return null;
 			}
 			downloadImageModel.setImageType(imageType);
-
-			logger.info(TAG + " getUploadedImage :: imageType :" + imageType);
-
+		
 		}
 		catch (SQLException e)
 		{

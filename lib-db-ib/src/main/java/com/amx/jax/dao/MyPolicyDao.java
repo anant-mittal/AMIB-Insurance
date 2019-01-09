@@ -280,7 +280,6 @@ public class MyPolicyDao
 			policyReceiptDetails.setInsuredAddress(callableStatement.getString(11));
 			//Civil ID
 			policyReceiptDetails.setInsuredMobileNo(callableStatement.getString(13));
-			logger.info(TAG + " downloadPolicyReceipt :: insuredMobileNo :" + callableStatement.getString(13));
 			policyReceiptDetails.setMake(callableStatement.getString(14));
 			policyReceiptDetails.setSubMake(callableStatement.getString(15));
 			policyReceiptDetails.setKtNumber(callableStatement.getString(16));
@@ -292,7 +291,6 @@ public class MyPolicyDao
 			policyReceiptDetails.setCapacity(callableStatement.getBigDecimal(22));
 			policyReceiptDetails.setFuelType(callableStatement.getString(23));
 			policyReceiptDetails.setVehicleCondition(callableStatement.getString(24));
-			logger.info(TAG + " downloadPolicyReceipt :: setAdditionalCoverage :" + callableStatement.getString(25));
 			policyReceiptDetails.setAdditionalCoverage(callableStatement.getString(25));
 			policyReceiptDetails.setVehicleValue(callableStatement.getBigDecimal(26));
 			policyReceiptDetails.setPolicyContribution(callableStatement.getBigDecimal(27));
