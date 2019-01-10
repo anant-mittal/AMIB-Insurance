@@ -72,16 +72,30 @@ public class UserSession
 	
 	private String uuidToken = null;
 	
+	private BigDecimal languageId;
 	
-	public String getUuidToken() {
+	public BigDecimal getLanguageId() 
+	{
+		return languageId;
+	}
+
+	public void setLanguageId(BigDecimal languageId) 
+	{
+		this.languageId = languageId;
+	}
+	
+	public String getUuidToken() 
+	{
 		return uuidToken;
 	}
 
-	public void setUuidToken(String uuidToken) {
+	public void setUuidToken(String uuidToken) 
+	{
 		this.uuidToken = uuidToken;
 	}
 
-	public String getReturnUrl() {
+	public String getReturnUrl() 
+	{
 		return returnUrl;
 	}
 
@@ -296,28 +310,17 @@ public class UserSession
 	
 	@Override
 	public String toString() {
-		return "UserSession [httpService=" + httpService + ", valid=" + valid + ", referrer=" + referrer + ", civilId="
-				+ civilId + ", motpPrefix=" + motpPrefix + ", eotpPrefix=" + eotpPrefix + ", motp=" + motp + ", eotp="
-				+ eotp + ", customerMobileNumber=" + customerMobileNumber + ", customerEmailId=" + customerEmailId
-				+ ", changePasswordOtp=" + changePasswordOtp + ", mOtpMobileNumber="
-				+ mOtpMobileNumber + ", eOtpEmailId=" + eOtpEmailId + ", customerSequenceNumber="
-				+ customerSequenceNumber + ", userSequenceNumber=" + userSequenceNumber + ", userAmibCustRef="
-				+ userAmibCustRef + ", request=" + request + ", customerAuthProvider=" + customerAuthProvider + "]";
+		return "UserSession [TAG=" + TAG + ", loggedInUsers=" + loggedInUsers + ", httpService=" + httpService
+				+ ", valid=" + valid + ", referrer=" + referrer + ", civilId=" + civilId + ", motpPrefix=" + motpPrefix
+				+ ", eotpPrefix=" + eotpPrefix + ", motp=" + motp + ", eotp=" + eotp + ", customerMobileNumber="
+				+ customerMobileNumber + ", customerEmailId=" + customerEmailId + ", changePasswordOtp="
+				+ changePasswordOtp + ", mOtpMobileNumber=" + mOtpMobileNumber + ", eOtpEmailId=" + eOtpEmailId
+				+ ", customerSequenceNumber=" + customerSequenceNumber + ", userSequenceNumber=" + userSequenceNumber
+				+ ", userAmibCustRef=" + userAmibCustRef + ", returnUrl=" + returnUrl + ", uuidToken=" + uuidToken
+				+ ", languageId=" + languageId + ", request=" + request + ", customerAuthProvider="
+				+ customerAuthProvider + "]";
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
 	
 	/****************************************************************************/
 	

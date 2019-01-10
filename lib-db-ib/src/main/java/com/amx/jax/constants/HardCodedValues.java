@@ -12,9 +12,15 @@ public class HardCodedValues
 	
 	public static String PAYMENT_METHOD = "5";//Suggested By Ashok Sir
 	
-	public static String USER_TYPE = "D";
+	public static String USER_TYPE = "D";//Suggested By Ashok Sir
 	
 	public static String DEVICE_TYPE = "ONLINE";
+	
+	public static String DEVICE_TYPE_WEB = "ONLINE";
+	
+	public static String DEVICE_TYPE_ANDROID = "ANDROID";
+	
+	public static String DEVICE_TYPE_IOS = "IOS";
 	
 	/*************ONLINE INSURANCE COMPANY*************/
 	

@@ -81,11 +81,7 @@ public class CustomerRegistrationService {
 			metaService.getTenantProfile().setDecplc(getCompanySetUp.get(0).getDecimalPlaceUpTo());
 			metaService.getTenantProfile().setCompanyName(getCompanySetUp.get(0).getCompanyName());
 			metaService.getTenantProfile().setCurrency(getCompanySetUp.get(0).getCurrency());
-			metaService.getUserDeviceInfo().setDeviceType("ONLINE");
-			metaService.getUserDeviceInfo().setDeviceId(httpService.getIPAddress());
-
-			logger.info("getCompanySetUp :: " + metaService.getTenantProfile().getLanguageId());
-
+			
 			resp.setResults(getCompanySetUp);
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 		} catch (Exception e) {
@@ -95,7 +91,8 @@ public class CustomerRegistrationService {
 		return resp;
 	}
 
-	public AmxApiResponse<ResponseInfo, Object> isValidCivilId(String civilid) {
+	public AmxApiResponse<ResponseInfo, Object> isValidCivilId(String civilid) 
+	{
 		boolean isValidCivilId = customerRegistrationDao.isValidCivilId(civilid);
 		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
 

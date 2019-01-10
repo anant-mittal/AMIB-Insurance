@@ -95,30 +95,12 @@ public class HomeController {
 		return versionNew;
 	}
 
-	/**
-	 * Login ping
-	 * 
-	 * @param request
-	 *            the request
-	 * @return the string
-	 */
-	/*
-	 * @RequestMapping(value = "/pub/meta/**", method = { RequestMethod.GET })
-	 * 
-	 * @ResponseBody public String loginPing(HttpServletRequest request) {
-	 * AmxApiResponse<Object, Object> wrapper = new AmxApiResponse<Object,
-	 * Object>(); return JsonUtil.toJson(wrapper); }
-	 */
 
 	// @Timed
 	@RequestMapping(value = { "/", "/register/**", "/login/**", "/app/**", "/resetPwd", "/home/**" }, method = {
 			RequestMethod.GET })
-	public String loginJPage(Model model, HttpServletRequest request) {
-		
-		logger.info("HomeController :: loginJPage() :: getUserDevice getType     :" + httpService.getUserDevice().getType());
-		logger.info("HomeController :: loginJPage() :: getUserDevice getPlatform :" + httpService.getUserDevice().getPlatform());
-		logger.info("HomeController :: loginJPage() :: getUserDevice getAppType  :" + httpService.getUserDevice().getAppType());
-		
+	public String loginJPage(Model model, HttpServletRequest request) 
+	{
 		model.addAttribute("lang", httpService.getLanguage());
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
 		model.addAttribute("cdnUrl", appConfig.getCdnURL());
@@ -137,22 +119,7 @@ public class HomeController {
 		return JsonUtil.toJson(wrapper);
 	}
 
-	/**
-	 * Default page.
-	 *
-	 * @param model
-	 *            the model
-	 * @return the string
-	 */
-	/*
-	 * @RequestMapping(value = { "/", "/register/**", "/app/**", "/home/**" },
-	 * method = { RequestMethod.GET }) public String defaultPage(Model model) {
-	 * model.addAttribute("lang", httpService.getLanguage());
-	 * model.addAttribute("applicationTitle", webConfig.getAppTitle());
-	 * model.addAttribute("cdnUrl", appConfig.getCdnURL());
-	 * model.addAttribute("cdnVerion", getVersion()); return "app"; }
-	 */
-
+	
 	@RequestMapping(value = { "/pub/terms" }, method = { RequestMethod.GET })
 	public String termsAndCondition(Model model) {
 		JSONObject dataJson = new JSONObject();
@@ -171,12 +138,5 @@ public class HomeController {
 		}
 		return "terms";
 	}
-
-	/*
-	 * public void laguageSetUp() { if
-	 * (httpService.getLanguage().toString().equalsIgnoreCase("EN")) {
-	 * metaService.getTenantProfile().setLanguageId(new BigDecimal(0));
-	 * customerRegistrationService.getCompanySetUp(); } }
-	 */
 
 }

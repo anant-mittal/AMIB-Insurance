@@ -23,6 +23,7 @@ import com.amx.jax.models.CompanySetUp;
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class MetaService implements IMetaService {
 
+	private static final Logger logger = LoggerFactory.getLogger(MetaService.class);
 	private static final long serialVersionUID = 8260115321460438947L;
 	private static final Logger LOGGER = LoggerFactory.getLogger(WebConfig.class);
 
@@ -66,8 +67,31 @@ public class MetaService implements IMetaService {
 		if (userDeviceInfos.getDeviceId() == null)
 		{
 			userDeviceInfos.setDeviceId(httpService.getIPAddress());
-			userDeviceInfos.setDeviceType(HardCodedValues.DEVICE_TYPE);
 		}
+		
+		if(userDeviceInfos.getDeviceType() == null)
+		{
+			if(null != httpService.getUserDevice().getAppType())
+			{
+				if(httpService.getUserDevice().getAppType().toString().equalsIgnoreCase("WEB"))
+				{
+					userDeviceInfos.setDeviceType(HardCodedValues.DEVICE_TYPE_WEB);
+				}
+				else if(httpService.getUserDevice().getAppType().toString().equalsIgnoreCase("ANDROID"))
+				{
+					userDeviceInfos.setDeviceType(HardCodedValues.DEVICE_TYPE_ANDROID);
+				}
+				else if(httpService.getUserDevice().getAppType().toString().equalsIgnoreCase("IOS"))
+				{
+					userDeviceInfos.setDeviceType(HardCodedValues.DEVICE_TYPE_IOS);
+				}
+				else
+				{
+					userDeviceInfos.setDeviceType(HardCodedValues.DEVICE_TYPE_WEB);
+				}
+			}
+		}
+		
 		return userDeviceInfos;
 	}
 

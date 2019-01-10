@@ -78,8 +78,6 @@ public class CivilIDExpiryListner implements ITunnelSubscriber<TunnelEvent> {
 		} else {
 			languageId = new BigDecimal(0);
 		}
-		logger.info(" onMessage :: langId :"+ langId);
-		logger.info(" onMessage :: languageId :"+ languageId);
 		
 		ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao.getCompanySetUp(languageId , webConfig.getAppCompCode());
 		
@@ -143,7 +141,6 @@ public class CivilIDExpiryListner implements ITunnelSubscriber<TunnelEvent> {
 			pushMessage.setModel(wrapper);
 			pushNotifyClient.send(pushMessage);
 		}*/
-		 
 
 	}
 }
