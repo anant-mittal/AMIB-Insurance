@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.http.CommonHttpRequest;
 import com.amx.jax.meta.IMetaService;
 import com.amx.jax.rest.RestService;
@@ -71,6 +70,7 @@ public class HomeController {
 
 	@Autowired
 	IMetaService metaService;
+	
 
 	/**
 	 * Gets the version.
@@ -95,12 +95,10 @@ public class HomeController {
 		return versionNew;
 	}
 
-
 	// @Timed
 	@RequestMapping(value = { "/", "/register/**", "/login/**", "/app/**", "/resetPwd", "/home/**" }, method = {
 			RequestMethod.GET })
-	public String loginJPage(Model model, HttpServletRequest request) 
-	{
+	public String loginJPage(Model model, HttpServletRequest request) {
 		model.addAttribute("lang", httpService.getLanguage());
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
 		model.addAttribute("cdnUrl", appConfig.getCdnURL());
@@ -119,7 +117,6 @@ public class HomeController {
 		return JsonUtil.toJson(wrapper);
 	}
 
-	
 	@RequestMapping(value = { "/pub/terms" }, method = { RequestMethod.GET })
 	public String termsAndCondition(Model model) {
 		JSONObject dataJson = new JSONObject();
@@ -138,5 +135,4 @@ public class HomeController {
 		}
 		return "terms";
 	}
-
 }

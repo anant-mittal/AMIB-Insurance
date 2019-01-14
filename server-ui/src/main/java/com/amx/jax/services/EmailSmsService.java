@@ -32,15 +32,17 @@ import com.amx.jax.postman.model.File;
 import com.amx.jax.postman.model.Notipy;
 import com.amx.jax.postman.model.Notipy.Channel;
 import com.amx.jax.postman.model.SMS;
+import com.amx.jax.postman.model.SupportEmail;
 import com.amx.jax.postman.model.TemplatesIB;
 import com.amx.jax.ui.session.UserSession;
 import com.amx.jax.utility.Utility;
 import com.amx.utils.Random;
+import com.amx.utils.Utils;
 
 @Service
 public class EmailSmsService
 {
-	String TAG = "com.insurance.services :: EmailSmsService :: ";
+	String TAG = "EmailSmsService :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(EmailSmsService.class);
 
@@ -888,6 +890,68 @@ public class EmailSmsService
 			e.printStackTrace();
 		}
 	}
+	
+	
+	
+	
+	
+	
+	public AmxApiResponse<Email, Object> sendEmailToSupprt(SupportEmail supportEmail) 
+	{
+		
+		
+		Map<String, String> map = new HashMap<String, String>();
+		
+		map.put(DetailsConstants.CONTACT_US_EMAIL, metaService.getTenantProfile().getContactUsEmail());
+		map.put(DetailsConstants.AMIB_WEBSITE_LINK, metaService.getTenantProfile().getAmibWebsiteLink());
+		map.put(DetailsConstants.CONTACT_US_EMAIL, metaService.getTenantProfile().getContactUsEmail());
+		map.put(DetailsConstants.COMPANY_NAME, getCompanyName());
+		map.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
+		map.put("name", supportEmail.getVisitorName());
+		map.put("cphone", supportEmail.getVisitorPhone());
+		map.put("cemail", supportEmail.getVisitorEmail());
+		map.put("message", supportEmail.getVisitorMessage());
+		map.put("identity", supportEmail.getIdentity());
+		map.put("lines", Utils.concatenate(supportEmail.getLines(), " \n "));
+
+		Email email = new Email();
+		email.setReplyTo(supportEmail.getVisitorEmail());//Visitor Email Id
+		email.addAllTo("abhishek.tiwari@mobicule.com");
+		email.getModel().put("data", map);
+		email.setSubject("AMIB Insurance Inquiry");
+		email.setITemplate(TemplatesIB.CONTACT_US);
+		email.setHtml(true);
+		email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
+		
+		logger.info(TAG+" sendEmailToSupprt :: getVisitorName :" + supportEmail.getVisitorName());
+		
+		postManClient.sendEmail(email);
+		
+		
+		/*Notipy msg = new Notipy();
+		msg.setMessage(supportEmail.getSubject());
+		//msg.addLine("Tenant : " + AppContextUtil.getTenant());
+		msg.addLine("VisitorName : " + supportEmail.getVisitorName());
+		msg.addLine("VisitorEmail : " + supportEmail.getVisitorEmail());
+		msg.addLine("VisitorPhone : " + supportEmail.getVisitorPhone());
+		msg.addLine("VisitorMessage : " + supportEmail.getVisitorMessage());
+		msg.setSubject(supportEmail.getSubject());
+		msg.setChannel(Notipy.Channel.INQUIRY);
+		postManClient.notifySlack(msg);*/
+		return AmxApiResponse.build(email);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	/*
 	 * 

@@ -23,9 +23,15 @@ import com.amx.jax.models.CustomerRegistrationRequest;
 import com.amx.jax.models.CustomerRegistrationResponse;
 import com.amx.jax.models.RequestOtpModel;
 import com.amx.jax.models.ResponseInfo;
+import com.amx.jax.postman.PostManService;
+import com.amx.jax.postman.client.GoogleService;
+import com.amx.jax.postman.model.Email;
+import com.amx.jax.postman.model.SupportEmail;
 import com.amx.jax.services.CustomerRegistrationService;
 import com.amx.jax.services.EmailSmsService;
 import com.amx.jax.swagger.ApiMockParam;
+import com.amx.jax.ui.response.ResponseWrapper;
+import com.amx.jax.ui.response.WebResponseStatus;
 import com.amx.jax.ui.session.UserSession;
 import com.amx.utils.ArgUtil;
 
@@ -49,7 +55,11 @@ public class CustomerRegistrationController {
 	private CustomerRegistrationService customerRegistrationService;
 
 	@Autowired
+	private GoogleService googleService;
+	
+	@Autowired
 	EmailSmsService emailSmsService;
+
 
 	@ApiOperation(value = "api to validate valid civil id")
 	@ApiWebAppStatus({ WebAppStatusCodes.CIVIL_ID_INVALID, WebAppStatusCodes.CIVIL_ID_VALID,
@@ -170,4 +180,31 @@ public class CustomerRegistrationController {
 		resp.setMessageKey(Message.LOGOUT_MESSAGE);
 		return resp;
 	}
+
+	@RequestMapping(value = "/pub/contact", method = { RequestMethod.POST })
+	public ResponseWrapper<Email> contactUs(@RequestParam String name, @RequestParam String cemail,
+			@RequestParam String cphone, @RequestParam String message, @RequestParam String verify) {
+		ResponseWrapper<Email> wrapper = new ResponseWrapper<>();
+		try {
+			if (googleService.verifyCaptcha(verify, httpService.getIPAddress())) {
+				SupportEmail email = new SupportEmail();
+				email.setCaptchaCode(verify);
+				email.setVisitorName(name);
+				email.setVisitorPhone(cphone);
+				email.setVisitorEmail(cemail);
+				email.setVisitorMessage(message);
+				emailSmsService.sendEmailToSupprt(email);
+				wrapper.setData(email);
+			}
+
+			else {
+				wrapper.setStatusKey(WebResponseStatus.ERROR);
+			}
+
+		} catch (Exception e) {
+			wrapper.setStatusKey(WebResponseStatus.ERROR);
+		}
+		return wrapper;
+	}
+
 }
