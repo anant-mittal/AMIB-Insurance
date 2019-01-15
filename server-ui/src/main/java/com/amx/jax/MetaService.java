@@ -64,6 +64,7 @@ public class MetaService implements IMetaService {
 	public UserDeviceInfos getUserDeviceInfo() 
 	{
 		logger.info("MetaService :: getUserDeviceInfo :: getIPAddress :" + httpService.getIPAddress());
+		logger.info("MetaService :: getUserDeviceInfo :: getDeviceId  :" + httpService.getDeviceId());
 		
 		if (userDeviceInfos.getDeviceId() == null)
 		{

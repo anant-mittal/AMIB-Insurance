@@ -99,6 +99,10 @@ public class HomeController {
 	@RequestMapping(value = { "/", "/register/**", "/login/**", "/app/**", "/resetPwd", "/home/**" }, method = {
 			RequestMethod.GET })
 	public String loginJPage(Model model, HttpServletRequest request) {
+		
+		logger.info("HomeController :: loginJPage :: getIPAddress :" + httpService.getIPAddress());
+		logger.info("HomeController :: loginJPage :: getDeviceId  :" + httpService.getDeviceId());
+		
 		model.addAttribute("lang", httpService.getLanguage());
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
 		model.addAttribute("cdnUrl", appConfig.getCdnURL());

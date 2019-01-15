@@ -598,7 +598,7 @@ public class CustomerRegistrationDao
 
 			logger.info(TAG + " updatePassword :: errorCode     :" + errorCode);
 			logger.info(TAG + " updatePassword :: errorMessage  :" + errorMessage);
-
+			
 			customerDetailModel.setErrorCode(errorCode);
 			customerDetailModel.setErrorMessage(errorMessage);
 
