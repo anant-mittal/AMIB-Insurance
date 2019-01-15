@@ -25,7 +25,6 @@ public class MetaService implements IMetaService {
 
 	private static final Logger logger = LoggerFactory.getLogger(MetaService.class);
 	private static final long serialVersionUID = 8260115321460438947L;
-	private static final Logger LOGGER = LoggerFactory.getLogger(WebConfig.class);
 
 	@Autowired
 	private TenantProfile tenantProfile;
@@ -64,6 +63,8 @@ public class MetaService implements IMetaService {
 	@Override
 	public UserDeviceInfos getUserDeviceInfo() 
 	{
+		logger.info("MetaService :: getUserDeviceInfo :: getIPAddress :" + httpService.getIPAddress());
+		
 		if (userDeviceInfos.getDeviceId() == null)
 		{
 			userDeviceInfos.setDeviceId(httpService.getIPAddress());
