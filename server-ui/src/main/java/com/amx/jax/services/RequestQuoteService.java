@@ -3,6 +3,7 @@ package com.amx.jax.services;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +14,8 @@ import com.amx.jax.WebAppStatus.WebAppStatusCodes;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.HardCodedValues;
-import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.PersonalDetailsDao;
 import com.amx.jax.dao.RequestQuoteDao;
-import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CustomerProfileDetailModel;
 import com.amx.jax.models.DateFormats;
@@ -33,6 +32,7 @@ import com.amx.jax.models.VehicleDetailsGetModel;
 import com.amx.jax.models.VehicleDetailsHeaderModel;
 import com.amx.jax.models.VehicleDetailsUpdateModel;
 import com.amx.jax.ui.session.UserSession;
+import com.amx.jax.utility.CodeAvaibility;
 
 @Service
 public class RequestQuoteService
@@ -415,7 +415,9 @@ public class RequestQuoteService
 					vehicleDetails.setModelYear(vehicleDetailsGetModel.getModelNumber());
 					vehicleDetails.setVehicleValue(vehicleDetailsGetModel.getMaxInsmat());
 					vehicleDetails.setPolicyDuration(vehicleDetailsGetModel.getPolicyPeriod());
-					vehicleDetails.setPurposeCode(vehicleDetailsGetModel.getPurposeCode());
+					
+					vehicleDetails.setPurposeCode(CodeAvaibility.purposeCodeCheck(vehicleDetailsGetModel.getPurposeCode() , getPurpose().getResults()));
+					
 					vehicleDetails.setColourCode(vehicleDetailsGetModel.getColourCode());
 					vehicleDetails.setShapeCode(vehicleDetailsGetModel.getShapeCode());
 					vehicleDetails.setSeatingCapacity(vehicleDetailsGetModel.getNoPass());
@@ -433,6 +435,9 @@ public class RequestQuoteService
 						vehicleDetails.setApplicationType(null);
 					}
 				}
+				
+				logger.info("RequestQuoteService :: getAppVehicleDetails :: vehicleDetails :" + vehicleDetails.toString());
+				
 				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			}
 			else
