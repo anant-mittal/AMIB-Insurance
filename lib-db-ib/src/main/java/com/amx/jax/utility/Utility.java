@@ -22,7 +22,7 @@ public class Utility
 			BigDecimal out = new BigDecimal(inValue.toString()).setScale(tillDecimalPlace, BigDecimal.ROUND_DOWN);
 			return out;
 		}
-		return inValue;
+		return new BigDecimal(0);
 	}
 	
 	public static BigDecimal getNumericValue(BigDecimal value)
