@@ -1,6 +1,11 @@
 
 package com.amx.jax.controllers;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -8,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.amx.jax.HomeController;
 import com.amx.jax.WebAppStatus.ApiWebAppStatus;
 import com.amx.jax.WebAppStatus.WebAppStatusCodes;
 import com.amx.jax.api.AmxApiResponse;
@@ -42,6 +49,8 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 public class CustomerRegistrationController {
 
+	private static final Logger logger = LoggerFactory.getLogger(CustomerRegistrationController.class);
+	
 	@Autowired
 	CommonHttpRequest httpService;
 
@@ -207,4 +216,79 @@ public class CustomerRegistrationController {
 		return wrapper;
 	}
 
+	@RequestMapping(value = { "/pub/checkIp" }, method = { RequestMethod.POST })
+	public AmxApiResponse<?, Object> getClientIpAddr(HttpServletRequest request) 
+	{
+		
+		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
+		
+		JSONObject dataJson = new JSONObject();
+		
+		String ip = request.getHeader("X-Forwarded-For");
+		dataJson.put("X-Forwarded-For", ip);
+		
+		logger.info("X-Forwarded-For :: ip :" + ip);
+		
+		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
+			ip = request.getHeader("Proxy-Client-IP");
+			logger.info("RemoteIpTest :: Proxy-Client-IP :: ip :" + ip);
+			dataJson.put("Proxy-Client-IP", ip);
+		}
+		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
+			ip = request.getHeader("WL-Proxy-Client-IP");
+			logger.info("RemoteIpTest :: WL-Proxy-Client-IP :: ip :" + ip);
+			dataJson.put("WL-Proxy-Client-IP", ip);
+		}
+		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
+			ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+			logger.info("RemoteIpTest :: HTTP_X_FORWARDED_FOR :: ip :" + ip);
+			dataJson.put("HTTP_X_FORWARDED_FOR", ip);
+		}
+		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
+			ip = request.getHeader("HTTP_X_FORWARDED");
+			logger.info("RemoteIpTest :: HTTP_X_FORWARDED :: ip :" + ip);
+			dataJson.put("HTTP_X_FORWARDED", ip);
+		}
+		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
+			ip = request.getHeader("HTTP_X_CLUSTER_CLIENT_IP");
+			logger.info("RemoteIpTest :: HTTP_X_CLUSTER_CLIENT_IP :: ip :" + ip);
+			dataJson.put("HTTP_X_CLUSTER_CLIENT_IP", ip);
+		}
+		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
+			ip = request.getHeader("HTTP_CLIENT_IP");
+			logger.info("RemoteIpTest :: HTTP_CLIENT_IP :: ip :" + ip);
+			dataJson.put("HTTP_CLIENT_IP", ip);
+		}
+		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
+			ip = request.getHeader("HTTP_FORWARDED_FOR");
+			logger.info("RemoteIpTest :: HTTP_FORWARDED_FOR :: ip :" + ip);
+			dataJson.put("HTTP_FORWARDED_FOR", ip);
+		}
+		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
+			ip = request.getHeader("HTTP_FORWARDED");
+			logger.info("RemoteIpTest :: HTTP_FORWARDED :: ip :" + ip);
+			dataJson.put("HTTP_FORWARDED", ip);
+		}
+		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
+			ip = request.getHeader("HTTP_VIA");
+			logger.info("RemoteIpTest :: HTTP_VIA :: ip :" + ip);
+			dataJson.put("HTTP_VIA", ip);
+		}
+		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
+			ip = request.getHeader("REMOTE_ADDR");
+			logger.info("RemoteIpTest :: REMOTE_ADDR :: ip :" + ip);
+			dataJson.put("REMOTE_ADDR", ip);
+		}
+		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
+			ip = request.getRemoteAddr();
+			logger.info("RemoteIpTest :: getRemoteAddr :: ip :" + ip);
+			dataJson.put("request.getRemoteAddr()", ip);
+		}
+		
+		resp.setData(dataJson.toString());
+		
+		return resp;
+		
+	}
+	
 }
