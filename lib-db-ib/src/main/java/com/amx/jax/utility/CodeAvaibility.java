@@ -13,7 +13,7 @@ public class CodeAvaibility
 	
 	public static String purposeCodeCheck(String key , List<?> list)
 	{
-		logger.info("KeyAvaibility :: purposeKeyAvaibility :: key :" + key);
+		//logger.info("KeyAvaibility :: purposeKeyAvaibility :: key :" + key);
 		
 		if(null != key && !key.equals("") && list.size() > 0)
 		{
@@ -23,11 +23,11 @@ public class CodeAvaibility
 			{
 				Purpose purpose = purposeArray.get(i);
 				
-				logger.info("KeyAvaibility :: purposeKeyAvaibility :: getPurposeCode :" + purpose.getPurposeCode());
+				//logger.info("KeyAvaibility :: purposeKeyAvaibility :: getPurposeCode :" + purpose.getPurposeCode());
 				
 				if(key.equalsIgnoreCase(purpose.getPurposeCode()))
 				{
-					logger.info("KeyAvaibility :: purposeKeyAvaibility :: return PurposeCode :" + purpose.getPurposeCode());
+					//logger.info("KeyAvaibility :: purposeKeyAvaibility :: return PurposeCode :" + purpose.getPurposeCode());
 					return purpose.getPurposeCode();
 				}
 			}

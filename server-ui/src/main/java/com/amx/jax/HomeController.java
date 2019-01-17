@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -71,6 +72,12 @@ public class HomeController {
 	@Autowired
 	IMetaService metaService;
 	
+	@Autowired(required = false)
+	private HttpServletRequest request;
+
+	@Autowired(required = false)
+	private HttpServletResponse response;
+	
 
 	/**
 	 * Gets the version.
@@ -99,9 +106,8 @@ public class HomeController {
 	@RequestMapping(value = { "/", "/register/**", "/login/**", "/app/**", "/resetPwd", "/home/**" }, method = {
 			RequestMethod.GET })
 	public String loginJPage(Model model, HttpServletRequest request) {
-		
-		logger.info("HomeController :: loginJPage :: getIPAddress :" + httpService.getIPAddress());
-		logger.info("HomeController :: loginJPage :: getDeviceId  :" + httpService.getDeviceId());
+
+		logger.info("HomeController :: loginJPage :: getIPAddress :" + getClientIpAddr(request));
 		
 		model.addAttribute("lang", httpService.getLanguage());
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
@@ -139,4 +145,43 @@ public class HomeController {
 		}
 		return "terms";
 	}
+
+	public static String getClientIpAddr(HttpServletRequest request) {
+		String ip = request.getHeader("X-Forwarded-For");
+		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
+			ip = request.getHeader("Proxy-Client-IP");
+		}
+		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
+			ip = request.getHeader("WL-Proxy-Client-IP");
+		}
+		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
+			ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+		}
+		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
+			ip = request.getHeader("HTTP_X_FORWARDED");
+		}
+		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
+			ip = request.getHeader("HTTP_X_CLUSTER_CLIENT_IP");
+		}
+		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
+			ip = request.getHeader("HTTP_CLIENT_IP");
+		}
+		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
+			ip = request.getHeader("HTTP_FORWARDED_FOR");
+		}
+		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
+			ip = request.getHeader("HTTP_FORWARDED");
+		}
+		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
+			ip = request.getHeader("HTTP_VIA");
+		}
+		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
+			ip = request.getHeader("REMOTE_ADDR");
+		}
+		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
+			ip = request.getRemoteAddr();
+		}
+		return ip;
+	}
+
 }

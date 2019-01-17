@@ -191,4 +191,37 @@ public class RequestQuoteController {
 		}
 		return requestQuoteService.submitRequestQuote(appSeqNumberDet, insuranceCompDet);
 	}
+	
+	
+	/*@RequestMapping(value = "/api/requestquote/test", method = RequestMethod.GET)
+	public AmxApiResponse<?, Object> test() 
+	{
+		ArrayList<Purpose> purposeArray = new ArrayList<Purpose>();
+		String key = "key223";
+		
+		Purpose purpose3 = new Purpose();
+		purpose3.setPurposeCode("key333");
+		purpose3.setPurposeDesc("val333");
+		
+		Purpose purpose2 = new Purpose();
+		purpose2.setPurposeCode("key222");
+		purpose2.setPurposeDesc("val222");
+		
+		Purpose purpose1 = new Purpose();
+		purpose1.setPurposeCode("key111");
+		purpose1.setPurposeDesc("val111");
+		
+		purposeArray.add(purpose1);
+		purposeArray.add(purpose2);
+		purposeArray.add(purpose3);
+		
+		logger.info("RequestQuoteService :: getAppVehicleDetails :: getPurposeCode :" + key);
+		
+		logger.info("RequestQuoteService :: getAppVehicleDetails :: returned key   :" + KeyAvaibility.purposeKeyAvaibility(key , purposeArray));
+		
+		return null;
+		
+	}*/
+	
+	
 }
