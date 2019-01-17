@@ -9,6 +9,7 @@ import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,7 +108,6 @@ public class HomeController {
 			RequestMethod.GET })
 	public String loginJPage(Model model, HttpServletRequest request) {
 
-		logger.info("HomeController :: loginJPage :: getIPAddress :" + getClientIpAddr(request));
 		
 		model.addAttribute("lang", httpService.getLanguage());
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
@@ -146,56 +146,73 @@ public class HomeController {
 		return "terms";
 	}
 
-	public static String getClientIpAddr(HttpServletRequest request) {
+	
+	@RequestMapping(value = { "/pub/checkIp" }, method = { RequestMethod.GET })
+	public JSONObject getClientIpAddr(HttpServletRequest request) 
+	{
+		JSONObject dataJson = new JSONObject();
+		
 		String ip = request.getHeader("X-Forwarded-For");
+		dataJson.put("X-Forwarded-For", ip);
 		
 		logger.info("X-Forwarded-For :: ip :" + ip);
 		
 		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
 			ip = request.getHeader("Proxy-Client-IP");
 			logger.info("RemoteIpTest :: Proxy-Client-IP :: ip :" + ip);
+			dataJson.put("Proxy-Client-IP", ip);
 		}
 		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
 			ip = request.getHeader("WL-Proxy-Client-IP");
 			logger.info("RemoteIpTest :: WL-Proxy-Client-IP :: ip :" + ip);
+			dataJson.put("WL-Proxy-Client-IP", ip);
 		}
 		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
 			ip = request.getHeader("HTTP_X_FORWARDED_FOR");
 			logger.info("RemoteIpTest :: HTTP_X_FORWARDED_FOR :: ip :" + ip);
+			dataJson.put("HTTP_X_FORWARDED_FOR", ip);
 		}
 		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
 			ip = request.getHeader("HTTP_X_FORWARDED");
 			logger.info("RemoteIpTest :: HTTP_X_FORWARDED :: ip :" + ip);
+			dataJson.put("HTTP_X_FORWARDED", ip);
 		}
 		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
 			ip = request.getHeader("HTTP_X_CLUSTER_CLIENT_IP");
 			logger.info("RemoteIpTest :: HTTP_X_CLUSTER_CLIENT_IP :: ip :" + ip);
+			dataJson.put("HTTP_X_CLUSTER_CLIENT_IP", ip);
 		}
 		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
 			ip = request.getHeader("HTTP_CLIENT_IP");
 			logger.info("RemoteIpTest :: HTTP_CLIENT_IP :: ip :" + ip);
+			dataJson.put("HTTP_CLIENT_IP", ip);
 		}
 		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
 			ip = request.getHeader("HTTP_FORWARDED_FOR");
 			logger.info("RemoteIpTest :: HTTP_FORWARDED_FOR :: ip :" + ip);
+			dataJson.put("HTTP_FORWARDED_FOR", ip);
 		}
 		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
 			ip = request.getHeader("HTTP_FORWARDED");
 			logger.info("RemoteIpTest :: HTTP_FORWARDED :: ip :" + ip);
+			dataJson.put("HTTP_FORWARDED", ip);
 		}
 		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
 			ip = request.getHeader("HTTP_VIA");
 			logger.info("RemoteIpTest :: HTTP_VIA :: ip :" + ip);
+			dataJson.put("HTTP_VIA", ip);
 		}
 		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
 			ip = request.getHeader("REMOTE_ADDR");
 			logger.info("RemoteIpTest :: REMOTE_ADDR :: ip :" + ip);
+			dataJson.put("REMOTE_ADDR", ip);
 		}
 		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
 			ip = request.getRemoteAddr();
 			logger.info("RemoteIpTest :: getRemoteAddr :: ip :" + ip);
+			dataJson.put("request.getRemoteAddr()", ip);
 		}
-		return ip;
+		return dataJson;
 	}
 
 }
