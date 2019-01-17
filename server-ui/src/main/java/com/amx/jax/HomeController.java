@@ -2,6 +2,7 @@
 package com.amx.jax;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
@@ -148,9 +149,9 @@ public class HomeController {
 
 	
 	@RequestMapping(value = { "/pub/checkIp" }, method = { RequestMethod.GET })
-	public JSONObject getClientIpAddr(HttpServletRequest request) 
+	public String getClientIpAddr(HttpServletRequest request) 
 	{
-		JSONObject dataJson = new JSONObject();
+		HashMap<String,String> dataJson = new HashMap();
 		
 		String ip = request.getHeader("X-Forwarded-For");
 		dataJson.put("X-Forwarded-For", ip);
@@ -212,7 +213,11 @@ public class HomeController {
 			logger.info("RemoteIpTest :: getRemoteAddr :: ip :" + ip);
 			dataJson.put("request.getRemoteAddr()", ip);
 		}
-		return dataJson;
+		
+		ResponseWrapper<HashMap> wrapper = new ResponseWrapper<HashMap>(null);
+		wrapper.setMessage(dataJson.toString());
+		return JsonUtil.toJson(wrapper);
+		
 	}
 
 }

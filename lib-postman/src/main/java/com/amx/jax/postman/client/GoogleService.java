@@ -11,7 +11,8 @@ import com.amx.utils.ArgUtil;
 @Component
 public class GoogleService {
 
-	private String googleSecret = "6LeK33AUAAAAANWoO_wM5_3FxJ0DoPjPZp_n7pVz";
+	//private String googleSecret = "6LeK33AUAAAAANWoO_wM5_3FxJ0DoPjPZp_n7pVz";
+	private String googleSecret = "6LdtFEMUAAAAACbe0JJ2MDSrsLPseUTCjb659uHD";
 
 	@Autowired
 	RestService restService;
