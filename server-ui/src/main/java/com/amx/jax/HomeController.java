@@ -21,8 +21,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.http.CommonHttpRequest;
 import com.amx.jax.meta.IMetaService;
+import com.amx.jax.models.ResponseOtpModel;
 import com.amx.jax.rest.RestService;
 import com.amx.jax.services.CustomizeQuoteService;
 import com.amx.jax.ui.response.ResponseMessage;
@@ -149,9 +151,12 @@ public class HomeController {
 
 	
 	@RequestMapping(value = { "/pub/checkIp" }, method = { RequestMethod.GET })
-	public String getClientIpAddr(HttpServletRequest request) 
+	public AmxApiResponse<?, Object> getClientIpAddr(HttpServletRequest request) 
 	{
-		HashMap<String,String> dataJson = new HashMap();
+		
+		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
+		
+		JSONObject dataJson = new JSONObject();
 		
 		String ip = request.getHeader("X-Forwarded-For");
 		dataJson.put("X-Forwarded-For", ip);
@@ -214,9 +219,9 @@ public class HomeController {
 			dataJson.put("request.getRemoteAddr()", ip);
 		}
 		
-		ResponseWrapper<HashMap> wrapper = new ResponseWrapper<HashMap>(null);
-		wrapper.setMessage(dataJson.toString());
-		return JsonUtil.toJson(wrapper);
+		resp.setData(dataJson.toString());
+		
+		return resp;
 		
 	}
 
