@@ -148,38 +148,52 @@ public class HomeController {
 
 	public static String getClientIpAddr(HttpServletRequest request) {
 		String ip = request.getHeader("X-Forwarded-For");
+		
+		logger.info("X-Forwarded-For :: ip :" + ip);
+		
 		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
 			ip = request.getHeader("Proxy-Client-IP");
+			logger.info("RemoteIpTest :: Proxy-Client-IP :: ip :" + ip);
 		}
 		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
 			ip = request.getHeader("WL-Proxy-Client-IP");
+			logger.info("RemoteIpTest :: WL-Proxy-Client-IP :: ip :" + ip);
 		}
 		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
 			ip = request.getHeader("HTTP_X_FORWARDED_FOR");
+			logger.info("RemoteIpTest :: HTTP_X_FORWARDED_FOR :: ip :" + ip);
 		}
 		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
 			ip = request.getHeader("HTTP_X_FORWARDED");
+			logger.info("RemoteIpTest :: HTTP_X_FORWARDED :: ip :" + ip);
 		}
 		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
 			ip = request.getHeader("HTTP_X_CLUSTER_CLIENT_IP");
+			logger.info("RemoteIpTest :: HTTP_X_CLUSTER_CLIENT_IP :: ip :" + ip);
 		}
 		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
 			ip = request.getHeader("HTTP_CLIENT_IP");
+			logger.info("RemoteIpTest :: HTTP_CLIENT_IP :: ip :" + ip);
 		}
 		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
 			ip = request.getHeader("HTTP_FORWARDED_FOR");
+			logger.info("RemoteIpTest :: HTTP_FORWARDED_FOR :: ip :" + ip);
 		}
 		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
 			ip = request.getHeader("HTTP_FORWARDED");
+			logger.info("RemoteIpTest :: HTTP_FORWARDED :: ip :" + ip);
 		}
 		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
 			ip = request.getHeader("HTTP_VIA");
+			logger.info("RemoteIpTest :: HTTP_VIA :: ip :" + ip);
 		}
 		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
 			ip = request.getHeader("REMOTE_ADDR");
+			logger.info("RemoteIpTest :: REMOTE_ADDR :: ip :" + ip);
 		}
 		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
 			ip = request.getRemoteAddr();
+			logger.info("RemoteIpTest :: getRemoteAddr :: ip :" + ip);
 		}
 		return ip;
 	}
