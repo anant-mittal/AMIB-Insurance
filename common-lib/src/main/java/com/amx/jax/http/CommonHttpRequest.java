@@ -185,10 +185,8 @@ public class CommonHttpRequest {
 		UserAgent userAgent = this.getUserAgent();
 
 		if (currentDevice != null) {
-			userDevice.setType(
-					(currentDevice.isMobile() ? UserClient.DeviceType.MOBILE
-							: (currentDevice.isTablet() ? UserClient.DeviceType.TABLET
-									: UserClient.DeviceType.COMPUTER)));
+			userDevice.setType((currentDevice.isMobile() ? UserClient.DeviceType.MOBILE
+					: (currentDevice.isTablet() ? UserClient.DeviceType.TABLET : UserClient.DeviceType.COMPUTER)));
 
 			DevicePlatform devicePlatform = DevicePlatform.UNKNOWN;
 			if (currentDevice.getDevicePlatform() == org.springframework.mobile.device.DevicePlatform.ANDROID
@@ -282,8 +280,8 @@ public class CommonHttpRequest {
 			if (!ArgUtil.isEmpty(handlerExeChain)) {
 				handlerMethod = (HandlerMethod) handlerExeChain.getHandler();
 				if (!ArgUtil.isEmpty(handlerMethod)) {
-					String handlerKey = handlerMethod.getShortLogMessage() + "#" +
-							ArgUtil.parseAsString(handlerMethod.hashCode());
+					String handlerKey = handlerMethod.getShortLogMessage() + "#"
+							+ ArgUtil.parseAsString(handlerMethod.hashCode());
 					handlerKey = handlerMethod.getMethod().toGenericString();
 					return apiRequestMap.get(handlerKey);
 				}
@@ -309,12 +307,10 @@ public class CommonHttpRequest {
 					apiRequest = handlerMethod.getBeanType().getAnnotation(ApiRequest.class);
 				}
 				if (apiRequest != null) {
-					String handlerKey = handlerMethod.getShortLogMessage() + "#" +
-							ArgUtil.parseAsString(handlerMethod.hashCode());
+					String handlerKey = handlerMethod.getShortLogMessage() + "#"
+							+ ArgUtil.parseAsString(handlerMethod.hashCode());
 					handlerKey = handlerMethod.getMethod().toGenericString();
-					apiRequestMap.put(
-							handlerKey,
-							apiRequest);
+					apiRequestMap.put(handlerKey, apiRequest);
 				}
 
 			}

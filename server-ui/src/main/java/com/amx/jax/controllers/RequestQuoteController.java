@@ -41,7 +41,7 @@ public class RequestQuoteController {
 		return requestQuoteService.getMake();
 	}
 
-	@ApiOperation(value = "returns vehicle details submake meta data for dropdown " , notes = "will return the data on basisi of make selected so selected make code need to enter.")
+	@ApiOperation(value = "returns vehicle details submake meta data for dropdown ", notes = "will return the data on basisi of make selected so selected make code need to enter.")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/vehicledetails/sub-make", method = RequestMethod.GET, produces = "application/json")
 	public AmxApiResponse<?, Object> getModel(@RequestParam("make") String make) {
@@ -104,7 +104,7 @@ public class RequestQuoteController {
 		return requestQuoteService.getRequestQuoteDetails();
 	}
 
-	@ApiOperation(value = "submits updated vehicle details to server" , notes = "for a new quote app sequence number will not present , "
+	@ApiOperation(value = "submits updated vehicle details to server", notes = "for a new quote app sequence number will not present , "
 			+ "but on the success of submit of vehicle details app sequence number will be generated in response and same "
 			+ "will be mandatory and need to be entered after updating the vehicle details of same quote. If for the same quote the "
 			+ "generated app sequence number not entered it will generate a new app sequence number and it will treated as new quote with new app sequence number ")
@@ -120,11 +120,10 @@ public class RequestQuoteController {
 		return requestQuoteService.setAppVehicleDetails(appSeqNumberDet, vehicleDetails, null);
 	}
 
-	@ApiOperation(value = "submits updated profile details to server" , notes = "here to update personal details it is mandatory to enter app sequence number")
+	@ApiOperation(value = "submits updated profile details to server", notes = "here to update personal details it is mandatory to enter app sequence number")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/api/request-quote/set-personal-details", method = RequestMethod.POST, produces = "application/json")
-	public AmxApiResponse<?, Object> setProfileDetails(
-			@RequestParam(name = "appSeqNumber") String appSeqNumber,
+	public AmxApiResponse<?, Object> setProfileDetails(@RequestParam(name = "appSeqNumber") String appSeqNumber,
 			@RequestBody PersonalDetails personalDetails) {
 		BigDecimal appSeqNumberDet = null;
 		if (null != appSeqNumber && !appSeqNumber.equals("") && !appSeqNumber.equalsIgnoreCase("null")) {
@@ -133,7 +132,7 @@ public class RequestQuoteController {
 		return requestQuoteService.setProfileDetails(appSeqNumberDet, personalDetails);
 	}
 
-	@ApiOperation(value = "submit upadted vehicle image to server" , notes = "image type can be only jpeg and png format while uploading image for the first time "
+	@ApiOperation(value = "submit upadted vehicle image to server", notes = "image type can be only jpeg and png format while uploading image for the first time "
 			+ "doc sequence number will be null , but after upload it will create a doc dequence number which will "
 			+ "required to enter while updating the same image. Doc sequence number of uploaded image can be get from "
 			+ "/api/request-quote/get-requestquote-details api.")
@@ -191,37 +190,33 @@ public class RequestQuoteController {
 		}
 		return requestQuoteService.submitRequestQuote(appSeqNumberDet, insuranceCompDet);
 	}
-	
-	
-	/*@RequestMapping(value = "/api/requestquote/test", method = RequestMethod.GET)
-	public AmxApiResponse<?, Object> test() 
-	{
-		ArrayList<Purpose> purposeArray = new ArrayList<Purpose>();
-		String key = "key223";
-		
-		Purpose purpose3 = new Purpose();
-		purpose3.setPurposeCode("key333");
-		purpose3.setPurposeDesc("val333");
-		
-		Purpose purpose2 = new Purpose();
-		purpose2.setPurposeCode("key222");
-		purpose2.setPurposeDesc("val222");
-		
-		Purpose purpose1 = new Purpose();
-		purpose1.setPurposeCode("key111");
-		purpose1.setPurposeDesc("val111");
-		
-		purposeArray.add(purpose1);
-		purposeArray.add(purpose2);
-		purposeArray.add(purpose3);
-		
-		logger.info("RequestQuoteService :: getAppVehicleDetails :: getPurposeCode :" + key);
-		
-		logger.info("RequestQuoteService :: getAppVehicleDetails :: returned key   :" + KeyAvaibility.purposeKeyAvaibility(key , purposeArray));
-		
-		return null;
-		
-	}*/
-	
-	
+
+	/*
+	 * @RequestMapping(value = "/api/requestquote/test", method = RequestMethod.GET)
+	 * public AmxApiResponse<?, Object> test() { ArrayList<Purpose> purposeArray =
+	 * new ArrayList<Purpose>(); String key = "key223";
+	 * 
+	 * Purpose purpose3 = new Purpose(); purpose3.setPurposeCode("key333");
+	 * purpose3.setPurposeDesc("val333");
+	 * 
+	 * Purpose purpose2 = new Purpose(); purpose2.setPurposeCode("key222");
+	 * purpose2.setPurposeDesc("val222");
+	 * 
+	 * Purpose purpose1 = new Purpose(); purpose1.setPurposeCode("key111");
+	 * purpose1.setPurposeDesc("val111");
+	 * 
+	 * purposeArray.add(purpose1); purposeArray.add(purpose2);
+	 * purposeArray.add(purpose3);
+	 * 
+	 * logger.info("RequestQuoteService :: getAppVehicleDetails :: getPurposeCode :"
+	 * + key);
+	 * 
+	 * logger.info("RequestQuoteService :: getAppVehicleDetails :: returned key   :"
+	 * + KeyAvaibility.purposeKeyAvaibility(key , purposeArray));
+	 * 
+	 * return null;
+	 * 
+	 * }
+	 */
+
 }
