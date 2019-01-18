@@ -1,10 +1,13 @@
 
 package com.amx.jax.controllers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +55,7 @@ import io.swagger.annotations.ApiOperation;
 public class CustomerRegistrationController {
 
 	private static final Logger logger = LoggerFactory.getLogger(CustomerRegistrationController.class);
-	
+
 	@Autowired
 	CommonHttpRequest httpService;
 
@@ -67,10 +70,9 @@ public class CustomerRegistrationController {
 
 	@Autowired
 	private GoogleService googleService;
-	
+
 	@Autowired
 	EmailSmsService emailSmsService;
-
 
 	@ApiOperation(value = "api to validate valid civil id")
 	@ApiWebAppStatus({ WebAppStatusCodes.CIVIL_ID_INVALID, WebAppStatusCodes.CIVIL_ID_VALID,
@@ -219,115 +221,55 @@ public class CustomerRegistrationController {
 	}
 
 	@RequestMapping(value = { "/pub/checkIp" }, method = { RequestMethod.POST })
-	public AmxApiResponse<?, Object> getClientIpAddr(HttpServletRequest request) 
-	{
-		
+	public AmxApiResponse<?, Object> getClientIpAddr(HttpServletRequest request) {
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
-		
+
+		List<HashMap<String, String>> dataArray = new ArrayList();
+
 		HashMap<String, String> dataJson = new HashMap();
-		
-		/*String ip = request.getHeader("X-Forwarded-For");
+
+		String ip = request.getHeader("X-Forwarded-For");
 		dataJson.put("X-Forwarded-For", ip);
-		
-		logger.info("X-Forwarded-For :: ip :" + ip);
-		
-		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
-			String ip1 = request.getHeader("Proxy-Client-IP");
-			dataJson.put("Proxy-Client-IP", ip1);
-		}
-		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
-			String ip2 = request.getHeader("WL-Proxy-Client-IP");
-			logger.info("RemoteIpTest :: WL-Proxy-Client-IP :: ip :" + ip);
-			dataJson.put("WL-Proxy-Client-IP", ip2);
-		}
-		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
-			String ip3 = request.getHeader("HTTP_X_FORWARDED_FOR");
-			logger.info("RemoteIpTest :: HTTP_X_FORWARDED_FOR :: ip :" + ip);
-			dataJson.put("HTTP_X_FORWARDED_FOR", ip3);
-		}
-		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
-			String ip4 = request.getHeader("HTTP_X_FORWARDED");
-			logger.info("RemoteIpTest :: HTTP_X_FORWARDED :: ip :" + ip);
-			dataJson.put("HTTP_X_FORWARDED", ip4);
-		}
-		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
-			String ip5 = request.getHeader("HTTP_X_CLUSTER_CLIENT_IP");
-			logger.info("RemoteIpTest :: HTTP_X_CLUSTER_CLIENT_IP :: ip :" + ip);
-			dataJson.put("HTTP_X_CLUSTER_CLIENT_IP", ip5);
-		}
-		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
-			String ip6 = request.getHeader("HTTP_CLIENT_IP");
-			logger.info("RemoteIpTest :: HTTP_CLIENT_IP :: ip :" + ip);
-			dataJson.put("HTTP_CLIENT_IP", ip6);
-		}
-		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
-			String ip7 = request.getHeader("HTTP_FORWARDED_FOR");
-			logger.info("RemoteIpTest :: HTTP_FORWARDED_FOR :: ip :" + ip);
-			dataJson.put("HTTP_FORWARDED_FOR", ip7);
-		}
-		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
-			String ip8 = request.getHeader("HTTP_FORWARDED");
-			logger.info("RemoteIpTest :: HTTP_FORWARDED :: ip :" + ip);
-			dataJson.put("HTTP_FORWARDED", ip8);
-		}
-		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
-			String ip9 = request.getHeader("HTTP_VIA");
-			logger.info("RemoteIpTest :: HTTP_VIA :: ip :" + ip);
-			dataJson.put("HTTP_VIA", ip9);
-		}
-		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
-			String ip10 = request.getHeader("REMOTE_ADDR");
-			logger.info("RemoteIpTest :: REMOTE_ADDR :: ip :" + ip);
-			dataJson.put("REMOTE_ADDR", ip10);
-		}
-		if (ip == null || ip.length() == 0 || ip.equalsIgnoreCase("unknown")) {
-			String ip11 = request.getRemoteAddr();
-			logger.info("RemoteIpTest :: getRemoteAddr :: ip :" + ip);
-			dataJson.put("request.getRemoteAddr()", ip11);
-		}*/
-		
-		
-		
-			String ip = request.getHeader("X-Forwarded-For");
-			dataJson.put("X-Forwarded-For", ip);
-		
-			String ip1 = request.getHeader("Proxy-Client-IP");
-			dataJson.put("Proxy-Client-IP", ip1);
-		
-			String ip2 = request.getHeader("WL-Proxy-Client-IP");
-			dataJson.put("WL-Proxy-Client-IP", ip2);
-		
-			String ip3 = request.getHeader("HTTP_X_FORWARDED_FOR");
-			dataJson.put("HTTP_X_FORWARDED_FOR", ip3);
-		
-			String ip4 = request.getHeader("HTTP_X_FORWARDED");
-			dataJson.put("HTTP_X_FORWARDED", ip4);
-		
-			String ip5 = request.getHeader("HTTP_X_CLUSTER_CLIENT_IP");
-			dataJson.put("HTTP_X_CLUSTER_CLIENT_IP", ip5);
-		
-			String ip6 = request.getHeader("HTTP_CLIENT_IP");
-			dataJson.put("HTTP_CLIENT_IP", ip6);
-		
-			String ip7 = request.getHeader("HTTP_FORWARDED_FOR");
-			dataJson.put("HTTP_FORWARDED_FOR", ip7);
-		
-			String ip8 = request.getHeader("HTTP_FORWARDED");
-			dataJson.put("HTTP_FORWARDED", ip8);
-		
-			String ip9 = request.getHeader("HTTP_VIA");
-			dataJson.put("HTTP_VIA", ip9);
-		
-			String ip10 = request.getHeader("REMOTE_ADDR");
-			dataJson.put("REMOTE_ADDR", ip10);
-		
-			String ip11 = request.getRemoteAddr();
-			dataJson.put("request.getRemoteAddr()", ip11);
-		
-		resp.setData(dataJson.toString());
-		
+
+		String ip1 = request.getHeader("Proxy-Client-IP");
+		dataJson.put("Proxy-Client-IP", ip1);
+
+		String ip2 = request.getHeader("WL-Proxy-Client-IP");
+		dataJson.put("WL-Proxy-Client-IP", ip2);
+
+		String ip3 = request.getHeader("HTTP_X_FORWARDED_FOR");
+		dataJson.put("HTTP_X_FORWARDED_FOR", ip3);
+
+		String ip4 = request.getHeader("HTTP_X_FORWARDED");
+		dataJson.put("HTTP_X_FORWARDED", ip4);
+
+		String ip5 = request.getHeader("HTTP_X_CLUSTER_CLIENT_IP");
+		dataJson.put("HTTP_X_CLUSTER_CLIENT_IP", ip5);
+
+		String ip6 = request.getHeader("HTTP_CLIENT_IP");
+		dataJson.put("HTTP_CLIENT_IP", ip6);
+
+		String ip7 = request.getHeader("HTTP_FORWARDED_FOR");
+		dataJson.put("HTTP_FORWARDED_FOR", ip7);
+
+		String ip8 = request.getHeader("HTTP_FORWARDED");
+		dataJson.put("HTTP_FORWARDED", ip8);
+
+		String ip9 = request.getHeader("HTTP_VIA");
+		dataJson.put("HTTP_VIA", ip9);
+
+		String ip10 = request.getHeader("REMOTE_ADDR");
+		dataJson.put("REMOTE_ADDR", ip10);
+
+		String ip11 = request.getRemoteAddr();
+		dataJson.put("request.getRemoteAddr()", ip11);
+
+		dataArray.add(dataJson);
+
+		resp.setResult(dataArray);
+
 		return resp;
-		
+
 	}
-	
+
 }

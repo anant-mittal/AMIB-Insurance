@@ -4,6 +4,7 @@ package com.amx.jax;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -75,13 +76,6 @@ public class HomeController {
 
 	@Autowired
 	IMetaService metaService;
-	
-	@Autowired(required = false)
-	private HttpServletRequest request;
-
-	@Autowired(required = false)
-	private HttpServletResponse response;
-	
 
 	/**
 	 * Gets the version.
@@ -111,7 +105,6 @@ public class HomeController {
 			RequestMethod.GET })
 	public String loginJPage(Model model, HttpServletRequest request) {
 
-		
 		model.addAttribute("lang", httpService.getLanguage());
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
 		model.addAttribute("cdnUrl", appConfig.getCdnURL());
@@ -148,8 +141,5 @@ public class HomeController {
 		}
 		return "terms";
 	}
-
 	
-	
-
 }
