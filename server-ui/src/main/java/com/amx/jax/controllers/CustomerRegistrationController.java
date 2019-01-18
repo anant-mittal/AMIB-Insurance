@@ -220,7 +220,7 @@ public class CustomerRegistrationController {
 		return wrapper;
 	}
 
-	@RequestMapping(value = { "/pub/checkIp" }, method = { RequestMethod.POST })
+	/*@RequestMapping(value = { "/pub/checkIp" }, method = { RequestMethod.POST })
 	public AmxApiResponse<?, Object> getClientIpAddr(HttpServletRequest request) {
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
 
@@ -270,6 +270,6 @@ public class CustomerRegistrationController {
 
 		return resp;
 
-	}
+	}*/
 
 }
