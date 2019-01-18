@@ -229,7 +229,7 @@ public class CustomerRegistrationController {
 		return wrapper;
 	}
 
-	@RequestMapping(value = { "/pub/checkIp" }, method = { RequestMethod.POST })
+	@RequestMapping(value = { "/pub/checkIp" }, method = { RequestMethod.GET })
 	public AmxApiResponse<?, Object> getClientIpAddr(HttpServletRequest request) {
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
 
@@ -273,6 +273,9 @@ public class CustomerRegistrationController {
 		String ip11 = request.getRemoteAddr();
 		dataJson.put("request.getRemoteAddr()", ip11);
 
+		String remoteAddr = request.getHeader("X-FORWARDED-FOR");
+		dataJson.put("X-FORWARDED-FOR", remoteAddr);
+		
 		dataArray.add(dataJson);
 
 		resp.setResult(dataArray);
