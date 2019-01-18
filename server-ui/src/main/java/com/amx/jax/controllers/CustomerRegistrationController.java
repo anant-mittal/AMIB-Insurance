@@ -199,7 +199,13 @@ public class CustomerRegistrationController {
 			@RequestParam String cphone, @RequestParam String message, @RequestParam String verify) {
 		ResponseWrapper<Email> wrapper = new ResponseWrapper<>();
 		try {
+
+			logger.info("CustomerRegistrationController :: contactUs :: verify :" + verify);
+
 			if (googleService.verifyCaptcha(verify, httpService.getIPAddress())) {
+
+				logger.info("CustomerRegistrationController :: contactUs :: name :" + name);
+
 				SupportEmail email = new SupportEmail();
 				email.setCaptchaCode(verify);
 				email.setVisitorName(name);
@@ -211,10 +217,13 @@ public class CustomerRegistrationController {
 			}
 
 			else {
+
+				logger.info("CustomerRegistrationController :: contactUs :: ERROR :");
 				wrapper.setStatusKey(WebResponseStatus.ERROR);
 			}
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			wrapper.setStatusKey(WebResponseStatus.ERROR);
 		}
 		return wrapper;
