@@ -255,7 +255,7 @@ public class CustomerRegistrationDao
 		return arrayResponseModel;
 	}
 
-	public boolean isEmailIdExist(String email , String userType)
+	public ArrayResponseModel isEmailIdExist(String email , String userType)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -272,31 +272,29 @@ public class CustomerRegistrationDao
 			callableStatement.setString(5, email);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
-
-			if (result.equalsIgnoreCase("Y"))
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			arrayResponseModel.setData(result);
+			
 		}
 		catch (SQLException e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"isEmailIdExist :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return false;
+		return arrayResponseModel;
 	}
 
-	public boolean isOtpEnabled(String civilId , String userType)
+	public ArrayResponseModel isOtpEnabled(String civilId , String userType)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
+		
 		String callFunction = "{ ? = call IRB_IF_OTP_ENABLED(?,?,?,?)}";
 
 		try
@@ -309,25 +307,21 @@ public class CustomerRegistrationDao
 			callableStatement.setString(5, civilId);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
-
-			if (result.equalsIgnoreCase("Y"))
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			arrayResponseModel.setData(result);
+			
 		}
 		catch (SQLException e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"isOtpEnabled :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return false;
+		return arrayResponseModel;
 	}
 
 	public ResponseInfo setOtpCount(String civilId , String userType)
@@ -365,6 +359,9 @@ public class CustomerRegistrationDao
 		}
 		catch (SQLException e)
 		{
+			validate.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			validate.setErrorMessage(e.toString());
+			logger.info(TAG+"setOtpCount :: exception :" + e);
 			e.printStackTrace();
 		}
 
@@ -435,6 +432,9 @@ public class CustomerRegistrationDao
 		}
 		catch (Exception e)
 		{
+			customerRegistrationModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			customerRegistrationModel.setErrorMessage(e.toString());
+			logger.info(TAG+"addNewCustomer :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -508,6 +508,9 @@ public class CustomerRegistrationDao
 		}
 		catch (Exception e)
 		{
+			customerDetailModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			customerDetailModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getUserDetails :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -622,6 +625,9 @@ public class CustomerRegistrationDao
 		}
 		catch (Exception e)
 		{
+			customerDetailModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			customerDetailModel.setErrorMessage(e.toString());
+			logger.info(TAG+"updatePassword :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -681,6 +687,9 @@ public class CustomerRegistrationDao
 		}
 		catch (Exception e)
 		{
+			failureException.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			failureException.setErrorMessage(e.toString());
+			logger.info(TAG+"setFailedException :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally

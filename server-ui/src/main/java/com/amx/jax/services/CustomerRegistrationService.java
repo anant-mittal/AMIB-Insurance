@@ -124,14 +124,11 @@ public class CustomerRegistrationService {
 		ArrayResponseModel arrayResponseModel = customerRegistrationDao.isCivilIdExist(civilid,
 				HardCodedValues.USER_TYPE);
 
-		if (arrayResponseModel.getData().equalsIgnoreCase("Y")) 
-		{
+		if (arrayResponseModel.getData().equalsIgnoreCase("Y")) {
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			resp.setMessage(Message.CIVILID_ALREDAY_REGISTER);
 			resp.setMessageKey(WebAppStatusCodes.CIVIL_ID_ALREADY_REGISTERED.toString());
-		} 
-		else 
-		{
+		} else {
 			resp.setStatusEnum(WebAppStatusCodes.CIVIL_ID_NOT_REGESTERED);
 			resp.setMessage(Message.CIVILID_ALREDAY_NOT_REGISTER);
 			resp.setMessageKey(WebAppStatusCodes.CIVIL_ID_NOT_REGESTERED.toString());
@@ -174,7 +171,7 @@ public class CustomerRegistrationService {
 				HardCodedValues.USER_TYPE);
 		AmxApiResponse<ResponseInfo, Object> validMobileNumber = new AmxApiResponse<ResponseInfo, Object>();
 
-		if (arrayResponseModel.getErrorCode().equalsIgnoreCase("Y")) {
+		if (null != arrayResponseModel.getErrorCode() && arrayResponseModel.getErrorCode().equalsIgnoreCase("Y")) {
 			validMobileNumber.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			validMobileNumber.setMessage(Message.MOBILE_NO_ALREDAY_REGISTER);
 			validMobileNumber.setMessageKey(WebAppStatusCodes.MOBILE_NUMBER_REGISTERED.toString());
@@ -221,9 +218,11 @@ public class CustomerRegistrationService {
 	}
 
 	public AmxApiResponse<ResponseInfo, Object> isEmailIdExist(String emailId) {
-		boolean emailIdExistCheck = customerRegistrationDao.isEmailIdExist(emailId, HardCodedValues.USER_TYPE);
 		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
-		if (emailIdExistCheck) {
+		ArrayResponseModel arrayResponseModel = customerRegistrationDao.isEmailIdExist(emailId,
+				HardCodedValues.USER_TYPE);
+
+		if (null != arrayResponseModel.getErrorCode() && arrayResponseModel.getErrorCode().equalsIgnoreCase("Y")) {
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			resp.setMessage(Message.EMAIL_ALREDAY_REGISTER);
 			resp.setMessageKey(WebAppStatusCodes.EMAIL_ID_REGESTERED.toString());
@@ -235,49 +234,69 @@ public class CustomerRegistrationService {
 			ResponseInfo validate = new ResponseInfo();
 			validate.setContactUsHelpLineNumber(metaService.getTenantProfile().getContactUsHelpLineNumber());
 			validate.setContactUsEmail(metaService.getTenantProfile().getContactUsEmail());
+			resp.setData(validate);
+		}
+
+		if (null != arrayResponseModel.getErrorCode()
+				&& arrayResponseModel.getErrorCode().equals(ApiConstants.ERROR_OCCURRED_ON_SERVER)) {
+			resp.setMessage(arrayResponseModel.getErrorCode());
+			resp.setMessageKey(arrayResponseModel.getErrorMessage());
 		}
 		return resp;
 	}
 
-	public AmxApiResponse<CustomerDetailResponse, Object> getCustomerDetails() {
+	public AmxApiResponse<CustomerDetailResponse, Object> getCustomerDetails() 
+	{
 		AmxApiResponse<CustomerDetailResponse, Object> resp = new AmxApiResponse<CustomerDetailResponse, Object>();
 		CustomerDetailResponse customerDetailResponse = new CustomerDetailResponse();
 		CustomerDetails customerDetails = new CustomerDetails();
 
-		if (null != userSession.getCivilId() && !userSession.getCivilId().equals("")) {
-			CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(userSession.getCivilId(),
-					HardCodedValues.USER_TYPE, userSession.getUserSequenceNumber());
-			customerDetails.setCivilId(userSession.getCivilId());
-			customerDetails.setCustSeqNumber(customerDetailModel.getCustSequenceNumber());
-			customerDetails.setDeviceId(customerDetailModel.getDeviceId());
-			customerDetails.setDeviceType(customerDetailModel.getDeviceType());
-			customerDetails.setEmail(customerDetailModel.getEmail());
-			customerDetails.setLanguageId(customerDetailModel.getLanguageId());
-			customerDetails.setLastLogin(customerDetailModel.getLastLogin());
-			customerDetails.setMailVerify(customerDetailModel.getMailVerify());
-			customerDetails.setMobile(customerDetailModel.getMobile());
-			customerDetails.setMobileVerify(customerDetailModel.getMobileVerify());
-			customerDetails.setUserName(customerDetailModel.getUserName());
-
-			userSession.setCustomerEmailId(customerDetailModel.getEmail());
-			userSession.setCustomerSequenceNumber(customerDetailModel.getCustSequenceNumber());
-			userSession.setCustomerMobileNumber(customerDetailModel.getMobile());
-
-			customerDetailResponse.setCustomerDetails(customerDetails);
-		} else {
+		if (null != userSession.getCivilId() && !userSession.getCivilId().equals("")) 
+		{
+			CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(userSession.getCivilId(), HardCodedValues.USER_TYPE, userSession.getUserSequenceNumber());
+			
+			if(customerDetailModel.getErrorCode() == null)
+			{
+				customerDetails.setCivilId(userSession.getCivilId());
+				customerDetails.setCustSeqNumber(customerDetailModel.getCustSequenceNumber());
+				customerDetails.setDeviceId(customerDetailModel.getDeviceId());
+				customerDetails.setDeviceType(customerDetailModel.getDeviceType());
+				customerDetails.setEmail(customerDetailModel.getEmail());
+				customerDetails.setLanguageId(customerDetailModel.getLanguageId());
+				customerDetails.setLastLogin(customerDetailModel.getLastLogin());
+				customerDetails.setMailVerify(customerDetailModel.getMailVerify());
+				customerDetails.setMobile(customerDetailModel.getMobile());
+				customerDetails.setMobileVerify(customerDetailModel.getMobileVerify());
+				customerDetails.setUserName(customerDetailModel.getUserName());
+				userSession.setCustomerEmailId(customerDetailModel.getEmail());
+				userSession.setCustomerSequenceNumber(customerDetailModel.getCustSequenceNumber());
+				userSession.setCustomerMobileNumber(customerDetailModel.getMobile());
+				customerDetailResponse.setCustomerDetails(customerDetails);
+			}
+			else
+			{
+				resp.setMessage(customerDetailModel.getErrorCode());
+				resp.setMessageKey(customerDetailModel.getErrorMessage());
+				return resp;
+			}
+		} 
+		else 
+		{
 			customerDetailResponse.setCustomerDetails(null);
 		}
 
-		ArrayResponseModel arrayResponseModel = customerRegistrationDao
-				.getCompanySetUp(metaService.getTenantProfile().getLanguageId(), webConfig.getAppCompCode());
-		if (arrayResponseModel.getErrorCode() == null) {
+		ArrayResponseModel arrayResponseModel = customerRegistrationDao.getCompanySetUp(metaService.getTenantProfile().getLanguageId(), webConfig.getAppCompCode());
+		if (arrayResponseModel.getErrorCode() == null) 
+		{
 			ArrayList<CompanySetUp> getCompanySetUp = arrayResponseModel.getDataArray();
 			CompanySetUp companySetUp = getCompanySetUp.get(0);
 			customerDetailResponse.setCompanySetUp(companySetUp);
 
 			resp.setData(customerDetailResponse);
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
-		} else {
+		} 
+		else 
+		{
 			resp.setMessage(arrayResponseModel.getErrorCode());
 			resp.setMessageKey(arrayResponseModel.getErrorMessage());
 		}
@@ -376,7 +395,8 @@ public class CustomerRegistrationService {
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			emailSmsService.emailTosuccessFullUserRegistration(userSession.getCustomerEmailId());
 		} else {
-			resp.setStatusKey(customerRegistrationModel.getErrorCode());
+			resp.setMessageKey(customerRegistrationModel.getErrorCode());
+			resp.setMessage(customerRegistrationModel.getErrorMessage());
 		}
 
 		resp.setMessage(customerRegistrationModel.getErrorMessage());
@@ -562,12 +582,14 @@ public class CustomerRegistrationService {
 		customerDetailModel = customerRegistrationDao.updatePassword(customerDetailModel, userSession.getCivilId(),
 				HardCodedValues.USER_TYPE);
 
-		if (customerDetailModel.getErrorCode() == null) {
+		if (customerDetailModel.getErrorCode() == null) 
+		{
 			resp.setMessageKey(customerDetailModel.getErrorCode());
 			resp.setError(customerDetailModel.getErrorMessage());
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			resp.setData(null);
-		} else {
+		} else 
+		{
 			resp.setMessageKey(customerDetailModel.getErrorCode());
 			resp.setError(customerDetailModel.getErrorMessage());
 			resp.setStatusKey(customerDetailModel.getErrorCode());

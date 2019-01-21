@@ -18,6 +18,7 @@ import com.amx.jax.constants.Message;
 import com.amx.jax.dao.CustomizeQuoteDao;
 import com.amx.jax.dao.MyQuoteDao;
 import com.amx.jax.dict.PayGServiceCode;
+import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CustomizeQuoteAddPol;
 import com.amx.jax.models.CustomizeQuoteInfo;
 import com.amx.jax.models.CustomizeQuoteModel;
@@ -108,7 +109,18 @@ public class CustomizeQuoteService
 			
 			
 			// SET QuoteAddPolicy Details
-			quoteAddPolicyDetails = customizeQuoteDao.getQuoteAdditionalPolicy(myQuoteModel.getQuoteSeqNumber(), myQuoteModel.getVerNumber());
+			ArrayResponseModel arrayResponseModel = customizeQuoteDao.getQuoteAdditionalPolicy(myQuoteModel.getQuoteSeqNumber(), myQuoteModel.getVerNumber());
+			if(arrayResponseModel.getErrorCode() == null)
+			{
+				quoteAddPolicyDetails = arrayResponseModel.getDataArray();
+			}
+			else
+			{
+				resp.setMessage(arrayResponseModel.getErrorMessage());
+				resp.setMessageKey(arrayResponseModel.getErrorCode());
+				return resp;
+			}
+			
 			
 			
 			
@@ -126,10 +138,21 @@ public class CustomizeQuoteService
 			{
 				String polType = quoteAddPolicyDetails.get(i).getAddPolicyTypeCode();
 				Date quoteDate = DateFormats.setDbSqlFormatDate(myQuoteModel.getQuoteDate());
-				ArrayList repTypeArray = customizeQuoteDao.getReplacementTypeList(polType, quoteDate);
-				if (null != repTypeArray)
+				
+				ArrayResponseModel arrayResponseModelRep = customizeQuoteDao.getReplacementTypeList(polType, quoteDate);
+				if(arrayResponseModelRep.getErrorCode() == null)
 				{
-					repTypeMap.put(polType, repTypeArray);
+					ArrayList repTypeArray = arrayResponseModelRep.getDataArray();
+					if (null != repTypeArray)
+					{
+						repTypeMap.put(polType, repTypeArray);
+					}
+				}
+				else
+				{
+					resp.setMessage(arrayResponseModelRep.getErrorMessage());
+					resp.setMessageKey(arrayResponseModelRep.getErrorCode());
+					return resp;
 				}
 			}
 
@@ -214,11 +237,23 @@ public class CustomizeQuoteService
 			{
 				String polType = quoteAddPolicyDetails.get(i).getAddPolicyTypeCode();
 				Date quoteDate = DateFormats.setDbSqlFormatDate(myQuoteModel.getQuoteDate());
-				ArrayList repTypeArray = customizeQuoteDao.getReplacementTypeList(polType, quoteDate);
-				if (null != repTypeArray)
+				
+				ArrayResponseModel arrayResponseModelRep = customizeQuoteDao.getReplacementTypeList(polType, quoteDate);
+				if(arrayResponseModelRep.getErrorCode() == null)
 				{
-					repTypeMap.put(polType, repTypeArray);
+					ArrayList repTypeArray = arrayResponseModelRep.getDataArray();
+					if (null != repTypeArray)
+					{
+						repTypeMap.put(polType, repTypeArray);
+					}
 				}
+				else
+				{
+					resp.setMessage(arrayResponseModelRep.getErrorMessage());
+					resp.setMessageKey(arrayResponseModelRep.getErrorCode());
+					return resp;
+				}
+				
 			}
 			
 			resp.setData(CalculateUtility.calculateCustomizeQuote(customizeQuoteModel));
@@ -238,8 +273,22 @@ public class CustomizeQuoteService
 		AmxApiResponse<String, Object> resp = new AmxApiResponse<String, Object>();
 		try
 		{
-			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
-			resp.setResults(customizeQuoteDao.getTermsAndCondition());
+			
+			
+			
+			ArrayResponseModel arrayResponseModelRep = customizeQuoteDao.getTermsAndCondition();
+			if(arrayResponseModelRep.getErrorCode() == null)
+			{
+				resp.setResults(arrayResponseModelRep.getDataArray());
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
+			}
+			else
+			{
+				resp.setMessage(arrayResponseModelRep.getErrorMessage());
+				resp.setMessageKey(arrayResponseModelRep.getErrorCode());
+				return resp;
+			}
+			
 		}
 		catch (Exception e)
 		{

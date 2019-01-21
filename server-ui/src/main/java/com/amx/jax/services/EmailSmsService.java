@@ -784,8 +784,9 @@ public class EmailSmsService
 	public AmxApiResponse<ResponseInfo, Object> isOtpEnabled(String civilId)
 	{
 		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
-		boolean isOtpEnable = customerRegistrationDao.isOtpEnabled(civilId , HardCodedValues.USER_TYPE);
-		if (isOtpEnable)
+		ArrayResponseModel arrayResponseModel = customerRegistrationDao.isOtpEnabled(civilId , HardCodedValues.USER_TYPE);
+		
+		if (null != arrayResponseModel.getErrorCode() && arrayResponseModel.getErrorCode().equalsIgnoreCase("Y"))
 		{
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			resp.setMessage(Message.CUST_OTP_ENABLED);
@@ -801,6 +802,13 @@ public class EmailSmsService
 			validate.setContactUsEmail(metaService.getTenantProfile().getContactUsEmail());
 			resp.setData(validate);
 		}
+		
+		if (null != arrayResponseModel.getErrorCode()
+				&& arrayResponseModel.getErrorCode().equals(ApiConstants.ERROR_OCCURRED_ON_SERVER)) {
+			resp.setMessage(arrayResponseModel.getErrorCode());
+			resp.setMessageKey(arrayResponseModel.getErrorMessage());
+		}
+		
 		return resp;
 	}
 
