@@ -14,7 +14,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.meta.IMetaService;
+import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CompanySetUp;
 import com.amx.jax.models.CustomerDetailModel;
 import com.amx.jax.models.CustomerLoginModel;
@@ -38,14 +41,16 @@ public class CustomerRegistrationDao
 	
 	Connection connection;
 
-	public ArrayList<CompanySetUp> getCompanySetUp(BigDecimal langId , String companyCode)
+	//public ArrayList<CompanySetUp> getCompanySetUp(BigDecimal langId , String companyCode)
+	public ArrayResponseModel getCompanySetUp(BigDecimal langId , String companyCode)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
-		String callProcedure = "{call IRB_GET_COMPANY_SETUP(?,?,?,?,?)}";
 		ArrayList<CompanySetUp> companySetUpArray = new ArrayList<CompanySetUp>();
-		logger.info(TAG + " getCompanySetUp :: companyCode :" + companyCode);
-
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
+		
+		String callProcedure = "{call IRB_GET_COMPANY_SETUP(?,?,?,?,?)}";
+		
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -87,20 +92,25 @@ public class CustomerRegistrationDao
 
 				companySetUpArray.add(companySetUp);
 			}
+			arrayResponseModel.setDataArray(companySetUpArray);
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getCompanySetUp :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return companySetUpArray;
+		return arrayResponseModel;
 	}
 
-	public boolean isValidCivilId(String civilid)
+	public ArrayResponseModel isValidCivilId(String civilid)
 	{
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callFunction = "{ ? = call O_VALIDATE_CIVILID(?)}";
@@ -112,32 +122,29 @@ public class CustomerRegistrationDao
 			callableStatement.setString(2, civilid);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
-
-			if (null == result)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			arrayResponseModel.setErrorCode(result);
 		}
 		catch (SQLException e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"isValidCivilId :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return false;
+		return arrayResponseModel;
 	}
 
-	public boolean isCivilIdExist(String civilid , String userType)
+	//public boolean isCivilIdExist(String civilid , String userType)
+	public ArrayResponseModel isCivilIdExist(String civilid , String userType)
 	{
 
 		getConnection();
 		CallableStatement callableStatement = null;
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		String callFunction = "{ ? = call IRB_IF_ONLINE_USEREXIST(?,?,?,?)}";
 
 		try
@@ -150,25 +157,21 @@ public class CustomerRegistrationDao
 			callableStatement.setString(5, civilid);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
-			
-			if (result.equalsIgnoreCase("Y"))
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			logger.info(TAG+"isValidCivilId :: result :" + result);
+			arrayResponseModel.setData(result);
 		}
 		catch (SQLException e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"isValidCivilId :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return false;
+		return arrayResponseModel;
 	}
 
 	public ResponseInfo isValidMobileNumber(String mobileNumber)
@@ -203,6 +206,9 @@ public class CustomerRegistrationDao
 		}
 		catch (SQLException e)
 		{
+			validate.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			validate.setErrorMessage(e.toString());
+			logger.info(TAG+"isValidCivilId :: exception :" + e);
 			e.printStackTrace();
 		}
 
@@ -213,10 +219,12 @@ public class CustomerRegistrationDao
 		return validate;
 	}
 
-	public boolean isMobileNumberExist(String mobilenumber , String userType)
+	//public boolean isMobileNumberExist(String mobilenumber , String userType)
+	public ArrayResponseModel isMobileNumberExist(String mobilenumber , String userType)
 	{
 
 		getConnection();
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		CallableStatement callableStatement = null;
 		String callFunction = "{ ? = call IRB_IF_DUP_MOBILE(?,?,?,?)}";
 
@@ -230,32 +238,28 @@ public class CustomerRegistrationDao
 			callableStatement.setString(5, mobilenumber);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
-
-			if (result.equalsIgnoreCase("Y"))
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			arrayResponseModel.setErrorCode(result);
+			
 		}
 		catch (SQLException e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"isMobileNumberExist :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return false;
+		return arrayResponseModel;
 	}
 
 	public boolean isEmailIdExist(String email , String userType)
 	{
-
 		getConnection();
 		CallableStatement callableStatement = null;
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		String callFunction = "{ ? = call IRB_IF_DUP_EMAIL(?,?,?,?)}";
 
 		try
@@ -517,7 +521,7 @@ public class CustomerRegistrationDao
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
-		String callProcedure = "{call IRB_CHECK_LOGIN(?,?,?,?,?,?,?,?,?,?,?)}";
+		String callProcedure = "{call IRB_CHECK_LOGIN(?,?,?,?,?,?,?,?,?,?,?,?)}";
 
 		try
 		{
@@ -530,17 +534,18 @@ public class CustomerRegistrationDao
 			callableStatement.setString(5, customerLoginModel.getPassword());
 			callableStatement.setString(6, metaService.getUserDeviceInfo().getDeviceId());
 			callableStatement.setString(7, metaService.getUserDeviceInfo().getDeviceType());
-			callableStatement.registerOutParameter(8, java.sql.Types.INTEGER);
+			callableStatement.setBigDecimal(8, new BigDecimal(0));
 			callableStatement.registerOutParameter(9, java.sql.Types.INTEGER);
-			callableStatement.registerOutParameter(10, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(10, java.sql.Types.INTEGER);
 			callableStatement.registerOutParameter(11, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(12, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
 
-			BigDecimal userSequenceNumber = callableStatement.getBigDecimal(8);
-			BigDecimal amibRef = callableStatement.getBigDecimal(9);
-			String errorCode = callableStatement.getString(10);
-			String errorMessage = callableStatement.getString(11);
-
+			BigDecimal userSequenceNumber = callableStatement.getBigDecimal(9);
+			BigDecimal amibRef = callableStatement.getBigDecimal(10);
+			String errorCode = callableStatement.getString(11);
+			String errorMessage = callableStatement.getString(12);
+			
 			customerLoginModel = new CustomerLoginModel();
 
 			if (errorCode == null)
@@ -559,6 +564,9 @@ public class CustomerRegistrationDao
 		}
 		catch (Exception e)
 		{
+			customerLoginModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			customerLoginModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getCompanySetUp :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally

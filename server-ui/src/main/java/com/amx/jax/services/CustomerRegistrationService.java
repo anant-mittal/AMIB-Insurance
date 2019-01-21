@@ -22,6 +22,7 @@ import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.http.CommonHttpRequest;
 import com.amx.jax.meta.IMetaService;
+import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.ChangePasswordOtpRequest;
 import com.amx.jax.models.ChangePasswordRequest;
 import com.amx.jax.models.ChangePasswordResponse;
@@ -67,23 +68,27 @@ public class CustomerRegistrationService {
 
 	public AmxApiResponse<CompanySetUp, Object> getCompanySetUp() {
 		logger.info("getCompanySetUp :: " + metaService.getTenantProfile().getLanguageId());
-
 		AmxApiResponse<CompanySetUp, Object> resp = new AmxApiResponse<CompanySetUp, Object>();
 		try {
-			ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao
+			ArrayResponseModel arrayResponseModel = customerRegistrationDao
 					.getCompanySetUp(metaService.getTenantProfile().getLanguageId(), webConfig.getAppCompCode());
 
-			metaService.getTenantProfile().setCountryId(getCompanySetUp.get(0).getCntryCd());
-			metaService.getTenantProfile().setCompCd(getCompanySetUp.get(0).getCompCd());
-			metaService.getTenantProfile().setContactUsHelpLineNumber(getCompanySetUp.get(0).getHelpLineNumber());
-			metaService.getTenantProfile().setContactUsEmail(getCompanySetUp.get(0).getEmail());
-			metaService.getTenantProfile().setAmibWebsiteLink(getCompanySetUp.get(0).getWebSite());
-			metaService.getTenantProfile().setDecplc(getCompanySetUp.get(0).getDecimalPlaceUpTo());
-			metaService.getTenantProfile().setCompanyName(getCompanySetUp.get(0).getCompanyName());
-			metaService.getTenantProfile().setCurrency(getCompanySetUp.get(0).getCurrency());
-
-			resp.setResults(getCompanySetUp);
-			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
+			if (arrayResponseModel.getErrorCode() == null) {
+				ArrayList<CompanySetUp> getCompanySetUp = arrayResponseModel.getDataArray();
+				metaService.getTenantProfile().setCountryId(getCompanySetUp.get(0).getCntryCd());
+				metaService.getTenantProfile().setCompCd(getCompanySetUp.get(0).getCompCd());
+				metaService.getTenantProfile().setContactUsHelpLineNumber(getCompanySetUp.get(0).getHelpLineNumber());
+				metaService.getTenantProfile().setContactUsEmail(getCompanySetUp.get(0).getEmail());
+				metaService.getTenantProfile().setAmibWebsiteLink(getCompanySetUp.get(0).getWebSite());
+				metaService.getTenantProfile().setDecplc(getCompanySetUp.get(0).getDecimalPlaceUpTo());
+				metaService.getTenantProfile().setCompanyName(getCompanySetUp.get(0).getCompanyName());
+				metaService.getTenantProfile().setCurrency(getCompanySetUp.get(0).getCurrency());
+				resp.setResults(getCompanySetUp);
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
+			} else {
+				resp.setMessage(arrayResponseModel.getErrorCode());
+				resp.setMessageKey(arrayResponseModel.getErrorMessage());
+			}
 		} catch (Exception e) {
 			resp.setException(e.toString());
 			e.printStackTrace();
@@ -92,10 +97,9 @@ public class CustomerRegistrationService {
 	}
 
 	public AmxApiResponse<ResponseInfo, Object> isValidCivilId(String civilid) {
-		boolean isValidCivilId = customerRegistrationDao.isValidCivilId(civilid);
 		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
-
-		if (isValidCivilId) {
+		ArrayResponseModel arrayResponseModel = customerRegistrationDao.isValidCivilId(civilid);
+		if (arrayResponseModel.getErrorCode() == null) {
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			resp.setMessage(Message.CIVILID_VALID);
 			resp.setMessageKey(WebAppStatusCodes.CIVIL_ID_VALID.toString());
@@ -104,21 +108,41 @@ public class CustomerRegistrationService {
 			resp.setMessage(Message.CIVILID_INVALID);
 			resp.setMessageKey(WebAppStatusCodes.CIVIL_ID_INVALID.toString());
 		}
+
+		if (null != arrayResponseModel.getErrorCode()
+				&& arrayResponseModel.getErrorCode().equals(ApiConstants.ERROR_OCCURRED_ON_SERVER)) {
+			resp.setMessage(arrayResponseModel.getErrorCode());
+			resp.setMessageKey(arrayResponseModel.getErrorMessage());
+		}
+
 		return resp;
 	}
 
 	public AmxApiResponse<ResponseInfo, Object> isCivilIdExist(String civilid) {
-		boolean civilIdExistCheck = customerRegistrationDao.isCivilIdExist(civilid, HardCodedValues.USER_TYPE);
+
 		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
-		if (civilIdExistCheck) {
+		ArrayResponseModel arrayResponseModel = customerRegistrationDao.isCivilIdExist(civilid,
+				HardCodedValues.USER_TYPE);
+
+		if (arrayResponseModel.getData().equalsIgnoreCase("Y")) 
+		{
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			resp.setMessage(Message.CIVILID_ALREDAY_REGISTER);
 			resp.setMessageKey(WebAppStatusCodes.CIVIL_ID_ALREADY_REGISTERED.toString());
-		} else {
+		} 
+		else 
+		{
 			resp.setStatusEnum(WebAppStatusCodes.CIVIL_ID_NOT_REGESTERED);
 			resp.setMessage(Message.CIVILID_ALREDAY_NOT_REGISTER);
-			resp.setMessageKey(WebAppStatusCodes.CIVIL_ID_NOT_REGESTERED.toString());// Commit
+			resp.setMessageKey(WebAppStatusCodes.CIVIL_ID_NOT_REGESTERED.toString());
 		}
+
+		if (null != arrayResponseModel.getErrorCode()
+				&& arrayResponseModel.getErrorCode().equals(ApiConstants.ERROR_OCCURRED_ON_SERVER)) {
+			resp.setMessage(arrayResponseModel.getErrorCode());
+			resp.setMessageKey(arrayResponseModel.getErrorMessage());
+		}
+
 		return resp;
 	}
 
@@ -146,10 +170,11 @@ public class CustomerRegistrationService {
 	}
 
 	public AmxApiResponse<ResponseInfo, Object> isMobileNumberExist(String mobileNumber) {
-		boolean mobileNumberExists = customerRegistrationDao.isMobileNumberExist(mobileNumber,
+		ArrayResponseModel arrayResponseModel = customerRegistrationDao.isMobileNumberExist(mobileNumber,
 				HardCodedValues.USER_TYPE);
 		AmxApiResponse<ResponseInfo, Object> validMobileNumber = new AmxApiResponse<ResponseInfo, Object>();
-		if (mobileNumberExists) {
+
+		if (arrayResponseModel.getErrorCode().equalsIgnoreCase("Y")) {
 			validMobileNumber.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			validMobileNumber.setMessage(Message.MOBILE_NO_ALREDAY_REGISTER);
 			validMobileNumber.setMessageKey(WebAppStatusCodes.MOBILE_NUMBER_REGISTERED.toString());
@@ -162,6 +187,13 @@ public class CustomerRegistrationService {
 			validate.setContactUsHelpLineNumber(metaService.getTenantProfile().getContactUsHelpLineNumber());
 			validate.setContactUsEmail(metaService.getTenantProfile().getContactUsEmail());
 		}
+
+		if (null != arrayResponseModel.getErrorCode()
+				&& arrayResponseModel.getErrorCode().equals(ApiConstants.ERROR_OCCURRED_ON_SERVER)) {
+			validMobileNumber.setMessage(arrayResponseModel.getErrorCode());
+			validMobileNumber.setMessageKey(arrayResponseModel.getErrorMessage());
+		}
+
 		return validMobileNumber;
 	}
 
@@ -236,11 +268,19 @@ public class CustomerRegistrationService {
 			customerDetailResponse.setCustomerDetails(null);
 		}
 
-		ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao
+		ArrayResponseModel arrayResponseModel = customerRegistrationDao
 				.getCompanySetUp(metaService.getTenantProfile().getLanguageId(), webConfig.getAppCompCode());
-		CompanySetUp companySetUp = getCompanySetUp.get(0);
+		if (arrayResponseModel.getErrorCode() == null) {
+			ArrayList<CompanySetUp> getCompanySetUp = arrayResponseModel.getDataArray();
+			CompanySetUp companySetUp = getCompanySetUp.get(0);
+			customerDetailResponse.setCompanySetUp(companySetUp);
 
-		customerDetailResponse.setCompanySetUp(companySetUp);
+			resp.setData(customerDetailResponse);
+			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
+		} else {
+			resp.setMessage(arrayResponseModel.getErrorCode());
+			resp.setMessageKey(arrayResponseModel.getErrorMessage());
+		}
 
 		resp.setData(customerDetailResponse);
 		return resp;

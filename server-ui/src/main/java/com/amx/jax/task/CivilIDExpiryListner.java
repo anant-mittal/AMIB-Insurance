@@ -13,6 +13,7 @@ import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.dict.AmibTunnelEvents;
 import com.amx.jax.dict.Language;
 import com.amx.jax.meta.IMetaService;
+import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CompanySetUp;
 import com.amx.jax.postman.client.PostManClient;
 import com.amx.jax.postman.client.PushNotifyClient;
@@ -79,7 +80,8 @@ public class CivilIDExpiryListner implements ITunnelSubscriber<TunnelEvent> {
 			languageId = new BigDecimal(0);
 		}
 		
-		ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao.getCompanySetUp(languageId , webConfig.getAppCompCode());
+		ArrayResponseModel arrayResponseModel = customerRegistrationDao.getCompanySetUp(languageId , webConfig.getAppCompCode());
+		ArrayList<CompanySetUp> getCompanySetUp = arrayResponseModel.getDataArray();
 		
 		Map<String, Object> wrapper = new HashMap<String, Object>();
 		Map<String, Object> modeldata = new HashMap<String, Object>();

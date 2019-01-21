@@ -21,6 +21,7 @@ import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.dict.Language;
 import com.amx.jax.meta.IMetaService;
+import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CustomerDetailModel;
 import com.amx.jax.models.PaymentStatus;
 import com.amx.jax.models.RequestOtpModel;
@@ -847,9 +848,10 @@ public class EmailSmsService
 	/************* CHECK IF CIVIL ID EXIST **********/
 	public AmxApiResponse<ResponseInfo, Object> isCivilIdExist(String civilid)
 	{
-		boolean civilIdExistCheck = customerRegistrationDao.isCivilIdExist(civilid , HardCodedValues.USER_TYPE);
+		ArrayResponseModel arrayResponseModel = customerRegistrationDao.isCivilIdExist(civilid , HardCodedValues.USER_TYPE);
 		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
-		if (civilIdExistCheck)
+		
+		if (arrayResponseModel.getErrorCode().equals("Y"))
 		{
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			resp.setMessage(Message.CIVILID_ALREDAY_REGISTER);
