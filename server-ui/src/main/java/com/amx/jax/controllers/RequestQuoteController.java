@@ -160,18 +160,21 @@ public class RequestQuoteController {
 		BigDecimal docSeqNumberDet = null;
 		if (null != docSeqNumber && !docSeqNumber.equals("") && !docSeqNumber.equalsIgnoreCase("null")) {
 			docSeqNumberDet = ArgUtil.parseAsBigDecimal(docSeqNumber);
-		}
 
-		DownloadImageModel downloadImageModel = requestQuoteService.downloadVehicleImage(docSeqNumberDet);
-		byte[] imageByteArray = downloadImageModel.getImageByteArray();
-		String imageType = downloadImageModel.getImageType();
-		MediaType mediaType = null;
-		if (imageType.contains("jpeg")) {
-			mediaType = MediaType.IMAGE_JPEG;
-		} else if (imageType.contains("png")) {
-			mediaType = MediaType.IMAGE_PNG;
+			DownloadImageModel downloadImageModel = requestQuoteService.downloadVehicleImage(docSeqNumberDet);
+			byte[] imageByteArray = downloadImageModel.getImageByteArray();
+			String imageType = downloadImageModel.getImageType();
+			MediaType mediaType = null;
+			if (imageType.contains("jpeg") || imageType.contains("jpg")) {
+				mediaType = MediaType.IMAGE_JPEG;
+			} else if (imageType.contains("png")) {
+				mediaType = MediaType.IMAGE_PNG;
+			}
+			return ResponseEntity.ok().contentLength(imageByteArray.length).contentType(mediaType).body(imageByteArray);
+
 		}
-		return ResponseEntity.ok().contentLength(imageByteArray.length).contentType(mediaType).body(imageByteArray);
+		return null;
+
 	}
 
 	@ApiOperation(value = "submits updated request quote details to server", notes = "after successfull submit of request quote a mail will trigger to the customer on his registered emial id of successful quote creation")

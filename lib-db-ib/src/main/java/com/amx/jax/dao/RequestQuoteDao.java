@@ -879,15 +879,17 @@ public class RequestQuoteDao
 			else
 			{
 				String extension = getFileExtension(file.getOriginalFilename());
-				logger.info(TAG + " uploadVehicleImage :: extension 1 :" + extension);
+				logger.info(TAG + " uploadVehicleImage :: extension 3 :" + extension);
 				if(extension.equalsIgnoreCase("jpeg"))
 				{
-					logger.info(TAG + " uploadVehicleImage :: extension 2 :" + extension);
 					callableStatement.setString(7, "image/jpeg");
+				}
+				else if(extension.equalsIgnoreCase("jpg"))
+				{
+					callableStatement.setString(7, "image/jpg");
 				}
 				else if(extension.equalsIgnoreCase("png"))
 				{
-					logger.info(TAG + " uploadVehicleImage :: extension 3 :" + extension);
 					callableStatement.setString(7, "image/png");
 				}
 			}
