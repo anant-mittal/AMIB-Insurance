@@ -214,9 +214,7 @@ public class CustomerRegistrationController {
 				email.setVisitorMessage(message);
 				emailSmsService.sendEmailToSupprt(email);
 				wrapper.setData(email);
-			}
-
-			else {
+			} else {
 
 				logger.info("CustomerRegistrationController :: contactUs :: ERROR :");
 				wrapper.setStatusKey(WebResponseStatus.ERROR);
@@ -229,5 +227,4 @@ public class CustomerRegistrationController {
 		return wrapper;
 	}
 
-	
 }

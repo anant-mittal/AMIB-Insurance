@@ -1,5 +1,7 @@
 package com.amx.jax.models;
 
+import java.math.BigDecimal;
+
 import com.amx.jax.swagger.ApiMockModelProperty;
 
 public class CustomerLoginRequest

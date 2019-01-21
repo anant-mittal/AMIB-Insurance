@@ -392,8 +392,7 @@ public class CustomerRegistrationService {
 			resp.setStatusKey(customerLoginModel.getErrorCode());
 		}
 
-		logger.info(
-				"validateUserLogin :: customerLoginModel.getErrorMessage() :" + customerLoginModel.getErrorMessage());
+		logger.info("validateUserLogin :: getErrorMessage() :" + customerLoginModel.getErrorMessage());
 		if (null != customerLoginModel.getErrorMessage()
 				&& customerLoginModel.getErrorCode().toString().equalsIgnoreCase(DatabaseErrorKey.INVALID_USER_LOGIN)) {
 			String countData = "";
