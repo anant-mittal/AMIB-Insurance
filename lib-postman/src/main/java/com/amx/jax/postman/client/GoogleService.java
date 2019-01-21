@@ -15,7 +15,7 @@ public class GoogleService {
 	private static final Logger logger = LoggerFactory.getLogger(GoogleService.class);
 
 	// private String googleSecret = "6LeK33AUAAAAANWoO_wM5_3FxJ0DoPjPZp_n7pVz";
-	private String googleSecret = "6LdtFEMUAAAAACbe0JJ2MDSrsLPseUTCjb659uHD";
+	private String googleSecret = "6LedCIsUAAAAANqAW4gzuhCJzl4d4krpw8BJfBNe";
 
 	@Autowired
 	RestService restService;
