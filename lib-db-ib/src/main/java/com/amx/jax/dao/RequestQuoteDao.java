@@ -872,7 +872,6 @@ public class RequestQuoteDao
 			String imageType = file.getContentType().toString();
 			logger.info(TAG + " uploadVehicleImage :: imageType :" + imageType);
 			
-			
 			if (imageType.contains("image")) 
 			{
 				callableStatement.setString(7, file.getContentType().toString());
