@@ -251,6 +251,8 @@ public class PayMentService
 				
 				if(paymentStatus.getPaymentStatus().equalsIgnoreCase("CAPTURED"))
 				{
+					paymentStatus.setPaymentProcedureStatus("N");
+					
 					try
 					{
 						logger.info(TAG + " getPaymentStatus :: paymentStatus 4 :" + paymentStatus.toString());
