@@ -30,7 +30,6 @@ import oracle.jdbc.OracleTypes;
 public class CustomerRegistrationDao
 {
 	static String TAG = "CustomerRegistrationDao :: ";
-
 	private static final Logger logger = LoggerFactory.getLogger(CustomerRegistrationDao.class);
 
 	@Autowired
@@ -93,6 +92,8 @@ public class CustomerRegistrationDao
 				companySetUpArray.add(companySetUp);
 			}
 			arrayResponseModel.setDataArray(companySetUpArray);
+			arrayResponseModel.setErrorCode(callableStatement.getString(4));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(5));
 		}
 		catch (Exception e)
 		{
@@ -520,7 +521,7 @@ public class CustomerRegistrationDao
 		return customerDetailModel;
 	}
 
-	public CustomerLoginModel validateUserLogin(CustomerLoginModel customerLoginModel , String userType)
+	public CustomerLoginModel validateUserLogin(CustomerLoginModel customerLoginModel , String userType , BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -537,7 +538,7 @@ public class CustomerRegistrationDao
 			callableStatement.setString(5, customerLoginModel.getPassword());
 			callableStatement.setString(6, metaService.getUserDeviceInfo().getDeviceId());
 			callableStatement.setString(7, metaService.getUserDeviceInfo().getDeviceType());
-			callableStatement.setBigDecimal(8, new BigDecimal(0));
+			callableStatement.setBigDecimal(8, languageId);
 			callableStatement.registerOutParameter(9, java.sql.Types.INTEGER);
 			callableStatement.registerOutParameter(10, java.sql.Types.INTEGER);
 			callableStatement.registerOutParameter(11, java.sql.Types.VARCHAR);

@@ -50,12 +50,22 @@ public class MyPolicyDao
 		{
 			if(null == userAmibCustRef)
 			{
-				userAmibCustRef = getCustomerAmibCode(civilId ,userType ,custSeqNum);
-				
-				if(null != userAmibCustRef)
+				ArrayResponseModel arrayRespCustAmibCode = getCustomerAmibCode(civilId ,userType ,custSeqNum);
+				if(null != arrayRespCustAmibCode)
 				{
-					logger.info(TAG + " getUserActivePolicy :: userAmibCustRef received :" + userAmibCustRef);
-					arrayResponseModel.setData(userAmibCustRef.toString());
+					if(null != arrayRespCustAmibCode.getErrorCode())
+					{
+						userAmibCustRef = arrayRespCustAmibCode.getNumericData();
+						if(null != userAmibCustRef)
+						{
+							logger.info(TAG + " getUserActivePolicy :: userAmibCustRef received :" + userAmibCustRef);
+							arrayResponseModel.setData(userAmibCustRef.toString());
+						}
+					}
+					else
+					{
+						return arrayRespCustAmibCode;
+					}
 				}
 			}
 		}
@@ -156,44 +166,48 @@ public class MyPolicyDao
 	}
 	
 	
-	public BigDecimal getCustomerAmibCode(String civilId , String userType , BigDecimal custSeqNum)
+	public ArrayResponseModel getCustomerAmibCode(String civilId , String userType , BigDecimal custSeqNum)
 	{
 		CallableStatement callableStatement = null;
 		String callFunction = "{ ? = call IRB_GET_AMIB_CUSTCD(?,?,?,?,?)}";
 		BigDecimal userAmibCustRef = null; 
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 
 		try
 		{
-			logger.info(TAG + " getCustomerAmibCode :: userAmibCustRef 1 :" + userAmibCustRef);
-			
 			callableStatement = connection.prepareCall(callFunction);
 			callableStatement.registerOutParameter(1, java.sql.Types.NUMERIC);
-			
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCountryId());
 			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(4, userType);
 			callableStatement.setString(5, civilId);
 			callableStatement.setBigDecimal(6, custSeqNum);
-			
 			callableStatement.executeUpdate();
+			
 			userAmibCustRef = callableStatement.getBigDecimal(1);
-			logger.info(TAG + " getCustomerAmibCode :: userAmibCustRef 2 :" + userAmibCustRef);
+			arrayResponseModel.setNumericData(userAmibCustRef);
+			
+			logger.info(TAG + " getCustomerAmibCode :: userAmibCustRef :" + userAmibCustRef);
 		}
 		catch (SQLException e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getCustomerAmibCode :: exception :" + e);
 			e.printStackTrace();
 		}
-		return userAmibCustRef;
+		return arrayResponseModel;
 	}
 	
 	
 	
-	public String checkRenewableApplicable(BigDecimal oldDocNumber , String civilId , String userType , BigDecimal custSeqNum)
+	public ArrayResponseModel checkRenewableApplicable(BigDecimal oldDocNumber , String civilId , String userType , BigDecimal custSeqNum)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_CHECK_RENEW_APPLICABLE(?,?,?,?,?,?,?,?)}";
 		String renewableApplError = null;
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 
 		try
 		{
@@ -208,6 +222,7 @@ public class MyPolicyDao
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
 			renewableApplError = callableStatement.getString(7);
+			arrayResponseModel.setData(renewableApplError);
 
 			logger.info(TAG + " checkRenewableApplicable :: oldDocNumber       :" + oldDocNumber);
 			logger.info(TAG + " checkRenewableApplicable :: error code    :" + renewableApplError);
@@ -215,22 +230,25 @@ public class MyPolicyDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"checkRenewableApplicable :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return renewableApplError;
+		return arrayResponseModel;
 	}
 	
-	public PolicyReceiptDetails downloadPolicyReceipt(BigDecimal docNumber, BigDecimal languageId)
+	public ArrayResponseModel downloadPolicyReceipt(BigDecimal docNumber, BigDecimal languageId)
 	{
 		getConnection();
+		
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_ONLINE_POLICY_PRINT(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
-		
-		
 		PolicyReceiptDetails policyReceiptDetails = new PolicyReceiptDetails();
 		
 		try
@@ -304,19 +322,23 @@ public class MyPolicyDao
 			policyReceiptDetails.setAmountPaidInNum(callableStatement.getBigDecimal(32));
 			policyReceiptDetails.setAmountPaidInWord(callableStatement.getString(33));
 			
-			logger.info(TAG + " downloadPolicyReceipt :: getString(34) :" + callableStatement.getString(34));
-			logger.info(TAG + " downloadPolicyReceipt :: getString(35) :" + callableStatement.getString(35));
+			arrayResponseModel.setErrorCode(callableStatement.getString(34));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(35));
+			arrayResponseModel.setObject(policyReceiptDetails);
 			
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"downloadPolicyReceipt :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return policyReceiptDetails;
+		return arrayResponseModel;
 	}
 
 	private Connection getConnection()

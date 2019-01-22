@@ -20,6 +20,8 @@ import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.ArrayResponseModel;
@@ -50,7 +52,7 @@ import oracle.jdbc.OracleTypes;
 @Component
 public class RequestQuoteDao
 {
-	String TAG = "com.amx.jax.dao.RequestQuoteDao :: ";
+	String TAG = "RequestQuoteDao :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(RequestQuoteDao.class);
 
@@ -86,18 +88,12 @@ public class RequestQuoteDao
 			incompleteApplModel.setAppStage(callableStatement.getString(7));
 			incompleteApplModel.setErrorCode(callableStatement.getString(8));
 			incompleteApplModel.setErrorMessage(callableStatement.getString(9));
-
-			if (callableStatement.getString(8) == null)
-			{
-				incompleteApplModel.setStatus(true);
-			}
-			else
-			{
-				incompleteApplModel.setStatus(false);
-			}
 		}
 		catch (Exception e)
 		{
+			incompleteApplModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			incompleteApplModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getIncompleteApplication :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -141,6 +137,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getMake :: exception :" + e);
 			e.printStackTrace();
 		}
 
@@ -182,7 +181,6 @@ public class RequestQuoteDao
 				model.setShapeCode(rs.getString(5));
 				model.setVehicleTypeDesc(rs.getString(8));
 				model.setShapeDesc(rs.getString(9));
-				logger.info(TAG + " getModel :: model :" + model.toString());
 				modelArray.add(model);
 			}
 			arrayResponseModel.setDataArray(modelArray);
@@ -191,6 +189,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getModel :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -232,6 +233,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getFuleType :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -274,6 +278,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getPurpose :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -317,6 +324,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getShape :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -358,6 +368,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getColour :: exception :" + e);
 			e.printStackTrace();
 		}
 
@@ -401,6 +414,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getVehicleCondition :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -410,11 +426,12 @@ public class RequestQuoteDao
 		return arrayResponseModel;
 	}
 
-	public ArrayList getMaxVehicleAgeAllowed()
+	public ArrayResponseModel getMaxVehicleAgeAllowed()
 	{
 		getConnection();
 		Statement statement = null;
 		int ageAllowed = 0;
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		ArrayList<CodeDesc> maxVehicleAgeArray = new ArrayList<CodeDesc>();
 		String query = "SELECT A.MAX_ALLOWED_VEHICLE_AGE FROM IRB_V_ONLMAX_VEHAGE A";
 		try
@@ -438,24 +455,29 @@ public class RequestQuoteDao
 				maxVehicleAgeArray.add(codeDesc);
 				allowedAgeIsTillNextYear--;
 			}
+			arrayResponseModel.setDataArray(maxVehicleAgeArray);
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getMaxVehicleAgeAllowed :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
 		{
 			CloseConnection(statement, connection);
 		}
-		return maxVehicleAgeArray;
+		return arrayResponseModel;
 	}
 
-	public ArrayList getPolicyDuration()
+	public ArrayResponseModel getPolicyDuration()
 	{
 		getConnection();
 		Statement statement = null;
 		int maxAllowedYear = 0;
-		ArrayList<CodeDesc> maxVehicleAgeArray = new ArrayList<CodeDesc>();
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
+		ArrayList<CodeDesc> maxPolicyDuration = new ArrayList<CodeDesc>();
 		String query = "SELECT MAX_ALLOWED_YEAR FROM IRB_V_ONLMAX_POLPERIOD";
 		try
 		{
@@ -470,18 +492,22 @@ public class RequestQuoteDao
 				CodeDesc codeDesc = new CodeDesc();
 				codeDesc.setCode("" + i);
 				codeDesc.setDesc("" + i);
-				maxVehicleAgeArray.add(codeDesc);
+				maxPolicyDuration.add(codeDesc);
 			}
+			arrayResponseModel.setDataArray(maxPolicyDuration);
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getPolicyDuration :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
 		{
 			CloseConnection(statement, connection);
 		}
-		return maxVehicleAgeArray;
+		return arrayResponseModel;
 	}
 
 	public ArrayResponseModel getAppVehicleDetails(BigDecimal appSeqNumber,BigDecimal languageId)
@@ -552,6 +578,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getAppVehicleDetails :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -605,6 +634,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			vehicleDetailsHeaderModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			vehicleDetailsHeaderModel.setErrorMessage(e.toString());
+			logger.info(TAG+"setVehicleDetailsHeader :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -653,6 +685,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			vehicleDetailsUpdateModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			vehicleDetailsUpdateModel.setErrorMessage(e.toString());
+			logger.info(TAG+"insUpdateVehicleDetails :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -694,6 +729,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getAppVehicleDetails :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -728,7 +766,16 @@ public class RequestQuoteDao
 				ImageDetails imageDetails = new ImageDetails();
 				imageDetails.setDocTypeCode(rs.getString(1));
 				imageDetails.setDocTypeDesc(rs.getString(2));
-				ImageStatus imageStatus = imageUploadedStatus(appSeqNumber, rs.getString(1));
+				
+				ArrayResponseModel arrayResponseImageStatus = imageUploadedStatus(appSeqNumber, rs.getString(1));
+				if(null != arrayResponseImageStatus.getErrorCode())
+				{
+					arrayResponseModel.setErrorCode(arrayResponseImageStatus.getErrorCode());
+					arrayResponseModel.setErrorMessage(arrayResponseImageStatus.getErrorMessage());
+					return arrayResponseModel;
+				}
+				ImageStatus imageStatus = (ImageStatus)arrayResponseImageStatus.getObject();
+				
 				imageDetails.setIsImageMandatory(rs.getString(3));
 				imageDetails.setDisplayOrder(rs.getBigDecimal(4));
 				imageDetails.setStatus(rs.getString(5));
@@ -752,6 +799,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getAppVehicleDetails :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -761,11 +811,13 @@ public class RequestQuoteDao
 		return arrayResponseModel;
 	}
 
-	public ImageStatus imageUploadedStatus(BigDecimal appSeqNumber, String docType)
+	public ArrayResponseModel imageUploadedStatus(BigDecimal appSeqNumber, String docType)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
 		ImageStatus imageStatus = new ImageStatus();
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
+		
 		String callProcedure = "{call IRB_CHECK_IMAGE_UPLOADED(?,?,?,?,?,?)}";
 		String epochDate = null;
 		try
@@ -786,8 +838,7 @@ public class RequestQuoteDao
 			imageStatus.setDocSeqNumber(callableStatement.getBigDecimal(5));
 			imageStatus.setImageDate(epochDate);
 
-			return imageStatus;
-
+			arrayResponseModel.setObject(imageStatus);
 		}
 		catch (SQLException e)
 		{
@@ -797,7 +848,7 @@ public class RequestQuoteDao
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return null;
+		return arrayResponseModel;
 	}
 
 	public DownloadImageModel downloadVehicleImage(BigDecimal docSeqNumber)
@@ -909,6 +960,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			imageModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			imageModel.setErrorMessage(e.toString());
+			logger.info(TAG+"uploadVehicleImage :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -984,6 +1038,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"uploadVehicleImage :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -1062,6 +1119,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"uploadVehicleImage :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -1096,6 +1156,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"uploadVehicleImage :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -1132,6 +1195,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			customerProfileDetailModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			customerProfileDetailModel.setErrorMessage(e.toString());
+			logger.info(TAG+"updateCustomerSequenceNumber :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -1195,6 +1261,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"updateCustomerSequenceNumber :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally

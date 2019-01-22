@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.amx.jax.WebAppStatus.ApiWebAppStatus;
 import com.amx.jax.WebAppStatus.WebAppStatusCodes;
 import com.amx.jax.api.AmxApiResponse;
+import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.DownloadImageModel;
 import com.amx.jax.models.PersonalDetails;
 import com.amx.jax.models.VehicleDetails;

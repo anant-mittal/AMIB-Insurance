@@ -53,7 +53,6 @@ public class MyPolicyService
 				return resp;
 			}
 			
-			
 			if(null == userSession.getUserAmibCustRef())
 			{
 				if(null != userActivePolicyDetails.getData())
@@ -68,8 +67,10 @@ public class MyPolicyService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "getUserActivePolicy :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
 		}
 		return resp;
 	}
@@ -90,13 +91,24 @@ public class MyPolicyService
 			}
 			else
 			{
-				String checkRenewableApplicable = myPolicyDao.checkRenewableApplicable(oldDocNumber , userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber());
-				if(null != checkRenewableApplicable && !checkRenewableApplicable.equals(""))
+				ArrayResponseModel arrayResponseModel =  myPolicyDao.checkRenewableApplicable(oldDocNumber , userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber()); 
+				if(null != arrayResponseModel.getErrorCode())
 				{
-					resp.setStatusKey(checkRenewableApplicable);
-					resp.setMessageKey(checkRenewableApplicable);
+					resp.setMessageKey(arrayResponseModel.getErrorCode());
+					resp.setMessage(arrayResponseModel.getErrorMessage());
 					return resp;
 				}
+				else
+				{
+					String checkRenewableApplicable = arrayResponseModel.getData();
+					if(null != checkRenewableApplicable && !checkRenewableApplicable.equals(""))
+					{
+						resp.setStatusKey(checkRenewableApplicable);
+						resp.setMessageKey(checkRenewableApplicable);
+						return resp;
+					}
+				}
+				
 				
 				PersonalDetails personalDetails = (PersonalDetails) respPersonalDetails.getData();
 				if (null != personalDetails.getIdExpiryDate())
@@ -147,29 +159,32 @@ public class MyPolicyService
 					}
 				}
 			}
+			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
 			resp.setMessage(e.toString());
-			return resp;
+			logger.info(TAG + "renewInsuranceOldPolicy :: exception :" + e);
+			e.printStackTrace();
 		}
-		
-		resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 		return resp;
 	}
 	
-	public PolicyReceiptDetails downloadPolicyReceipt(BigDecimal docNumber)
+	public ArrayResponseModel downloadPolicyReceipt(BigDecimal docNumber)
 	{
-		PolicyReceiptDetails policyReceiptDetails = null;
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		try
 		{
-			policyReceiptDetails = myPolicyDao.downloadPolicyReceipt(docNumber, userSession.getLanguageId());
+			arrayResponseModel = myPolicyDao.downloadPolicyReceipt(docNumber, userSession.getLanguageId());
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"downloadPolicyReceipt :: exception :" + e);
 			e.printStackTrace();
 		}
-		return policyReceiptDetails;
+		return arrayResponseModel;
 	}
 }

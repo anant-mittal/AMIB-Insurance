@@ -1,14 +1,8 @@
 
 package com.amx.jax.controllers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.math.BigDecimal;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.amx.jax.HomeController;
 import com.amx.jax.WebAppStatus.ApiWebAppStatus;
 import com.amx.jax.WebAppStatus.WebAppStatusCodes;
 import com.amx.jax.api.AmxApiResponse;
@@ -35,7 +28,6 @@ import com.amx.jax.models.CustomerRegistrationRequest;
 import com.amx.jax.models.CustomerRegistrationResponse;
 import com.amx.jax.models.RequestOtpModel;
 import com.amx.jax.models.ResponseInfo;
-import com.amx.jax.postman.PostManService;
 import com.amx.jax.postman.client.GoogleService;
 import com.amx.jax.postman.model.Email;
 import com.amx.jax.postman.model.SupportEmail;
@@ -167,7 +159,14 @@ public class CustomerRegistrationController {
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS, WebAppStatusCodes.LIST_POP_ERROR,
 			WebAppStatusCodes.INVLD_LOGIN_CATG, WebAppStatusCodes.INVALID_USR })
 	@RequestMapping(value = "/pub/reg/userdetails", method = RequestMethod.POST)
-	public AmxApiResponse<CustomerDetailResponse, Object> getUserDetails() {
+	public AmxApiResponse<CustomerDetailResponse, Object> getUserDetails() 
+	{
+		/*BigDecimal languageIdDat = null;
+		if (null != languageId && !languageId.equals("") && !languageId.equalsIgnoreCase("null")) 
+		{
+			languageIdDat = ArgUtil.parseAsBigDecimal(languageId);
+			userSession.setLanguageId(languageIdDat);
+		}*/
 		return customerRegistrationService.getCustomerDetails();
 	}
 

@@ -9,6 +9,7 @@ import com.amx.jax.WebAppStatus.WebAppStatusCodes;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.dao.MyQuoteDao;
+import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.MyQuoteModel;
 import com.amx.jax.ui.session.UserSession;
 
@@ -16,6 +17,8 @@ import com.amx.jax.ui.session.UserSession;
 public class MyQuotesService
 {
 	private static final Logger logger = LoggerFactory.getLogger(MyQuotesService.class);
+	
+	String TAG = "MyQuotesService :: ";
 	
 	@Autowired
 	UserSession userSession;
@@ -28,13 +31,24 @@ public class MyQuotesService
 		AmxApiResponse<MyQuoteModel, Object> resp = new AmxApiResponse<MyQuoteModel, Object>();
 		try
 		{
-			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
-			resp.setResults(myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber(), userSession.getLanguageId()));
+			ArrayResponseModel arrayResponseModel = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber(), userSession.getLanguageId());
+			if(arrayResponseModel.getErrorCode() == null)
+			{
+				resp.setResults(arrayResponseModel.getDataArray());
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
+			}
+			else
+			{
+				resp.setMessageKey(arrayResponseModel.getErrorCode());
+				resp.setMessage(arrayResponseModel.getErrorMessage());
+			}
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG+"getUserQuote :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
 		}
 		return resp;
 	}

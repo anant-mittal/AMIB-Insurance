@@ -57,21 +57,28 @@ public class PayMentService
 		try
 		{
 			MyQuoteModel myQuoteModel = new MyQuoteModel();
-			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber(), userSession.getLanguageId());
-			for (int i = 0; i < getUserQuote.size(); i++)
+			ArrayResponseModel arrayResponseUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber(), userSession.getLanguageId());
+			if(arrayResponseUserQuote.getErrorCode() == null)
 			{
-				MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
-				if (null != quoteSeqNum && !quoteSeqNum.toString().equals(""))
+				ArrayList<MyQuoteModel> getUserQuote = arrayResponseUserQuote.getDataArray();
+				for (int i = 0; i < getUserQuote.size(); i++)
 				{
-					if (null != myQuoteModelFromDb.getQuoteSeqNumber() && myQuoteModelFromDb.getQuoteSeqNumber().equals(quoteSeqNum))
+					MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
+					if (null != quoteSeqNum && !quoteSeqNum.toString().equals(""))
 					{
-						myQuoteModel = myQuoteModelFromDb;
+						if (null != myQuoteModelFromDb.getQuoteSeqNumber() && myQuoteModelFromDb.getQuoteSeqNumber().equals(quoteSeqNum))
+						{
+							myQuoteModel = myQuoteModelFromDb;
+						}
 					}
 				}
 			}
-			
-			logger.info(TAG + " insertPaymentDetals :: quoteSeqNum :" + quoteSeqNum);
-			logger.info(TAG + " insertPaymentDetals :: getAppSeqNumber :" + myQuoteModel.getAppSeqNumber());
+			else
+			{
+				resp.setMessageKey(arrayResponseUserQuote.getErrorCode());
+				resp.setMessage(arrayResponseUserQuote.getErrorMessage());
+				return resp;
+			}
 			
 			PaymentDetails insertPaymentDetails = new PaymentDetails();
 			insertPaymentDetails.setAppSeqNum(myQuoteModel.getAppSeqNumber());
@@ -95,8 +102,10 @@ public class PayMentService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "insertPaymentDetals :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
 		}
 		return resp;
 	}
@@ -129,7 +138,9 @@ public class PayMentService
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			resp.setException(e.toString());
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG+"cretaeAmibCust :: exception :" + e);
 		}
 		return resp;
 	}
@@ -155,8 +166,10 @@ public class PayMentService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "processReceipt :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
 		}
 		return resp;
 	}
@@ -182,8 +195,10 @@ public class PayMentService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "createAmibPolicy :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
 		}
 		return resp;
 	}
@@ -208,8 +223,10 @@ public class PayMentService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "preparePrintData :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
 		}
 		return resp;
 	}
@@ -293,8 +310,10 @@ public class PayMentService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "getPaymentStatus :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
 		}
 		return resp;
 	}
@@ -364,8 +383,10 @@ public class PayMentService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "paymentReceiptData :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
 		}
 		return resp;
 	}

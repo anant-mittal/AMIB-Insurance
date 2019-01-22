@@ -135,10 +135,10 @@ public class CustomizeQuoteController {
 
 			PaymentDetails updateStatus = payMentService.updatePaymentDetals(paymentDetails);
 			logger.info(" onPaymentCallback :: updateStatus  :" + updateStatus.toString());
-
 		}
 
-		catch (Exception e) {
+		catch (Exception e) 
+		{
 			e.printStackTrace();
 		}
 		return paymentResponse;
