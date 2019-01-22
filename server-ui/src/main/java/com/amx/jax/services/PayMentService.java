@@ -235,21 +235,26 @@ public class PayMentService
 	{
 		AmxApiResponse<PaymentStatus, Object> resp = new AmxApiResponse<>();
 		PaymentStatus paymentStatus = new PaymentStatus();
-		paymentStatus.setPaymentProcedureStatus("N");
 		
 		try
 		{
 			ArrayResponseModel arrayResponseModel = payMentDao.getPaymentStatus(paySeqNum);
-			logger.info(TAG + " getPaymentStatus :: arrayResponseModel  :" + arrayResponseModel.toString());
+			logger.info(TAG + " getPaymentStatus :: arrayResponseModel  1 :" + arrayResponseModel.toString());
+			paymentStatus.setPaymentProcedureStatus("N");
+			
+			logger.info(TAG + " getPaymentStatus :: arrayResponseModel 2 :" + arrayResponseModel.getErrorCode());
+			
 			if(null == arrayResponseModel.getErrorCode())
 			{
 				paymentStatus = (PaymentStatus) arrayResponseModel.getObject();
-				logger.info(TAG + " getPaymentStatus :: paymentStatus  :" + paymentStatus.toString());
+				logger.info(TAG + " getPaymentStatus :: paymentStatus 3 :" + paymentStatus.toString());
 				
 				if(paymentStatus.getPaymentStatus().equalsIgnoreCase("CAPTURED"))
 				{
 					try
 					{
+						logger.info(TAG + " getPaymentStatus :: paymentStatus 4 :" + paymentStatus.toString());
+						
 						AmxApiResponse<? , Object> createAmibResp = payMentService.cretaeAmibCust();
 						if (!createAmibResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 						{
@@ -258,6 +263,8 @@ public class PayMentService
 						}
 						else
 						{
+							logger.info(TAG + " getPaymentStatus :: paymentStatus 5 :" + paymentStatus.toString());
+							
 							AmxApiResponse<? , Object> processTeceiptResp = payMentService.processReceipt(paySeqNum);
 							if (!processTeceiptResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 							{
@@ -266,6 +273,8 @@ public class PayMentService
 							}
 							else
 							{
+								logger.info(TAG + " getPaymentStatus :: paymentStatus 6 :" + paymentStatus.toString());
+								
 								AmxApiResponse<? , Object> createAmibPolicyResp = payMentService.createAmibPolicy(paySeqNum);
 								if (!createAmibPolicyResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 								{
@@ -274,6 +283,8 @@ public class PayMentService
 								}
 								else
 								{
+									logger.info(TAG + " getPaymentStatus :: paymentStatus 7 :" + paymentStatus.toString());
+									
 									AmxApiResponse<? , Object> preparePrintData = payMentService.preparePrintData(paySeqNum);
 									if (!preparePrintData.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 									{
@@ -299,6 +310,7 @@ public class PayMentService
 					}
 				}
 				
+				logger.info(TAG + " getPaymentStatus :: paymentStatus 8 :" + paymentStatus.toString());
 				resp.setData(paymentStatus);
 				resp.setStatusKey(ApiConstants.SUCCESS);
 			}
