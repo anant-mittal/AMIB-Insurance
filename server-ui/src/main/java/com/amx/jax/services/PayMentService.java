@@ -247,12 +247,11 @@ public class PayMentService
 			if(null == arrayResponseModel.getErrorCode())
 			{
 				paymentStatus = (PaymentStatus) arrayResponseModel.getObject();
+				paymentStatus.setPaymentProcedureStatus("N");
 				logger.info(TAG + " getPaymentStatus :: paymentStatus 3 :" + paymentStatus.toString());
 				
 				if(paymentStatus.getPaymentStatus().equalsIgnoreCase("CAPTURED"))
 				{
-					paymentStatus.setPaymentProcedureStatus("N");
-					
 					try
 					{
 						logger.info(TAG + " getPaymentStatus :: paymentStatus 4 :" + paymentStatus.toString());
