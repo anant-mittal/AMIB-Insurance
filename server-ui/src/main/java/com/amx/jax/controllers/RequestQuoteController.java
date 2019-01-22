@@ -166,7 +166,7 @@ public class RequestQuoteController {
 		byte[] imageByteArray = downloadImageModel.getImageByteArray();
 		String imageType = downloadImageModel.getImageType();
 		MediaType mediaType = null;
-		if (imageType.contains("jpeg")) {
+		if (imageType.contains("jpeg") || imageType.contains("jpg")) {
 			mediaType = MediaType.IMAGE_JPEG;
 		} else if (imageType.contains("png")) {
 			mediaType = MediaType.IMAGE_PNG;

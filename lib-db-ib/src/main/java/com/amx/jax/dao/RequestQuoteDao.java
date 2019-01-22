@@ -866,7 +866,33 @@ public class RequestQuoteDao
 			callableStatement.setString(4, docTypeCode);
 			callableStatement.setBigDecimal(5, docSeqNumber);
 			callableStatement.setBlob(6, inputStream, inputStream.available());
-			callableStatement.setString(7, file.getContentType().toString());
+			
+			String imageType = file.getContentType().toString();
+			logger.info(TAG + " uploadVehicleImage :: imageType :" + imageType);
+			
+			if (imageType.contains("image")) 
+			{
+				callableStatement.setString(7, file.getContentType().toString());
+			} 
+			else
+			{
+				String extension = getFileExtension(file.getOriginalFilename());
+				logger.info(TAG + " uploadVehicleImage :: extension 3 :" + extension);
+				if(extension.equalsIgnoreCase("jpeg"))
+				{
+					callableStatement.setString(7, "image/jpeg");
+				}
+				else if(extension.equalsIgnoreCase("jpg"))
+				{
+					callableStatement.setString(7, "image/jpg");
+				}
+				else if(extension.equalsIgnoreCase("png"))
+				{
+					callableStatement.setString(7, "image/png");
+				}
+			}
+			
+			
 			callableStatement.setString(8, metaService.getUserDeviceInfo().getDeviceType());
 			callableStatement.setString(9, metaService.getUserDeviceInfo().getDeviceId());
 			callableStatement.setString(10, civilId);
@@ -1231,4 +1257,11 @@ public class RequestQuoteDao
 			e.printStackTrace();
 		}
 	}
+	
+	private static String getFileExtension(String fileName) 
+	{
+        if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
+        return fileName.substring(fileName.lastIndexOf(".")+1);
+        else return "";
+    }
 }
