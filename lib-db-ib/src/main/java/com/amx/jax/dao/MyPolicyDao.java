@@ -11,6 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.ActivePolicyModel;
 import com.amx.jax.models.ArrayResponseModel;
@@ -126,8 +128,6 @@ public class MyPolicyDao
 				activePolicyModel.setRenewalIndic(rs.getString(43));//Not Used On UI
 				activePolicyModel.setFuelCode(rs.getString(44));
 				activePolicyModel.setFuelDesc(rs.getString(45));
-				
-				logger.info(TAG + " getUserActivePolicy :: setRenewalIndic :"+rs.getString(43));
 				if (null != rs.getString(43) && rs.getString(43).equalsIgnoreCase("N")) // Action is based on this
 				{
 					activePolicyModel.setRenewableApplCheck("N");
@@ -143,6 +143,9 @@ public class MyPolicyDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getUserActivePolicy :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally

@@ -46,6 +46,14 @@ public class MyPolicyService
 		{
 			
 			ArrayResponseModel userActivePolicyDetails =  myPolicyDao.getUserActivePolicy(userSession.getUserAmibCustRef(), userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber()); 
+			if(null != userActivePolicyDetails.getErrorCode())
+			{
+				resp.setMessageKey(userActivePolicyDetails.getErrorCode());
+				resp.setMessage(userActivePolicyDetails.getErrorMessage());
+				return resp;
+			}
+			
+			
 			if(null == userSession.getUserAmibCustRef())
 			{
 				if(null != userActivePolicyDetails.getData())

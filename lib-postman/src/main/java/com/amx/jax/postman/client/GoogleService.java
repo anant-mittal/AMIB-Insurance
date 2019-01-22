@@ -22,13 +22,13 @@ public class GoogleService {
 
 	public Boolean verifyCaptcha(String responseKey, String remoteIP) {
 		logger.info("GoogleService :: verifyCaptcha :: remoteIP :" + remoteIP);
+		logger.info("googleSecret :: " + googleSecret);
 
 		try {
 			@SuppressWarnings("unchecked")
 			Map<String, Object> resp = restService.ajax("https://www.google.com/recaptcha/api/siteverify").acceptJson()
 					.field("secret", googleSecret).field("response", responseKey).field("remoteip", remoteIP).postForm()
 					.as(Map.class);
-
 			logger.info("GoogleService :: verifyCaptcha :: responseKey :" + responseKey);
 			logger.info("GoogleService :: verifyCaptcha :: resp :" + resp);
 			logger.info("GoogleService :: verifyCaptcha :: resp.toString() :" + resp.toString());

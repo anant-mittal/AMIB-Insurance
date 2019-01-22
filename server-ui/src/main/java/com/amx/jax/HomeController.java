@@ -142,5 +142,4 @@ public class HomeController {
 		return "terms";
 	}
 	
-	//Ok
 }
