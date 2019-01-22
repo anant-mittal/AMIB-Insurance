@@ -105,7 +105,9 @@ public class CustomerRegistrationService {
 		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
 		try {
 			ArrayResponseModel arrayResponseModel = customerRegistrationDao.isValidCivilId(civilid);
-			if (arrayResponseModel.getErrorCode() == null) {
+			logger.info(TAG + "isValidCivilId :: getData :" + arrayResponseModel.getData());
+			if (arrayResponseModel.getData() == null) 
+			{
 				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 				resp.setMessage(Message.CIVILID_VALID);
 				resp.setMessageKey(WebAppStatusCodes.CIVIL_ID_VALID.toString());
@@ -135,7 +137,8 @@ public class CustomerRegistrationService {
 		try {
 			ArrayResponseModel arrayResponseModel = customerRegistrationDao.isCivilIdExist(civilid,
 					HardCodedValues.USER_TYPE);
-
+			logger.info(TAG + "isCivilIdExist :: getData :" + arrayResponseModel.getData());
+			
 			if (arrayResponseModel.getData().equalsIgnoreCase("Y")) {
 				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 				resp.setMessage(Message.CIVILID_ALREDAY_REGISTER);
@@ -175,7 +178,9 @@ public class CustomerRegistrationService {
 			}
 
 			ResponseInfo isValidMobileNumber = customerRegistrationDao.isValidMobileNumber(mobileNumber);
-
+			logger.info(TAG + "isValidMobileNumber :: getErrorCode :" + isValidMobileNumber.getErrorCode());
+			
+			
 			if (isValidMobileNumber.getErrorCode() == null) {
 				validMobileNumber.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			} else {
@@ -200,7 +205,9 @@ public class CustomerRegistrationService {
 			ArrayResponseModel arrayResponseModel = customerRegistrationDao.isMobileNumberExist(mobileNumber,
 					HardCodedValues.USER_TYPE);
 
-			if (null != arrayResponseModel.getErrorCode() && arrayResponseModel.getErrorCode().equalsIgnoreCase("Y")) {
+			logger.info(TAG + "isMobileNumberExist :: getData :" + arrayResponseModel.getData());
+			
+			if (null != arrayResponseModel.getData() && arrayResponseModel.getData().equalsIgnoreCase("Y")) {
 				validMobileNumber.setStatusEnum(WebAppStatusCodes.SUCCESS);
 				validMobileNumber.setMessage(Message.MOBILE_NO_ALREDAY_REGISTER);
 				validMobileNumber.setMessageKey(WebAppStatusCodes.MOBILE_NUMBER_REGISTERED.toString());
@@ -399,6 +406,8 @@ public class CustomerRegistrationService {
 					requestOtpModel.getEmailId(), requestOtpModel.getMobileNumber(), DetailsConstants.REGISTRATION_OTP);
 
 			if (null != validateDOTP) {
+				
+				logger.info(TAG + "registrationOtp :: requestOtpModel :" + requestOtpModel);
 				return validateDOTP;
 			}
 		} catch (Exception e) {
@@ -748,12 +757,15 @@ public class CustomerRegistrationService {
 		try {
 
 			AmxApiResponse<ResponseInfo, Object> validateCivilID = isValidCivilId(requestOtpModel.getCivilId());
+			
 			AmxApiResponse<ResponseInfo, Object> civilIdExistCheck = isCivilIdExist(requestOtpModel.getCivilId());
-			AmxApiResponse<ResponseInfo, Object> isValidMobileNumber = isValidMobileNumber(
-					requestOtpModel.getMobileNumber());
-			AmxApiResponse<ResponseInfo, Object> mobileNumberExists = isMobileNumberExist(
-					requestOtpModel.getMobileNumber());
+			
+			AmxApiResponse<ResponseInfo, Object> isValidMobileNumber = isValidMobileNumber(requestOtpModel.getMobileNumber());
+			
+			AmxApiResponse<ResponseInfo, Object> mobileNumberExists = isMobileNumberExist(requestOtpModel.getMobileNumber());
+			
 			AmxApiResponse<ResponseInfo, Object> validateEmailID = isValidEmailId(requestOtpModel.getEmailId());
+			
 			AmxApiResponse<ResponseInfo, Object> emailIdExists = isEmailIdExist(requestOtpModel.getEmailId());
 
 			try {
@@ -761,20 +773,28 @@ public class CustomerRegistrationService {
 					requestOtpModel.setCivilId(userSession.getCivilId());
 				}
 
+				logger.info(TAG + "validateForRegistration :: 0");
+				
 				if (!validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
 					validateCivilID.setStatusKey(validateCivilID.getMessageKey());
 					return validateCivilID;
 				}
+				
+				logger.info(TAG + "validateForRegistration :: 1 ");
 
 				if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
 					civilIdExistCheck.setStatusKey(civilIdExistCheck.getMessageKey());
 					return civilIdExistCheck;
 				}
+				
+				logger.info(TAG + "validateForRegistration :: 2");
 
 				if (!validateEmailID.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
 
 					return validateEmailID;
 				}
+				
+				logger.info(TAG + "validateForRegistration :: 3");
 
 				if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
 					sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL, requestOtpModel,
@@ -783,11 +803,15 @@ public class CustomerRegistrationService {
 					resp.setStatusEnum(WebAppStatusCodes.EMAIL_ID_REGESTERED);
 					return resp;
 				}
+				
+				logger.info(TAG + "validateForRegistration :: 4");
 
 				if (!isValidMobileNumber.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
 					return isValidMobileNumber;
 				}
 
+				logger.info(TAG + "validateForRegistration :: 5");
+				
 				if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
 					sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE, requestOtpModel,
 							mobileNumberExists.getMessage());
@@ -796,6 +820,8 @@ public class CustomerRegistrationService {
 					return resp;
 				}
 
+				logger.info(TAG + "validateForRegistration :: 6");
+				
 				if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)
 						&& emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
 					sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_MOBE_MAIL, requestOtpModel,
@@ -804,6 +830,8 @@ public class CustomerRegistrationService {
 					resp.setMessageKey(WebAppStatusCodes.MOBILE_OR_EMAIL_ALREADY_EXISTS.toString());
 					return resp;
 				}
+				logger.info(TAG + "validateForRegistration :: 7");
+				
 
 			} catch (Exception e) {
 				resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
@@ -818,6 +846,6 @@ public class CustomerRegistrationService {
 			e.printStackTrace();
 		}
 
-		return resp;
+		return null;
 	}
 }
