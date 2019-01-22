@@ -786,7 +786,7 @@ public class EmailSmsService
 		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
 		ArrayResponseModel arrayResponseModel = customerRegistrationDao.isOtpEnabled(civilId , HardCodedValues.USER_TYPE);
 		
-		if (null != arrayResponseModel.getErrorCode() && arrayResponseModel.getErrorCode().equalsIgnoreCase("Y"))
+		if (null != arrayResponseModel.getData() && arrayResponseModel.getData().equalsIgnoreCase("Y"))
 		{
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			resp.setMessage(Message.CUST_OTP_ENABLED);
@@ -859,7 +859,7 @@ public class EmailSmsService
 		ArrayResponseModel arrayResponseModel = customerRegistrationDao.isCivilIdExist(civilid , HardCodedValues.USER_TYPE);
 		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
 		
-		if (arrayResponseModel.getErrorCode().equals("Y"))
+		if (null != arrayResponseModel.getData() && arrayResponseModel.getData().equals("Y"))
 		{
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			resp.setMessage(Message.CIVILID_ALREDAY_REGISTER);
