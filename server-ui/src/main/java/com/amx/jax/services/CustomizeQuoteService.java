@@ -72,7 +72,7 @@ public class CustomizeQuoteService
 		try
 		{
 			MyQuoteModel myQuoteModel = new MyQuoteModel();
-			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber());
+			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber(),userSession.getLanguageId());
 			for (int i = 0; i < getUserQuote.size(); i++)
 			{
 				MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
@@ -109,7 +109,7 @@ public class CustomizeQuoteService
 			
 			
 			// SET QuoteAddPolicy Details
-			ArrayResponseModel arrayResponseModel = customizeQuoteDao.getQuoteAdditionalPolicy(myQuoteModel.getQuoteSeqNumber(), myQuoteModel.getVerNumber());
+			ArrayResponseModel arrayResponseModel = customizeQuoteDao.getQuoteAdditionalPolicy(myQuoteModel.getQuoteSeqNumber(), myQuoteModel.getVerNumber(), userSession.getLanguageId());
 			if(arrayResponseModel.getErrorCode() == null)
 			{
 				quoteAddPolicyDetails = arrayResponseModel.getDataArray();
@@ -139,20 +139,26 @@ public class CustomizeQuoteService
 				String polType = quoteAddPolicyDetails.get(i).getAddPolicyTypeCode();
 				Date quoteDate = DateFormats.setDbSqlFormatDate(myQuoteModel.getQuoteDate());
 				
-				ArrayResponseModel arrayResponseModelRep = customizeQuoteDao.getReplacementTypeList(polType, quoteDate);
-				if(arrayResponseModelRep.getErrorCode() == null)
+				ArrayResponseModel arrayResponseModelRep = customizeQuoteDao.getReplacementTypeList(polType, quoteDate, userSession.getLanguageId());
+				if(null != arrayResponseModelRep)
 				{
-					ArrayList repTypeArray = arrayResponseModelRep.getDataArray();
-					if (null != repTypeArray)
+					logger.info("getCustomizedQuoteDetails :: getDataArray :" + arrayResponseModelRep.getDataArray());
+					logger.info("getCustomizedQuoteDetails :: getErrorCode :" + arrayResponseModelRep.getErrorCode());
+					
+					if(null == arrayResponseModelRep.getErrorCode())
 					{
-						repTypeMap.put(polType, repTypeArray);
+						ArrayList repTypeArray = arrayResponseModelRep.getDataArray();
+						if (null != repTypeArray)
+						{
+							repTypeMap.put(polType, repTypeArray);
+						}
 					}
-				}
-				else
-				{
-					resp.setMessage(arrayResponseModelRep.getErrorMessage());
-					resp.setMessageKey(arrayResponseModelRep.getErrorCode());
-					return resp;
+					else
+					{
+						resp.setMessage(arrayResponseModelRep.getErrorMessage());
+						resp.setMessageKey(arrayResponseModelRep.getErrorCode());
+						return resp;
+					}
 				}
 			}
 
@@ -184,7 +190,7 @@ public class CustomizeQuoteService
 		try
 		{
 			ArrayList<String> allQuotes = new ArrayList<String>();
-			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber());
+			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber(), userSession.getLanguageId());
 			for (int i = 0; i < getUserQuote.size(); i++)
 			{
 				MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
@@ -218,7 +224,7 @@ public class CustomizeQuoteService
 			BigDecimal quoteSeqNumber = customizeQuoteInfo.getQuoteSeqNumber();
 			
 			MyQuoteModel myQuoteModel = new MyQuoteModel();
-			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber());
+			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber(), userSession.getLanguageId());
 			for (int i = 0; i < getUserQuote.size(); i++)
 			{
 				MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
@@ -238,20 +244,26 @@ public class CustomizeQuoteService
 				String polType = quoteAddPolicyDetails.get(i).getAddPolicyTypeCode();
 				Date quoteDate = DateFormats.setDbSqlFormatDate(myQuoteModel.getQuoteDate());
 				
-				ArrayResponseModel arrayResponseModelRep = customizeQuoteDao.getReplacementTypeList(polType, quoteDate);
-				if(arrayResponseModelRep.getErrorCode() == null)
+				ArrayResponseModel arrayResponseModelRep = customizeQuoteDao.getReplacementTypeList(polType, quoteDate, userSession.getLanguageId());
+				if(null != arrayResponseModelRep)
 				{
-					ArrayList repTypeArray = arrayResponseModelRep.getDataArray();
-					if (null != repTypeArray)
+					logger.info("getCustomizedQuoteDetails :: getDataArray :" + arrayResponseModelRep.getDataArray());
+					logger.info("getCustomizedQuoteDetails :: getErrorCode :" + arrayResponseModelRep.getErrorCode());
+					
+					if(null == arrayResponseModelRep.getErrorCode())
 					{
-						repTypeMap.put(polType, repTypeArray);
+						ArrayList repTypeArray = arrayResponseModelRep.getDataArray();
+						if (null != repTypeArray)
+						{
+							repTypeMap.put(polType, repTypeArray);
+						}
 					}
-				}
-				else
-				{
-					resp.setMessage(arrayResponseModelRep.getErrorMessage());
-					resp.setMessageKey(arrayResponseModelRep.getErrorCode());
-					return resp;
+					else
+					{
+						resp.setMessage(arrayResponseModelRep.getErrorMessage());
+						resp.setMessageKey(arrayResponseModelRep.getErrorCode());
+						return resp;
+					}
 				}
 				
 			}
@@ -276,7 +288,7 @@ public class CustomizeQuoteService
 			
 			
 			
-			ArrayResponseModel arrayResponseModelRep = customizeQuoteDao.getTermsAndCondition();
+			ArrayResponseModel arrayResponseModelRep = customizeQuoteDao.getTermsAndCondition(userSession.getLanguageId());
 			if(arrayResponseModelRep.getErrorCode() == null)
 			{
 				resp.setResults(arrayResponseModelRep.getDataArray());
@@ -301,7 +313,7 @@ public class CustomizeQuoteService
 	
 	public TreeMap<Integer,String> getTermsAndConditionTest()
 	{
-		return customizeQuoteDao.getTermsAndConditionTest();
+		return customizeQuoteDao.getTermsAndConditionTest(userSession.getLanguageId());
 	}
 
 	public AmxApiResponse<?, Object> saveCustomizeQuote(CustomizeQuoteModel customizeQuoteModel , HttpServletRequest request)
@@ -313,7 +325,7 @@ public class CustomizeQuoteService
 			BigDecimal quoteSeqNumber = customizeQuoteInfo.getQuoteSeqNumber();
 
 			MyQuoteModel myQuoteModel = new MyQuoteModel();
-			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber());
+			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber(),userSession.getLanguageId());
 			for (int i = 0; i < getUserQuote.size(); i++)
 			{
 				MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);

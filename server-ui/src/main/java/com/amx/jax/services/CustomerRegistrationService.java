@@ -1,6 +1,7 @@
 
 package com.amx.jax.services;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -66,12 +67,15 @@ public class CustomerRegistrationService {
 	@Autowired
 	private CustomerRegistrationDao customerRegistrationDao;
 
-	public AmxApiResponse<CompanySetUp, Object> getCompanySetUp() {
-		logger.info("getCompanySetUp :: " + metaService.getTenantProfile().getLanguageId());
+	public AmxApiResponse<CompanySetUp, Object> getCompanySetUp() 
+	{
+		userSession.setLanguageId(new BigDecimal(0));
+		
 		AmxApiResponse<CompanySetUp, Object> resp = new AmxApiResponse<CompanySetUp, Object>();
-		try {
+		try 
+		{
 			ArrayResponseModel arrayResponseModel = customerRegistrationDao
-					.getCompanySetUp(metaService.getTenantProfile().getLanguageId(), webConfig.getAppCompCode());
+					.getCompanySetUp(userSession.getLanguageId(), webConfig.getAppCompCode());
 
 			if (arrayResponseModel.getErrorCode() == null) {
 				ArrayList<CompanySetUp> getCompanySetUp = arrayResponseModel.getDataArray();
@@ -253,7 +257,7 @@ public class CustomerRegistrationService {
 
 		if (null != userSession.getCivilId() && !userSession.getCivilId().equals("")) 
 		{
-			CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(userSession.getCivilId(), HardCodedValues.USER_TYPE, userSession.getUserSequenceNumber());
+			CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(userSession.getCivilId(), HardCodedValues.USER_TYPE, userSession.getUserSequenceNumber(), userSession.getLanguageId());
 			
 			if(customerDetailModel.getErrorCode() == null)
 			{
@@ -285,7 +289,7 @@ public class CustomerRegistrationService {
 			customerDetailResponse.setCustomerDetails(null);
 		}
 
-		ArrayResponseModel arrayResponseModel = customerRegistrationDao.getCompanySetUp(metaService.getTenantProfile().getLanguageId(), webConfig.getAppCompCode());
+		ArrayResponseModel arrayResponseModel = customerRegistrationDao.getCompanySetUp(userSession.getLanguageId() , webConfig.getAppCompCode());
 		if (arrayResponseModel.getErrorCode() == null) 
 		{
 			ArrayList<CompanySetUp> getCompanySetUp = arrayResponseModel.getDataArray();
@@ -384,12 +388,12 @@ public class CustomerRegistrationService {
 		customerRegistrationModel.setUserType(HardCodedValues.USER_TYPE);
 		customerRegistrationModel.setMobile(userSession.getCustomerMobileNumber());
 		customerRegistrationModel.setEmail(userSession.getCustomerEmailId());
-		customerRegistrationModel.setLanguageId(metaService.getTenantProfile().getLanguageId());
+		customerRegistrationModel.setLanguageId(userSession.getLanguageId());
 		customerRegistrationModel.setCivilId(userSession.getCivilId());
 		customerRegistrationModel.setCreatedDeviceId(metaService.getUserDeviceInfo().getDeviceId());
 		customerRegistrationModel.setDeviceType(metaService.getUserDeviceInfo().getDeviceType());
 
-		customerRegistrationModel = customerRegistrationDao.addNewCustomer(customerRegistrationModel);
+		customerRegistrationModel = customerRegistrationDao.addNewCustomer(customerRegistrationModel, userSession.getLanguageId());
 
 		if (customerRegistrationModel.getErrorCode() == null) {
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
@@ -484,7 +488,9 @@ public class CustomerRegistrationService {
 		return resp;
 	}
 
-	public void onSuccessLogin(CustomerLoginRequest customerLoginRequest, CustomerLoginModel customerLoginModel) {
+	public void onSuccessLogin(CustomerLoginRequest customerLoginRequest, CustomerLoginModel customerLoginModel) 
+	{
+		userSession.setLanguageId(new BigDecimal(0));
 		userSession.setCivilId(customerLoginRequest.getCivilId());
 		userSession.setUserSequenceNumber(customerLoginModel.getUserSeqNum());
 		userSession.setUserAmibCustRef(customerLoginModel.getAmibRef());
@@ -517,7 +523,7 @@ public class CustomerRegistrationService {
 		}
 
 		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(
-				changePasswordOtpRequest.getCivilId(), HardCodedValues.USER_TYPE, userSession.getUserSequenceNumber());
+				changePasswordOtpRequest.getCivilId(), HardCodedValues.USER_TYPE, userSession.getUserSequenceNumber(), userSession.getLanguageId());
 		if (null == customerDetailModel || customerDetailModel.getErrorCode() != null) {
 			resp.setMessageKey(customerDetailModel.getErrorCode());
 			resp.setMessage(customerDetailModel.getErrorMessage());
@@ -555,7 +561,7 @@ public class CustomerRegistrationService {
 		}
 
 		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(userSession.getCivilId(),
-				HardCodedValues.USER_TYPE, userSession.getUserSequenceNumber());
+				HardCodedValues.USER_TYPE, userSession.getUserSequenceNumber(), userSession.getLanguageId());
 		if (null == customerDetailModel || customerDetailModel.getErrorCode() != null) {
 			resp.setMessageKey(customerDetailModel.getErrorCode());
 			resp.setMessage(customerDetailModel.getErrorMessage());
@@ -628,7 +634,7 @@ public class CustomerRegistrationService {
 		failureException.setCompCd(metaService.getTenantProfile().getCompCd());
 		failureException.setDeviceId(metaService.getUserDeviceInfo().getDeviceId());
 		failureException.setDeviceType(metaService.getUserDeviceInfo().getDeviceType());
-		failureException.setLanguageId(metaService.getTenantProfile().getLanguageId());
+		failureException.setLanguageId(userSession.getLanguageId());
 		failureException.setExceptionType("REGISTER");
 		failureException.setUserType(HardCodedValues.USER_TYPE);
 		failureException.setExceptionMsg(exceptionMessage);

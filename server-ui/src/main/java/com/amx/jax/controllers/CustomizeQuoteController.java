@@ -223,10 +223,8 @@ public class CustomizeQuoteController {
 		if (null == metaService.getTenantProfile().getCountryId()
 				|| null == metaService.getUserDeviceInfo().getDeviceId()) 
 		{
-			if (httpService.getLanguage().toString().equalsIgnoreCase("EN")) 
-			{
-				metaService.getTenantProfile().setLanguageId(new BigDecimal(0));
-			}
+			
+			userSession.setLanguageId(new BigDecimal(0));
 			customerRegistrationService.getCompanySetUp();
 		}
 	}

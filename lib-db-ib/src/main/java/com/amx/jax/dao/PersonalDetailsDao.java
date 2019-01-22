@@ -36,7 +36,7 @@ public class PersonalDetailsDao
 	
 	Connection connection;
 
-	public CustomerProfileDetailModel getProfileDetails(String civilId , String userType , BigDecimal custSeqNum)
+	public CustomerProfileDetailModel getProfileDetails(String civilId , String userType , BigDecimal custSeqNum, BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -51,7 +51,7 @@ public class PersonalDetailsDao
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(3, userType);
 			callableStatement.setString(4, civilId);
-			callableStatement.setBigDecimal(5, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(5, languageId);
 			callableStatement.setBigDecimal(6, custSeqNum);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
@@ -114,7 +114,7 @@ public class PersonalDetailsDao
 		return customerProfileDetailModel;
 	}
 
-	public CustomerProfileDetailModel updateProfileDetails(CustomerProfileDetailModel customerProfileDetailModel , String civilId , String userType , BigDecimal custSeqNum)
+	public CustomerProfileDetailModel updateProfileDetails(CustomerProfileDetailModel customerProfileDetailModel , String civilId , String userType , BigDecimal custSeqNum, BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -139,7 +139,7 @@ public class PersonalDetailsDao
 			callableStatement.setString(13, customerProfileDetailModel.getAreaCode());
 			callableStatement.setString(14, customerProfileDetailModel.getMobile());
 			callableStatement.setString(15, customerProfileDetailModel.getEmail());
-			callableStatement.setBigDecimal(16, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(16, languageId);
 			callableStatement.setString(17, metaService.getUserDeviceInfo().getDeviceId());
 			callableStatement.setString(18, metaService.getUserDeviceInfo().getDeviceType());
 			callableStatement.setString(19, civilId);
@@ -179,7 +179,7 @@ public class PersonalDetailsDao
 		return customerProfileDetailModel;
 	}
 
-	public ArrayList getBusiness()
+	public ArrayList getBusiness(BigDecimal languageId)
 	{
 		getConnection();
 
@@ -193,7 +193,7 @@ public class PersonalDetailsDao
 
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
-			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(3, languageId);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -222,7 +222,7 @@ public class PersonalDetailsDao
 		return businessArray;
 	}
 
-	public ArrayList getNationality()
+	public ArrayList getNationality(BigDecimal languageId)
 	{
 		getConnection();
 
@@ -236,7 +236,7 @@ public class PersonalDetailsDao
 
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
-			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(3, languageId);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -266,7 +266,7 @@ public class PersonalDetailsDao
 		return nationalityArray;
 	}
 
-	public ArrayList getGovernorates()
+	public ArrayList getGovernorates(BigDecimal languageId)
 	{
 		getConnection();
 
@@ -280,7 +280,7 @@ public class PersonalDetailsDao
 
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
-			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(3, languageId);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -310,7 +310,7 @@ public class PersonalDetailsDao
 		return governoratesArray;
 	}
 
-	public ArrayList getArea(String gov)
+	public ArrayList getArea(String gov ,BigDecimal languageId)
 	{
 		getConnection();
 
@@ -325,7 +325,7 @@ public class PersonalDetailsDao
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(3, gov);
-			callableStatement.setBigDecimal(4, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(4, languageId);
 			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
@@ -355,7 +355,7 @@ public class PersonalDetailsDao
 		return areaArray;
 	}
 
-	public ArrayList getGender()
+	public ArrayList getGender(BigDecimal languageId)
 	{
 		getConnection();
 
@@ -369,7 +369,7 @@ public class PersonalDetailsDao
 
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
-			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(3, languageId);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);

@@ -362,7 +362,7 @@ public class PayMentDao
 	}
 	
 	
-	public ArrayResponseModel paymentReceiptData(BigDecimal paySeqNum)
+	public ArrayResponseModel paymentReceiptData(BigDecimal paySeqNum, BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -379,7 +379,7 @@ public class PayMentDao
 			
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, paySeqNum);
-			callableStatement.setBigDecimal(4, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(4, languageId);
 			
 			callableStatement.registerOutParameter(5, java.sql.Types.NUMERIC);
 			callableStatement.registerOutParameter(6, java.sql.Types.NUMERIC);

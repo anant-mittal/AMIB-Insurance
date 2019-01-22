@@ -107,7 +107,7 @@ public class RequestQuoteDao
 		return incompleteApplModel;
 	}
 
-	public ArrayResponseModel getMake()
+	public ArrayResponseModel getMake(BigDecimal languageId)
 	{
 		getConnection();
 
@@ -120,7 +120,7 @@ public class RequestQuoteDao
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
-			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(3, languageId);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -152,7 +152,7 @@ public class RequestQuoteDao
 		return arrayResponseModel;
 	}
 
-	public ArrayResponseModel getModel(String make)
+	public ArrayResponseModel getModel(String make , BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -165,7 +165,7 @@ public class RequestQuoteDao
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(3, make);
-			callableStatement.setBigDecimal(4, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(4, languageId);
 			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
@@ -200,7 +200,7 @@ public class RequestQuoteDao
 		return arrayResponseModel;
 	}
 
-	public ArrayResponseModel getFuleType()
+	public ArrayResponseModel getFuleType(BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -212,7 +212,7 @@ public class RequestQuoteDao
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
-			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(3, languageId);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -241,7 +241,7 @@ public class RequestQuoteDao
 		return arrayResponseModel;
 	}
 
-	public ArrayResponseModel getPurpose()
+	public ArrayResponseModel getPurpose(BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -253,7 +253,7 @@ public class RequestQuoteDao
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
-			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(3, languageId);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -284,7 +284,7 @@ public class RequestQuoteDao
 		return arrayResponseModel;
 	}
 
-	public ArrayResponseModel getShape()
+	public ArrayResponseModel getShape(BigDecimal languageId)
 	{
 		getConnection();
 
@@ -297,7 +297,7 @@ public class RequestQuoteDao
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
-			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(3, languageId);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -326,7 +326,7 @@ public class RequestQuoteDao
 		return arrayResponseModel;
 	}
 
-	public ArrayResponseModel getColour()
+	public ArrayResponseModel getColour(BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -338,7 +338,7 @@ public class RequestQuoteDao
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
-			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(3, languageId);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -369,7 +369,7 @@ public class RequestQuoteDao
 		return arrayResponseModel;
 	}
 
-	public ArrayResponseModel getVehicleCondition()
+	public ArrayResponseModel getVehicleCondition(BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -381,7 +381,7 @@ public class RequestQuoteDao
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
-			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(3, languageId);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -484,7 +484,7 @@ public class RequestQuoteDao
 		return maxVehicleAgeArray;
 	}
 
-	public ArrayResponseModel getAppVehicleDetails(BigDecimal appSeqNumber)
+	public ArrayResponseModel getAppVehicleDetails(BigDecimal appSeqNumber,BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -497,7 +497,7 @@ public class RequestQuoteDao
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, appSeqNumber);
-			callableStatement.setBigDecimal(4, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(4, languageId);
 			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
@@ -662,7 +662,7 @@ public class RequestQuoteDao
 		return vehicleDetailsUpdateModel;
 	}
 
-	public ArrayResponseModel getImageMetaData()
+	public ArrayResponseModel getImageMetaData(BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -676,7 +676,7 @@ public class RequestQuoteDao
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
-			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(3, languageId);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -703,7 +703,7 @@ public class RequestQuoteDao
 		return arrayResponseModel;
 	}
 
-	public ArrayResponseModel getImageDetails(BigDecimal appSeqNumber)
+	public ArrayResponseModel getImageDetails(BigDecimal appSeqNumber, BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -716,7 +716,7 @@ public class RequestQuoteDao
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
-			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(3, languageId);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -926,7 +926,7 @@ public class RequestQuoteDao
 		return imageModel;
 	}
 
-	public ArrayResponseModel getInsuranceCompanyDetails(BigDecimal appSeqNumber)
+	public ArrayResponseModel getInsuranceCompanyDetails(BigDecimal appSeqNumber, BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -941,7 +941,7 @@ public class RequestQuoteDao
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
-			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(3, languageId);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -1141,7 +1141,7 @@ public class RequestQuoteDao
 		return customerProfileDetailModel;
 	}
 
-	public ArrayResponseModel getRenewPolicyVehicleDetails(BigDecimal appDocNumberDet)
+	public ArrayResponseModel getRenewPolicyVehicleDetails(BigDecimal appDocNumberDet, BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -1156,7 +1156,7 @@ public class RequestQuoteDao
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, appDocNumberDet);
-			callableStatement.setBigDecimal(4, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(4, languageId);
 			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);

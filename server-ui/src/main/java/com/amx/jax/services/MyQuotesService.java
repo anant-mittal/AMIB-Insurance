@@ -29,7 +29,7 @@ public class MyQuotesService
 		try
 		{
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
-			resp.setResults(myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber()));
+			resp.setResults(myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber(), userSession.getLanguageId()));
 		}
 		catch (Exception e)
 		{

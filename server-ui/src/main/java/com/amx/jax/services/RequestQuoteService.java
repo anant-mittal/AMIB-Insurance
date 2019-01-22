@@ -91,7 +91,7 @@ public class RequestQuoteService
 
 		try
 		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getMake();
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getMake(userSession.getLanguageId());
 			if (null == arrayResponseModel.getErrorCode())
 			{
 				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
@@ -120,7 +120,7 @@ public class RequestQuoteService
 
 		try
 		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getModel(make);
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getModel(make, userSession.getLanguageId());
 			if (null == arrayResponseModel.getErrorCode())
 			{
 				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
@@ -149,7 +149,7 @@ public class RequestQuoteService
 
 		try
 		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getFuleType();
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getFuleType(userSession.getLanguageId());
 			if (null == arrayResponseModel.getErrorCode())
 			{
 				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
@@ -177,7 +177,7 @@ public class RequestQuoteService
 
 		try
 		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getPurpose();
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getPurpose(userSession.getLanguageId());
 			if (null == arrayResponseModel.getErrorCode())
 			{
 				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
@@ -205,7 +205,7 @@ public class RequestQuoteService
 
 		try
 		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getShape();
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getShape(userSession.getLanguageId());
 			if (null == arrayResponseModel.getErrorCode())
 			{
 				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
@@ -233,7 +233,7 @@ public class RequestQuoteService
 
 		try
 		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getColour();
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getColour(userSession.getLanguageId());
 			if (null == arrayResponseModel.getErrorCode())
 			{
 				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
@@ -261,7 +261,7 @@ public class RequestQuoteService
 
 		try
 		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getVehicleCondition();
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getVehicleCondition(userSession.getLanguageId());
 			if (null == arrayResponseModel.getErrorCode())
 			{
 				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
@@ -402,7 +402,7 @@ public class RequestQuoteService
 
 		try
 		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getAppVehicleDetails(appSeqNumber);
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getAppVehicleDetails(appSeqNumber, userSession.getLanguageId());
 			if (null == arrayResponseModel.getErrorCode())
 			{
 				ArrayList<VehicleDetailsGetModel> vehicleDetailsArray = arrayResponseModel.getDataArray();
@@ -467,7 +467,7 @@ public class RequestQuoteService
 
 			if (null == oldDocNumber)
 			{
-				ArrayResponseModel arrayResponseModel = requestQuoteDao.getAppVehicleDetails(appSeqNumber);
+				ArrayResponseModel arrayResponseModel = requestQuoteDao.getAppVehicleDetails(appSeqNumber, userSession.getLanguageId());
 				if (null == arrayResponseModel.getErrorCode())
 				{
 					ArrayList<VehicleDetailsGetModel> vehicleDetailsArray = arrayResponseModel.getDataArray();
@@ -531,7 +531,7 @@ public class RequestQuoteService
 		AmxApiResponse<PersonalDetails, Object> resp = new AmxApiResponse<PersonalDetails, Object>();
 		PersonalDetails personalDetails = new PersonalDetails();
 		CustomerProfileDetailModel customerProfileDetailModel = new CustomerProfileDetailModel();
-		customerProfileDetailModel = personalDetailsDao.getProfileDetails(userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber());
+		customerProfileDetailModel = personalDetailsDao.getProfileDetails(userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber(), userSession.getLanguageId());
 
 		personalDetails.setAreaCode(customerProfileDetailModel.getAreaCode());
 		personalDetails.setBusinessCode(customerProfileDetailModel.getBusinessCode());
@@ -594,7 +594,7 @@ public class RequestQuoteService
 			custSeqNumberAvailable = false;
 		}
 
-		customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel , userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber());
+		customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel , userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber(), userSession.getLanguageId());
 		userSession.setCustomerSequenceNumber(customerProfileDetailModel.getCustSequenceNumber());
 		
 		if (!custSeqNumberAvailable)
@@ -632,7 +632,7 @@ public class RequestQuoteService
 		AmxApiResponse<?, Object> resp = new AmxApiResponse<Object, Object>();
 		try
 		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getImageMetaData();
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getImageMetaData(userSession.getLanguageId());
 			if (null == arrayResponseModel.getErrorCode())
 			{
 				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
@@ -658,7 +658,7 @@ public class RequestQuoteService
 		AmxApiResponse<?, Object> resp = new AmxApiResponse<Object, Object>();
 		try
 		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getImageDetails(appSeqNumber);
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getImageDetails(appSeqNumber, userSession.getLanguageId());
 			if (null == arrayResponseModel.getErrorCode())
 			{
 				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
@@ -740,7 +740,7 @@ public class RequestQuoteService
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
 		try
 		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getInsuranceCompanyDetails(appSeqNumber);
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getInsuranceCompanyDetails(appSeqNumber, userSession.getLanguageId());
 
 			if (null == arrayResponseModel.getErrorCode())
 			{
@@ -794,7 +794,7 @@ public class RequestQuoteService
 		ArrayResponseModel arrayResponseModel = requestQuoteDao.submitRequestQuote(appSeqNumber , userSession.getCivilId());
 		if (null == arrayResponseModel.getErrorCode())
 		{
-			ArrayResponseModel getVehicleDetailsArray = requestQuoteDao.getAppVehicleDetails(appSeqNumber);
+			ArrayResponseModel getVehicleDetailsArray = requestQuoteDao.getAppVehicleDetails(appSeqNumber, userSession.getLanguageId());
 			if (null == getVehicleDetailsArray.getErrorCode())
 			{
 			
@@ -949,7 +949,7 @@ public class RequestQuoteService
 		BigDecimal companyCode = null;
 		try
 		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getRenewPolicyVehicleDetails(appDocNumberDet);
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getRenewPolicyVehicleDetails(appDocNumberDet, userSession.getLanguageId());
 			if (null == arrayResponseModel.getErrorCode())
 			{
 				if (null != arrayResponseModel && null != arrayResponseModel.getDataArray() && arrayResponseModel.getDataArray().size() > 0)

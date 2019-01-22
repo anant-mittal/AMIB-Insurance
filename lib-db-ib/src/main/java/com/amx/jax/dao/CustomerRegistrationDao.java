@@ -372,7 +372,7 @@ public class CustomerRegistrationDao
 		return validate;
 	}
 
-	public CustomerRegistrationModel addNewCustomer(CustomerRegistrationModel customerRegistrationModel)
+	public CustomerRegistrationModel addNewCustomer(CustomerRegistrationModel customerRegistrationModel , BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -402,7 +402,7 @@ public class CustomerRegistrationDao
 			callableStatement.setString(7, "");
 			callableStatement.setString(8, emailId);
 			callableStatement.setString(9, "");
-			callableStatement.setBigDecimal(10, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(10, languageId);
 			callableStatement.setString(11, deviceType);
 			callableStatement.setDate(12, getCurrentDate());
 			callableStatement.setString(13, createdDeviceId);
@@ -444,7 +444,7 @@ public class CustomerRegistrationDao
 		return customerRegistrationModel;
 	}
 
-	public CustomerDetailModel getUserDetails(String civilId , String userType , BigDecimal userSeqNum)
+	public CustomerDetailModel getUserDetails(String civilId , String userType , BigDecimal userSeqNum , BigDecimal languageId)
 	{
 		getConnection();
 		CustomerDetailModel customerDetailModel = null;
@@ -460,7 +460,7 @@ public class CustomerRegistrationDao
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(3, userType);
 			callableStatement.setString(4, civilId);
-			callableStatement.setBigDecimal(5, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(5, languageId);
 			callableStatement.setBigDecimal(6, userSeqNum);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);

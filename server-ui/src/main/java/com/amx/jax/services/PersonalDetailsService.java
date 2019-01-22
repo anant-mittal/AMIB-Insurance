@@ -51,7 +51,7 @@ public class PersonalDetailsService
 		CustomerProfileDetailResponse customerProfileDetailResponse = new CustomerProfileDetailResponse();
 		CustomerProfileDetailModel customerProfileDetailModel = new CustomerProfileDetailModel();
 
-		customerProfileDetailModel = personalDetailsDao.getProfileDetails(userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber());
+		customerProfileDetailModel = personalDetailsDao.getProfileDetails(userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber(), userSession.getLanguageId());
 
 		customerProfileDetailResponse.setAreaCode(customerProfileDetailModel.getAreaCode());
 		customerProfileDetailResponse.setAreaDesc(customerProfileDetailModel.getAreaDesc());
@@ -122,7 +122,7 @@ public class PersonalDetailsService
 			}
 		}
 		
-		customerProfileDetailModelCheck = personalDetailsDao.getProfileDetails(userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber());
+		customerProfileDetailModelCheck = personalDetailsDao.getProfileDetails(userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber(),userSession.getLanguageId());
 		
 
 		if (null != customerProfileDetailModelCheck.getMobile() && null != customerProfileDetailModelCheck.getEmail() && !customerProfileDetailModelCheck.getMobile().equals(customerProfileUpdateRequest.getMobile())
@@ -221,7 +221,7 @@ public class PersonalDetailsService
 		customerProfileDetailModel.setMobile(customerProfileUpdateRequest.getMobile());
 		customerProfileDetailModel.setEmail(customerProfileUpdateRequest.getEmail());
 		
-		customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel , userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber());
+		customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel , userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber(), userSession.getLanguageId());
 		userSession.setCustomerSequenceNumber(customerProfileDetailModel.getCustSequenceNumber());
 		
 		customerProfileUpdateResponse.setStatus(customerProfileDetailModel.getStatus());
@@ -248,7 +248,7 @@ public class PersonalDetailsService
 		try
 		{
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
-			resp.setResults(personalDetailsDao.getBusiness());
+			resp.setResults(personalDetailsDao.getBusiness(userSession.getLanguageId()));
 
 		}
 		catch (Exception e)
@@ -266,7 +266,7 @@ public class PersonalDetailsService
 		try
 		{
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
-			resp.setResults(personalDetailsDao.getNationality());
+			resp.setResults(personalDetailsDao.getNationality(userSession.getLanguageId()));
 
 		}
 		catch (Exception e)
@@ -286,7 +286,7 @@ public class PersonalDetailsService
 		try
 		{
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
-			resp.setResults(personalDetailsDao.getGovernorates());
+			resp.setResults(personalDetailsDao.getGovernorates(userSession.getLanguageId()));
 
 		}
 		catch (Exception e)
@@ -304,7 +304,7 @@ public class PersonalDetailsService
 		try
 		{
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
-			resp.setResults(personalDetailsDao.getArea(gov));
+			resp.setResults(personalDetailsDao.getArea(gov, userSession.getLanguageId()));
 
 		}
 		catch (Exception e)
@@ -323,7 +323,7 @@ public class PersonalDetailsService
 		try
 		{
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
-			resp.setResults(personalDetailsDao.getGender());
+			resp.setResults(personalDetailsDao.getGender(userSession.getLanguageId()));
 
 		}
 		catch (Exception e)

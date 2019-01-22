@@ -26,7 +26,7 @@ public class GoogleService {
 
 		try {
 			@SuppressWarnings("unchecked")
-			Map<String, Object> resp = restService.ajax("https://www.google.com/recaptcha/api/siteverify").header("Content-Type", "application/x-www-form-urlencoded")
+			Map<String, Object> resp = restService.ajax("https://www.google.com/recaptcha/api/siteverify").acceptJson()
 					.field("secret", googleSecret).field("response", responseKey).field("remoteip", remoteIP).postForm()
 					.as(Map.class);
 			logger.info("GoogleService :: verifyCaptcha :: responseKey :" + responseKey);

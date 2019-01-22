@@ -45,7 +45,7 @@ public class MyPolicyService
 		try
 		{
 			
-			ArrayResponseModel userActivePolicyDetails =  myPolicyDao.getUserActivePolicy(userSession.getUserAmibCustRef(), userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber()); 
+			ArrayResponseModel userActivePolicyDetails =  myPolicyDao.getUserActivePolicy(userSession.getUserAmibCustRef(), userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber(), userSession.getLanguageId()); 
 			if(null != userActivePolicyDetails.getErrorCode())
 			{
 				resp.setMessageKey(userActivePolicyDetails.getErrorCode());
@@ -164,7 +164,7 @@ public class MyPolicyService
 		PolicyReceiptDetails policyReceiptDetails = null;
 		try
 		{
-			policyReceiptDetails = myPolicyDao.downloadPolicyReceipt(docNumber);
+			policyReceiptDetails = myPolicyDao.downloadPolicyReceipt(docNumber, userSession.getLanguageId());
 		}
 		catch (Exception e)
 		{

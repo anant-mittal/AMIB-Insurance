@@ -57,7 +57,7 @@ public class PayMentService
 		try
 		{
 			MyQuoteModel myQuoteModel = new MyQuoteModel();
-			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber());
+			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber(), userSession.getLanguageId());
 			for (int i = 0; i < getUserQuote.size(); i++)
 			{
 				MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
@@ -350,7 +350,7 @@ public class PayMentService
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<>();
 		try
 		{
-			ArrayResponseModel arrayResponseModel = payMentDao.paymentReceiptData(paySeqNum);
+			ArrayResponseModel arrayResponseModel = payMentDao.paymentReceiptData(paySeqNum, userSession.getLanguageId());
 			if(null == arrayResponseModel.getErrorCode())
 			{
 				resp.setData(arrayResponseModel.getObject());
