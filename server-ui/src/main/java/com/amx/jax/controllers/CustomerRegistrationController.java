@@ -70,6 +70,9 @@ public class CustomerRegistrationController {
 	@ApiWebAppStatus({ WebAppStatusCodes.CIVIL_ID_INVALID, WebAppStatusCodes.CIVIL_ID_VALID,
 			WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@ApiMockParam(example = "284090301401", value = "customer civil id")
+	
+	
+	
 	@RequestMapping(value = "/pub/reg/civilid-valid", method = RequestMethod.POST)
 	public AmxApiResponse<ResponseInfo, Object> isValidCivilId(@RequestParam("civilId") String civilid) {
 		return customerRegistrationService.isValidCivilId(civilid);

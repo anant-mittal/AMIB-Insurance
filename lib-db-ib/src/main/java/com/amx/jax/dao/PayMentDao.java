@@ -96,9 +96,10 @@ public class PayMentDao
 		
 		try
 		{
-			logger.info(TAG + " updatePaymentDetals :: PaymentDetails :" + insertPaymentDetails.toString());
-			logger.info(TAG + " updatePaymentDetals :: metaService    :" + metaService.toString());
-			logger.info(TAG + " updatePaymentDetals :: civilId         :" + civilId);
+			logger.info(TAG + " updatePaymentDetals :: PaymentDetails       :" + insertPaymentDetails.toString());
+			logger.info(TAG + " updatePaymentDetals :: getTenantProfile     :" + metaService.getTenantProfile().toString());
+			logger.info(TAG + " updatePaymentDetals :: getUserDeviceInfo    :" + metaService.getUserDeviceInfo().toString());
+			logger.info(TAG + " updatePaymentDetals :: civilId              :" + civilId);
 			
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
