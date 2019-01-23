@@ -72,6 +72,8 @@ public class CustomerRegistrationService {
 	{
 		AmxApiResponse<CompanySetUp, Object> resp = new AmxApiResponse<CompanySetUp, Object>();
 		try {
+			
+			logger.info("CustomerRegistrationService :: getCompanySetUp :: getLanguageId  :" + userSession.getLanguageId());
 			ArrayResponseModel arrayResponseModel = customerRegistrationDao.getCompanySetUp(userSession.getLanguageId(),
 					webConfig.getAppCompCode());
 
