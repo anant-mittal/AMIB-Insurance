@@ -933,14 +933,17 @@ public class RequestQuoteDao
 				logger.info(TAG + " uploadVehicleImage :: extension 3 :" + extension);
 				if(extension.equalsIgnoreCase("jpeg"))
 				{
+					logger.info(TAG + " uploadVehicleImage :: jpeg");
 					callableStatement.setString(7, "image/jpeg");
 				}
 				else if(extension.equalsIgnoreCase("jpg"))
 				{
+					logger.info(TAG + " uploadVehicleImage :: jpg");
 					callableStatement.setString(7, "image/jpg");
 				}
 				else if(extension.equalsIgnoreCase("png"))
 				{
+					logger.info(TAG + " uploadVehicleImage :: png");
 					callableStatement.setString(7, "image/png");
 				}
 			}

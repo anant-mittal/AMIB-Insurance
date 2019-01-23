@@ -146,11 +146,15 @@ public class RequestQuoteController {
 		if (null != appSeqNumber && !appSeqNumber.equals("") && !appSeqNumber.equalsIgnoreCase("null")) {
 			appSeqNumberDet = ArgUtil.parseAsBigDecimal(appSeqNumber);
 		}
-
 		BigDecimal docSeqNumberDet = null;
 		if (null != docSeqNumber && !docSeqNumber.equals("") && !docSeqNumber.equalsIgnoreCase("null")) {
 			docSeqNumberDet = ArgUtil.parseAsBigDecimal(docSeqNumber);
 		}
+		
+		logger.info("RequestQuoteController :: uploadVehicleImage :: appSeqNumberDet :" + appSeqNumberDet);
+		logger.info("RequestQuoteController :: uploadVehicleImage :: docTypeCode :" + docTypeCode);
+		logger.info("RequestQuoteController :: uploadVehicleImage :: docSeqNumberDet :" + docSeqNumberDet);
+		
 		return requestQuoteService.uploadVehicleImage(file, appSeqNumberDet, docTypeCode, docSeqNumberDet);
 	}
 
@@ -162,13 +166,25 @@ public class RequestQuoteController {
 		if (null != docSeqNumber && !docSeqNumber.equals("") && !docSeqNumber.equalsIgnoreCase("null")) {
 			docSeqNumberDet = ArgUtil.parseAsBigDecimal(docSeqNumber);
 
+			logger.info("RequestQuoteController :: downloadVehicleImage :: docSeqNumberDet :" + docSeqNumberDet);
+			
 			DownloadImageModel downloadImageModel = requestQuoteService.downloadVehicleImage(docSeqNumberDet);
+			
+			logger.info("RequestQuoteController :: downloadVehicleImage :: getImageByteArray :" + downloadImageModel.getImageByteArray());
+			
 			byte[] imageByteArray = downloadImageModel.getImageByteArray();
+			
+			logger.info("RequestQuoteController :: downloadVehicleImage :: getImageType :" + downloadImageModel.getImageType());
+			
 			String imageType = downloadImageModel.getImageType();
+			
 			MediaType mediaType = null;
 			if (imageType.contains("jpeg") || imageType.contains("jpg")) {
+				
+				logger.info("RequestQuoteController :: downloadVehicleImage :: jpeg :");
 				mediaType = MediaType.IMAGE_JPEG;
 			} else if (imageType.contains("png")) {
+				logger.info("RequestQuoteController :: downloadVehicleImage :: png :");
 				mediaType = MediaType.IMAGE_PNG;
 			}
 			return ResponseEntity.ok().contentLength(imageByteArray.length).contentType(mediaType).body(imageByteArray);
