@@ -239,16 +239,14 @@ public class PayMentService
 		try
 		{
 			ArrayResponseModel arrayResponseModel = payMentDao.getPaymentStatus(paySeqNum);
-			logger.info(TAG + " getPaymentStatus :: arrayResponseModel  1 :" + arrayResponseModel.toString());
 			paymentStatus.setPaymentProcedureStatus("N");
 			
-			logger.info(TAG + " getPaymentStatus :: arrayResponseModel 2 :" + arrayResponseModel.getErrorCode());
+			logger.info(TAG + " getPaymentStatus :: arrayResponseModel :" + arrayResponseModel.getErrorCode());
 			
 			if(null == arrayResponseModel.getErrorCode())
 			{
 				paymentStatus = (PaymentStatus) arrayResponseModel.getObject();
 				paymentStatus.setPaymentProcedureStatus("N");
-				logger.info(TAG + " getPaymentStatus :: paymentStatus 3 :" + paymentStatus.toString());
 				
 				if(paymentStatus.getPaymentStatus().equalsIgnoreCase("CAPTURED"))
 				{
@@ -259,50 +257,30 @@ public class PayMentService
 						AmxApiResponse<? , Object> createAmibResp = payMentService.cretaeAmibCust();
 						if (!createAmibResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 						{
-							logger.info(TAG + " getPaymentStatus :: paymentStatus 5 :" + paymentStatus.toString());
-							logger.info(TAG + " getPaymentStatus :: paymentStatus getMessageKey :" + createAmibResp.getMessageKey());
-							logger.info(TAG + " getPaymentStatus :: paymentStatus getMessage :" +  createAmibResp.getMessage());
-							logger.info(TAG + " getPaymentStatus :: paymentStatus paySeqNum :" +  paySeqNum.toString());
 							emailSmsService.failedPGProcedureAfterCapture(paymentStatus , createAmibResp.getMessageKey() , createAmibResp.getMessage() , "CREATE AMIB PROCEDURE" , paySeqNum.toString());
 							paymentStatus.setPaymentProcedureStatus("Y");
 						}
 						else
 						{
-							logger.info(TAG + " getPaymentStatus :: paymentStatus 6 :" + paymentStatus.toString());
 							AmxApiResponse<? , Object> processTeceiptResp = payMentService.processReceipt(paySeqNum);
 							if (!processTeceiptResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 							{
-								logger.info(TAG + " getPaymentStatus :: paymentStatus 7 :" + paymentStatus.toString());
-								logger.info(TAG + " getPaymentStatus :: paymentStatus getMessageKey :" + processTeceiptResp.getMessageKey());
-								logger.info(TAG + " getPaymentStatus :: paymentStatus getMessage :" +  processTeceiptResp.getMessage());
-								logger.info(TAG + " getPaymentStatus :: paymentStatus paySeqNum :" +  paySeqNum.toString());
-								
 								emailSmsService.failedPGProcedureAfterCapture(paymentStatus , processTeceiptResp.getMessageKey() , processTeceiptResp.getMessage() , "PROCESS RECEIPT PROCEDURE" , paySeqNum.toString());
 								paymentStatus.setPaymentProcedureStatus("Y");
 							}
 							else
 							{
-								logger.info(TAG + " getPaymentStatus :: paymentStatus 8 :" + paymentStatus.toString());
 								AmxApiResponse<? , Object> createAmibPolicyResp = payMentService.createAmibPolicy(paySeqNum);
 								if (!createAmibPolicyResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 								{
-									logger.info(TAG + " getPaymentStatus :: paymentStatus 9 :" + paymentStatus.toString());
-									logger.info(TAG + " getPaymentStatus :: paymentStatus getMessageKey :" + createAmibPolicyResp.getMessageKey());
-									logger.info(TAG + " getPaymentStatus :: paymentStatus getMessage :" +  createAmibPolicyResp.getMessage());
-									logger.info(TAG + " getPaymentStatus :: paymentStatus paySeqNum :" +  paySeqNum.toString());
 									emailSmsService.failedPGProcedureAfterCapture(paymentStatus , createAmibPolicyResp.getMessageKey() , createAmibPolicyResp.getMessage() , "CREATE AMIB PLOICY PROCEDURE" , paySeqNum.toString());
 									paymentStatus.setPaymentProcedureStatus("Y");
 								}
 								else
 								{
-									logger.info(TAG + " getPaymentStatus :: paymentStatus 10 :" + paymentStatus.toString());
 									AmxApiResponse<? , Object> preparePrintData = payMentService.preparePrintData(paySeqNum);
 									if (!preparePrintData.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 									{
-										logger.info(TAG + " getPaymentStatus :: paymentStatus 11 :" + paymentStatus.toString());
-										logger.info(TAG + " getPaymentStatus :: paymentStatus getMessageKey :" + preparePrintData.getMessageKey());
-										logger.info(TAG + " getPaymentStatus :: paymentStatus getMessage :" +  preparePrintData.getMessage());
-										logger.info(TAG + " getPaymentStatus :: paymentStatus paySeqNum :" +  paySeqNum.toString());
 										emailSmsService.failedPGProcedureAfterCapture(paymentStatus , preparePrintData.getMessageKey() , preparePrintData.getMessage() , "PREPARE STATEMENT PROCEDURE" , paySeqNum.toString());
 									}
 								}
@@ -334,8 +312,6 @@ public class PayMentService
 				resp.setStatusKey(arrayResponseModel.getErrorCode());
 				resp.setMessageKey(arrayResponseModel.getErrorCode());
 			}
-			
-			//Check
 		}
 		catch (Exception e)
 		{

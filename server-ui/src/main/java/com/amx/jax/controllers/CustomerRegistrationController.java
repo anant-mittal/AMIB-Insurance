@@ -131,7 +131,14 @@ public class CustomerRegistrationController {
 			WebAppStatusCodes.CIVIL_ID_NOT_REGESTERED, WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS,
 			WebAppStatusCodes.INVALID_USR_PWD })
 	@RequestMapping(value = "/pub/login/validate-userlogin", method = RequestMethod.POST)
-	public AmxApiResponse<?, Object> validateUserLogin(@RequestBody CustomerLoginRequest customerLoginRequest) {
+	public AmxApiResponse<?, Object> validateUserLogin(@RequestParam(name = "languageId") String languageId ,@RequestBody CustomerLoginRequest customerLoginRequest) 
+	{
+		BigDecimal languageIdDat = null;
+		if (null != languageId && !languageId.equals("") && !languageId.equalsIgnoreCase("null")) 
+		{
+			languageIdDat = ArgUtil.parseAsBigDecimal(languageId);
+			userSession.setLanguageId(languageIdDat);
+		}
 		return customerRegistrationService.validateUserLogin(customerLoginRequest);
 	}
 
@@ -159,14 +166,14 @@ public class CustomerRegistrationController {
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS, WebAppStatusCodes.LIST_POP_ERROR,
 			WebAppStatusCodes.INVLD_LOGIN_CATG, WebAppStatusCodes.INVALID_USR })
 	@RequestMapping(value = "/pub/reg/userdetails", method = RequestMethod.POST)
-	public AmxApiResponse<CustomerDetailResponse, Object> getUserDetails() 
+	public AmxApiResponse<CustomerDetailResponse, Object> getUserDetails(@RequestParam(name = "languageId", required = false) String languageId) 
 	{
-		/*BigDecimal languageIdDat = null;
+		BigDecimal languageIdDat = null;
 		if (null != languageId && !languageId.equals("") && !languageId.equalsIgnoreCase("null")) 
 		{
 			languageIdDat = ArgUtil.parseAsBigDecimal(languageId);
 			userSession.setLanguageId(languageIdDat);
-		}*/
+		}
 		return customerRegistrationService.getCustomerDetails();
 	}
 

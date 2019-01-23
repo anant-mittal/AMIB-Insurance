@@ -220,12 +220,16 @@ public class CustomizeQuoteController {
 
 	private void setMetaData() 
 	{
-		if (null == metaService.getTenantProfile().getCountryId()
+		
+		logger.info("CustomizeQuoteService :: setMetaData :: getLanguageId  :" + userSession.getLanguageId());
+		customerRegistrationService.getCompanySetUp();
+		
+		/*if (null == metaService.getTenantProfile().getCountryId()
 				|| null == metaService.getUserDeviceInfo().getDeviceId()) 
 		{
-			
+			logger.info("CustomizeQuoteService :: setMetaData :: getLanguageId  :" + userSession.getLanguageId());
 			userSession.setLanguageId(new BigDecimal(0));
 			customerRegistrationService.getCompanySetUp();
-		}
+		}*/
 	}
 }

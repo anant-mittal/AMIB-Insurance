@@ -68,9 +68,8 @@ public class CustomerRegistrationService {
 	@Autowired
 	private CustomerRegistrationDao customerRegistrationDao;
 
-	public AmxApiResponse<CompanySetUp, Object> getCompanySetUp() {
-		userSession.setLanguageId(new BigDecimal(0));
-
+	public AmxApiResponse<CompanySetUp, Object> getCompanySetUp() 
+	{
 		AmxApiResponse<CompanySetUp, Object> resp = new AmxApiResponse<CompanySetUp, Object>();
 		try {
 			ArrayResponseModel arrayResponseModel = customerRegistrationDao.getCompanySetUp(userSession.getLanguageId(),
@@ -514,7 +513,7 @@ public class CustomerRegistrationService {
 			customerLoginModel.setCivilId(customerLoginRequest.getCivilId());
 			customerLoginModel.setPassword(customerLoginRequest.getPassword());
 			customerLoginModel = customerRegistrationDao.validateUserLogin(customerLoginModel,
-					HardCodedValues.USER_TYPE, new BigDecimal(0));
+					HardCodedValues.USER_TYPE, userSession.getLanguageId());
 
 			if (customerLoginModel.getErrorCode() == null) {
 				onSuccessLogin(customerLoginRequest, customerLoginModel);
@@ -565,8 +564,8 @@ public class CustomerRegistrationService {
 		return resp;
 	}
 
-	public void onSuccessLogin(CustomerLoginRequest customerLoginRequest, CustomerLoginModel customerLoginModel) {
-		userSession.setLanguageId(new BigDecimal(0));
+	public void onSuccessLogin(CustomerLoginRequest customerLoginRequest, CustomerLoginModel customerLoginModel) 
+	{
 		userSession.setCivilId(customerLoginRequest.getCivilId());
 		userSession.setUserSequenceNumber(customerLoginModel.getUserSeqNum());
 		userSession.setUserAmibCustRef(customerLoginModel.getAmibRef());
