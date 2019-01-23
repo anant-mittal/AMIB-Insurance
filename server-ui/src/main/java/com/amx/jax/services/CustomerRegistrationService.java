@@ -73,10 +73,9 @@ public class CustomerRegistrationService {
 		AmxApiResponse<CompanySetUp, Object> resp = new AmxApiResponse<CompanySetUp, Object>();
 		try {
 			
-			logger.info("CustomerRegistrationService :: getCompanySetUp :: getLanguageId  :" + userSession.getLanguageId());
-			ArrayResponseModel arrayResponseModel = customerRegistrationDao.getCompanySetUp(userSession.getLanguageId(),
-					webConfig.getAppCompCode());
+			logger.info("CustomerRegistrationService :: getCompanySetUp :: userSession  :" + userSession.toString());
 
+			ArrayResponseModel arrayResponseModel = customerRegistrationDao.getCompanySetUp(userSession.getLanguageId(),webConfig.getAppCompCode());
 			if (arrayResponseModel.getErrorCode() == null) {
 				ArrayList<CompanySetUp> getCompanySetUp = arrayResponseModel.getDataArray();
 				metaService.getTenantProfile().setCountryId(getCompanySetUp.get(0).getCntryCd());
