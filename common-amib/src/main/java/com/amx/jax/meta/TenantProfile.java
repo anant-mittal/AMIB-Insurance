@@ -11,7 +11,7 @@ public class TenantProfile implements Serializable {
 
 	private BigDecimal compCd;
 
-	private BigDecimal languageId;
+	//private BigDecimal languageId;
 
 	private String contactUsEmail;
 
@@ -49,13 +49,13 @@ public class TenantProfile implements Serializable {
 		this.compCd = compCd;
 	}
 
-	public BigDecimal getLanguageId() {
+	/*public BigDecimal getLanguageId() {
 		return languageId;
 	}
 
 	public void setLanguageId(BigDecimal languageId) {
 		this.languageId = languageId;
-	}
+	}*/
 
 	public String getContactUsEmail() {
 		return contactUsEmail;

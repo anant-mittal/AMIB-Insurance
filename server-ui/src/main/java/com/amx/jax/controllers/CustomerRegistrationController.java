@@ -1,14 +1,8 @@
 
 package com.amx.jax.controllers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.math.BigDecimal;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.amx.jax.HomeController;
 import com.amx.jax.WebAppStatus.ApiWebAppStatus;
 import com.amx.jax.WebAppStatus.WebAppStatusCodes;
 import com.amx.jax.api.AmxApiResponse;
@@ -35,7 +28,6 @@ import com.amx.jax.models.CustomerRegistrationRequest;
 import com.amx.jax.models.CustomerRegistrationResponse;
 import com.amx.jax.models.RequestOtpModel;
 import com.amx.jax.models.ResponseInfo;
-import com.amx.jax.postman.PostManService;
 import com.amx.jax.postman.client.GoogleService;
 import com.amx.jax.postman.model.Email;
 import com.amx.jax.postman.model.SupportEmail;
@@ -78,6 +70,9 @@ public class CustomerRegistrationController {
 	@ApiWebAppStatus({ WebAppStatusCodes.CIVIL_ID_INVALID, WebAppStatusCodes.CIVIL_ID_VALID,
 			WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@ApiMockParam(example = "284090301401", value = "customer civil id")
+	
+	
+	
 	@RequestMapping(value = "/pub/reg/civilid-valid", method = RequestMethod.POST)
 	public AmxApiResponse<ResponseInfo, Object> isValidCivilId(@RequestParam("civilId") String civilid) {
 		return customerRegistrationService.isValidCivilId(civilid);
@@ -139,7 +134,14 @@ public class CustomerRegistrationController {
 			WebAppStatusCodes.CIVIL_ID_NOT_REGESTERED, WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS,
 			WebAppStatusCodes.INVALID_USR_PWD })
 	@RequestMapping(value = "/pub/login/validate-userlogin", method = RequestMethod.POST)
-	public AmxApiResponse<?, Object> validateUserLogin(@RequestBody CustomerLoginRequest customerLoginRequest) {
+	public AmxApiResponse<?, Object> validateUserLogin(@RequestParam(name = "languageId") String languageId ,@RequestBody CustomerLoginRequest customerLoginRequest) 
+	{
+		BigDecimal languageIdDat = null;
+		if (null != languageId && !languageId.equals("") && !languageId.equalsIgnoreCase("null")) 
+		{
+			languageIdDat = ArgUtil.parseAsBigDecimal(languageId);
+			userSession.setLanguageId(languageIdDat);
+		}
 		return customerRegistrationService.validateUserLogin(customerLoginRequest);
 	}
 
@@ -167,7 +169,14 @@ public class CustomerRegistrationController {
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS, WebAppStatusCodes.LIST_POP_ERROR,
 			WebAppStatusCodes.INVLD_LOGIN_CATG, WebAppStatusCodes.INVALID_USR })
 	@RequestMapping(value = "/pub/reg/userdetails", method = RequestMethod.POST)
-	public AmxApiResponse<CustomerDetailResponse, Object> getUserDetails() {
+	public AmxApiResponse<CustomerDetailResponse, Object> getUserDetails(@RequestParam(name = "languageId", required = false) String languageId) 
+	{
+		BigDecimal languageIdDat = null;
+		if (null != languageId && !languageId.equals("") && !languageId.equalsIgnoreCase("null")) 
+		{
+			languageIdDat = ArgUtil.parseAsBigDecimal(languageId);
+			userSession.setLanguageId(languageIdDat);
+		}
 		return customerRegistrationService.getCustomerDetails();
 	}
 
@@ -200,8 +209,6 @@ public class CustomerRegistrationController {
 		ResponseWrapper<Email> wrapper = new ResponseWrapper<>();
 		try {
 
-			logger.info("CustomerRegistrationController :: contactUs :: verify :" + verify);
-
 			if (googleService.verifyCaptcha(verify, httpService.getIPAddress())) {
 				
 				logger.info("CustomerRegistrationController :: contactUs :: verify Done :" + verify);
@@ -214,13 +221,14 @@ public class CustomerRegistrationController {
 				email.setVisitorMessage(message);
 				emailSmsService.sendEmailToSupprt(email);
 				wrapper.setData(email);
-			}
+			} else {
 
-			else {
+				logger.info("CustomerRegistrationController :: contactUs :: ERROR :");
 				wrapper.setStatusKey(WebResponseStatus.ERROR);
 			}
 
 		} catch (Exception e) {
+			e.printStackTrace();
 			wrapper.setStatusKey(WebResponseStatus.ERROR);
 		}
 		return wrapper;

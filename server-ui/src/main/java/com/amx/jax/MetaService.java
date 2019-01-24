@@ -17,6 +17,7 @@ import com.amx.jax.http.CommonHttpRequest;
 import com.amx.jax.meta.IMetaService;
 import com.amx.jax.meta.TenantProfile;
 import com.amx.jax.meta.UserDeviceInfos;
+import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CompanySetUp;
 
 @Component
@@ -47,7 +48,9 @@ public class MetaService implements IMetaService {
 	{
 		if (tenantProfile.getCountryId() == null) 
 		{
-			ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao.getCompanySetUp(laguageSetUp(),webConfig.getAppCompCode());
+			ArrayResponseModel arrayResponseModel = customerRegistrationDao.getCompanySetUp(laguageSetUp(),webConfig.getAppCompCode());
+			ArrayList<CompanySetUp> getCompanySetUp = arrayResponseModel.getDataArray();
+			
 			tenantProfile.setCountryId(getCompanySetUp.get(0).getCntryCd());
 			tenantProfile.setCompCd(getCompanySetUp.get(0).getCompCd());
 			tenantProfile.setContactUsHelpLineNumber(getCompanySetUp.get(0).getHelpLineNumber());

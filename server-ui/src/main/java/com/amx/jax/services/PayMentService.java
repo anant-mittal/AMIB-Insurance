@@ -57,21 +57,28 @@ public class PayMentService
 		try
 		{
 			MyQuoteModel myQuoteModel = new MyQuoteModel();
-			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber());
-			for (int i = 0; i < getUserQuote.size(); i++)
+			ArrayResponseModel arrayResponseUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber(), userSession.getLanguageId());
+			if(arrayResponseUserQuote.getErrorCode() == null)
 			{
-				MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
-				if (null != quoteSeqNum && !quoteSeqNum.toString().equals(""))
+				ArrayList<MyQuoteModel> getUserQuote = arrayResponseUserQuote.getDataArray();
+				for (int i = 0; i < getUserQuote.size(); i++)
 				{
-					if (null != myQuoteModelFromDb.getQuoteSeqNumber() && myQuoteModelFromDb.getQuoteSeqNumber().equals(quoteSeqNum))
+					MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
+					if (null != quoteSeqNum && !quoteSeqNum.toString().equals(""))
 					{
-						myQuoteModel = myQuoteModelFromDb;
+						if (null != myQuoteModelFromDb.getQuoteSeqNumber() && myQuoteModelFromDb.getQuoteSeqNumber().equals(quoteSeqNum))
+						{
+							myQuoteModel = myQuoteModelFromDb;
+						}
 					}
 				}
 			}
-			
-			logger.info(TAG + " insertPaymentDetals :: quoteSeqNum :" + quoteSeqNum);
-			logger.info(TAG + " insertPaymentDetals :: getAppSeqNumber :" + myQuoteModel.getAppSeqNumber());
+			else
+			{
+				resp.setMessageKey(arrayResponseUserQuote.getErrorCode());
+				resp.setMessage(arrayResponseUserQuote.getErrorMessage());
+				return resp;
+			}
 			
 			PaymentDetails insertPaymentDetails = new PaymentDetails();
 			insertPaymentDetails.setAppSeqNum(myQuoteModel.getAppSeqNumber());
@@ -95,8 +102,10 @@ public class PayMentService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "insertPaymentDetals :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
 		}
 		return resp;
 	}
@@ -129,7 +138,9 @@ public class PayMentService
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			resp.setException(e.toString());
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG+"cretaeAmibCust :: exception :" + e);
 		}
 		return resp;
 	}
@@ -155,8 +166,10 @@ public class PayMentService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "processReceipt :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
 		}
 		return resp;
 	}
@@ -182,8 +195,10 @@ public class PayMentService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "createAmibPolicy :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
 		}
 		return resp;
 	}
@@ -208,8 +223,10 @@ public class PayMentService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "preparePrintData :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
 		}
 		return resp;
 	}
@@ -218,21 +235,25 @@ public class PayMentService
 	{
 		AmxApiResponse<PaymentStatus, Object> resp = new AmxApiResponse<>();
 		PaymentStatus paymentStatus = new PaymentStatus();
-		paymentStatus.setPaymentProcedureStatus("N");
 		
 		try
 		{
 			ArrayResponseModel arrayResponseModel = payMentDao.getPaymentStatus(paySeqNum);
-			logger.info(TAG + " getPaymentStatus :: arrayResponseModel  :" + arrayResponseModel.toString());
+			paymentStatus.setPaymentProcedureStatus("N");
+			
+			logger.info(TAG + " getPaymentStatus :: arrayResponseModel :" + arrayResponseModel.getErrorCode());
+			
 			if(null == arrayResponseModel.getErrorCode())
 			{
 				paymentStatus = (PaymentStatus) arrayResponseModel.getObject();
-				logger.info(TAG + " getPaymentStatus :: paymentStatus  :" + paymentStatus.toString());
+				paymentStatus.setPaymentProcedureStatus("N");
 				
 				if(paymentStatus.getPaymentStatus().equalsIgnoreCase("CAPTURED"))
 				{
 					try
 					{
+						logger.info(TAG + " getPaymentStatus :: paymentStatus 4 :" + paymentStatus.toString());
+						
 						AmxApiResponse<? , Object> createAmibResp = payMentService.cretaeAmibCust();
 						if (!createAmibResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 						{
@@ -282,6 +303,7 @@ public class PayMentService
 					}
 				}
 				
+				logger.info(TAG + " getPaymentStatus :: paymentStatus 12 :" + paymentStatus.toString());
 				resp.setData(paymentStatus);
 				resp.setStatusKey(ApiConstants.SUCCESS);
 			}
@@ -293,8 +315,10 @@ public class PayMentService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "getPaymentStatus :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
 		}
 		return resp;
 	}
@@ -304,7 +328,6 @@ public class PayMentService
 		PaymentReceipt paymentReceipt = null;
 		
 		logger.info(TAG + " receiptData :: paySeqNum  :" + paySeqNum);
-		
 		AmxApiResponse<?, Object> receiptData  = payMentService.paymentReceiptData(paySeqNum);
 		if (receiptData.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
@@ -339,8 +362,6 @@ public class PayMentService
 		model.put(DetailsConstants.trnsReceiptRef, paymentReceipt.getTrnsReceiptRef());
 		dataList.add(model);
 		
-		//emailSmsService.emialToCustonSuccessPg(new BigDecimal(100),"11111111111", new BigDecimal(2222) , dataList);
-		
 		return dataList;
 	}
 	
@@ -350,7 +371,7 @@ public class PayMentService
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<>();
 		try
 		{
-			ArrayResponseModel arrayResponseModel = payMentDao.paymentReceiptData(paySeqNum);
+			ArrayResponseModel arrayResponseModel = payMentDao.paymentReceiptData(paySeqNum, userSession.getLanguageId());
 			if(null == arrayResponseModel.getErrorCode())
 			{
 				resp.setData(arrayResponseModel.getObject());
@@ -364,8 +385,10 @@ public class PayMentService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "paymentReceiptData :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
 		}
 		return resp;
 	}

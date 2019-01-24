@@ -20,7 +20,7 @@ public class DashBoardService
 {
 	private static final Logger logger = LoggerFactory.getLogger(RequestQuoteService.class);
 
-	String TAG = "com.amx.jax.services.RequestQuoteService :- ";
+	String TAG = "RequestQuoteService :: ";
 
 	@Autowired
 	public DashBoardDao dashBoardDao;
@@ -55,8 +55,10 @@ public class DashBoardService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "getIncompleteApplication :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
 		}
 		return resp;
 	}

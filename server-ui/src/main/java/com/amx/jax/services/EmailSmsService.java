@@ -21,6 +21,7 @@ import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.dict.Language;
 import com.amx.jax.meta.IMetaService;
+import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CustomerDetailModel;
 import com.amx.jax.models.PaymentStatus;
 import com.amx.jax.models.RequestOtpModel;
@@ -172,25 +173,6 @@ public class EmailSmsService
 			sms.setITemplate(TemplatesIB.OTP_SMS);
 			sms.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
 			postManClient.sendSMS(sms);
-			
-			
-			/*if (!appConfig.isProdMode())
-			{
-				logger.info("sendMobileOtp :: slack :: appConfig.isProdMode() :" + appConfig.isProdMode());
-				sendToSlack("mobile", sms.getTo().get(0), mobileOtpPrefix, mobileOtp);
-			}
-			else
-			{
-				logger.info("sendMobileOtp :: mobile :: appConfig.isProdMode() :" + appConfig.isProdMode());
-				
-				model.put(DetailsConstants.MOBILE_OTP, mobileOtpToSend);
-				wrapper.put("data", model);
-				
-				sms.setModel(wrapper);
-				sms.setITemplate(TemplatesIB.OTP_SMS);
-				sms.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
-				postManClient.sendSMS(sms);
-			}*/
 			
 		}
 		catch (Exception e)
@@ -476,7 +458,7 @@ public class EmailSmsService
 	 ********/
 	public void failedPGProcedureAfterCapture(PaymentStatus paymentStatus, String messageKey , String message , String type , String paySeqNum)
 	{
-		String emailIdAshokSir = "ashok.kalal@almullaexchange.com";
+		String emailIdAshokSir = "erashokkalal@gmail.com";
 		String amibEmailId = metaService.getTenantProfile().getContactUsEmail();
 		String civilId = userSession.getCivilId();
 		
@@ -783,8 +765,9 @@ public class EmailSmsService
 	public AmxApiResponse<ResponseInfo, Object> isOtpEnabled(String civilId)
 	{
 		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
-		boolean isOtpEnable = customerRegistrationDao.isOtpEnabled(civilId , HardCodedValues.USER_TYPE);
-		if (isOtpEnable)
+		ArrayResponseModel arrayResponseModel = customerRegistrationDao.isOtpEnabled(civilId , HardCodedValues.USER_TYPE);
+		
+		if (null != arrayResponseModel.getData() && arrayResponseModel.getData().equalsIgnoreCase("Y"))
 		{
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			resp.setMessage(Message.CUST_OTP_ENABLED);
@@ -800,6 +783,13 @@ public class EmailSmsService
 			validate.setContactUsEmail(metaService.getTenantProfile().getContactUsEmail());
 			resp.setData(validate);
 		}
+		
+		if (null != arrayResponseModel.getErrorCode()
+				&& arrayResponseModel.getErrorCode().equals(ApiConstants.ERROR_OCCURRED_ON_SERVER)) {
+			resp.setMessage(arrayResponseModel.getErrorCode());
+			resp.setMessageKey(arrayResponseModel.getErrorMessage());
+		}
+		
 		return resp;
 	}
 
@@ -847,9 +837,10 @@ public class EmailSmsService
 	/************* CHECK IF CIVIL ID EXIST **********/
 	public AmxApiResponse<ResponseInfo, Object> isCivilIdExist(String civilid)
 	{
-		boolean civilIdExistCheck = customerRegistrationDao.isCivilIdExist(civilid , HardCodedValues.USER_TYPE);
+		ArrayResponseModel arrayResponseModel = customerRegistrationDao.isCivilIdExist(civilid , HardCodedValues.USER_TYPE);
 		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
-		if (civilIdExistCheck)
+		
+		if (null != arrayResponseModel.getData() && arrayResponseModel.getData().equals("Y"))
 		{
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			resp.setMessage(Message.CIVILID_ALREDAY_REGISTER);
@@ -923,8 +914,6 @@ public class EmailSmsService
 		email.setHtml(true);
 		email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
 		
-		logger.info(TAG+" sendEmailToSupprt :: getVisitorName :" + supportEmail.getVisitorName());
-		
 		postManClient.sendEmail(email);
 		
 		
@@ -970,7 +959,7 @@ public class EmailSmsService
 		String civilId = userSession.getCivilId();
 		if (null != civilId && !civilId.equals(""))
 		{
-			CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getUserSequenceNumber());
+			CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getUserSequenceNumber(), userSession.getLanguageId());
 			if (null != customerDetailModel.getUserName() && !customerDetailModel.getUserName().equals(""))
 			{
 				return customerDetailModel.getUserName();

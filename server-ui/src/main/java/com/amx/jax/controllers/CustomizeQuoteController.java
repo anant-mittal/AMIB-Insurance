@@ -112,10 +112,14 @@ public class CustomizeQuoteController {
 	@ApiOperation(value = "submits payment info to server", notes = "this api is not going to be consumed by ui end. this is internal called api for payment gateway")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/remit/save-remittance", method = { RequestMethod.POST })
-	public PaymentResponseDto onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse) {
-		try {
+	public PaymentResponseDto onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse) 
+	{
+		try 
+		{
 			setMetaData();
 
+			logger.info(" onPaymentCallback :: paymentResponse :" + paymentResponse.toString());
+			
 			PaymentDetails paymentDetails = new PaymentDetails();
 			paymentDetails.setPaymentId(paymentResponse.getPaymentId());
 			paymentDetails.setApprovalNo(paymentResponse.getAuth_appNo());
@@ -124,21 +128,23 @@ public class CustomizeQuoteController {
 			paymentDetails.setTransId(paymentResponse.getTransactionId());
 			paymentDetails.setRefId(paymentResponse.getReferenceId());
 
-			if (null != paymentResponse.getTrackId()) {
+			if (null != paymentResponse.getTrackId()) 
+			{
 				BigDecimal paySeqNumber = new BigDecimal(paymentResponse.getTrackId().toString());
 				logger.info(" onPaymentCallback :: paySeqNumber  :" + paySeqNumber);
 				paymentDetails.setPaySeqNum(paySeqNumber);
 				paymentDetails.setPaymentToken(paySeqNumber.toString());
-			} else {
+			} 
+			else 
+			{
 				paymentDetails.setPaySeqNum(null);
 			}
 
 			PaymentDetails updateStatus = payMentService.updatePaymentDetals(paymentDetails);
 			logger.info(" onPaymentCallback :: updateStatus  :" + updateStatus.toString());
-
 		}
-
-		catch (Exception e) {
+		catch (Exception e) 
+		{
 			e.printStackTrace();
 		}
 		return paymentResponse;
@@ -149,8 +155,12 @@ public class CustomizeQuoteController {
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@ApiMockParam(example = "123", value = "pay sequence number of transaction")
 	@RequestMapping(value = "/api/payment-status", method = { RequestMethod.POST })
-	public AmxApiResponse<?, Object> getPaymentStatus(@RequestParam String paySeqNum) {
+	public AmxApiResponse<?, Object> getPaymentStatus(@RequestParam String paySeqNum) 
+	{
 		logger.info("getPaymentStatus :: paySeqNum  :" + paySeqNum);
+		logger.info("getPaymentStatus :: userSession :" + userSession.toString());
+		logger.info("getPaymentStatus :: metaService :" + metaService.getTenantProfile().toString());
+		
 		BigDecimal paySeqNumDet = null;
 		if (null != paySeqNum && !paySeqNum.equals("") && !paySeqNum.equalsIgnoreCase("null")) {
 			paySeqNumDet = ArgUtil.parseAsBigDecimal(paySeqNum, null);
@@ -220,14 +230,16 @@ public class CustomizeQuoteController {
 
 	private void setMetaData() 
 	{
-		if (null == metaService.getTenantProfile().getCountryId()
+		
+		logger.info("CustomizeQuoteService :: setMetaData :: getLanguageId  :" + userSession.getLanguageId());
+		customerRegistrationService.getCompanySetUp();
+		
+		/*if (null == metaService.getTenantProfile().getCountryId()
 				|| null == metaService.getUserDeviceInfo().getDeviceId()) 
 		{
-			if (httpService.getLanguage().toString().equalsIgnoreCase("EN")) 
-			{
-				metaService.getTenantProfile().setLanguageId(new BigDecimal(0));
-			}
+			logger.info("CustomizeQuoteService :: setMetaData :: getLanguageId  :" + userSession.getLanguageId());
+			userSession.setLanguageId(new BigDecimal(0));
 			customerRegistrationService.getCompanySetUp();
-		}
+		}*/
 	}
 }

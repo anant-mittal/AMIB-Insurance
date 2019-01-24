@@ -18,6 +18,7 @@ import com.amx.jax.constants.Message;
 import com.amx.jax.dao.CustomizeQuoteDao;
 import com.amx.jax.dao.MyQuoteDao;
 import com.amx.jax.dict.PayGServiceCode;
+import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CustomizeQuoteAddPol;
 import com.amx.jax.models.CustomizeQuoteInfo;
 import com.amx.jax.models.CustomizeQuoteModel;
@@ -41,6 +42,8 @@ public class CustomizeQuoteService
 {
 	private static final Logger logger = LoggerFactory.getLogger(CustomizeQuoteService.class);
 
+	String TAG = "CustomizeQuoteService :: ";
+	
 	@Autowired
 	UserSession userSession;
 
@@ -71,20 +74,31 @@ public class CustomizeQuoteService
 		try
 		{
 			MyQuoteModel myQuoteModel = new MyQuoteModel();
-			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber());
-			for (int i = 0; i < getUserQuote.size(); i++)
+			ArrayResponseModel arrayResponseUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber(), userSession.getLanguageId());
+			if(arrayResponseUserQuote.getErrorCode() == null)
 			{
-				MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
-				if (null != quoteSeqNumber && !quoteSeqNumber.toString().equals("") && !myQuoteModelFromDb.getPaymentProcessError().equalsIgnoreCase("Y"))
+				ArrayList<MyQuoteModel> getUserQuote = arrayResponseUserQuote.getDataArray();
+				for (int i = 0; i < getUserQuote.size(); i++)
 				{
-					if (null != myQuoteModelFromDb.getQuoteSeqNumber() && myQuoteModelFromDb.getQuoteSeqNumber().equals(quoteSeqNumber))
+					MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
+					if (null != quoteSeqNumber && !quoteSeqNumber.toString().equals("") && !myQuoteModelFromDb.getPaymentProcessError().equalsIgnoreCase("Y"))
 					{
-						myQuoteModel = myQuoteModelFromDb;
-						customizeQuoteInfo.setQuoteSeqNumber(quoteSeqNumber);
-						quoteAvailableToCustomer = true;
+						if (null != myQuoteModelFromDb.getQuoteSeqNumber() && myQuoteModelFromDb.getQuoteSeqNumber().equals(quoteSeqNumber))
+						{
+							myQuoteModel = myQuoteModelFromDb;
+							customizeQuoteInfo.setQuoteSeqNumber(quoteSeqNumber);
+							quoteAvailableToCustomer = true;
+						}
 					}
 				}
 			}
+			else
+			{
+				resp.setMessageKey(arrayResponseUserQuote.getErrorCode());
+				resp.setMessage(arrayResponseUserQuote.getErrorMessage());
+				return resp;
+			}
+			
 			
 			if(!quoteAvailableToCustomer)
 			{
@@ -108,7 +122,18 @@ public class CustomizeQuoteService
 			
 			
 			// SET QuoteAddPolicy Details
-			quoteAddPolicyDetails = customizeQuoteDao.getQuoteAdditionalPolicy(myQuoteModel.getQuoteSeqNumber(), myQuoteModel.getVerNumber());
+			ArrayResponseModel arrayResponseModel = customizeQuoteDao.getQuoteAdditionalPolicy(myQuoteModel.getQuoteSeqNumber(), myQuoteModel.getVerNumber(), userSession.getLanguageId());
+			if(arrayResponseModel.getErrorCode() == null)
+			{
+				quoteAddPolicyDetails = arrayResponseModel.getDataArray();
+			}
+			else
+			{
+				resp.setMessage(arrayResponseModel.getErrorMessage());
+				resp.setMessageKey(arrayResponseModel.getErrorCode());
+				return resp;
+			}
+			
 			
 			
 			
@@ -126,10 +151,24 @@ public class CustomizeQuoteService
 			{
 				String polType = quoteAddPolicyDetails.get(i).getAddPolicyTypeCode();
 				Date quoteDate = DateFormats.setDbSqlFormatDate(myQuoteModel.getQuoteDate());
-				ArrayList repTypeArray = customizeQuoteDao.getReplacementTypeList(polType, quoteDate);
-				if (null != repTypeArray)
+				
+				ArrayResponseModel arrayResponseModelRep = customizeQuoteDao.getReplacementTypeList(polType, quoteDate, userSession.getLanguageId());
+				if(null != arrayResponseModelRep)
 				{
-					repTypeMap.put(polType, repTypeArray);
+					if(null == arrayResponseModelRep.getErrorCode())
+					{
+						ArrayList repTypeArray = arrayResponseModelRep.getDataArray();
+						if (null != repTypeArray)
+						{
+							repTypeMap.put(polType, repTypeArray);
+						}
+					}
+					else
+					{
+						resp.setMessage(arrayResponseModelRep.getErrorMessage());
+						resp.setMessageKey(arrayResponseModelRep.getErrorCode());
+						return resp;
+					}
 				}
 			}
 
@@ -149,8 +188,10 @@ public class CustomizeQuoteService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG+"getCustomizedQuoteDetails :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
 		}
 		return resp;
 	}
@@ -161,23 +202,34 @@ public class CustomizeQuoteService
 		try
 		{
 			ArrayList<String> allQuotes = new ArrayList<String>();
-			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber());
-			for (int i = 0; i < getUserQuote.size(); i++)
+			
+			ArrayResponseModel arrayResponseUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber(), userSession.getLanguageId());
+			if(arrayResponseUserQuote.getErrorCode() == null)
 			{
-				MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
-				if (null != myQuoteModelFromDb.getQuoteSeqNumber() && null != myQuoteModelFromDb.getPaymentProcessError() && !myQuoteModelFromDb.getPaymentProcessError().equalsIgnoreCase("Y"))
+				ArrayList<MyQuoteModel> getUserQuote = arrayResponseUserQuote.getDataArray();
+				for (int i = 0; i < getUserQuote.size(); i++)
 				{
-					allQuotes.add(myQuoteModelFromDb.getQuoteSeqNumber().toString());
+					MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
+					if (null != myQuoteModelFromDb.getQuoteSeqNumber() && null != myQuoteModelFromDb.getPaymentProcessError() && !myQuoteModelFromDb.getPaymentProcessError().equalsIgnoreCase("Y"))
+					{
+						allQuotes.add(myQuoteModelFromDb.getQuoteSeqNumber().toString());
+					}
 				}
+				resp.setMeta(allQuotes);
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			}
-			resp.setMeta(allQuotes);
-			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
-
+			else
+			{
+				resp.setMessageKey(arrayResponseUserQuote.getErrorCode());
+				resp.setMessage(arrayResponseUserQuote.getErrorMessage());
+			}
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG+"getQuoteSeqList :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
 		}
 		return resp;
 	}
@@ -195,30 +247,56 @@ public class CustomizeQuoteService
 			BigDecimal quoteSeqNumber = customizeQuoteInfo.getQuoteSeqNumber();
 			
 			MyQuoteModel myQuoteModel = new MyQuoteModel();
-			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber());
-			for (int i = 0; i < getUserQuote.size(); i++)
+			ArrayResponseModel arrayResponseUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber(), userSession.getLanguageId());
+			if(arrayResponseUserQuote.getErrorCode() == null)
 			{
-				MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
-				if (null != quoteSeqNumber && !quoteSeqNumber.toString().equals(""))
+				ArrayList<MyQuoteModel> getUserQuote = arrayResponseUserQuote.getDataArray();
+				for (int i = 0; i < getUserQuote.size(); i++)
 				{
-					if (null != myQuoteModelFromDb.getQuoteSeqNumber() && myQuoteModelFromDb.getQuoteSeqNumber().equals(quoteSeqNumber))
+					MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
+					if (null != quoteSeqNumber && !quoteSeqNumber.toString().equals(""))
 					{
-						myQuoteModel = myQuoteModelFromDb;
-						customizeQuoteInfo.setQuoteSeqNumber(quoteSeqNumber);
+						if (null != myQuoteModelFromDb.getQuoteSeqNumber() && myQuoteModelFromDb.getQuoteSeqNumber().equals(quoteSeqNumber))
+						{
+							myQuoteModel = myQuoteModelFromDb;
+							customizeQuoteInfo.setQuoteSeqNumber(quoteSeqNumber);
+						}
 					}
 				}
 			}
+			else
+			{
+				resp.setMessageKey(arrayResponseUserQuote.getErrorCode());
+				resp.setMessage(arrayResponseUserQuote.getErrorMessage());
+				return resp;
+			}
+			
 			
 			quoteAddPolicyDetails = customizeQuoteCalculated.getQuoteAddPolicyDetails();
 			for (int i = 0; i < quoteAddPolicyDetails.size(); i++)
 			{
 				String polType = quoteAddPolicyDetails.get(i).getAddPolicyTypeCode();
 				Date quoteDate = DateFormats.setDbSqlFormatDate(myQuoteModel.getQuoteDate());
-				ArrayList repTypeArray = customizeQuoteDao.getReplacementTypeList(polType, quoteDate);
-				if (null != repTypeArray)
+				
+				ArrayResponseModel arrayResponseModelRep = customizeQuoteDao.getReplacementTypeList(polType, quoteDate, userSession.getLanguageId());
+				if(null != arrayResponseModelRep)
 				{
-					repTypeMap.put(polType, repTypeArray);
+					if(null == arrayResponseModelRep.getErrorCode())
+					{
+						ArrayList repTypeArray = arrayResponseModelRep.getDataArray();
+						if (null != repTypeArray)
+						{
+							repTypeMap.put(polType, repTypeArray);
+						}
+					}
+					else
+					{
+						resp.setMessage(arrayResponseModelRep.getErrorMessage());
+						resp.setMessageKey(arrayResponseModelRep.getErrorCode());
+						return resp;
+					}
 				}
+				
 			}
 			
 			resp.setData(CalculateUtility.calculateCustomizeQuote(customizeQuoteModel));
@@ -227,8 +305,10 @@ public class CustomizeQuoteService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG+"calculateCutomizeQuote :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
 		}
 		return resp;
 	}
@@ -238,13 +318,26 @@ public class CustomizeQuoteService
 		AmxApiResponse<String, Object> resp = new AmxApiResponse<String, Object>();
 		try
 		{
-			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
-			resp.setResults(customizeQuoteDao.getTermsAndCondition());
+			ArrayResponseModel arrayResponseModelRep = customizeQuoteDao.getTermsAndCondition(userSession.getLanguageId());
+			if(arrayResponseModelRep.getErrorCode() == null)
+			{
+				resp.setResults(arrayResponseModelRep.getDataArray());
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
+			}
+			else
+			{
+				resp.setMessage(arrayResponseModelRep.getErrorMessage());
+				resp.setMessageKey(arrayResponseModelRep.getErrorCode());
+				return resp;
+			}
+			
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG+"getTermsAndCondition :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
 		}
 		return resp;
 	}
@@ -252,7 +345,7 @@ public class CustomizeQuoteService
 	
 	public TreeMap<Integer,String> getTermsAndConditionTest()
 	{
-		return customizeQuoteDao.getTermsAndConditionTest();
+		return customizeQuoteDao.getTermsAndConditionTest(userSession.getLanguageId());
 	}
 
 	public AmxApiResponse<?, Object> saveCustomizeQuote(CustomizeQuoteModel customizeQuoteModel , HttpServletRequest request)
@@ -264,16 +357,26 @@ public class CustomizeQuoteService
 			BigDecimal quoteSeqNumber = customizeQuoteInfo.getQuoteSeqNumber();
 
 			MyQuoteModel myQuoteModel = new MyQuoteModel();
-			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber());
-			for (int i = 0; i < getUserQuote.size(); i++)
+			ArrayResponseModel arrayResponseUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber(), userSession.getLanguageId());
+			if(arrayResponseUserQuote.getErrorCode() == null)
 			{
-				MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
-				if (null != myQuoteModelFromDb.getQuoteSeqNumber() && myQuoteModelFromDb.getQuoteSeqNumber().equals(quoteSeqNumber))
+				ArrayList<MyQuoteModel> getUserQuote = arrayResponseUserQuote.getDataArray();
+				for (int i = 0; i < getUserQuote.size(); i++)
 				{
-					myQuoteModel = myQuoteModelFromDb;
+					MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
+					if (null != myQuoteModelFromDb.getQuoteSeqNumber() && myQuoteModelFromDb.getQuoteSeqNumber().equals(quoteSeqNumber))
+					{
+						myQuoteModel = myQuoteModelFromDb;
+					}
 				}
 			}
-
+			else
+			{
+				resp.setMessageKey(arrayResponseUserQuote.getErrorCode());
+				resp.setMessage(arrayResponseUserQuote.getErrorMessage());
+				return resp;
+			}
+			
 			AmxApiResponse<?, Object> respQuoteAddModel = saveCustomizeQuoteAddPol(customizeQuoteModel, myQuoteModel);
 			if (!respQuoteAddModel.getStatusKey().equals(ApiConstants.SUCCESS))
 			{
@@ -285,8 +388,10 @@ public class CustomizeQuoteService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG+"saveCustomizeQuote :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
 		}
 		return resp;
 	}
@@ -323,7 +428,7 @@ public class CustomizeQuoteService
 					PaymentDetails paymentDetails = respInsertPayment.getData();
 					
 					Payment payment = new Payment();
-					payment.setDocFinYear(1123);
+					payment.setDocFinYear(userSession.getCivilId().toString());//Civil Id Added
 					payment.setDocNo(paymentDetails.getPaySeqNum().toString());// PaySeqNum
 					payment.setMerchantTrackId(paymentDetails.getPaySeqNum().toString());// PaySeqNum
 					payment.setNetPayableAmount(totalPremium.getTotalAmount());
@@ -340,15 +445,16 @@ public class CustomizeQuoteService
 					resp.setStatusKey(validate.getErrorCode());
 					resp.setMessageKey(validate.getErrorCode());
 				}
-				
-				return resp;
 			}
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG+"saveCustomizeQuoteDetails :: exception :" + e);
 			e.printStackTrace();
 		}
-		return null;
+		return resp;
 	}
 	
 
@@ -356,46 +462,55 @@ public class CustomizeQuoteService
 	{
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
 
-		if (null != customizeQuoteModel)
+		try 
 		{
-
-			ArrayList<QuoteAddPolicyDetails> quoteAddPolicyDetailsArray = customizeQuoteModel.getQuoteAddPolicyDetails();
-			QuotationDetails quotationDetails = customizeQuoteModel.getQuotationDetails();
-
-			for (int i = 0; i < quoteAddPolicyDetailsArray.size(); i++)
+			if (null != customizeQuoteModel)
 			{
-				BigDecimal yearMultiplePremium = new BigDecimal(0);
-				CustomizeQuoteAddPol customizeQuoteAddPol = new CustomizeQuoteAddPol();
-				QuoteAddPolicyDetails quoteAddPolicyDetails = quoteAddPolicyDetailsArray.get(i);
 
-				customizeQuoteAddPol.setQuoteSeqNumber(myQuoteModel.getQuoteSeqNumber());
-				customizeQuoteAddPol.setVerNumber(myQuoteModel.getVerNumber());
-				customizeQuoteAddPol.setAddPolicyTypeCode(quoteAddPolicyDetails.getAddPolicyTypeCode());
-				customizeQuoteAddPol.setYearlyPremium(quoteAddPolicyDetails.getYearlyPremium());
-				if (quoteAddPolicyDetails.getAddPolicyTypeEnable())
+				ArrayList<QuoteAddPolicyDetails> quoteAddPolicyDetailsArray = customizeQuoteModel.getQuoteAddPolicyDetails();
+				QuotationDetails quotationDetails = customizeQuoteModel.getQuotationDetails();
+
+				for (int i = 0; i < quoteAddPolicyDetailsArray.size(); i++)
 				{
-					yearMultiplePremium = quoteAddPolicyDetails.getYearlyPremium().multiply(quotationDetails.getPolicyDuration());
-					customizeQuoteAddPol.setOptIndex("Y");
-					customizeQuoteAddPol.setYearMultiplePremium(yearMultiplePremium);
+					BigDecimal yearMultiplePremium = new BigDecimal(0);
+					CustomizeQuoteAddPol customizeQuoteAddPol = new CustomizeQuoteAddPol();
+					QuoteAddPolicyDetails quoteAddPolicyDetails = quoteAddPolicyDetailsArray.get(i);
+
+					customizeQuoteAddPol.setQuoteSeqNumber(myQuoteModel.getQuoteSeqNumber());
+					customizeQuoteAddPol.setVerNumber(myQuoteModel.getVerNumber());
+					customizeQuoteAddPol.setAddPolicyTypeCode(quoteAddPolicyDetails.getAddPolicyTypeCode());
+					customizeQuoteAddPol.setYearlyPremium(quoteAddPolicyDetails.getYearlyPremium());
+					if (quoteAddPolicyDetails.getAddPolicyTypeEnable())
+					{
+						yearMultiplePremium = quoteAddPolicyDetails.getYearlyPremium().multiply(quotationDetails.getPolicyDuration());
+						customizeQuoteAddPol.setOptIndex("Y");
+						customizeQuoteAddPol.setYearMultiplePremium(yearMultiplePremium);
+					}
+					else
+					{
+						customizeQuoteAddPol.setOptIndex("N");
+						customizeQuoteAddPol.setYearMultiplePremium(yearMultiplePremium);
+					}
+					customizeQuoteAddPol.setReplacementTypeCode(quoteAddPolicyDetails.getReplacementTypeCode());
+					
+					ResponseInfo validate = customizeQuoteDao.saveCustomizeQuoteAddPol(customizeQuoteAddPol , userSession.getCivilId());
+					if (validate.getErrorCode() != null)
+					{
+						resp.setMessageKey(validate.getErrorCode());
+						resp.setStatusKey(validate.getErrorCode());
+						return resp;
+					}
 				}
-				else
-				{
-					customizeQuoteAddPol.setOptIndex("N");
-					customizeQuoteAddPol.setYearMultiplePremium(yearMultiplePremium);
-				}
-				customizeQuoteAddPol.setReplacementTypeCode(quoteAddPolicyDetails.getReplacementTypeCode());
-				
-				ResponseInfo validate = customizeQuoteDao.saveCustomizeQuoteAddPol(customizeQuoteAddPol , userSession.getCivilId());
-				if (validate.getErrorCode() != null)
-				{
-					resp.setMessageKey(validate.getErrorCode());
-					resp.setStatusKey(validate.getErrorCode());
-					return resp;
-				}
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			}
-			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
-			return resp;
 		}
-		return null;
+		catch (Exception e) 
+		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "getCompanySetUp :: exception :" + e);
+			e.printStackTrace();
+		}
+		return resp;
 	}
 }

@@ -10,13 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.IncompleteApplModel;
 
 @Component
 public class DashBoardDao
 {
-	String TAG = "com.amx.jax.dao.RequestQuoteDao :: ";
+	String TAG = "RequestQuoteDao :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(RequestQuoteDao.class);
 
@@ -54,7 +55,7 @@ public class DashBoardDao
 			incompleteApplModel.setErrorCode(callableStatement.getString(8));
 			incompleteApplModel.setErrorMessage(callableStatement.getString(9));
 
-			logger.info(TAG + " getIncompleteApplication :: callableStatement.getBigDecimal(6) :" + callableStatement.getBigDecimal(6));
+			//logger.info(TAG + " getIncompleteApplication :: getBigDecimal(6) :" + callableStatement.getBigDecimal(6));
 
 			if (callableStatement.getString(8) == null)
 			{
@@ -67,6 +68,9 @@ public class DashBoardDao
 		}
 		catch (Exception e)
 		{
+			incompleteApplModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			incompleteApplModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getIncompleteApplication :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally

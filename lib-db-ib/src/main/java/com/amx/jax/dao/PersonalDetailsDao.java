@@ -10,8 +10,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.Area;
+import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.Business;
 import com.amx.jax.models.CustomerProfileDetailModel;
 import com.amx.jax.models.Gender;
@@ -24,7 +27,7 @@ import oracle.jdbc.OracleTypes;
 @Repository
 public class PersonalDetailsDao
 {
-	String TAG = "com.insurance.personaldetails.dao.PersonalDetailsDao :: ";
+	String TAG = "PersonalDetailsDao :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(PersonalDetailsDao.class);
 
@@ -36,7 +39,7 @@ public class PersonalDetailsDao
 	
 	Connection connection;
 
-	public CustomerProfileDetailModel getProfileDetails(String civilId , String userType , BigDecimal custSeqNum)
+	public CustomerProfileDetailModel getProfileDetails(String civilId , String userType , BigDecimal custSeqNum, BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -51,7 +54,7 @@ public class PersonalDetailsDao
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(3, userType);
 			callableStatement.setString(4, civilId);
-			callableStatement.setBigDecimal(5, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(5, languageId);
 			callableStatement.setBigDecimal(6, custSeqNum);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
@@ -93,18 +96,12 @@ public class PersonalDetailsDao
 			customerProfileDetailModel.setLanguageId(callableStatement.getBigDecimal(22));
 			customerProfileDetailModel.setErrorCode(callableStatement.getString(23));
 			customerProfileDetailModel.setErrorMessage(callableStatement.getString(24));
-
-			if (callableStatement.getString(23) == null)
-			{
-				customerProfileDetailModel.setStatus(true);
-			}
-			else
-			{
-				customerProfileDetailModel.setStatus(false);
-			}
 		}
 		catch (Exception e)
 		{
+			customerProfileDetailModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			customerProfileDetailModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getProfileDetails :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -114,7 +111,7 @@ public class PersonalDetailsDao
 		return customerProfileDetailModel;
 	}
 
-	public CustomerProfileDetailModel updateProfileDetails(CustomerProfileDetailModel customerProfileDetailModel , String civilId , String userType , BigDecimal custSeqNum)
+	public CustomerProfileDetailModel updateProfileDetails(CustomerProfileDetailModel customerProfileDetailModel , String civilId , String userType , BigDecimal custSeqNum, BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -139,7 +136,7 @@ public class PersonalDetailsDao
 			callableStatement.setString(13, customerProfileDetailModel.getAreaCode());
 			callableStatement.setString(14, customerProfileDetailModel.getMobile());
 			callableStatement.setString(15, customerProfileDetailModel.getEmail());
-			callableStatement.setBigDecimal(16, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(16, languageId);
 			callableStatement.setString(17, metaService.getUserDeviceInfo().getDeviceId());
 			callableStatement.setString(18, metaService.getUserDeviceInfo().getDeviceType());
 			callableStatement.setString(19, civilId);
@@ -152,24 +149,18 @@ public class PersonalDetailsDao
 			customerProfileDetailModel = new CustomerProfileDetailModel();
 			if (null != callableStatement.getBigDecimal(5))
 			{
-				logger.info(TAG + " updateProfileDetails :: customerSequenceNumber :" + callableStatement.getBigDecimal(5));
+				//logger.info(TAG + " updateProfileDetails :: customerSequenceNumber :" + callableStatement.getBigDecimal(5));
 				customerProfileDetailModel.setCustSequenceNumber(callableStatement.getBigDecimal(5));
 			}
 
 			customerProfileDetailModel.setErrorCode(callableStatement.getString(20));
 			customerProfileDetailModel.setErrorMessage(callableStatement.getString(21));
-
-			if (callableStatement.getString(20) == null)
-			{
-				customerProfileDetailModel.setStatus(true);
-			}
-			else
-			{
-				customerProfileDetailModel.setStatus(false);
-			}
 		}
 		catch (Exception e)
 		{
+			customerProfileDetailModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			customerProfileDetailModel.setErrorMessage(e.toString());
+			logger.info(TAG+"updateProfileDetails :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -179,10 +170,10 @@ public class PersonalDetailsDao
 		return customerProfileDetailModel;
 	}
 
-	public ArrayList getBusiness()
+	public ArrayResponseModel getBusiness(BigDecimal languageId)
 	{
 		getConnection();
-
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_BUSINESS(?,?,?,?,?,?)}";
 		ArrayList<Business> businessArray = new ArrayList<Business>();
@@ -190,15 +181,13 @@ public class PersonalDetailsDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
-			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(3, languageId);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
-
 			ResultSet rs = (ResultSet) callableStatement.getObject(4);
 
 			while (rs.next())
@@ -208,9 +197,17 @@ public class PersonalDetailsDao
 				business.setBusinessDesc(rs.getString(2));
 				businessArray.add(business);
 			}
+			
+			arrayResponseModel.setErrorCode(callableStatement.getString(5));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(6));
+			arrayResponseModel.setDataArray(businessArray);
+
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getBusiness :: exception :" + e);
 			e.printStackTrace();
 		}
 
@@ -219,14 +216,15 @@ public class PersonalDetailsDao
 			CloseConnection(callableStatement, connection);
 		}
 
-		return businessArray;
+		return arrayResponseModel;
 	}
 
-	public ArrayList getNationality()
+	public ArrayResponseModel getNationality(BigDecimal languageId)
 	{
 		getConnection();
 
 		CallableStatement callableStatement = null;
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		String callProcedure = "{call IRB_GET_NATIONALITIES(?,?,?,?,?,?)}";
 		ArrayList<Nationality> nationalityArray = new ArrayList<Nationality>();
 
@@ -236,7 +234,7 @@ public class PersonalDetailsDao
 
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
-			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(3, languageId);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -251,10 +249,16 @@ public class PersonalDetailsDao
 				nationality.setNationalityDesc(rs.getString(2));
 				nationalityArray.add(nationality);
 			}
+			arrayResponseModel.setErrorCode(callableStatement.getString(5));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(6));
+			arrayResponseModel.setDataArray(nationalityArray);
 
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getNationality :: exception :" + e);
 			e.printStackTrace();
 		}
 
@@ -263,14 +267,15 @@ public class PersonalDetailsDao
 			CloseConnection(callableStatement, connection);
 		}
 
-		return nationalityArray;
+		return arrayResponseModel;
 	}
 
-	public ArrayList getGovernorates()
+	public ArrayResponseModel getGovernorates(BigDecimal languageId)
 	{
 		getConnection();
 
 		CallableStatement callableStatement = null;
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		String callProcedure = "{call IRB_GET_GOVERNORATES(?,?,?,?,?,?)}";
 		ArrayList<Governorates> governoratesArray = new ArrayList<Governorates>();
 
@@ -280,7 +285,7 @@ public class PersonalDetailsDao
 
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
-			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(3, languageId);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -295,25 +300,29 @@ public class PersonalDetailsDao
 				governorates.setGovDesc(rs.getString(2));
 				governoratesArray.add(governorates);
 			}
-
+			arrayResponseModel.setErrorCode(callableStatement.getString(5));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(6));
+			arrayResponseModel.setDataArray(governoratesArray);
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getNationality :: exception :" + e);
 			e.printStackTrace();
 		}
-
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
 
-		return governoratesArray;
+		return arrayResponseModel;
 	}
 
-	public ArrayList getArea(String gov)
+	public ArrayResponseModel getArea(String gov ,BigDecimal languageId)
 	{
 		getConnection();
-
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_AREA(?,?,?,?,?,?,?)}";
 		ArrayList<Area> areaArray = new ArrayList<Area>();
@@ -325,7 +334,7 @@ public class PersonalDetailsDao
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(3, gov);
-			callableStatement.setBigDecimal(4, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(4, languageId);
 			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
@@ -340,10 +349,15 @@ public class PersonalDetailsDao
 				area.setAreaDesc(rs.getString(2));
 				areaArray.add(area);
 			}
-
+			arrayResponseModel.setErrorCode(callableStatement.getString(6));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(7));
+			arrayResponseModel.setDataArray(areaArray);
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getArea :: exception :" + e);
 			e.printStackTrace();
 		}
 
@@ -352,13 +366,13 @@ public class PersonalDetailsDao
 			CloseConnection(callableStatement, connection);
 		}
 
-		return areaArray;
+		return arrayResponseModel;
 	}
 
-	public ArrayList getGender()
+	public ArrayResponseModel getGender(BigDecimal languageId)
 	{
 		getConnection();
-
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_GENDER(?,?,?,?,?,?)}";
 		ArrayList<Gender> genderArray = new ArrayList<Gender>();
@@ -369,7 +383,7 @@ public class PersonalDetailsDao
 
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
-			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(3, languageId);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -384,19 +398,24 @@ public class PersonalDetailsDao
 				gender.setGenderDesc(rs.getString(2));
 				genderArray.add(gender);
 			}
+			arrayResponseModel.setErrorCode(callableStatement.getString(5));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(6));
+			arrayResponseModel.setDataArray(genderArray);
 
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getGender :: exception :" + e);
 			e.printStackTrace();
 		}
-
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
 
-		return genderArray;
+		return arrayResponseModel;
 	}
 	
 	private Connection getConnection()

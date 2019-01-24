@@ -11,7 +11,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.meta.IMetaService;
+import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.MyQuoteModel;
 import com.amx.jax.utility.Utility;
@@ -20,7 +23,7 @@ import oracle.jdbc.OracleTypes;
 @Repository
 public class MyQuoteDao
 {
-	String TAG = "com.amx.jax.dao.MyQuoteDao :: ";
+	String TAG = "MyQuoteDao :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(MyQuoteDao.class);
 
@@ -32,10 +35,11 @@ public class MyQuoteDao
 
 	Connection connection;
 
-	public ArrayList<MyQuoteModel> getUserQuote(BigDecimal customerSeqNum)
+	public ArrayResponseModel getUserQuote(BigDecimal customerSeqNum, BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		String callProcedure = "{call IRB_GET_MYQUOTES(?,?,?,?,?,?,?)}";//
 		ArrayList<MyQuoteModel> activePolicyArray = new ArrayList<MyQuoteModel>();
 
@@ -46,7 +50,7 @@ public class MyQuoteDao
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, customerSeqNum);
-			callableStatement.setBigDecimal(4, metaService.getTenantProfile().getLanguageId());
+			callableStatement.setBigDecimal(4, languageId);
 			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
@@ -100,18 +104,24 @@ public class MyQuoteDao
 				myQuoteModel.setPaymentProcessError(rs.getString(42));// if 'Y' error has occurred while payment and same error message is shown on Quote
 				activePolicyArray.add(myQuoteModel);
 				
-				logger.info(TAG + " getUserQuote :: myQuoteModel :" + myQuoteModel.toString());
+				//logger.info(TAG + " getUserQuote :: myQuoteModel :" + myQuoteModel.toString());
 			}
+			arrayResponseModel.setDataArray(activePolicyArray);
+			arrayResponseModel.setErrorCode(callableStatement.getString(6));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(7));
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getUserQuote :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return activePolicyArray;
+		return arrayResponseModel;
 	}
 
 	private Connection getConnection()
