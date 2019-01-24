@@ -84,7 +84,7 @@ public class MyPolicyController {
 			logger.info("MyPolicyController :: downloadPolicyReceipt :: docNumberDet :" + docNumberDet);
 			
 			ArrayResponseModel arrayResponseModel = myPolicyService.downloadPolicyReceipt(docNumberDet);
-			if(arrayResponseModel.getErrorCode() != null)
+			if(arrayResponseModel.getErrorCode() == null)
 			{
 				PolicyReceiptDetails policyReceiptDetails = (PolicyReceiptDetails) arrayResponseModel.getObject();
 				
