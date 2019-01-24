@@ -70,9 +70,7 @@ public class CustomerRegistrationController {
 	@ApiWebAppStatus({ WebAppStatusCodes.CIVIL_ID_INVALID, WebAppStatusCodes.CIVIL_ID_VALID,
 			WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@ApiMockParam(example = "284090301401", value = "customer civil id")
-	
-	
-	
+
 	@RequestMapping(value = "/pub/reg/civilid-valid", method = RequestMethod.POST)
 	public AmxApiResponse<ResponseInfo, Object> isValidCivilId(@RequestParam("civilId") String civilid) {
 		return customerRegistrationService.isValidCivilId(civilid);
@@ -134,11 +132,10 @@ public class CustomerRegistrationController {
 			WebAppStatusCodes.CIVIL_ID_NOT_REGESTERED, WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS,
 			WebAppStatusCodes.INVALID_USR_PWD })
 	@RequestMapping(value = "/pub/login/validate-userlogin", method = RequestMethod.POST)
-	public AmxApiResponse<?, Object> validateUserLogin(@RequestParam(name = "languageId") String languageId ,@RequestBody CustomerLoginRequest customerLoginRequest) 
-	{
+	public AmxApiResponse<?, Object> validateUserLogin(@RequestParam(name = "languageId") String languageId,
+			@RequestBody CustomerLoginRequest customerLoginRequest) {
 		BigDecimal languageIdDat = null;
-		if (null != languageId && !languageId.equals("") && !languageId.equalsIgnoreCase("null")) 
-		{
+		if (null != languageId && !languageId.equals("") && !languageId.equalsIgnoreCase("null")) {
 			languageIdDat = ArgUtil.parseAsBigDecimal(languageId);
 			userSession.setLanguageId(languageIdDat);
 		}
@@ -169,11 +166,10 @@ public class CustomerRegistrationController {
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS, WebAppStatusCodes.LIST_POP_ERROR,
 			WebAppStatusCodes.INVLD_LOGIN_CATG, WebAppStatusCodes.INVALID_USR })
 	@RequestMapping(value = "/pub/reg/userdetails", method = RequestMethod.POST)
-	public AmxApiResponse<CustomerDetailResponse, Object> getUserDetails(@RequestParam(name = "languageId", required = false) String languageId) 
-	{
+	public AmxApiResponse<CustomerDetailResponse, Object> getUserDetails(
+			@RequestParam(name = "languageId", required = false) String languageId) {
 		BigDecimal languageIdDat = null;
-		if (null != languageId && !languageId.equals("") && !languageId.equalsIgnoreCase("null")) 
-		{
+		if (null != languageId && !languageId.equals("") && !languageId.equalsIgnoreCase("null")) {
 			languageIdDat = ArgUtil.parseAsBigDecimal(languageId);
 			userSession.setLanguageId(languageIdDat);
 		}
@@ -210,9 +206,9 @@ public class CustomerRegistrationController {
 		try {
 
 			if (googleService.verifyCaptcha(verify, httpService.getIPAddress())) {
-				
+
 				logger.info("CustomerRegistrationController :: contactUs :: verify Done :" + verify);
-				
+
 				SupportEmail email = new SupportEmail();
 				email.setCaptchaCode(verify);
 				email.setVisitorName(name);

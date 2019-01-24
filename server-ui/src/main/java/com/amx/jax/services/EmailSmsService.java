@@ -895,7 +895,6 @@ public class EmailSmsService
 		
 		map.put(DetailsConstants.CONTACT_US_EMAIL, metaService.getTenantProfile().getContactUsEmail());
 		map.put(DetailsConstants.AMIB_WEBSITE_LINK, metaService.getTenantProfile().getAmibWebsiteLink());
-		map.put(DetailsConstants.CONTACT_US_EMAIL, metaService.getTenantProfile().getContactUsEmail());
 		map.put(DetailsConstants.COMPANY_NAME, getCompanyName());
 		map.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
 		map.put("name", supportEmail.getVisitorName());

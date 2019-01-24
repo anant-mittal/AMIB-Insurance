@@ -345,6 +345,7 @@ public class CustomerRegistrationService {
 					webConfig.getAppCompCode());
 			if (arrayResponseModel.getErrorCode() == null) {
 				ArrayList<CompanySetUp> getCompanySetUp = arrayResponseModel.getDataArray();
+				
 				CompanySetUp companySetUp = getCompanySetUp.get(0);
 				customerDetailResponse.setCompanySetUp(companySetUp);
 
@@ -656,7 +657,9 @@ public class CustomerRegistrationService {
 				resp.setMessage(customerDetailModel.getErrorMessage());
 				resp.setStatusKey(customerDetailModel.getErrorCode());
 				return resp;
-			} else {
+			} 
+			else 
+			{
 				AmxApiResponse<?, Object> validateDOTP = emailSmsService.validateDOTP(eOtp, mOtp,
 						customerDetailModel.getEmail(), customerDetailModel.getMobile(),
 						DetailsConstants.RESET_PASSOWRD_OTP);
