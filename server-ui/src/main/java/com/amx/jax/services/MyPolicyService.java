@@ -175,6 +175,7 @@ public class MyPolicyService
 		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		try
 		{
+			logger.info("MyPolicyService :: downloadPolicyReceipt :: getLanguageId :" + userSession.getLanguageId());
 			arrayResponseModel = myPolicyDao.downloadPolicyReceipt(docNumber, userSession.getLanguageId());
 		}
 		catch (Exception e)

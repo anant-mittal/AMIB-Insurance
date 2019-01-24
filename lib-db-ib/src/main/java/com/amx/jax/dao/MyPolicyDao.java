@@ -324,6 +324,10 @@ public class MyPolicyDao
 			
 			arrayResponseModel.setErrorCode(callableStatement.getString(34));
 			arrayResponseModel.setErrorMessage(callableStatement.getString(35));
+			
+			logger.info("MyPolicyDao :: downloadPolicyReceipt :: getErrorCode :" + arrayResponseModel.getErrorCode());
+			logger.info("MyPolicyDao :: downloadPolicyReceipt :: getErrorMessage :" + arrayResponseModel.getErrorMessage());
+			
 			arrayResponseModel.setObject(policyReceiptDetails);
 			
 		}

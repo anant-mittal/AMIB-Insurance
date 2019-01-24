@@ -81,10 +81,14 @@ public class MyPolicyController {
 				docNumberDet = ArgUtil.parseAsBigDecimal(docNumber, null);
 			}
 
+			logger.info("MyPolicyController :: downloadPolicyReceipt :: docNumberDet :" + docNumberDet);
+			
 			ArrayResponseModel arrayResponseModel = myPolicyService.downloadPolicyReceipt(docNumberDet);
 			if(arrayResponseModel.getErrorCode() != null)
 			{
 				PolicyReceiptDetails policyReceiptDetails = (PolicyReceiptDetails) arrayResponseModel.getObject();
+				
+				logger.info("MyPolicyController :: downloadPolicyReceipt :: policyReceiptDetails :" + policyReceiptDetails.toString());
 				
 				Map<String, Object> wrapper = new HashMap<String, Object>();
 				Map<String, Object> model = new HashMap<String, Object>();
