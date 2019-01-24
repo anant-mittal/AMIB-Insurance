@@ -149,7 +149,7 @@ public class PersonalDetailsDao
 			customerProfileDetailModel = new CustomerProfileDetailModel();
 			if (null != callableStatement.getBigDecimal(5))
 			{
-				logger.info(TAG + " updateProfileDetails :: customerSequenceNumber :" + callableStatement.getBigDecimal(5));
+				//logger.info(TAG + " updateProfileDetails :: customerSequenceNumber :" + callableStatement.getBigDecimal(5));
 				customerProfileDetailModel.setCustSequenceNumber(callableStatement.getBigDecimal(5));
 			}
 

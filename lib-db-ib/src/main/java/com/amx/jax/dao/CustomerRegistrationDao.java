@@ -43,7 +43,6 @@ public class CustomerRegistrationDao
 	//public ArrayList<CompanySetUp> getCompanySetUp(BigDecimal langId , String companyCode)
 	public ArrayResponseModel getCompanySetUp(BigDecimal langId , String companyCode)
 	{
-		logger.info("CustomerRegistrationDao :: getCompanySetUp :: langId :" + langId);
 		getConnection();
 		CallableStatement callableStatement = null;
 		ArrayList<CompanySetUp> companySetUpArray = new ArrayList<CompanySetUp>();
@@ -89,7 +88,6 @@ public class CustomerRegistrationDao
 				companySetUp.setHelpLineNumber(rs.getString(19));
 				companySetUp.setWebSite(rs.getString(20));
 				companySetUp.setEmailSenderId(rs.getString(21));
-				logger.info(TAG+"getCompanySetUp :: companySetUp :" + companySetUp.toString());
 				companySetUpArray.add(companySetUp);
 			}
 			arrayResponseModel.setDataArray(companySetUpArray);
@@ -124,7 +122,6 @@ public class CustomerRegistrationDao
 			callableStatement.setString(2, civilid);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
-			logger.info(TAG+"isValidCivilId :: result :" + result);
 			arrayResponseModel.setData(result);
 		}
 		catch (SQLException e)
@@ -160,7 +157,6 @@ public class CustomerRegistrationDao
 			callableStatement.setString(5, civilid);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
-			logger.info(TAG+"isCivilIdExist :: result :" + result);
 			arrayResponseModel.setData(result);
 		}
 		catch (SQLException e)

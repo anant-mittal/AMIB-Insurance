@@ -328,7 +328,6 @@ public class PayMentService
 		PaymentReceipt paymentReceipt = null;
 		
 		logger.info(TAG + " receiptData :: paySeqNum  :" + paySeqNum);
-		
 		AmxApiResponse<?, Object> receiptData  = payMentService.paymentReceiptData(paySeqNum);
 		if (receiptData.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
@@ -362,8 +361,6 @@ public class PayMentService
 		model.put(DetailsConstants.modelYear, paymentReceipt.getModelYear());
 		model.put(DetailsConstants.trnsReceiptRef, paymentReceipt.getTrnsReceiptRef());
 		dataList.add(model);
-		
-		//emailSmsService.emialToCustonSuccessPg(new BigDecimal(100),"11111111111", new BigDecimal(2222) , dataList);
 		
 		return dataList;
 	}

@@ -104,7 +104,7 @@ public class MyQuoteDao
 				myQuoteModel.setPaymentProcessError(rs.getString(42));// if 'Y' error has occurred while payment and same error message is shown on Quote
 				activePolicyArray.add(myQuoteModel);
 				
-				logger.info(TAG + " getUserQuote :: myQuoteModel :" + myQuoteModel.toString());
+				//logger.info(TAG + " getUserQuote :: myQuoteModel :" + myQuoteModel.toString());
 			}
 			arrayResponseModel.setDataArray(activePolicyArray);
 			arrayResponseModel.setErrorCode(callableStatement.getString(6));

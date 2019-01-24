@@ -58,7 +58,6 @@ public class MyPolicyService
 				if(null != userActivePolicyDetails.getData())
 				{
 					BigDecimal amibRef = new BigDecimal(userActivePolicyDetails.getData());
-					logger.info(TAG + " getUserActivePolicy :: amibRef :" + amibRef);
 					userSession.setUserAmibCustRef(amibRef);
 				}
 			}

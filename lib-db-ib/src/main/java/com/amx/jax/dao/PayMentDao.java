@@ -146,8 +146,8 @@ public class PayMentDao
 		ResponseInfo validate = new ResponseInfo();
 		try
 		{
-			logger.info(TAG + " cretaeAmibCust :: custSeqNum :" + custSeqNum);
-			logger.info(TAG + " cretaeAmibCust :: civilId    :" + civilId);
+			//logger.info(TAG + " cretaeAmibCust :: custSeqNum :" + custSeqNum);
+			//logger.info(TAG + " cretaeAmibCust :: civilId    :" + civilId);
 			
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
@@ -187,8 +187,8 @@ public class PayMentDao
 		ResponseInfo validate = new ResponseInfo();
 		try
 		{
-			logger.info(TAG + " processReceipt :: paySeqNum :" + paySeqNum);
-			logger.info(TAG + " processReceipt :: civilId   :" + civilId);
+			//logger.info(TAG + " processReceipt :: paySeqNum :" + paySeqNum);
+			//logger.info(TAG + " processReceipt :: civilId   :" + civilId);
 			
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
@@ -231,8 +231,8 @@ public class PayMentDao
 		ResponseInfo validate = new ResponseInfo();
 		try
 		{
-			logger.info(TAG + " createAmibPolicy :: paySeqNum :" + paySeqNum);
-			logger.info(TAG + " createAmibPolicy :: civilId   :" + civilId);
+			//logger.info(TAG + " createAmibPolicy :: paySeqNum :" + paySeqNum);
+			//logger.info(TAG + " createAmibPolicy :: civilId   :" + civilId);
 			
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
@@ -350,7 +350,7 @@ public class PayMentDao
 			paymentStatus.setPayToken(callableStatement.getString(15));
 			paymentStatus.setAppSeqNumber(callableStatement.getBigDecimal(16));
 			
-			logger.info(TAG + " preparePrintData :: paymentStatus      :" + paymentStatus.toString());
+			//logger.info(TAG + " preparePrintData :: paymentStatus      :" + paymentStatus.toString());
 			logger.info(TAG + " preparePrintData :: Error Code         :" + callableStatement.getString(17));
 			logger.info(TAG + " preparePrintData :: Error Msg          :" + callableStatement.getString(18));
 			
@@ -459,7 +459,7 @@ public class PayMentDao
 			arrayResponseModel.setErrorMessage(callableStatement.getString(26));
 			arrayResponseModel.setObject(paymentReceiptModel);
 			
-			logger.info(TAG + " paymentReceiptData :: paymentReceiptModel  :" + paymentReceiptModel.toString());
+			//logger.info(TAG + " paymentReceiptData :: paymentReceiptModel  :" + paymentReceiptModel.toString());
 		}
 		catch (Exception e)
 		{

@@ -55,7 +55,7 @@ public class DashBoardDao
 			incompleteApplModel.setErrorCode(callableStatement.getString(8));
 			incompleteApplModel.setErrorMessage(callableStatement.getString(9));
 
-			logger.info(TAG + " getIncompleteApplication :: getBigDecimal(6) :" + callableStatement.getBigDecimal(6));
+			//logger.info(TAG + " getIncompleteApplication :: getBigDecimal(6) :" + callableStatement.getBigDecimal(6));
 
 			if (callableStatement.getString(8) == null)
 			{

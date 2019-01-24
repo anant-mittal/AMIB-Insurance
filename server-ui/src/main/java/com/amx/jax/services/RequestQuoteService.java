@@ -465,9 +465,6 @@ public class RequestQuoteService
 						vehicleDetails.setApplicationType(null);
 					}
 				}
-				
-				logger.info("RequestQuoteService :: getAppVehicleDetails :: vehicleDetails :" + vehicleDetails.toString());
-				
 				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			}
 			else
@@ -989,7 +986,7 @@ public class RequestQuoteService
 	{
 		BigDecimal insuranceCompCode = null;
 		BigDecimal appSeqNumber = null;
-		logger.info(" getRenewPolicyDetails :: oldDocNumber :" + oldDocNumber);
+		//logger.info(" getRenewPolicyDetails :: oldDocNumber :" + oldDocNumber);
 	
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
 		try
@@ -1004,7 +1001,7 @@ public class RequestQuoteService
 				if (null != getVehicleDetails.getMeta())
 				{
 					insuranceCompCode = (BigDecimal) getVehicleDetails.getMeta();
-					logger.info(" getRenewPolicyDetails :: insuranceCompCode :" + insuranceCompCode);
+					//logger.info(" getRenewPolicyDetails :: insuranceCompCode :" + insuranceCompCode);
 				}
 	
 				AmxApiResponse<?, Object> submitVehicleDetails = setAppVehicleDetails(appSeqNumber, (VehicleDetails) getVehicleDetails.getData(), oldDocNumber);
@@ -1017,7 +1014,7 @@ public class RequestQuoteService
 					RequestQuoteModel requestQuoteModel = (RequestQuoteModel) submitVehicleDetails.getData();
 					RequestQuoteInfo requestQuoteInfo = requestQuoteModel.getRequestQuoteInfo();
 					appSeqNumber = requestQuoteInfo.getAppSeqNumber();
-					logger.info(" getRenewPolicyDetails :: appSeqNumber1 :" + appSeqNumber);
+					//logger.info(" getRenewPolicyDetails :: appSeqNumber1 :" + appSeqNumber);
 				}
 	
 				AmxApiResponse<?, Object> respPersonalDetails = getProfileDetails();

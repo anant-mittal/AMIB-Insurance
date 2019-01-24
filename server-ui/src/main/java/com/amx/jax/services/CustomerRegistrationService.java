@@ -73,8 +73,6 @@ public class CustomerRegistrationService {
 		AmxApiResponse<CompanySetUp, Object> resp = new AmxApiResponse<CompanySetUp, Object>();
 		try {
 			
-			logger.info("CustomerRegistrationService :: getCompanySetUp :: userSession  :" + userSession.toString());
-
 			ArrayResponseModel arrayResponseModel = customerRegistrationDao.getCompanySetUp(userSession.getLanguageId(),webConfig.getAppCompCode());
 			if (arrayResponseModel.getErrorCode() == null) {
 				ArrayList<CompanySetUp> getCompanySetUp = arrayResponseModel.getDataArray();
@@ -146,8 +144,6 @@ public class CustomerRegistrationService {
 				return resp;
 			}
 			
-			logger.info(TAG + "isCivilIdExist :: getData :" + arrayResponseModel.getData());
-			
 			if (arrayResponseModel.getData().equalsIgnoreCase("Y")) {
 				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 				resp.setMessage(Message.CIVILID_ALREDAY_REGISTER);
@@ -215,8 +211,6 @@ public class CustomerRegistrationService {
 				validMobileNumber.setMessageKey(arrayResponseModel.getErrorCode());
 				return validMobileNumber;
 			}
-
-			logger.info(TAG + "isMobileNumberExist :: getData :" + arrayResponseModel.getData());
 			
 			if (null != arrayResponseModel.getData() && arrayResponseModel.getData().equalsIgnoreCase("Y")) {
 				validMobileNumber.setStatusEnum(WebAppStatusCodes.SUCCESS);
@@ -415,7 +409,6 @@ public class CustomerRegistrationService {
 
 			if (null != validateDOTP) {
 				
-				logger.info(TAG + "registrationOtp :: requestOtpModel :" + requestOtpModel);
 				return validateDOTP;
 			}
 		} catch (Exception e) {
@@ -534,7 +527,6 @@ public class CustomerRegistrationService {
 				resp.setStatusKey(customerLoginModel.getErrorCode());
 			}
 
-			logger.info("validateUserLogin :: getErrorMessage() :" + customerLoginModel.getErrorMessage());
 			if (null != customerLoginModel.getErrorMessage() && customerLoginModel.getErrorCode().toString()
 					.equalsIgnoreCase(DatabaseErrorKey.INVALID_USER_LOGIN)) {
 				String countData = "";
@@ -781,29 +773,21 @@ public class CustomerRegistrationService {
 					requestOtpModel.setCivilId(userSession.getCivilId());
 				}
 
-				logger.info(TAG + "validateForRegistration :: 0");
-				
 				if (!validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
 					validateCivilID.setStatusKey(validateCivilID.getMessageKey());
 					return validateCivilID;
 				}
 				
-				logger.info(TAG + "validateForRegistration :: 1 ");
-
 				if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
 					civilIdExistCheck.setStatusKey(civilIdExistCheck.getMessageKey());
 					return civilIdExistCheck;
 				}
 				
-				logger.info(TAG + "validateForRegistration :: 2");
-
 				if (!validateEmailID.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
 
 					return validateEmailID;
 				}
 				
-				logger.info(TAG + "validateForRegistration :: 3");
-
 				if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
 					sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL, requestOtpModel,
 							emailIdExists.getMessage());
@@ -812,13 +796,9 @@ public class CustomerRegistrationService {
 					return resp;
 				}
 				
-				logger.info(TAG + "validateForRegistration :: 4");
-
 				if (!isValidMobileNumber.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
 					return isValidMobileNumber;
 				}
-
-				logger.info(TAG + "validateForRegistration :: 5");
 				
 				if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
 					sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE, requestOtpModel,
@@ -827,8 +807,6 @@ public class CustomerRegistrationService {
 					resp.setStatusEnum(WebAppStatusCodes.MOBILE_NUMBER_REGISTERED);
 					return resp;
 				}
-
-				logger.info(TAG + "validateForRegistration :: 6");
 				
 				if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)
 						&& emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
@@ -838,8 +816,6 @@ public class CustomerRegistrationService {
 					resp.setMessageKey(WebAppStatusCodes.MOBILE_OR_EMAIL_ALREADY_EXISTS.toString());
 					return resp;
 				}
-				logger.info(TAG + "validateForRegistration :: 7");
-				
 
 			} catch (Exception e) {
 				resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);

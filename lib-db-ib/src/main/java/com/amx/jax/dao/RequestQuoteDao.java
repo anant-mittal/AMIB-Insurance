@@ -569,7 +569,7 @@ public class RequestQuoteDao
 				vehicleDetailsModel.setReplacementTypeDesc(rs.getString(34));
 				vehicleDetailsModel.setMaxInsmat(Utility.round(rs.getBigDecimal(35), metaService.getTenantProfile().getDecplc()));
 				vehicleDetailsModel.setVehicleTypeDesc(rs.getString(36));
-				logger.info(TAG + " getAppVehicleDetails :: vehicleDetailsModel :" + vehicleDetailsModel.toString());
+				//logger.info(TAG + " getAppVehicleDetails :: vehicleDetailsModel :" + vehicleDetailsModel.toString());
 				vehicleDetailsArray.add(vehicleDetailsModel);
 			}
 			arrayResponseModel.setDataArray(vehicleDetailsArray);
@@ -789,7 +789,7 @@ public class RequestQuoteDao
 				{
 					imageDetails.setDocSeqNumber(null);
 				}
-				logger.info(TAG + " getImageDetails :: imageDetails)  :" + imageDetails.toString());
+				//logger.info(TAG + " getImageDetails :: imageDetails)  :" + imageDetails.toString());
 
 				imageMetaInfoArray.add(imageDetails);
 			}
@@ -1075,7 +1075,7 @@ public class RequestQuoteDao
 			callableStatement.setBigDecimal(5, companyCode);
 			callableStatement.executeUpdate();
 			result = callableStatement.getString(1);
-			logger.info(TAG + " appSelectedProvider :: result :" + result);
+			//logger.info(TAG + " appSelectedProvider :: result :" + result);
 			if (result.toString().equalsIgnoreCase("Y"))
 			{
 				return "Y";

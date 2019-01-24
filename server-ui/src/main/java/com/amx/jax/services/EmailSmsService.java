@@ -458,7 +458,7 @@ public class EmailSmsService
 	 ********/
 	public void failedPGProcedureAfterCapture(PaymentStatus paymentStatus, String messageKey , String message , String type , String paySeqNum)
 	{
-		String emailIdAshokSir = "ashok.kalal@almullaexchange.com";
+		String emailIdAshokSir = "erashokkalal@gmail.com";
 		String amibEmailId = metaService.getTenantProfile().getContactUsEmail();
 		String civilId = userSession.getCivilId();
 		
@@ -913,8 +913,6 @@ public class EmailSmsService
 		email.setITemplate(TemplatesIB.CONTACT_US);
 		email.setHtml(true);
 		email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
-		
-		logger.info(TAG+" sendEmailToSupprt :: getVisitorName :" + supportEmail.getVisitorName());
 		
 		postManClient.sendEmail(email);
 		

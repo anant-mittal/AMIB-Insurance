@@ -428,7 +428,7 @@ public class CustomizeQuoteService
 					PaymentDetails paymentDetails = respInsertPayment.getData();
 					
 					Payment payment = new Payment();
-					payment.setDocFinYear(1123);
+					payment.setDocFinYear(userSession.getCivilId().toString());//Civil Id Added
 					payment.setDocNo(paymentDetails.getPaySeqNum().toString());// PaySeqNum
 					payment.setMerchantTrackId(paymentDetails.getPaySeqNum().toString());// PaySeqNum
 					payment.setNetPayableAmount(totalPremium.getTotalAmount());

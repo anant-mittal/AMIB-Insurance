@@ -29,12 +29,6 @@ public class GoogleService {
 			Map<String, Object> resp = restService.ajax("https://www.google.com/recaptcha/api/siteverify").acceptJson()
 					.field("secret", googleSecret).field("response", responseKey).field("remoteip", remoteIP).postForm()
 					.as(Map.class);
-			logger.info("GoogleService :: verifyCaptcha :: responseKey :" + responseKey);
-			logger.info("GoogleService :: verifyCaptcha :: resp :" + resp);
-			logger.info("GoogleService :: verifyCaptcha :: resp.toString() :" + resp.toString());
-			logger.info("GoogleService :: verifyCaptcha :: resp.keySet() :" + resp.keySet());
-			logger.info("GoogleService :: verifyCaptcha :: resp.values() :" + resp.values());
-			
 			if (resp != null) {
 				return ArgUtil.parseAsBoolean(resp.get("success"));
 			}

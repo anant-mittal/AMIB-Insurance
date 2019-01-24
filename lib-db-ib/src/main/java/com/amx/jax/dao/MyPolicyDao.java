@@ -58,7 +58,7 @@ public class MyPolicyDao
 						userAmibCustRef = arrayRespCustAmibCode.getNumericData();
 						if(null != userAmibCustRef)
 						{
-							logger.info(TAG + " getUserActivePolicy :: userAmibCustRef received :" + userAmibCustRef);
+							//logger.info(TAG + " getUserActivePolicy :: userAmibCustRef received :" + userAmibCustRef);
 							arrayResponseModel.setData(userAmibCustRef.toString());
 						}
 					}
@@ -187,7 +187,7 @@ public class MyPolicyDao
 			userAmibCustRef = callableStatement.getBigDecimal(1);
 			arrayResponseModel.setNumericData(userAmibCustRef);
 			
-			logger.info(TAG + " getCustomerAmibCode :: userAmibCustRef :" + userAmibCustRef);
+			//logger.info(TAG + " getCustomerAmibCode :: userAmibCustRef :" + userAmibCustRef);
 		}
 		catch (SQLException e)
 		{

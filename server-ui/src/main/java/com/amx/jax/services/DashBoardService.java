@@ -20,7 +20,7 @@ public class DashBoardService
 {
 	private static final Logger logger = LoggerFactory.getLogger(RequestQuoteService.class);
 
-	String TAG = "com.amx.jax.services.RequestQuoteService :- ";
+	String TAG = "RequestQuoteService :: ";
 
 	@Autowired
 	public DashBoardDao dashBoardDao;

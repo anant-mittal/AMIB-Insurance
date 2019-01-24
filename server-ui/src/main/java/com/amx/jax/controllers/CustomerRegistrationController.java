@@ -209,12 +209,7 @@ public class CustomerRegistrationController {
 		ResponseWrapper<Email> wrapper = new ResponseWrapper<>();
 		try {
 
-			logger.info("CustomerRegistrationController :: contactUs :: verify :" + verify);
-
 			if (googleService.verifyCaptcha(verify, httpService.getIPAddress())) {
-
-				logger.info("CustomerRegistrationController :: contactUs :: name :" + name);
-
 				SupportEmail email = new SupportEmail();
 				email.setCaptchaCode(verify);
 				email.setVisitorName(name);

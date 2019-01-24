@@ -89,7 +89,7 @@ public class CustomizeQuoteDao
 				quoteAddPolicyDetails.setYearlyPremium(rs.getBigDecimal(6));
 				quoteAddPolicyDetails.setReplacementTypeCode(rs.getString(9));
 				activePolicyArray.add(quoteAddPolicyDetails);
-				logger.info(TAG + " getQuoteAdditionalPolicy :: QuoteAddPolicyDetails :" + quoteAddPolicyDetails.toString());
+				//logger.info(TAG + " getQuoteAdditionalPolicy :: QuoteAddPolicyDetails :" + quoteAddPolicyDetails.toString());
 				arrayResponseModel.setDataArray(activePolicyArray);
 				
 			}
@@ -138,13 +138,13 @@ public class CustomizeQuoteDao
 				{
 					return null;
 				}
-				logger.info("getCustomizedQuoteDetails :: rs.getString(1) :" + rs.getString(1));
+				//logger.info("getCustomizedQuoteDetails :: rs.getString(1) :" + rs.getString(1));
 				replacementTypeList.setReplacementTypeCode(rs.getString(1));
 				replacementTypeList.setReplacementTypeDesc(rs.getString(2));
 				replacementTypeList.setYearlyPremium(rs.getBigDecimal(3));
 				repTypeListArray.add(replacementTypeList);
 			}
-			logger.info("getCustomizedQuoteDetails :: repTypeListArray :" + repTypeListArray);
+			//logger.info("getCustomizedQuoteDetails :: repTypeListArray :" + repTypeListArray);
 			arrayResponseModel.setDataArray(repTypeListArray);
 
 		}
@@ -312,8 +312,8 @@ public class CustomizeQuoteDao
 			callableStatement.registerOutParameter(14, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
 			
-			logger.info(TAG + " saveCustomizeQuoteAddPol :: getErrorCode() :" + callableStatement.getString(13));
-			logger.info(TAG + " saveCustomizeQuoteAddPol :: getErrorMessage() :" + callableStatement.getString(14));
+			//logger.info(TAG + " saveCustomizeQuoteAddPol :: getErrorCode() :" + callableStatement.getString(13));
+			//logger.info(TAG + " saveCustomizeQuoteAddPol :: getErrorMessage() :" + callableStatement.getString(14));
 			
 			validate.setErrorCode(callableStatement.getString(13));
 			validate.setErrorMessage(callableStatement.getString(14));

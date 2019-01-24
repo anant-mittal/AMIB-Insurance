@@ -85,8 +85,7 @@ public class MyPolicyController {
 			if(arrayResponseModel.getErrorCode() != null)
 			{
 				PolicyReceiptDetails policyReceiptDetails = (PolicyReceiptDetails) arrayResponseModel.getObject();
-				logger.info("downloadPolicyReceipt :: policyReceiptDetails :" + policyReceiptDetails.toString());
-
+				
 				Map<String, Object> wrapper = new HashMap<String, Object>();
 				Map<String, Object> model = new HashMap<String, Object>();
 				ArrayList<Map> dataList = new ArrayList<>();
