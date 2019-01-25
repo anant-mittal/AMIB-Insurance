@@ -173,10 +173,11 @@ public class CustomerRegistrationDao
 		return arrayResponseModel;
 	}
 
-	public ResponseInfo isValidMobileNumber(String mobileNumber)
+	public ArrayResponseModel isValidMobileNumber(String mobileNumber)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		String callProcedure = "{call IRB_VALIDATE_MOBILE(?,?,?,?,?)}";
 		ResponseInfo validate = new ResponseInfo();
 
@@ -192,21 +193,14 @@ public class CustomerRegistrationDao
 			String errorCode = callableStatement.getString(4);
 			String errorMessage = callableStatement.getString(5);
 
-			if (null == errorCode)
-			{
-				return validate;
-			}
-			else
-			{
-				validate.setErrorCode(errorCode);
-				validate.setErrorMessage(errorMessage);
-				return validate;
-			}
+			arrayResponseModel.setErrorCode(errorCode);
+			arrayResponseModel.setErrorMessage(errorMessage);
+			
 		}
 		catch (SQLException e)
 		{
-			validate.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
-			validate.setErrorMessage(e.toString());
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"isValidCivilId :: exception :" + e);
 			e.printStackTrace();
 		}
@@ -215,7 +209,7 @@ public class CustomerRegistrationDao
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return validate;
+		return arrayResponseModel;
 	}
 
 	//public boolean isMobileNumberExist(String mobilenumber , String userType)
