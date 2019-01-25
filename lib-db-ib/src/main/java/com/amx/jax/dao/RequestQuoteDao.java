@@ -774,9 +774,16 @@ public class RequestQuoteDao
 					arrayResponseModel.setErrorMessage(arrayResponseImageStatus.getErrorMessage());
 					return arrayResponseModel;
 				}
-				ImageStatus imageStatus = (ImageStatus)arrayResponseImageStatus.getObject();
 				
-				imageDetails.setIsImageMandatory(rs.getString(3));
+				ImageStatus imageStatus = (ImageStatus)arrayResponseImageStatus.getObject();
+				if(null != rs.getString(3) && !rs.getString(3).equals(""))//Suggested By Ashok Sir
+				{
+					imageDetails.setIsImageMandatory(rs.getString(3));
+				}
+				else
+				{
+					imageDetails.setIsImageMandatory("N");
+				}
 				imageDetails.setDisplayOrder(rs.getBigDecimal(4));
 				imageDetails.setStatus(rs.getString(5));
 				imageDetails.setImageSubmittedDate(imageStatus.getImageDate());
@@ -789,8 +796,7 @@ public class RequestQuoteDao
 				{
 					imageDetails.setDocSeqNumber(null);
 				}
-				//logger.info(TAG + " getImageDetails :: imageDetails)  :" + imageDetails.toString());
-
+				
 				imageMetaInfoArray.add(imageDetails);
 			}
 			arrayResponseModel.setDataArray(imageMetaInfoArray);
