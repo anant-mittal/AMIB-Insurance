@@ -521,6 +521,14 @@ public class CustomerRegistrationDao
 
 		try
 		{
+			logger.info(TAG+"validateUserLogin :: getCountryId :" + metaService.getTenantProfile().getCountryId());
+			logger.info(TAG+"validateUserLogin :: getCompCd :" + metaService.getTenantProfile().getCompCd());
+			logger.info(TAG+"validateUserLogin :: userType :" + userType);
+			logger.info(TAG+"validateUserLogin :: getCivilId :" + customerLoginModel.getCivilId());
+			logger.info(TAG+"validateUserLogin :: getPassword :" + customerLoginModel.getPassword());
+			logger.info(TAG+"validateUserLogin :: getDeviceId :" + metaService.getUserDeviceInfo().getDeviceId());
+			logger.info(TAG+"validateUserLogin :: languageId :" + languageId);
+			
 			callableStatement = connection.prepareCall(callProcedure);
 
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
@@ -541,6 +549,11 @@ public class CustomerRegistrationDao
 			BigDecimal amibRef = callableStatement.getBigDecimal(10);
 			String errorCode = callableStatement.getString(11);
 			String errorMessage = callableStatement.getString(12);
+			
+			logger.info(TAG+"validateUserLogin :: userSequenceNumber :" + userSequenceNumber);
+			logger.info(TAG+"validateUserLogin :: amibRef :" + amibRef);
+			logger.info(TAG+"validateUserLogin :: errorCode :" + errorCode);
+			logger.info(TAG+"validateUserLogin :: errorMessage :" + errorMessage);
 			
 			customerLoginModel = new CustomerLoginModel();
 
