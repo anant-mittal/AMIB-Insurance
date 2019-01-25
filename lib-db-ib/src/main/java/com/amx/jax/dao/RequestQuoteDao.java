@@ -776,7 +776,14 @@ public class RequestQuoteDao
 				}
 				
 				ImageStatus imageStatus = (ImageStatus)arrayResponseImageStatus.getObject();
-				imageDetails.setIsImageMandatory(rs.getString(3));
+				if(rs.getString(1).equalsIgnoreCase("DFT"))
+				{
+					imageDetails.setIsImageMandatory(null);
+				}
+				else
+				{
+					imageDetails.setIsImageMandatory(rs.getString(3));
+				}
 				
 				/*if(null != rs.getString(3) && !rs.getString(3).equals(""))//Suggested By Ashok Sir
 				{
