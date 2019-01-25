@@ -28,7 +28,8 @@ public enum TemplatesMX implements ITemplate {
 	// Rate Alert, PlaceOrder
 	RATE_ALERT("place-order"), RATE_ALERT_COMPLETION("place-order-executed"),
 
-	BRANCH_SEARCH_EMPTY("BranchSearchEmpty"), TEST("test"), BRANCH_FEEDBACK("trnx-feedback"),
+	BRANCH_SEARCH_EMPTY("BranchSearchEmpty"), TEST("test"), BRANCH_FEEDBACK("trnx-feedback"), TT("tt"), EFT("eft"),
+	CASH("cash"),
 
 	CIVILID_EXPIRY("civilexpiry"), CIVILID_EXPIRED("civilexpired"),
 
@@ -44,7 +45,10 @@ public enum TemplatesMX implements ITemplate {
 	FC_DELIVER_EMAIL_OTP("deliver-email-otp", Channel.NOTIPY), FC_DELIVER_SMS_OTP("deliver-sms-otp", Channel.NOTIPY),
 	FC_ORDER_SUCCESS("order-success"),
 	FC_KNET_SUCCESS("knet-success"),
-	FXO_RECEIPT("FXO_RECEIPT", PDFConverter.JASPER, "fxo-receipt.json");
+	FXO_RECEIPT("FXO_RECEIPT", PDFConverter.JASPER, "fxo-receipt.json"),
+	FXO_STATMENT("FxoTransactionList"),
+	SUSPICIOUS_USER("suspicious-user"), PROFILE_CHANGE_SMS("profile-change-sms", Channel.ALERTY),
+	EMAIL_CHANGE_OLD_EMAIL("EmailChangeOldEmail");
 
 	String fileName;
 	PDFConverter converter;
