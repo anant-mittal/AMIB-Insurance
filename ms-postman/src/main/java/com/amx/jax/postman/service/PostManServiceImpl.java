@@ -107,12 +107,9 @@ public class PostManServiceImpl implements PostManService {
 	/**
 	 * Process template.
 	 *
-	 * @param template
-	 *            the template
-	 * @param map
-	 *            the map
-	 * @param fileType
-	 *            the file type
+	 * @param template the template
+	 * @param map      the map
+	 * @param fileType the file type
 	 * @return the file
 	 */
 	public File processTemplate(TemplatesMX template, Map<String, Object> map, Type fileType) {
@@ -175,14 +172,10 @@ public class PostManServiceImpl implements PostManService {
 	/**
 	 * Notify exception.
 	 *
-	 * @param appname
-	 *            the appname
-	 * @param title
-	 *            the title
-	 * @param exception
-	 *            the exception
-	 * @param e
-	 *            the e
+	 * @param appname   the appname
+	 * @param title     the title
+	 * @param exception the exception
+	 * @param e         the e
 	 * @return the exception report
 	 */
 	public AmxApiResponse<ExceptionReport, Object> notifyException(String appname, String title, String exception,

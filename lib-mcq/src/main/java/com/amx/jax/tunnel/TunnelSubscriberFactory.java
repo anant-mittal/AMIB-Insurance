@@ -57,9 +57,15 @@ public class TunnelSubscriberFactory {
 				Class<?> c = AopProxyUtils.ultimateTargetClass(listener);
 				TunnelEventMapping tunnelEvent = getAnnotationProxyReady(c, TunnelEventMapping.class);
 				String eventTopic = tunnelEvent.topic();
+
 				if (ArgUtil.isEmpty(eventTopic)) {
 					eventTopic = tunnelEvent.byEvent().getName();
 				}
+
+				if (!ArgUtil.isEmpty(listener.getTopic())) {
+					eventTopic = listener.getTopic();
+				}
+
 				boolean integrity = tunnelEvent.integrity();
 				TunnelEventXchange scheme = tunnelEvent.scheme();
 				if (scheme == TunnelEventXchange.TASK_WORKER) {
@@ -128,7 +134,8 @@ public class TunnelSubscriberFactory {
 			}
 
 			public void doMessage(String channel, TunnelMessage<M> msg) {
-				AuditServiceClient.trackStatic(new RequestTrackEvent(RequestTrackEvent.Type.SUB_IN, msg));
+				AuditServiceClient.trackStatic(
+						new RequestTrackEvent(RequestTrackEvent.Type.SUB_IN, TunnelEventXchange.SHOUT_LISTNER, msg));
 				try {
 					this.subscriber.onMessage(channel, msg.getData());
 				} catch (Exception e) {
@@ -172,7 +179,8 @@ public class TunnelSubscriberFactory {
 			public void doMessage(String channel, TunnelMessage<M> msg) {
 				AppContextUtil.setContext(msg.getContext());
 				AppContextUtil.init();
-				AuditServiceClient.trackStatic(new RequestTrackEvent(RequestTrackEvent.Type.SUB_IN, msg));
+				AuditServiceClient.trackStatic(
+						new RequestTrackEvent(RequestTrackEvent.Type.SUB_IN, TunnelEventXchange.SEND_LISTNER, msg));
 				try {
 					this.subscriber.onMessage(channel, msg.getData());
 				} catch (Exception e) {
@@ -202,7 +210,8 @@ public class TunnelSubscriberFactory {
 					AppContext context = msg.getContext();
 					AppContextUtil.setContext(context);
 					AppContextUtil.init();
-					AuditServiceClient.trackStatic(new RequestTrackEvent(RequestTrackEvent.Type.SUB_IN, msg));
+					AuditServiceClient.trackStatic(
+							new RequestTrackEvent(RequestTrackEvent.Type.SUB_IN, TunnelEventXchange.TASK_WORKER, msg));
 					try {
 						listener.onMessage(channel, msg.getData());
 					} catch (Exception e) {

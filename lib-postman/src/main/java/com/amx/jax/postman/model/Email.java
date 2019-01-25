@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Email extends Message {
+public class Email extends Message implements Cloneable {
 
 	private static final long serialVersionUID = 9210306073311369368L;
 	private String from = null;
@@ -73,8 +73,7 @@ public class Email extends Message {
 	}
 
 	/**
-	 * @param from
-	 *            the from to set
+	 * @param from the from to set
 	 */
 	public void setFrom(String from) {
 		this.from = from;
@@ -88,8 +87,7 @@ public class Email extends Message {
 	}
 
 	/**
-	 * @param cc
-	 *            the cc to set
+	 * @param cc the cc to set
 	 */
 	public void setCc(List<String> cc) {
 		this.cc = cc;
@@ -103,8 +101,7 @@ public class Email extends Message {
 	}
 
 	/**
-	 * @param isHtml
-	 *            the isHtml to set
+	 * @param isHtml the isHtml to set
 	 */
 	public void setHtml(boolean isHtml) {
 		this.isHtml = isHtml;
@@ -122,6 +119,10 @@ public class Email extends Message {
 	public String toString()
 	{
 		return "Email [from=" + from + ", replyTo=" + replyTo + ", cc=" + cc + ", isHtml=" + isHtml + ", files=" + files + "]";
+	}
+
+	public Email clone() throws CloneNotSupportedException {
+		return (Email) super.clone();
 	}
 
 }

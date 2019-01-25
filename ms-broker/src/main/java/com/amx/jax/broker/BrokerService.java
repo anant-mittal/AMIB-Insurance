@@ -6,9 +6,6 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -18,14 +15,12 @@ import com.amx.jax.broker.entity.EventNotificationEntity;
 import com.amx.jax.broker.entity.EventNotificationView;
 import com.amx.jax.dict.Tenant;
 import com.amx.jax.logger.LoggerService;
-import com.amx.jax.tunnel.DBEvents;
+import com.amx.jax.tunnel.DBEvent;
 import com.amx.jax.tunnel.TunnelService;
 import com.amx.utils.StringUtils;
 import com.amx.utils.TimeUtils;
 import com.amx.utils.UniqueID;
 
-@Configuration
-@EnableScheduling
 @Component
 @Service
 public class BrokerService {
@@ -41,7 +36,6 @@ public class BrokerService {
 	@Autowired
 	TunnelService tunnelService;
 
-	@Scheduled(fixedDelay = BrokerConstants.PUSH_NOTIFICATION_FREQUENCY)
 	public void pushNewEventNotifications() {
 
 		String sessionId = UniqueID.generateString();
@@ -76,7 +70,7 @@ public class BrokerService {
 				);
 
 				// Push to Message Queue
-				DBEvents event = new DBEvents();
+				DBEvent event = new DBEvent();
 				event.setEventCode(current_event_record.getEvent_code());
 				event.setPriority(current_event_record.getEvent_priority());
 				event.setData(event_data_map);
@@ -109,10 +103,6 @@ public class BrokerService {
 		}
 	}
 
-	@Scheduled(
-			fixedDelay = BrokerConstants.DELETE_NOTIFICATION_FREQUENCY,
-			initialDelay = BrokerConstants.DELETE_NOTIFICATION_FREQUENCY
-	)
 	public void cleanUpEventNotificationRecords() {
 		logger.info("Delete proccess started on the table EX_EVENT_NOTIFICATION...");
 		try {
