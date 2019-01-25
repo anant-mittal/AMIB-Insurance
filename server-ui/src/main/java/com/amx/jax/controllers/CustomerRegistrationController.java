@@ -162,7 +162,7 @@ public class CustomerRegistrationController {
 		return customerRegistrationService.updatePassword(changePasswordRequest);
 	}
 
-	@ApiOperation(value = "api to return customer details", notes = "this api return customer details once customer is logged in. ")
+	@ApiOperation(value = "api to return customer details", notes = "this api will return company details and if customer is logged in this api will return customer details and company details .")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS, WebAppStatusCodes.LIST_POP_ERROR,
 			WebAppStatusCodes.INVLD_LOGIN_CATG, WebAppStatusCodes.INVALID_USR })
 	@RequestMapping(value = "/pub/reg/userdetails", method = RequestMethod.POST)
@@ -179,7 +179,7 @@ public class CustomerRegistrationController {
 	@ApiWebAppStatus({ WebAppStatusCodes.CIVIL_ID_INVALID, WebAppStatusCodes.CIVIL_ID_VALID,
 			WebAppStatusCodes.CIVIL_ID_ALREADY_REGISTERED, WebAppStatusCodes.CIVIL_ID_NOT_REGESTERED,
 			WebAppStatusCodes.CP_OTP_NOT_GENERATED, WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
-	@ApiOperation(value = "api to verify email id and contact number while changing password for logged in user", notes = "this api will return company details and if customer is logged in this api will return customer details and company details .")
+	@ApiOperation(value = "api to verify email id and contact number while changing password for logged in user", notes = "this api will update the logged in user password.")
 	@RequestMapping(value = "/pub/login/changepass-loggedin", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> changePasswordLogedInUser(
 			@RequestHeader(value = "mOtp", required = false) String mOtpHeader,

@@ -889,8 +889,6 @@ public class EmailSmsService
 	
 	public AmxApiResponse<Email, Object> sendEmailToSupprt(SupportEmail supportEmail) 
 	{
-		
-		
 		Map<String, String> map = new HashMap<String, String>();
 		
 		map.put(DetailsConstants.CONTACT_US_EMAIL, metaService.getTenantProfile().getContactUsEmail());
@@ -906,9 +904,9 @@ public class EmailSmsService
 
 		Email email = new Email();
 		email.setReplyTo(supportEmail.getVisitorEmail());//Visitor Email Id
-		email.addAllTo("abhishek.tiwari@mobicule.com");
+		email.addAllTo("amibmotor@almullagroup.com");
 		email.getModel().put("data", map);
-		email.setSubject("AMIB Insurance Inquiry");
+		email.setSubject("Inquiry from Website");
 		email.setITemplate(TemplatesIB.CONTACT_US);
 		email.setHtml(true);
 		email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
