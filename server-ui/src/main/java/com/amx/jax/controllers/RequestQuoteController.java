@@ -159,29 +159,40 @@ public class RequestQuoteController {
 	@ApiOperation(value = "returns uploaded vehicle image in byte array format of entered doc number")
 	@RequestMapping(value = "/api/request-quote/downlaod-vehicle-images", method = RequestMethod.GET, produces = MediaType.IMAGE_JPEG_VALUE)
 	public ResponseEntity<byte[]> downloadVehicleImage(
-			@RequestParam(name = "docSeqNumber", required = false) String docSeqNumber) throws IOException {
-		BigDecimal docSeqNumberDet = null;
-		if (null != docSeqNumber && !docSeqNumber.equals("") && !docSeqNumber.equalsIgnoreCase("null")) {
-			docSeqNumberDet = ArgUtil.parseAsBigDecimal(docSeqNumber);
+			@RequestParam(name = "docSeqNumber", required = false) String docSeqNumber)
+	{
+		try
+		{
+			BigDecimal docSeqNumberDet = null;
+			if (null != docSeqNumber && !docSeqNumber.equals("") && !docSeqNumber.equalsIgnoreCase("null")) {
+				docSeqNumberDet = ArgUtil.parseAsBigDecimal(docSeqNumber);
 
-			logger.info("RequestQuoteController :: downloadVehicleImage :: docSeqNumberDet :" + docSeqNumberDet);
-			DownloadImageModel downloadImageModel = requestQuoteService.downloadVehicleImage(docSeqNumberDet);
-			logger.info("RequestQuoteController :: downloadVehicleImage :: getImageByteArray :" + downloadImageModel.getImageByteArray());
-			byte[] imageByteArray = downloadImageModel.getImageByteArray();
-			logger.info("RequestQuoteController :: downloadVehicleImage :: getImageType :" + downloadImageModel.getImageType());
-			String imageType = downloadImageModel.getImageType();
-			MediaType mediaType = null;
-			if (imageType.contains("jpeg") || imageType.contains("jpg")) {
-				
-				logger.info("RequestQuoteController :: downloadVehicleImage :: jpeg :");
-				mediaType = MediaType.IMAGE_JPEG;
-			} else if (imageType.contains("png")) {
-				logger.info("RequestQuoteController :: downloadVehicleImage :: png :");
-				mediaType = MediaType.IMAGE_PNG;
+				logger.info("RequestQuoteController :: downloadVehicleImage :: docSeqNumberDet :" + docSeqNumberDet);
+				DownloadImageModel downloadImageModel = requestQuoteService.downloadVehicleImage(docSeqNumberDet);
+				logger.info("RequestQuoteController :: downloadVehicleImage :: getImageByteArray :" + downloadImageModel.getImageByteArray());
+				byte[] imageByteArray = downloadImageModel.getImageByteArray();
+				logger.info("RequestQuoteController :: downloadVehicleImage :: getImageType :" + downloadImageModel.getImageType());
+				String imageType = downloadImageModel.getImageType();
+				MediaType mediaType = null;
+				if (imageType.contains("jpeg") || imageType.contains("jpg")) {
+					
+					logger.info("RequestQuoteController :: downloadVehicleImage :: jpeg :");
+					mediaType = MediaType.IMAGE_JPEG;
+				} else if (imageType.contains("png")) {
+					logger.info("RequestQuoteController :: downloadVehicleImage :: png :");
+					mediaType = MediaType.IMAGE_PNG;
+				}
+				return ResponseEntity.ok().contentLength(imageByteArray.length).contentType(mediaType).body(imageByteArray);
 			}
-			return ResponseEntity.ok().contentLength(imageByteArray.length).contentType(mediaType).body(imageByteArray);
-
 		}
+		catch(Exception e)
+		{
+			logger.info("RequestQuoteController :: downloadVehicleImage :: e :"+e);
+			e.printStackTrace();
+		}
+		
+		logger.info("RequestQuoteController :: downloadVehicleImage :: NULLLLLLLL :");
+		
 		return null;
 
 	}

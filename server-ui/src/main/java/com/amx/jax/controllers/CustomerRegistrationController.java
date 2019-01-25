@@ -132,12 +132,16 @@ public class CustomerRegistrationController {
 			WebAppStatusCodes.CIVIL_ID_NOT_REGESTERED, WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS,
 			WebAppStatusCodes.INVALID_USR_PWD })
 	@RequestMapping(value = "/pub/login/validate-userlogin", method = RequestMethod.POST)
-	public AmxApiResponse<?, Object> validateUserLogin(@RequestParam(name = "languageId") String languageId,
+	public AmxApiResponse<?, Object> validateUserLogin(@RequestParam(name = "languageId" , required = false) String languageId,
 			@RequestBody CustomerLoginRequest customerLoginRequest) {
 		BigDecimal languageIdDat = null;
 		if (null != languageId && !languageId.equals("") && !languageId.equalsIgnoreCase("null")) {
 			languageIdDat = ArgUtil.parseAsBigDecimal(languageId);
 			userSession.setLanguageId(languageIdDat);
+		}
+		else
+		{
+			userSession.setLanguageId(new BigDecimal(0));
 		}
 		return customerRegistrationService.validateUserLogin(customerLoginRequest);
 	}
