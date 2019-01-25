@@ -1,6 +1,7 @@
 
 package com.amx.jax.services;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,17 +11,23 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.amx.jax.WebAppStatus.WebAppStatusCodes;
+import com.amx.jax.WebConfig;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.DatabaseErrorKey;
 import com.amx.jax.constants.DetailsConstants;
+import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.constants.Message;
 import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.http.CommonHttpRequest;
+import com.amx.jax.meta.IMetaService;
+import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.ChangePasswordOtpRequest;
 import com.amx.jax.models.ChangePasswordRequest;
 import com.amx.jax.models.ChangePasswordResponse;
+import com.amx.jax.models.CommonUtils;
 import com.amx.jax.models.CompanySetUp;
 import com.amx.jax.models.CustomerDetailModel;
 import com.amx.jax.models.CustomerDetailResponse;
@@ -32,21 +39,16 @@ import com.amx.jax.models.CustomerRegistrationModel;
 import com.amx.jax.models.CustomerRegistrationRequest;
 import com.amx.jax.models.CustomerRegistrationResponse;
 import com.amx.jax.models.FailureException;
-import com.amx.jax.models.MetaData;
 import com.amx.jax.models.RequestOtpModel;
 import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.models.ResponseOtpModel;
 import com.amx.jax.ui.session.UserSession;
 
 @Service
-public class CustomerRegistrationService
-{
-	String TAG = "com.amx.jax.services :: CustomerRegistrationService :: ";
+public class CustomerRegistrationService {
 
 	private static final Logger logger = LoggerFactory.getLogger(CustomerRegistrationService.class);
-
-	@Autowired
-	private MetaData metaData;
+	static String TAG = "CustomerRegistrationService :: ";
 
 	@Autowired
 	UserSession userSession;
@@ -58,633 +60,771 @@ public class CustomerRegistrationService
 	CommonHttpRequest httpService;
 
 	@Autowired
+	private WebConfig webConfig;
+
+	@Autowired
+	IMetaService metaService;
+
+	@Autowired
 	private CustomerRegistrationDao customerRegistrationDao;
 
-	public AmxApiResponse<CompanySetUp, Object> getCompanySetUp()
-	{
-		logger.info(TAG + " getCompanySetUp ::");
-		
+	public AmxApiResponse<CompanySetUp, Object> getCompanySetUp() {
 		AmxApiResponse<CompanySetUp, Object> resp = new AmxApiResponse<CompanySetUp, Object>();
-		try
-		{
-			ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao.getCompanySetUp(metaData.getLanguageId());
+		try {
 
-			metaData.setCountryId(getCompanySetUp.get(0).getCntryCd());
-			metaData.setCompCd(getCompanySetUp.get(0).getCompCd());
-			metaData.setContactUsHelpLineNumber(getCompanySetUp.get(0).getHelpLineNumber());
-			metaData.setContactUsEmail(getCompanySetUp.get(0).getEmail());
-			metaData.setAmibWebsiteLink(getCompanySetUp.get(0).getWebSite());
-			metaData.setDecplc(getCompanySetUp.get(0).getDecimalPlaceUpTo());
-			metaData.setCompanyName(getCompanySetUp.get(0).getCompanyName());
-			metaData.setDeviceType("ONLINE");
-			metaData.setDeviceId(httpService.getIPAddress());
-			logger.info(TAG + " getCompanySetUp :: getIPAddress :"+httpService.getIPAddress());
-			metaData.setCurrency(getCompanySetUp.get(0).getCurrency());
-			metaData.setUserType("D");
-
-			resp.setResults(getCompanySetUp);
-			resp.setStatusKey(ApiConstants.SUCCESS);
-		}
-		catch (Exception e)
-		{
-			resp.setException(e.toString());
+			ArrayResponseModel arrayResponseModel = customerRegistrationDao.getCompanySetUp(userSession.getLanguageId(),
+					webConfig.getAppCompCode());
+			if (arrayResponseModel.getErrorCode() == null) {
+				ArrayList<CompanySetUp> getCompanySetUp = arrayResponseModel.getDataArray();
+				metaService.getTenantProfile().setCountryId(getCompanySetUp.get(0).getCntryCd());
+				metaService.getTenantProfile().setCompCd(getCompanySetUp.get(0).getCompCd());
+				metaService.getTenantProfile().setContactUsHelpLineNumber(getCompanySetUp.get(0).getHelpLineNumber());
+				metaService.getTenantProfile().setContactUsEmail(getCompanySetUp.get(0).getEmail());
+				metaService.getTenantProfile().setAmibWebsiteLink(getCompanySetUp.get(0).getWebSite());
+				metaService.getTenantProfile().setDecplc(getCompanySetUp.get(0).getDecimalPlaceUpTo());
+				metaService.getTenantProfile().setCompanyName(getCompanySetUp.get(0).getCompanyName());
+				metaService.getTenantProfile().setCurrency(getCompanySetUp.get(0).getCurrency());
+				resp.setResults(getCompanySetUp);
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
+			} else {
+				resp.setMessage(arrayResponseModel.getErrorMessage());
+				resp.setMessageKey(arrayResponseModel.getErrorCode());
+			}
+		} catch (Exception e) {
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "getCompanySetUp :: exception :" + e);
 			e.printStackTrace();
 		}
 		return resp;
 	}
 
-	public AmxApiResponse<ResponseInfo, Object> isValidCivilId(String civilid)
-	{
-		boolean isValidCivilId = customerRegistrationDao.isValidCivilId(civilid);
+	public AmxApiResponse<ResponseInfo, Object> isValidCivilId(String civilid) {
 		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
+		try {
+			ArrayResponseModel arrayResponseModel = customerRegistrationDao.isValidCivilId(civilid);
+			if (null != arrayResponseModel.getErrorCode()
+					&& arrayResponseModel.getErrorCode().equals(ApiConstants.ERROR_OCCURRED_ON_SERVER)) {
+				resp.setMessage(arrayResponseModel.getErrorMessage());
+				resp.setMessageKey(arrayResponseModel.getErrorCode());
+				return resp;
+			}
 
-		if (isValidCivilId)
-		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			resp.setMessage(Message.CIVILID_VALID);
-			resp.setMessageKey(MessageKey.KEY_CIVIL_ID_VALID);
-		}
-		else
-		{
-			resp.setStatusKey(ApiConstants.FAILURE);
-			resp.setMessage(Message.CIVILID_INVALID);
-			resp.setMessageKey(MessageKey.KEY_CIVIL_ID_INVALID);
+			if (arrayResponseModel.getData() == null) {
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
+				resp.setMessage(Message.CIVILID_VALID);
+				resp.setMessageKey(WebAppStatusCodes.CIVIL_ID_VALID.toString());
+			} else {
+				resp.setStatusEnum(WebAppStatusCodes.CIVIL_ID_INVALID);
+				resp.setMessage(Message.CIVILID_INVALID);
+				resp.setMessageKey(WebAppStatusCodes.CIVIL_ID_INVALID.toString());
+			}
+
+		} catch (Exception e) {
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "isValidCivilId :: exception :" + e);
+			e.printStackTrace();
 		}
 		return resp;
 	}
 
-	public AmxApiResponse<ResponseInfo, Object> isCivilIdExist(String civilid)
-	{
-		boolean civilIdExistCheck = customerRegistrationDao.isCivilIdExist(civilid , metaData.getUserType());
-		logger.info(TAG + " isCivilIdExist :: civilIdExistCheck :" + civilIdExistCheck);
-		
-		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
-		if (civilIdExistCheck)
-		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			resp.setMessage(Message.CIVILID_ALREDAY_REGISTER);
-			resp.setMessageKey(MessageKey.KEY_CIVIL_ID_ALREADY_REGISTER);
-		}
-		else
-		{
-			resp.setStatusKey(ApiConstants.FAILURE);
-			resp.setMessage(Message.CIVILID_ALREDAY_NOT_REGISTER);
-			resp.setMessageKey(MessageKey.KEY_CIVIL_ID_NOT_REGISTERED);// Commit
-		}
-		return resp;
+	public AmxApiResponse<ResponseInfo, Object> isCivilIdExist(String civilid) {
 
+		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
+		try {
+			ArrayResponseModel arrayResponseModel = customerRegistrationDao.isCivilIdExist(civilid,
+					HardCodedValues.USER_TYPE);
+			if (null != arrayResponseModel.getErrorCode()
+					&& arrayResponseModel.getErrorCode().equals(ApiConstants.ERROR_OCCURRED_ON_SERVER)) {
+				resp.setMessage(arrayResponseModel.getErrorMessage());
+				resp.setMessageKey(arrayResponseModel.getErrorCode());
+				return resp;
+			}
+
+			if (null != arrayResponseModel.getData() && arrayResponseModel.getData().equalsIgnoreCase("Y")) {
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
+				resp.setMessage(Message.CIVILID_ALREDAY_REGISTER);
+				resp.setMessageKey(WebAppStatusCodes.CIVIL_ID_ALREADY_REGISTERED.toString());
+			} else {
+				resp.setStatusEnum(WebAppStatusCodes.CIVIL_ID_NOT_REGESTERED);
+				resp.setMessage(Message.CIVILID_ALREDAY_NOT_REGISTER);
+				resp.setMessageKey(WebAppStatusCodes.CIVIL_ID_NOT_REGESTERED.toString());
+			}
+
+		} catch (Exception e) {
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "isCivilIdExist :: exception :" + e);
+			e.printStackTrace();
+		}
+
+		return resp;
 	}
 
-	public AmxApiResponse<ResponseInfo, Object> isValidMobileNumber(String mobileNumber)
-	{
-		ResponseInfo isValidMobileNumber = customerRegistrationDao.isValidMobileNumber(mobileNumber);
+	public AmxApiResponse<ResponseInfo, Object> isValidMobileNumber(String mobileNumber) {
 		AmxApiResponse<ResponseInfo, Object> validMobileNumber = new AmxApiResponse<ResponseInfo, Object>();
-		if (isValidMobileNumber.isValid())
-		{
-			validMobileNumber.setStatusKey(ApiConstants.SUCCESS);
+
+		try {
+			if (null != mobileNumber && !mobileNumber.equals("")) {
+				if (!CommonUtils.isNumeric(mobileNumber)) {
+					validMobileNumber.setStatusEnum(WebAppStatusCodes.INVALID_MOBILE);
+					validMobileNumber.setMessageKey(WebAppStatusCodes.INVALID_MOBILE.toString());
+					return validMobileNumber;
+				}
+			}
+
+			ArrayResponseModel isValidMobileNumber = customerRegistrationDao.isValidMobileNumber(mobileNumber);
+
+			if (isValidMobileNumber.getErrorCode() == null) {
+				validMobileNumber.setStatusEnum(WebAppStatusCodes.SUCCESS);
+			} else {
+				validMobileNumber.setStatusKey(isValidMobileNumber.getErrorCode());
+			}
+			validMobileNumber.setMessage(isValidMobileNumber.getErrorMessage());
+			validMobileNumber.setMessageKey(isValidMobileNumber.getErrorCode());
+		} catch (Exception e) {
+			validMobileNumber.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			validMobileNumber.setMessage(e.toString());
+			logger.info(TAG + "isValidMobileNumber :: exception :" + e);
+			e.printStackTrace();
 		}
-		else
-		{
-			validMobileNumber.setStatusKey(ApiConstants.FAILURE);
-		}
-		validMobileNumber.setMessage(isValidMobileNumber.getErrorMessage());
-		validMobileNumber.setError(isValidMobileNumber.getErrorCode());
-		validMobileNumber.setMessageKey(isValidMobileNumber.getErrorCode());
 		return validMobileNumber;
 	}
 
-	public AmxApiResponse<ResponseInfo, Object> isMobileNumberExist(String mobileNumber)
-	{
-		boolean mobileNumberExists = customerRegistrationDao.isMobileNumberExist(mobileNumber , metaData.getUserType());
+	public AmxApiResponse<ResponseInfo, Object> isMobileNumberExist(String mobileNumber) {
+
 		AmxApiResponse<ResponseInfo, Object> validMobileNumber = new AmxApiResponse<ResponseInfo, Object>();
-		if (mobileNumberExists)
-		{
-			validMobileNumber.setStatusKey(ApiConstants.SUCCESS);
-			validMobileNumber.setMessage(Message.MOBILE_NO_ALREDAY_REGISTER);
-			validMobileNumber.setMessageKey(MessageKey.KEY_MOBILE_NO_ALREADY_REGISTER);
+
+		try {
+			ArrayResponseModel arrayResponseModel = customerRegistrationDao.isMobileNumberExist(mobileNumber,
+					HardCodedValues.USER_TYPE);
+			if (null != arrayResponseModel.getErrorCode()
+					&& arrayResponseModel.getErrorCode().equals(ApiConstants.ERROR_OCCURRED_ON_SERVER)) {
+				validMobileNumber.setMessage(arrayResponseModel.getErrorMessage());
+				validMobileNumber.setMessageKey(arrayResponseModel.getErrorCode());
+				return validMobileNumber;
+			}
+
+			if (null != arrayResponseModel.getData() && arrayResponseModel.getData().equalsIgnoreCase("Y")) {
+				validMobileNumber.setStatusEnum(WebAppStatusCodes.SUCCESS);
+				validMobileNumber.setMessage(Message.MOBILE_NO_ALREDAY_REGISTER);
+				validMobileNumber.setMessageKey(WebAppStatusCodes.MOBILE_NUMBER_REGISTERED.toString());
+			} else {
+				validMobileNumber.setStatusEnum(WebAppStatusCodes.MOBILE_NUMBER_NOT_REGISTERED);
+				validMobileNumber.setMessage(Message.MOBILE_NO_NOT_REGISTER);
+				validMobileNumber.setMessageKey(WebAppStatusCodes.MOBILE_NUMBER_NOT_REGISTERED.toString());
+
+				ResponseInfo validate = new ResponseInfo();
+				validate.setContactUsHelpLineNumber(metaService.getTenantProfile().getContactUsHelpLineNumber());
+				validate.setContactUsEmail(metaService.getTenantProfile().getContactUsEmail());
+			}
+		} catch (Exception e) {
+			validMobileNumber.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			validMobileNumber.setMessage(e.toString());
+			logger.info(TAG + "isMobileNumberExist :: exception :" + e);
+			e.printStackTrace();
 		}
-		else
-		{
-			validMobileNumber.setStatusKey(ApiConstants.FAILURE);
-			validMobileNumber.setMessage(Message.MOBILE_NO_NOT_REGISTER);
-			validMobileNumber.setMessageKey(MessageKey.KEY_MOBILE_NO_NOT_REGISTER);
+		return validMobileNumber;
+	}
+
+	public AmxApiResponse<ResponseInfo, Object> isValidEmailId(String emailId) {
+		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
+
+		try {
 			ResponseInfo validate = new ResponseInfo();
-			validate.setContactUsHelpLineNumber(metaData.getContactUsHelpLineNumber());
-			validate.setContactUsEmail(metaData.getContactUsEmail());
+			if (validateEmail(emailId)) {
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
+				resp.setMessage(Message.EMAIL_VALID);
+				resp.setMessageKey(WebAppStatusCodes.EMAIL_ID_VALID.toString());
+			} else {
+				resp.setStatusEnum(WebAppStatusCodes.EMAIL_ID_INVALID);
+				resp.setMessage(Message.EMAIL_INVALID);
+				resp.setMessageKey(WebAppStatusCodes.EMAIL_ID_INVALID.toString());
+			}
+			resp.setData(validate);
+		} catch (Exception e) {
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "isValidEmailId :: exception :" + e);
+			e.printStackTrace();
 		}
-		return validMobileNumber;
-	}
-
-	public AmxApiResponse<ResponseInfo, Object> isValidEmailId(String emailId)
-	{
-		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
-		ResponseInfo validate = new ResponseInfo();
-		if (validateEmail(emailId))
-		{
-			validate.setValid(true);
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			resp.setMessage(Message.EMAIL_VALID);
-			resp.setMessageKey(MessageKey.KEY_EMAID_VALID);
-		}
-		else
-		{
-			validate.setValid(false);
-			resp.setStatusKey(ApiConstants.FAILURE);
-			resp.setMessage(Message.EMAIL_INVALID);
-			resp.setMessageKey(MessageKey.KEY_EMAID_INVALID);
-		}
-		resp.setData(validate);
 		return resp;
 	}
 
-	public static boolean validateEmail(String emailStr)
-	{
-		Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+	public static boolean validateEmail(String emailStr) {
+		Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$",
+				Pattern.CASE_INSENSITIVE);
 		Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(emailStr);
 		return matcher.find();
 	}
 
-
-	public AmxApiResponse<ResponseInfo, Object> isEmailIdExist(String emailId)
-	{
-		boolean emailIdExistCheck = customerRegistrationDao.isEmailIdExist(emailId , metaData.getUserType());
-		logger.info(TAG + " isCivilIdExist :: civilIdExistCheck :" + emailIdExistCheck);
+	public AmxApiResponse<ResponseInfo, Object> isEmailIdExist(String emailId) {
 		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
-		if (emailIdExistCheck)
-		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			resp.setMessage(Message.EMAIL_ALREDAY_REGISTER);
-			resp.setMessageKey(MessageKey.KEY_EMAID_ALREADY_REGISTER);
+
+		try {
+			ArrayResponseModel arrayResponseModel = customerRegistrationDao.isEmailIdExist(emailId,
+					HardCodedValues.USER_TYPE);
+
+			if (null != arrayResponseModel.getErrorCode()
+					&& arrayResponseModel.getErrorCode().equals(ApiConstants.ERROR_OCCURRED_ON_SERVER)) {
+				resp.setMessage(arrayResponseModel.getErrorMessage());
+				resp.setMessageKey(arrayResponseModel.getErrorCode());
+				return resp;
+			}
+
+			if (null != arrayResponseModel.getData() && arrayResponseModel.getData().equalsIgnoreCase("Y")) {
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
+				resp.setMessage(Message.EMAIL_ALREDAY_REGISTER);
+				resp.setMessageKey(WebAppStatusCodes.EMAIL_ID_REGESTERED.toString());
+			} else {
+				resp.setStatusEnum(WebAppStatusCodes.EMAIL_ID_NOT_REGESTERED);
+				resp.setMessage(Message.EMAIL_ALREDAY_NOT_REGISTER);
+				resp.setMessageKey(WebAppStatusCodes.EMAIL_ID_NOT_REGESTERED.toString());
+
+				ResponseInfo validate = new ResponseInfo();
+				validate.setContactUsHelpLineNumber(metaService.getTenantProfile().getContactUsHelpLineNumber());
+				validate.setContactUsEmail(metaService.getTenantProfile().getContactUsEmail());
+				resp.setData(validate);
+			}
+
+		} catch (Exception e) {
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "isEmailIdExist :: exception :" + e);
+			e.printStackTrace();
 		}
-		else
-		{
-			resp.setStatusKey(ApiConstants.FAILURE);
-			resp.setMessage(Message.EMAIL_ALREDAY_NOT_REGISTER);
-			resp.setMessageKey(MessageKey.KEY_EMAID_NOT_REGISTER);
-			ResponseInfo validate = new ResponseInfo();
-			validate.setContactUsHelpLineNumber(metaData.getContactUsHelpLineNumber());
-			validate.setContactUsEmail(metaData.getContactUsEmail());
-		}
+
 		return resp;
 	}
 
-	public AmxApiResponse<CustomerDetailResponse, Object> getCustomerDetails()
-	{
+	public AmxApiResponse<CustomerDetailResponse, Object> getCustomerDetails() {
 		AmxApiResponse<CustomerDetailResponse, Object> resp = new AmxApiResponse<CustomerDetailResponse, Object>();
-		CustomerDetailResponse customerDetailResponse = new CustomerDetailResponse();
-		CustomerDetails customerDetails = new CustomerDetails();
+		try {
+			CustomerDetailResponse customerDetailResponse = new CustomerDetailResponse();
+			CustomerDetails customerDetails = new CustomerDetails();
 
-		if (null != userSession.getCivilId() && !userSession.getCivilId().equals(""))
-		{
-			CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(userSession.getCivilId() , metaData.getUserType() , userSession.getUserSequenceNumber());
-			customerDetails.setCivilId(userSession.getCivilId());
-			customerDetails.setCustSeqNumber(customerDetailModel.getCustSequenceNumber());
-			customerDetails.setDeviceId(customerDetailModel.getDeviceId());
-			customerDetails.setDeviceType(customerDetailModel.getDeviceType());
-			customerDetails.setEmail(customerDetailModel.getEmail());
-			customerDetails.setLanguageId(customerDetailModel.getLanguageId());
-			customerDetails.setLastLogin(customerDetailModel.getLastLogin());
-			customerDetails.setMailVerify(customerDetailModel.getMailVerify());
-			customerDetails.setMobile(customerDetailModel.getMobile());
-			customerDetails.setMobileVerify(customerDetailModel.getMobileVerify());
-			customerDetails.setUserName(customerDetailModel.getUserName());
+			if (null != userSession.getCivilId() && !userSession.getCivilId().equals("") && userSession.isValid()) {
+				CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(
+						userSession.getCivilId(), HardCodedValues.USER_TYPE, userSession.getUserSequenceNumber(),
+						userSession.getLanguageId());
 
-			userSession.setCustomerEmailId(customerDetailModel.getEmail());
-			userSession.setCustomerSequenceNumber(customerDetailModel.getCustSequenceNumber());
-			userSession.setCustomerMobileNumber(customerDetailModel.getMobile());
+				if (customerDetailModel.getErrorCode() == null) {
+					customerDetails.setCivilId(userSession.getCivilId());
+					customerDetails.setCustSeqNumber(customerDetailModel.getCustSequenceNumber());
+					customerDetails.setDeviceId(customerDetailModel.getDeviceId());
+					customerDetails.setDeviceType(customerDetailModel.getDeviceType());
+					customerDetails.setEmail(customerDetailModel.getEmail());
+					customerDetails.setLanguageId(customerDetailModel.getLanguageId());
+					customerDetails.setLastLogin(customerDetailModel.getLastLogin());
+					customerDetails.setMailVerify(customerDetailModel.getMailVerify());
+					customerDetails.setMobile(customerDetailModel.getMobile());
+					customerDetails.setMobileVerify(customerDetailModel.getMobileVerify());
+					customerDetails.setUserName(customerDetailModel.getUserName());
+					userSession.setCustomerEmailId(customerDetailModel.getEmail());
+					userSession.setCustomerSequenceNumber(customerDetailModel.getCustSequenceNumber());
+					userSession.setCustomerMobileNumber(customerDetailModel.getMobile());
+					customerDetailResponse.setCustomerDetails(customerDetails);
+				} else {
+					resp.setMessage(customerDetailModel.getErrorMessage());
+					resp.setMessageKey(customerDetailModel.getErrorCode());
+					return resp;
+				}
+			} else {
+				customerDetailResponse.setCustomerDetails(null);
+			}
 
-			customerDetailResponse.setCustomerDetails(customerDetails);
+			ArrayResponseModel arrayResponseModel = customerRegistrationDao.getCompanySetUp(userSession.getLanguageId(),
+					webConfig.getAppCompCode());
+			if (arrayResponseModel.getErrorCode() == null) {
+				ArrayList<CompanySetUp> getCompanySetUp = arrayResponseModel.getDataArray();
+
+				CompanySetUp companySetUp = getCompanySetUp.get(0);
+				customerDetailResponse.setCompanySetUp(companySetUp);
+
+				resp.setData(customerDetailResponse);
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
+			} else {
+				resp.setMessage(arrayResponseModel.getErrorMessage());
+				resp.setMessageKey(arrayResponseModel.getErrorCode());
+			}
+
+			resp.setData(customerDetailResponse);
+		} catch (Exception e) {
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "getCustomerDetails :: exception :" + e);
+			e.printStackTrace();
 		}
-		else
-		{
-			customerDetailResponse.setCustomerDetails(null);
-		}
-
-		ArrayList<CompanySetUp> getCompanySetUp = customerRegistrationDao.getCompanySetUp(metaData.getLanguageId());
-		CompanySetUp companySetUp = getCompanySetUp.get(0);
-
-		customerDetailResponse.setCompanySetUp(companySetUp);
-
-		resp.setData(customerDetailResponse);
 		return resp;
 	}
 
-	public AmxApiResponse<ResponseInfo, Object> isCivilIdExistCheck(String civilid)
-	{
-		AmxApiResponse<ResponseInfo, Object> validateCivilID = isValidCivilId(civilid);
+	public AmxApiResponse<ResponseInfo, Object> isCivilIdExistCheck(String civilid) {
 
-		if (validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-		{
+		AmxApiResponse<ResponseInfo, Object> validateCivilID = isValidCivilId(civilid);
+		if (!validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
 			return validateCivilID;
 		}
 		return isCivilIdExist(civilid);
 	}
 
-	public AmxApiResponse<ResponseInfo, Object> isMobileNumberExistCheck(String mobilenumber)
-	{
-		AmxApiResponse<ResponseInfo, Object> isValidMobileNumber = isValidMobileNumber(mobilenumber);
+	public AmxApiResponse<ResponseInfo, Object> isMobileNumberExistCheck(String mobilenumber) {
 
-		if (isValidMobileNumber.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-		{
+		AmxApiResponse<ResponseInfo, Object> isValidMobileNumber = isValidMobileNumber(mobilenumber);
+		if (!isValidMobileNumber.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
 			return isValidMobileNumber;
 		}
 		return isMobileNumberExist(mobilenumber);
 	}
 
-	public AmxApiResponse<ResponseInfo, Object> isEmailIdExistCheck(String emailId)
-	{
-		AmxApiResponse<ResponseInfo, Object> isValidEmailId = isValidEmailId(emailId);
+	public AmxApiResponse<ResponseInfo, Object> isEmailIdExistCheck(String emailId) {
 
-		if (isValidEmailId.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-		{
+		AmxApiResponse<ResponseInfo, Object> isValidEmailId = isValidEmailId(emailId);
+		if (!isValidEmailId.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
 			return isValidEmailId;
 		}
 		return isEmailIdExist(emailId);
 	}
 
-	public AmxApiResponse<?, Object> registrationOtp(String eOtp, String mOtp, RequestOtpModel requestOtpModel)
-	{
+	public AmxApiResponse<?, Object> registrationOtp(String eOtp, String mOtp, RequestOtpModel requestOtpModel) {
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
 
-		try
-		{
+		try {
 			AmxApiResponse<?, Object> validateForRegistration = validateForRegistration(requestOtpModel);
-			if (null != validateForRegistration)
-			{
+			if (null != validateForRegistration) {
 				return validateForRegistration;
 			}
-
-			logger.info(TAG + " registrationOtp :: civilId    :" + requestOtpModel.getCivilId());
-			logger.info(TAG + " registrationOtp :: getEmailId :" + requestOtpModel.getEmailId());
-
 			userSession.setCivilId(requestOtpModel.getCivilId());
 			userSession.setCustomerEmailId(requestOtpModel.getEmailId());
 			userSession.setCustomerMobileNumber(requestOtpModel.getMobileNumber());
 
 			AmxApiResponse<?, Object> validateDOTP = emailSmsService.validateDOTP(eOtp, mOtp,
 					requestOtpModel.getEmailId(), requestOtpModel.getMobileNumber(), DetailsConstants.REGISTRATION_OTP);
-			
-			if (null != validateDOTP)
-			{
+
+			if (null != validateDOTP) {
+
 				return validateDOTP;
 			}
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "registrationOtp :: exception :" + e);
 			e.printStackTrace();
-			resp.setData(null);
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
 
-	public AmxApiResponse<CustomerRegistrationResponse, Object> addNewCustomer(CustomerRegistrationRequest userRegistartionRequest)
-	{
+	public AmxApiResponse<CustomerRegistrationResponse, Object> addNewCustomer(
+			CustomerRegistrationRequest userRegistartionRequest) {
 		AmxApiResponse<CustomerRegistrationResponse, Object> resp = new AmxApiResponse<CustomerRegistrationResponse, Object>();
-		CustomerRegistrationResponse customerRegistrationResponse = new CustomerRegistrationResponse();
-		CustomerRegistrationModel customerRegistrationModel = new CustomerRegistrationModel();
-		customerRegistrationModel.setPassword(userRegistartionRequest.getPassword());
-		customerRegistrationModel.setCountryId(metaData.getCountryId());
-		customerRegistrationModel.setCompCd(metaData.getCompCd());
-		customerRegistrationModel.setUserType(metaData.getUserType());
-		customerRegistrationModel.setMobile(userSession.getCustomerMobileNumber());
-		customerRegistrationModel.setEmail(userSession.getCustomerEmailId());
-		customerRegistrationModel.setLanguageId(metaData.getLanguageId());
-		customerRegistrationModel.setCivilId(userSession.getCivilId());
-		customerRegistrationModel.setCreatedDeviceId(metaData.getDeviceId());
-		customerRegistrationModel.setDeviceType(metaData.getDeviceType());
 
-		customerRegistrationModel = customerRegistrationDao.addNewCustomer(customerRegistrationModel);
+		try {
 
-		if (customerRegistrationModel.getStatus())
-		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			emailSmsService.emailTosuccessFullUserRegistration(userSession.getCustomerEmailId());
-		}
-		else
-		{
-			resp.setStatusKey(ApiConstants.FAILURE);
-		}
-
-		resp.setMessage(customerRegistrationModel.getErrorMessage());
-		resp.setMessageKey(customerRegistrationModel.getErrorCode());
-		customerRegistrationResponse.setCivilid(customerRegistrationModel.getCivilid());
-		customerRegistrationResponse.setUserSequenceNumber(customerRegistrationModel.getUserSequenceNumber());
-		resp.setData(customerRegistrationResponse);
-		return resp;
-
-	}
-
-	public AmxApiResponse<?, Object> validateUserLogin(CustomerLoginRequest customerLoginRequest)
-	{
-		CustomerLoginResponse customerLoginResponse = new CustomerLoginResponse();
-		CustomerLoginModel customerLoginModel = new CustomerLoginModel();
-		AmxApiResponse<CustomerLoginResponse, Object> resp = new AmxApiResponse<CustomerLoginResponse, Object>();
-		AmxApiResponse<ResponseInfo, Object> validateCivilID = isValidCivilId(customerLoginRequest.getCivilId());
-		AmxApiResponse<ResponseInfo, Object> civilIdExistCheck = isCivilIdExist(customerLoginRequest.getCivilId());
-
-		if (validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-		{
-			return validateCivilID;
-		}
-
-		if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-		{
-			return civilIdExistCheck;
-		}
-
-		if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
-		{
-			if (null == customerLoginRequest.getPassword() || customerLoginRequest.getPassword().equals(""))
-			{
-				resp.setStatusKey(ApiConstants.FAILURE);
+			if (null == userRegistartionRequest.getPassword() || userRegistartionRequest.getPassword().equals("")) {
+				resp.setStatusEnum(WebAppStatusCodes.EMPTY_PASSWORD);
 				resp.setMessage(Message.EMPTY_PASSWORD);
-				resp.setMessageKey(MessageKey.KEY_EMPTY_PASSWORD);
+				resp.setMessageKey(WebAppStatusCodes.EMPTY_PASSWORD.toString());
 				return resp;
 			}
-		}
 
-		customerLoginModel.setCivilId(customerLoginRequest.getCivilId());
-		customerLoginModel.setPassword(customerLoginRequest.getPassword());
-		customerLoginModel = customerRegistrationDao.validateUserLogin(customerLoginModel , metaData.getUserType());
-
-		if (customerLoginModel.getStatus())
-		{
-
-			onSuccessLogin(customerLoginRequest, customerLoginModel);
-			getCustomerDetails();
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			userSession.authorize(customerLoginRequest.getCivilId(), customerLoginRequest.getPassword());
-		}
-		else
-		{
-			resp.setStatusKey(ApiConstants.FAILURE);
-		}
-
-		if (null != customerLoginModel.getErrorMessage() && customerLoginModel.getErrorCode().toString().equalsIgnoreCase(DatabaseErrorKey.INVALID_USER_LOGIN))
-		{
-			logger.info(TAG + " validateUserLogin :: Invalid Attempts :");
-
-			String countData = "";
-			int count = Integer.parseInt(customerLoginModel.getErrorMessage());
-			int userInvalidCountRemaining = 3 - count;
-			if (userInvalidCountRemaining == 0)
-			{
-				countData = " No ";
+			if (null == userSession.getCustomerEmailId() || userSession.getCustomerEmailId().equals("")) {
+				resp.setStatusEnum(WebAppStatusCodes.CUSTOMER_MOBILE_EMAIL_NOT_VALIDATED);
+				resp.setMessage(Message.CUSTOMER_MOBILE_EMAIL_NOT_VALIDATED);
+				resp.setMessageKey(WebAppStatusCodes.CUSTOMER_MOBILE_EMAIL_NOT_VALIDATED.toString());
+				return resp;
 			}
-			else
-			{
-				countData = "" + userInvalidCountRemaining;
+
+			CustomerRegistrationResponse customerRegistrationResponse = new CustomerRegistrationResponse();
+			CustomerRegistrationModel customerRegistrationModel = new CustomerRegistrationModel();
+			customerRegistrationModel.setPassword(userRegistartionRequest.getPassword());
+			customerRegistrationModel.setCountryId(metaService.getTenantProfile().getCountryId());
+			customerRegistrationModel.setCompCd(metaService.getTenantProfile().getCompCd());
+			customerRegistrationModel.setUserType(HardCodedValues.USER_TYPE);
+			customerRegistrationModel.setMobile(userSession.getCustomerMobileNumber());
+			customerRegistrationModel.setEmail(userSession.getCustomerEmailId());
+			customerRegistrationModel.setLanguageId(userSession.getLanguageId());
+			customerRegistrationModel.setCivilId(userSession.getCivilId());
+			customerRegistrationModel.setCreatedDeviceId(metaService.getUserDeviceInfo().getDeviceId());
+			customerRegistrationModel.setDeviceType(metaService.getUserDeviceInfo().getDeviceType());
+
+			customerRegistrationModel = customerRegistrationDao.addNewCustomer(customerRegistrationModel,
+					userSession.getLanguageId());
+
+			if (customerRegistrationModel.getErrorCode() == null) {
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
+				emailSmsService.emailTosuccessFullUserRegistration(userSession.getCustomerEmailId());
+			} else {
+				resp.setMessageKey(customerRegistrationModel.getErrorCode());
+				resp.setMessage(customerRegistrationModel.getErrorMessage());
 			}
-			resp.setMessageKey(customerLoginModel.getErrorCode());
-			resp.setMessage(countData);
-		}
-		else if (null != customerLoginModel.getErrorCode() && customerLoginModel.getErrorCode().equalsIgnoreCase(DatabaseErrorKey.USER_ACCOUNT_LOCK))
-		{
-			logger.info(TAG + " validateUserLogin :: Lock Account :");
-			resp.setMessageKey(customerLoginModel.getErrorCode());
-			resp.setMessage(customerLoginModel.getErrorCode());
-			customerLoginResponse.setContactUsHelpLineNumber(metaData.getContactUsHelpLineNumber());
-			customerLoginResponse.setContactUsEmail(metaData.getContactUsEmail());
-		}
-		else
-		{
-			resp.setMessageKey(customerLoginModel.getErrorCode());
-			resp.setMessage(customerLoginModel.getErrorCode());
+
+			resp.setMessage(customerRegistrationModel.getErrorMessage());
+			resp.setMessageKey(customerRegistrationModel.getErrorCode());
+			customerRegistrationResponse.setCivilid(customerRegistrationModel.getCivilid());
+			customerRegistrationResponse.setUserSequenceNumber(customerRegistrationModel.getUserSequenceNumber());
+			resp.setData(customerRegistrationResponse);
+		} catch (Exception e) {
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "addNewCustomer :: exception :" + e);
+			e.printStackTrace();
 		}
 
-		customerLoginResponse.setAmibRef(customerLoginModel.getAmibRef());
-		customerLoginResponse.setUserSeqNum(customerLoginModel.getUserSeqNum());
-		resp.setData(customerLoginResponse);
-		logger.info(TAG + " validateUserLogin :: customerLoginResponse :" + customerLoginResponse.toString());
+		return resp;
+
+	}
+
+	public AmxApiResponse<?, Object> validateUserLogin(CustomerLoginRequest customerLoginRequest) {
+		AmxApiResponse<CustomerLoginResponse, Object> resp = new AmxApiResponse<CustomerLoginResponse, Object>();
+
+		try {
+			if (null == customerLoginRequest.getCivilId() || customerLoginRequest.getCivilId().equals("")) {
+				resp.setStatusEnum(WebAppStatusCodes.EMPTY_CIVIL_ID);
+				resp.setMessage(Message.EMPTY_CIVIL_ID);
+				resp.setMessageKey(WebAppStatusCodes.EMPTY_CIVIL_ID.toString());
+				return resp;
+			}
+
+			CustomerLoginResponse customerLoginResponse = new CustomerLoginResponse();
+			CustomerLoginModel customerLoginModel = new CustomerLoginModel();
+			AmxApiResponse<ResponseInfo, Object> validateCivilID = isValidCivilId(customerLoginRequest.getCivilId());
+			AmxApiResponse<ResponseInfo, Object> civilIdExistCheck = isCivilIdExist(customerLoginRequest.getCivilId());
+
+			if (!validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
+				return validateCivilID;
+			}
+
+			if (!civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
+				return civilIdExistCheck;
+			}
+
+			if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
+				if (null == customerLoginRequest.getPassword() || customerLoginRequest.getPassword().equals("")) {
+					resp.setStatusEnum(WebAppStatusCodes.EMPTY_PASSWORD);
+					resp.setMessageKey(WebAppStatusCodes.EMPTY_PASSWORD.toString());
+					return resp;
+				}
+			}
+
+			customerLoginModel.setCivilId(customerLoginRequest.getCivilId());
+			customerLoginModel.setPassword(customerLoginRequest.getPassword());
+			customerLoginModel = customerRegistrationDao.validateUserLogin(customerLoginModel,
+					HardCodedValues.USER_TYPE, userSession.getLanguageId());
+
+			if (customerLoginModel.getErrorCode() == null) {
+				onSuccessLogin(customerLoginRequest, customerLoginModel);
+				getCustomerDetails();
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
+				userSession.authorize(customerLoginRequest.getCivilId(), customerLoginRequest.getPassword());
+				resp.setRedirectUrl(userSession.getReturnUrl());
+			} else {
+				resp.setStatusKey(customerLoginModel.getErrorCode());
+			}
+
+			if (null != customerLoginModel.getErrorMessage() && customerLoginModel.getErrorCode().toString()
+					.equalsIgnoreCase(DatabaseErrorKey.INVALID_USER_LOGIN)) {
+				String countData = "";
+				int count = Integer.parseInt(customerLoginModel.getErrorMessage());
+				int userInvalidCountRemaining = 3 - count;
+				if (userInvalidCountRemaining == 0) {
+					countData = " No ";
+				} else {
+					countData = "" + userInvalidCountRemaining;
+				}
+				resp.setMessageKey(customerLoginModel.getErrorCode());
+				resp.setMessage(countData);
+			} else if (null != customerLoginModel.getErrorCode()
+					&& customerLoginModel.getErrorCode().equalsIgnoreCase(DatabaseErrorKey.USER_ACCOUNT_LOCK)) {
+				logger.info("validateUserLogin :: Lock Account :");
+				resp.setMessageKey(customerLoginModel.getErrorCode());
+				resp.setMessage(customerLoginModel.getErrorMessage());
+				customerLoginResponse
+						.setContactUsHelpLineNumber(metaService.getTenantProfile().getContactUsHelpLineNumber());
+				customerLoginResponse.setContactUsEmail(metaService.getTenantProfile().getContactUsEmail());
+			} else {
+				resp.setMessageKey(customerLoginModel.getErrorCode());
+				resp.setMessage(customerLoginModel.getErrorMessage());
+			}
+
+			customerLoginResponse.setAmibRef(customerLoginModel.getAmibRef());
+			customerLoginResponse.setUserSeqNum(customerLoginModel.getUserSeqNum());
+			resp.setData(customerLoginResponse);
+		} catch (Exception e) {
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "validateUserLogin :: exception :" + e);
+			e.printStackTrace();
+		}
 
 		return resp;
 	}
 
-	public void onSuccessLogin(CustomerLoginRequest customerLoginRequest, CustomerLoginModel customerLoginModel)
-	{
+	public void onSuccessLogin(CustomerLoginRequest customerLoginRequest, CustomerLoginModel customerLoginModel) {
 		userSession.setCivilId(customerLoginRequest.getCivilId());
 		userSession.setUserSequenceNumber(customerLoginModel.getUserSeqNum());
 		userSession.setUserAmibCustRef(customerLoginModel.getAmibRef());
 		userSession.setCivilId(customerLoginRequest.getCivilId());
 	}
 
-	public AmxApiResponse<?, Object> changePasswordOtpInitiate(String eOtp, String mOtp, ChangePasswordOtpRequest changePasswordOtpRequest)
-	{
+	public AmxApiResponse<?, Object> changePasswordOtpInitiate(String eOtp, String mOtp,
+			ChangePasswordOtpRequest changePasswordOtpRequest) {
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
 
-		logger.info(TAG + " changePasswordOtpInitiate :: getCivilId :"+changePasswordOtpRequest.getCivilId());
-		userSession.setCivilId(changePasswordOtpRequest.getCivilId());
+		try {
 
-		
-		AmxApiResponse<ResponseInfo, Object> validateCivilID = isValidCivilId(changePasswordOtpRequest.getCivilId());
-		if (validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-		{
-			return validateCivilID;
+			if (null == changePasswordOtpRequest.getCivilId() || changePasswordOtpRequest.getCivilId().equals("")) {
+				resp.setStatusEnum(WebAppStatusCodes.EMPTY_CIVIL_ID);
+				resp.setMessage(Message.EMPTY_CIVIL_ID);
+				resp.setMessageKey(WebAppStatusCodes.EMPTY_CIVIL_ID.toString());
+				return resp;
+			}
+
+			userSession.setCivilId(changePasswordOtpRequest.getCivilId());
+
+			AmxApiResponse<ResponseInfo, Object> validateCivilID = isValidCivilId(
+					changePasswordOtpRequest.getCivilId());
+			if (!validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
+				validateCivilID.setStatusKey(validateCivilID.getMessageKey());
+				return validateCivilID;
+			}
+
+			AmxApiResponse<ResponseInfo, Object> civilIdExistCheck = isCivilIdExist(
+					changePasswordOtpRequest.getCivilId());
+			if (!civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
+				civilIdExistCheck.setStatusKey(civilIdExistCheck.getMessageKey());
+				return civilIdExistCheck;
+			}
+
+			CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(
+					changePasswordOtpRequest.getCivilId(), HardCodedValues.USER_TYPE,
+					userSession.getUserSequenceNumber(), userSession.getLanguageId());
+			if (null == customerDetailModel || customerDetailModel.getErrorCode() != null) {
+				resp.setMessageKey(customerDetailModel.getErrorCode());
+				resp.setMessage(customerDetailModel.getErrorMessage());
+				resp.setStatusKey(customerDetailModel.getErrorCode());
+				return resp;
+			} else {
+				try {
+
+					AmxApiResponse<?, Object> validateDOTP = emailSmsService.validateDOTP(eOtp, mOtp,
+							customerDetailModel.getEmail(), customerDetailModel.getMobile(),
+							DetailsConstants.RESET_PASSOWRD_OTP);
+					if (null != validateDOTP) {
+						return validateDOTP;
+					}
+					resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
+				} catch (Exception e) {
+					e.printStackTrace();
+					resp.setStatusEnum(WebAppStatusCodes.CP_OTP_NOT_GENERATED);
+					resp.setMessage(Message.CP_EMAIL_NOT_SENT);
+					resp.setMessageKey(WebAppStatusCodes.CP_OTP_NOT_GENERATED.toString());
+				}
+			}
+		} catch (Exception e) {
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "changePasswordOtpInitiate :: exception :" + e);
+			e.printStackTrace();
 		}
 
-		AmxApiResponse<ResponseInfo, Object> civilIdExistCheck = isCivilIdExist(changePasswordOtpRequest.getCivilId());
-		logger.info(TAG + " changePasswordOtpInitiate :: civilIdExistCheck :"+civilIdExistCheck.getStatus());
-		if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-		{
-			return civilIdExistCheck;
-		}
+		return resp;
+	}
 
-		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(changePasswordOtpRequest.getCivilId() , metaData.getUserType() , userSession.getUserSequenceNumber());
-		if (null == customerDetailModel || customerDetailModel.getErrorCode() != null)
-		{
-			resp.setMessageKey(customerDetailModel.getErrorCode());
-			resp.setMessage(customerDetailModel.getErrorMessage());
-			resp.setStatusKey(ApiConstants.FAILURE);
-			return resp;
-		}
-		else
-		{
-			try
-			{
+	public AmxApiResponse<?, Object> changePasswordLogedInUser(String eOtp, String mOtp,
+			ChangePasswordRequest changePasswordRequest) {
+		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
 
-				AmxApiResponse<?, Object> validateDOTP = emailSmsService.validateDOTP(eOtp, mOtp, customerDetailModel.getEmail(), customerDetailModel.getMobile() , DetailsConstants.RESET_PASSOWRD_OTP);
-				if (null != validateDOTP)
-				{
+		try {
+			if (null == changePasswordRequest.getNewPassword() || changePasswordRequest.getNewPassword().equals("")) {
+				resp.setStatusEnum(WebAppStatusCodes.EMPTY_PASSWORD);
+				resp.setMessage(Message.EMPTY_PASSWORD);
+				resp.setMessageKey(WebAppStatusCodes.EMPTY_PASSWORD.toString());
+				return resp;
+			}
+
+			CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(userSession.getCivilId(),
+					HardCodedValues.USER_TYPE, userSession.getUserSequenceNumber(), userSession.getLanguageId());
+			if (null == customerDetailModel || customerDetailModel.getErrorCode() != null) {
+				resp.setMessageKey(customerDetailModel.getErrorCode());
+				resp.setMessage(customerDetailModel.getErrorMessage());
+				resp.setStatusKey(customerDetailModel.getErrorCode());
+				return resp;
+			} else {
+				AmxApiResponse<?, Object> validateDOTP = emailSmsService.validateDOTP(eOtp, mOtp,
+						customerDetailModel.getEmail(), customerDetailModel.getMobile(),
+						DetailsConstants.RESET_PASSOWRD_OTP);
+				if (null != validateDOTP) {
 					return validateDOTP;
 				}
-				resp.setStatusKey(ApiConstants.SUCCESS);
+
+				return updatePassword(changePasswordRequest);
 			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-				resp.setStatusKey(ApiConstants.FAILURE);
-				resp.setMessage(Message.CP_EMAIL_NOT_SENT);
-				resp.setMessageKey(MessageKey.KEY_CP_OTP_NOT_GENERATED);
-			}
+		} catch (Exception e) {
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "changePasswordLogedInUser :: exception :" + e);
+			e.printStackTrace();
 		}
 		return resp;
 	}
 
-	public AmxApiResponse<?, Object> changePasswordLogedInUser(String eOtp, String mOtp, ChangePasswordRequest changePasswordRequest)
-	{
-		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
-
-		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(userSession.getCivilId() , metaData.getUserType() , userSession.getUserSequenceNumber());
-		if (null == customerDetailModel || customerDetailModel.getErrorCode() != null)
-		{
-			resp.setMessageKey(customerDetailModel.getErrorCode());
-			resp.setMessage(customerDetailModel.getErrorMessage());
-			resp.setStatusKey(ApiConstants.FAILURE);
-			return resp;
-		}
-		else
-		{
-			AmxApiResponse<?, Object> validateDOTP = emailSmsService.validateDOTP(eOtp, mOtp, customerDetailModel.getEmail(), customerDetailModel.getMobile() , DetailsConstants.RESET_PASSOWRD_OTP);
-			if (null != validateDOTP)
-			{
-				return validateDOTP;
-			}
-
-			return updatePassword(changePasswordRequest);
-		}
-	}
-
-	public AmxApiResponse<ChangePasswordResponse, Object> updatePassword(ChangePasswordRequest changePasswordRequest)
-	{
+	public AmxApiResponse<ChangePasswordResponse, Object> updatePassword(ChangePasswordRequest changePasswordRequest) {
 		AmxApiResponse<ChangePasswordResponse, Object> resp = new AmxApiResponse<ChangePasswordResponse, Object>();
 
-		CustomerDetailModel customerDetailModel = new CustomerDetailModel();
-		customerDetailModel.setPassword(changePasswordRequest.getNewPassword());
+		try {
+			CustomerDetailModel customerDetailModel = new CustomerDetailModel();
+			customerDetailModel.setPassword(changePasswordRequest.getNewPassword());
 
-		customerDetailModel = customerRegistrationDao.updatePassword(customerDetailModel , userSession.getCivilId() , metaData.getUserType());
+			customerDetailModel = customerRegistrationDao.updatePassword(customerDetailModel, userSession.getCivilId(),
+					HardCodedValues.USER_TYPE);
 
-		if (customerDetailModel.getStatus())
-		{
-			resp.setMessageKey(customerDetailModel.getErrorCode());
-			resp.setError(customerDetailModel.getErrorMessage());
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			resp.setData(null);
-		}
-		else
-		{
-			resp.setMessageKey(customerDetailModel.getErrorCode());
-			resp.setError(customerDetailModel.getErrorMessage());
-			resp.setStatusKey(ApiConstants.FAILURE);
-			resp.setData(null);
+			if (customerDetailModel.getErrorCode() == null) {
+				resp.setMessageKey(customerDetailModel.getErrorCode());
+				resp.setMessage(customerDetailModel.getErrorMessage());
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
+				resp.setData(null);
+			} else {
+				resp.setMessageKey(customerDetailModel.getErrorCode());
+				resp.setMessage(customerDetailModel.getErrorMessage());
+				resp.setStatusKey(customerDetailModel.getErrorCode());
+				resp.setData(null);
+			}
+		} catch (Exception e) {
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "updatePassword :: exception :" + e);
+			e.printStackTrace();
 		}
 		return resp;
 	}
 
-	public AmxApiResponse<ChangePasswordResponse, Object> updateUserPassword(String eOtp, String mOtp, ChangePasswordRequest changePasswordRequest)
-	{
+	public AmxApiResponse<ChangePasswordResponse, Object> updateUserPassword(String eOtp, String mOtp,
+			ChangePasswordRequest changePasswordRequest) {
 		AmxApiResponse<ChangePasswordResponse, Object> resp = new AmxApiResponse<ChangePasswordResponse, Object>();
-		CustomerDetailModel customerDetailModel = new CustomerDetailModel();
-		customerDetailModel.setPassword(changePasswordRequest.getNewPassword());
-		customerDetailModel = customerRegistrationDao.updatePassword(customerDetailModel , userSession.getCivilId() , metaData.getUserType());
-		if (customerDetailModel.getStatus())
-		{
-			resp.setMessageKey(customerDetailModel.getErrorCode());
-			resp.setError(customerDetailModel.getErrorMessage());
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			resp.setData(null);
-		}
-		else
-		{
-			resp.setMessageKey(customerDetailModel.getErrorCode());
-			resp.setError(customerDetailModel.getErrorMessage());
-			resp.setStatusKey(ApiConstants.FAILURE);
-			resp.setData(null);
+		try {
+			CustomerDetailModel customerDetailModel = new CustomerDetailModel();
+			customerDetailModel.setPassword(changePasswordRequest.getNewPassword());
+			customerDetailModel = customerRegistrationDao.updatePassword(customerDetailModel, userSession.getCivilId(),
+					HardCodedValues.USER_TYPE);
+			if (customerDetailModel.getErrorCode() == null) {
+				resp.setMessageKey(customerDetailModel.getErrorCode());
+				resp.setMessage(customerDetailModel.getErrorMessage());
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
+				resp.setData(null);
+			} else {
+				resp.setMessageKey(customerDetailModel.getErrorCode());
+				resp.setMessage(customerDetailModel.getErrorMessage());
+				resp.setStatusKey(customerDetailModel.getErrorCode());
+				resp.setData(null);
+			}
+		} catch (Exception e) {
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "updateUserPassword :: exception :" + e);
+			e.printStackTrace();
 		}
 		return resp;
 	}
 
-	public void sendFailedRegistration(String type, RequestOtpModel requestOtpModel, String exceptionMessage)
-	{
+	public void sendFailedRegistration(String type, RequestOtpModel requestOtpModel, String exceptionMessage) {
 		FailureException failureException = new FailureException();
 		failureException.setCivilId(requestOtpModel.getCivilId());
 		failureException.setMobileNumber(requestOtpModel.getMobileNumber());
 		failureException.setEmailId(requestOtpModel.getEmailId());
-		failureException.setCountryId(metaData.getCountryId());
-		failureException.setCompCd(metaData.getCompCd());
-		failureException.setDeviceId(metaData.getDeviceId());
-		failureException.setDeviceType(metaData.getDeviceType());
-		failureException.setLanguageId(metaData.getLanguageId());
+		failureException.setCountryId(metaService.getTenantProfile().getCountryId());
+		failureException.setCompCd(metaService.getTenantProfile().getCompCd());
+		failureException.setDeviceId(metaService.getUserDeviceInfo().getDeviceId());
+		failureException.setDeviceType(metaService.getUserDeviceInfo().getDeviceType());
+		failureException.setLanguageId(userSession.getLanguageId());
 		failureException.setExceptionType("REGISTER");
-		failureException.setUserType(metaData.getUserType());
+		failureException.setUserType(HardCodedValues.USER_TYPE);
 		failureException.setExceptionMsg(exceptionMessage);
-
 		emailSmsService.sendFailedRegEmail(requestOtpModel);
-
 		customerRegistrationDao.setFailedException(type, failureException);
 
 	}
 
-	private AmxApiResponse<?, Object> validateForRegistration(RequestOtpModel requestOtpModel)
-	{
+	private AmxApiResponse<?, Object> validateForRegistration(RequestOtpModel requestOtpModel) {
 		AmxApiResponse<ResponseOtpModel, Object> resp = new AmxApiResponse<ResponseOtpModel, Object>();
 
-		AmxApiResponse<ResponseInfo, Object> validateCivilID = isValidCivilId(requestOtpModel.getCivilId());
-		AmxApiResponse<ResponseInfo, Object> civilIdExistCheck = isCivilIdExist(requestOtpModel.getCivilId());
-		AmxApiResponse<ResponseInfo, Object> isValidMobileNumber = isValidMobileNumber(requestOtpModel.getMobileNumber());
-		AmxApiResponse<ResponseInfo, Object> mobileNumberExists = isMobileNumberExist(requestOtpModel.getMobileNumber());
-		AmxApiResponse<ResponseInfo, Object> validateEmailID = isValidEmailId(requestOtpModel.getEmailId());
-		AmxApiResponse<ResponseInfo, Object> emailIdExists = isEmailIdExist(requestOtpModel.getEmailId());
+		try {
 
-		try
-		{
-			if (null == requestOtpModel.getCivilId() || requestOtpModel.getCivilId().toString().equals(""))
-			{
-				requestOtpModel.setCivilId(userSession.getCivilId());
-			}
+			AmxApiResponse<ResponseInfo, Object> validateCivilID = isValidCivilId(requestOtpModel.getCivilId());
 
-			if (validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-			{
-				return validateCivilID;
-			}
+			AmxApiResponse<ResponseInfo, Object> civilIdExistCheck = isCivilIdExist(requestOtpModel.getCivilId());
 
-			if (isValidMobileNumber.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-			{
-				return isValidMobileNumber;
-			}
+			AmxApiResponse<ResponseInfo, Object> isValidMobileNumber = isValidMobileNumber(
+					requestOtpModel.getMobileNumber());
 
-			if (validateEmailID.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-			{
-				return validateEmailID;
-			}
+			AmxApiResponse<ResponseInfo, Object> mobileNumberExists = isMobileNumberExist(
+					requestOtpModel.getMobileNumber());
 
-			if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
-			{
-				civilIdExistCheck.setStatusKey(ApiConstants.FAILURE);
-				return civilIdExistCheck;
-			}
+			AmxApiResponse<ResponseInfo, Object> validateEmailID = isValidEmailId(requestOtpModel.getEmailId());
 
-			if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS) && emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
-			{
-				sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_MOBE_MAIL, requestOtpModel, mobileNumberExists.getMessage());
-				mobileNumberExists.setMessageKey(MessageKey.KEY_MOBILE_OR_EMAIL_ALREADY_EXISTS);
-				mobileNumberExists.setStatusKey(ApiConstants.FAILURE);
-				return mobileNumberExists;
+			AmxApiResponse<ResponseInfo, Object> emailIdExists = isEmailIdExist(requestOtpModel.getEmailId());
+
+			try {
+				if (null == requestOtpModel.getCivilId() || requestOtpModel.getCivilId().toString().equals("")) {
+					requestOtpModel.setCivilId(userSession.getCivilId());
+				}
+
+				if (!validateCivilID.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
+					validateCivilID.setStatusKey(validateCivilID.getMessageKey());
+					return validateCivilID;
+				}
+
+				if (civilIdExistCheck.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
+					civilIdExistCheck.setStatusKey(civilIdExistCheck.getMessageKey());
+					return civilIdExistCheck;
+				}
+
+				if (!validateEmailID.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
+
+					return validateEmailID;
+				}
+
+				if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
+					sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL, requestOtpModel,
+							emailIdExists.getMessage());
+					resp.setMessageKey(WebAppStatusCodes.EMAIL_ID_REGESTERED.toString());
+					resp.setStatusEnum(WebAppStatusCodes.EMAIL_ID_REGESTERED);
+					return resp;
+				}
+
+				if (!isValidMobileNumber.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
+					return isValidMobileNumber;
+				}
+
+				if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
+					sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE, requestOtpModel,
+							mobileNumberExists.getMessage());
+					resp.setMessageKey(WebAppStatusCodes.MOBILE_NUMBER_REGISTERED.toString());
+					resp.setStatusEnum(WebAppStatusCodes.MOBILE_NUMBER_REGISTERED);
+					return resp;
+				}
+
+				if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)
+						&& emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
+					sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_MOBE_MAIL, requestOtpModel,
+							mobileNumberExists.getMessage());
+					resp.setStatusEnum(WebAppStatusCodes.MOBILE_OR_EMAIL_ALREADY_EXISTS);
+					resp.setMessageKey(WebAppStatusCodes.MOBILE_OR_EMAIL_ALREADY_EXISTS.toString());
+					return resp;
+				}
+
+			} catch (Exception e) {
+				resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+				resp.setMessage(e.toString());
+				logger.info(TAG + "validateForRegistration :: exception :" + e);
+				e.printStackTrace();
 			}
-			else if (mobileNumberExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
-			{
-				sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_MOBILE, requestOtpModel, mobileNumberExists.getMessage());
-				mobileNumberExists.setMessageKey(MessageKey.KEY_MOBILE_NO_ALREADY_REGISTER);
-				mobileNumberExists.setStatusKey(ApiConstants.FAILURE);
-				return mobileNumberExists;
-			}
-			else if (emailIdExists.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
-			{
-				sendFailedRegistration(DetailsConstants.REG_INCOMPLETE_TYPE_DUPLICATE_EMAIL, requestOtpModel, emailIdExists.getMessage());
-				emailIdExists.setMessageKey(MessageKey.KEY_EMAID_ALREADY_REGISTER);
-				emailIdExists.setStatusKey(ApiConstants.FAILURE);
-				return emailIdExists;
-			}
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "validateForRegistration :: exception :" + e);
 			e.printStackTrace();
-			resp.setData(null);
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
-			return resp;
 		}
+
 		return null;
 	}
 }

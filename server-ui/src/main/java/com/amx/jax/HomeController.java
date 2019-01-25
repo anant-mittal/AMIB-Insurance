@@ -1,14 +1,17 @@
 
 package com.amx.jax;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.map.HashedMap;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,9 +24,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.http.CommonHttpRequest;
-import com.amx.jax.models.MetaData;
+import com.amx.jax.meta.IMetaService;
+import com.amx.jax.models.ResponseOtpModel;
 import com.amx.jax.rest.RestService;
-import com.amx.jax.services.CustomerRegistrationService;
 import com.amx.jax.services.CustomizeQuoteService;
 import com.amx.jax.ui.response.ResponseMessage;
 import com.amx.jax.ui.response.ResponseWrapper;
@@ -39,8 +42,7 @@ import io.swagger.annotations.Api;
  */
 @Controller
 @Api(value = "Auth APIs")
-public class HomeController
-{
+public class HomeController {
 
 	String TAG = "com.amx.jax.services :: HomeController :: ";
 
@@ -60,9 +62,6 @@ public class HomeController
 	@Autowired
 	RestService restService;
 
-	@Autowired
-	private MetaData metaData;
-
 	/** The check time. */
 	private long checkTime = 0L;
 
@@ -70,13 +69,13 @@ public class HomeController
 	private String versionNew = "_";
 
 	@Autowired
-	private CustomerRegistrationService customerRegistrationService;
-
-	@Autowired
 	private CustomizeQuoteService customizeQuoteService;
 
 	@Autowired
 	UserSession userSession;
+
+	@Autowired
+	IMetaService metaService;
 
 	/**
 	 * Gets the version.
@@ -84,138 +83,63 @@ public class HomeController
 	 * @return the version
 	 */
 
-	public String getVersion()
-	{
+	public String getVersion() {
 		long checkTimeNew = System.currentTimeMillis() / (1000 * 60 * 5);
-		
-		System.out.println("HomeController :: getVersion() :: checkTimeNew :"+ checkTimeNew);
-		System.out.println("HomeController :: getVersion() :: checkTime    :"+ checkTime);
-		
-		if (checkTimeNew != checkTime) 
-		{
-			try 
-			{
-				System.out.println("HomeController :: getVersion() :: getCdnURL1 :"+ appConfig.getCdnURL() + "/dist/build.json?_=" + checkTimeNew);
-				System.out.println("HomeController :: getVersion() :: getCdnURL2 :"+ appConfig.getCdnURL() + "/dist/build.json?_=" + checkTimeNew);
-				
-				Map<String, Object> map = JsonUtil.toMap(restService.ajax(appConfig.getCdnURL() + "/dist/build.json?_=" + checkTimeNew).get().asObject());
-				if (map.containsKey("version")) 
-				{
-					System.out.println("HomeController :: getVersion() :: map :"+ map.values());
+		if (checkTimeNew != checkTime) {
+			try {
+				Map<String, Object> map = JsonUtil.toMap(restService
+						.ajax(appConfig.getCdnURL() + "/dist/build.json?_=" + checkTimeNew).get().asObject());
+				if (map.containsKey("version")) {
 					versionNew = ArgUtil.parseAsString(map.get("version"));
-					System.out.println("HomeController :: getVersion() :: versionNew 1 :"+ versionNew);
 				}
 				checkTime = checkTimeNew;
-			} 
-			catch (Exception e) 
-			{
-				System.out.println("HomeController :: getVersion() :: Exception :"+ e);
+			} catch (Exception e) {
+				logger.info("HomeController :: getVersion() :: Exception :" + e);
 			}
 		}
-		System.out.println("HomeController :: getVersion() :: versionNew 2 :"+ versionNew);
-		
 		return versionNew;
-		
-		//return "1.0.1";
 	}
 
-	/**
-	 * Login ping
-	 * 
-	 * @param request
-	 *            the request
-	 * @return the string
-	 */
-	@RequestMapping(value = "/pub/meta/**", method = { RequestMethod.GET })
-	@ResponseBody
-	public String loginPing(HttpServletRequest request)
-	{
-		System.out.println("HomeController :: loginPing :: getLanguage : " + httpService.getLanguage());
-		AmxApiResponse<Object, Object> wrapper = new AmxApiResponse<Object, Object>();
-		return JsonUtil.toJson(wrapper);
-	}
+	// @Timed
+	@RequestMapping(value = { "/", "/register/**", "/login/**", "/app/**", "/resetPwd", "/home/**" }, method = {
+			RequestMethod.GET })
+	public String loginJPage(Model model, HttpServletRequest request) {
 
-	//@Timed
-	@RequestMapping(value = {"/login/**" , "/resetPwd"}, method = { RequestMethod.GET })
-	public String loginJPage(Model model)
-	{
-		System.out.println("HomeController :: loginJPage 1 :: getLanguage : " + httpService.getLanguage());
 		model.addAttribute("lang", httpService.getLanguage());
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
 		model.addAttribute("cdnUrl", appConfig.getCdnURL());
 		model.addAttribute("cdnVerion", getVersion());
-		//model.addAttribute(AppConstants.DEVICE_ID_KEY, userDevice.getFingerprint());
-		//model.addAttribute("fcmSenderId", fcmSenderId);
+		// model.addAttribute(AppConstants.DEVICE_ID_KEY, userDevice.getFingerprint());
+		// model.addAttribute("fcmSenderId", fcmSenderId);
 		return "app";
 	}
 
-	@RequestMapping(value = "/login/**", method = { RequestMethod.GET, RequestMethod.POST }, headers = { "Accept=application/json", "Accept=application/v0+json" })
+	@RequestMapping(value = "/login/**", method = { RequestMethod.GET, RequestMethod.POST }, headers = {
+			"Accept=application/json", "Accept=application/v0+json" })
 	@ResponseBody
-	public String loginPJson()
-	{
-		System.out.println("HomeController :: loginJPage 2 :: getLanguage : " + httpService.getLanguage());
+	public String loginPJson() {
 		ResponseWrapper<Object> wrapper = new ResponseWrapper<Object>(null);
 		wrapper.setMessage(WebResponseStatus.UNAUTHORIZED, ResponseMessage.UNAUTHORIZED);
-		System.out.println("HomeController :: loginJPage 2 :: JsonUtil.toJson(wrapper): " + JsonUtil.toJson(wrapper));
-		
 		return JsonUtil.toJson(wrapper);
-	}
-		
-
-	/**
-	 * Default page.
-	 *
-	 * @param model
-	 *            the model
-	 * @return the string
-	 */
-	@RequestMapping(value = { "/", "/register/**", "/app/**", "/home/**", "/" }, method = { RequestMethod.GET })
-	public String defaultPage(Model model)
-	{
-		model.addAttribute("lang", httpService.getLanguage());
-		model.addAttribute("applicationTitle", webConfig.getAppTitle());
-		model.addAttribute("cdnUrl", appConfig.getCdnURL());
-		model.addAttribute("cdnVerion", getVersion());
-
-		laguageSetUp();
-		return "app";
 	}
 
 	@RequestMapping(value = { "/pub/terms" }, method = { RequestMethod.GET })
-	public String termsAndCondition(Model model)
-	{
+	public String termsAndCondition(Model model) {
 		JSONObject dataJson = new JSONObject();
 		ArrayList<String> dataList = new ArrayList<>();
-		try
-		{
+		try {
 			TreeMap<Integer, String> data = customizeQuoteService.getTermsAndConditionTest();
 			Iterator it = data.entrySet().iterator();
-			while (it.hasNext())
-			{
+			while (it.hasNext()) {
 				Map.Entry pair = (Map.Entry) it.next();
-				System.out.println(pair.getKey() + " = " + pair.getValue());
 				dataList.add(pair.getValue().toString());
 				it.remove();
 			}
-			model.addAttribute("terms",dataList);
-			System.out.println("HomeController :: termsAndCondition :: dataJson :" + dataList.toString());
-			System.out.println("HomeController :: termsAndCondition :: model    :" + model.asMap());
-		}
-		catch(Exception e)
-		{
+			model.addAttribute("terms", dataList);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return "terms";
 	}
-
-
-	public void laguageSetUp()
-	{
-		if (httpService.getLanguage().toString().equalsIgnoreCase("EN"))
-		{
-			metaData.setLanguageId(new BigDecimal(0));
-			customerRegistrationService.getCompanySetUp();
-		}
-	}
-
+	
 }

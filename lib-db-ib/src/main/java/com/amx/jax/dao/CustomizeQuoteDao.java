@@ -8,17 +8,17 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.TreeMap;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.amx.jax.models.AdditionalPolicySave;
+import com.amx.jax.constants.ApiConstants;
+import com.amx.jax.meta.IMetaService;
+import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CustomizeQuoteAddPol;
 import com.amx.jax.models.CustomizeQuoteSave;
-import com.amx.jax.models.MetaData;
 import com.amx.jax.models.QuoteAddPolicyDetails;
 import com.amx.jax.models.ReplacementTypeList;
 import com.amx.jax.models.TermsCondition;
@@ -38,28 +38,30 @@ public class CustomizeQuoteDao
 	JdbcTemplate jdbcTemplate;
 
 	@Autowired
-	MetaData metaData;
+	IMetaService metaService;
 
 	Connection connection;
 
-	public ArrayList<QuoteAddPolicyDetails> getQuoteAdditionalPolicy(BigDecimal quotSeqNumber, BigDecimal verNumber)
+	public ArrayResponseModel getQuoteAdditionalPolicy(BigDecimal quotSeqNumber, BigDecimal verNumber , BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		String callProcedure = "{call IRB_GET_QUOTE_ADDLPOL(?,?,?,?,?,?,?,?)}";
 		ArrayList<QuoteAddPolicyDetails> activePolicyArray = new ArrayList<QuoteAddPolicyDetails>();
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, quotSeqNumber);
 			callableStatement.setBigDecimal(4, verNumber);
-			callableStatement.setBigDecimal(5, metaData.getLanguageId());
+			callableStatement.setBigDecimal(5, languageId);
 			callableStatement.registerOutParameter(6, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
+			
 			ResultSet rs = (ResultSet) callableStatement.getObject(6);
 			while (rs.next())
 			{
@@ -87,35 +89,42 @@ public class CustomizeQuoteDao
 				quoteAddPolicyDetails.setYearlyPremium(rs.getBigDecimal(6));
 				quoteAddPolicyDetails.setReplacementTypeCode(rs.getString(9));
 				activePolicyArray.add(quoteAddPolicyDetails);
-				logger.info(TAG + " getQuoteAdditionalPolicy :: QuoteAddPolicyDetails :" + quoteAddPolicyDetails.toString());
+				//logger.info(TAG + " getQuoteAdditionalPolicy :: QuoteAddPolicyDetails :" + quoteAddPolicyDetails.toString());
+				arrayResponseModel.setDataArray(activePolicyArray);
+				
 			}
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getQuoteAdditionalPolicy :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return activePolicyArray;
+		return arrayResponseModel;
 	}
 
-	public ArrayList getReplacementTypeList(String policyTypeCode, Date policyDate)// V10,28-09-2018
+	//public ArrayList getReplacementTypeList(String policyTypeCode, Date policyDate)// V10,28-09-2018
+	public ArrayResponseModel getReplacementTypeList(String policyTypeCode, Date policyDate , BigDecimal languageId)// V10,28-09-2018
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		String callProcedure = "{call IRB_GET_REPLPOLTYPE_LIST(?,?,?,?,?,?,?,?)}";
 		ArrayList<ReplacementTypeList> repTypeListArray = new ArrayList<ReplacementTypeList>();
 
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(3, policyTypeCode);
 			callableStatement.setDate(4, policyDate);
-			callableStatement.setBigDecimal(5, metaData.getLanguageId());
+			callableStatement.setBigDecimal(5, languageId);
 			callableStatement.registerOutParameter(6, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
@@ -129,37 +138,46 @@ public class CustomizeQuoteDao
 				{
 					return null;
 				}
+				//logger.info("getCustomizedQuoteDetails :: rs.getString(1) :" + rs.getString(1));
 				replacementTypeList.setReplacementTypeCode(rs.getString(1));
 				replacementTypeList.setReplacementTypeDesc(rs.getString(2));
 				replacementTypeList.setYearlyPremium(rs.getBigDecimal(3));
 				repTypeListArray.add(replacementTypeList);
 			}
+			//logger.info("getCustomizedQuoteDetails :: repTypeListArray :" + repTypeListArray);
+			arrayResponseModel.setDataArray(repTypeListArray);
 
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getReplacementTypeList :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return repTypeListArray;
+		return arrayResponseModel;
 	}
 
-	public ArrayList getTermsAndCondition()
+	//public ArrayList getTermsAndCondition()
+	public ArrayResponseModel getTermsAndCondition(BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
+		
 		String callProcedure = "{call IRB_GET_TERMSCON(?,?,?,?,?,?,?)}";
 		ArrayList<TermsCondition> termsConditionArray = new ArrayList<TermsCondition>();
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(3, "PAY");
-			callableStatement.setBigDecimal(4, metaData.getLanguageId());
+			callableStatement.setBigDecimal(4, languageId);
 			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
@@ -172,11 +190,14 @@ public class CustomizeQuoteDao
 				termsCondition.setTermsAndCondition(rs.getString(1));
 				termsCondition.setId(rs.getBigDecimal(2));
 				termsConditionArray.add(termsCondition);
-
 			}
+			arrayResponseModel.setDataArray(termsConditionArray);
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getTermsAndCondition :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -184,10 +205,10 @@ public class CustomizeQuoteDao
 			CloseConnection(callableStatement, connection);
 		}
 
-		return termsConditionArray;
+		return arrayResponseModel;
 	}
 
-	public TreeMap<Integer, String> getTermsAndConditionTest()
+	public TreeMap<Integer, String> getTermsAndConditionTest(BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -196,10 +217,10 @@ public class CustomizeQuoteDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(3, "PAY");
-			callableStatement.setBigDecimal(4, metaData.getLanguageId());
+			callableStatement.setBigDecimal(4, languageId);
 			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
@@ -232,18 +253,18 @@ public class CustomizeQuoteDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, customizeQuoteSave.getQuotSeqNumber());
 			callableStatement.setBigDecimal(4, customizeQuoteSave.getVerNumber());
-			callableStatement.setBigDecimal(5, Utility.round(customizeQuoteSave.getBasicPremium(), metaData.getDecplc()));
-			callableStatement.setBigDecimal(6, Utility.round(customizeQuoteSave.getSupervisionFees(), metaData.getDecplc()));
-			callableStatement.setBigDecimal(7, Utility.round(customizeQuoteSave.getIssueFee(), metaData.getDecplc()));
-			callableStatement.setBigDecimal(8, Utility.round(customizeQuoteSave.getDisscountAmt(), metaData.getDecplc()));
-			callableStatement.setBigDecimal(9, Utility.round(customizeQuoteSave.getAddCoveragePremium(), metaData.getDecplc()));
-			callableStatement.setBigDecimal(10,Utility.round(customizeQuoteSave.getTotalAmount(), metaData.getDecplc()));
-			callableStatement.setString(11, metaData.getDeviceType());
-			callableStatement.setString(12, metaData.getDeviceId());
+			callableStatement.setBigDecimal(5, Utility.round(customizeQuoteSave.getBasicPremium(), metaService.getTenantProfile().getDecplc()));
+			callableStatement.setBigDecimal(6, Utility.round(customizeQuoteSave.getSupervisionFees(), metaService.getTenantProfile().getDecplc()));
+			callableStatement.setBigDecimal(7, Utility.round(customizeQuoteSave.getIssueFee(), metaService.getTenantProfile().getDecplc()));
+			callableStatement.setBigDecimal(8, Utility.round(customizeQuoteSave.getDisscountAmt(), metaService.getTenantProfile().getDecplc()));
+			callableStatement.setBigDecimal(9, Utility.round(customizeQuoteSave.getAddCoveragePremium(), metaService.getTenantProfile().getDecplc()));
+			callableStatement.setBigDecimal(10,Utility.round(customizeQuoteSave.getTotalAmount(), metaService.getTenantProfile().getDecplc()));
+			callableStatement.setString(11, metaService.getUserDeviceInfo().getDeviceType());
+			callableStatement.setString(12, metaService.getUserDeviceInfo().getDeviceId());
 			callableStatement.setString(13, civilId);
 			callableStatement.registerOutParameter(14, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(15, java.sql.Types.VARCHAR);
@@ -254,6 +275,9 @@ public class CustomizeQuoteDao
 		}
 		catch (Exception e)
 		{
+			validate.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			validate.setErrorMessage(e.toString());
+			logger.info(TAG+"saveCustomizeQuote :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -272,31 +296,33 @@ public class CustomizeQuoteDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, customizeQuoteAddPol.getQuoteSeqNumber());
 			callableStatement.setBigDecimal(4, customizeQuoteAddPol.getVerNumber());
 			callableStatement.setString(5, customizeQuoteAddPol.getAddPolicyTypeCode());
 			callableStatement.setBigDecimal(6, customizeQuoteAddPol.getYearlyPremium());
 			callableStatement.setString(7, customizeQuoteAddPol.getOptIndex());
-			callableStatement.setBigDecimal(8, Utility.round(customizeQuoteAddPol.getYearMultiplePremium(), metaData.getDecplc()));
+			callableStatement.setBigDecimal(8, Utility.round(customizeQuoteAddPol.getYearMultiplePremium(), metaService.getTenantProfile().getDecplc()));
 			callableStatement.setString(9, customizeQuoteAddPol.getReplacementTypeCode());
-			callableStatement.setString(10, metaData.getDeviceType());
-			callableStatement.setString(11, metaData.getDeviceId());
+			callableStatement.setString(10, metaService.getUserDeviceInfo().getDeviceType());
+			callableStatement.setString(11, metaService.getUserDeviceInfo().getDeviceId());
 			callableStatement.setString(12, civilId);
 			callableStatement.registerOutParameter(13, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(14, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
 			
-			logger.info(TAG + " saveCustomizeQuoteAddPol :: getErrorCode() :" + callableStatement.getString(13));
-			logger.info(TAG + " saveCustomizeQuoteAddPol :: getErrorMessage() :" + callableStatement.getString(14));
+			//logger.info(TAG + " saveCustomizeQuoteAddPol :: getErrorCode() :" + callableStatement.getString(13));
+			//logger.info(TAG + " saveCustomizeQuoteAddPol :: getErrorMessage() :" + callableStatement.getString(14));
 			
 			validate.setErrorCode(callableStatement.getString(13));
 			validate.setErrorMessage(callableStatement.getString(14));
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			validate.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			validate.setErrorMessage(e.toString());
+			logger.info(TAG+"saveCustomizeQuote :: exception :" + e);
 		}
 		finally
 		{

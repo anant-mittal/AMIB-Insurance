@@ -1,5 +1,6 @@
 package com.amx.jax.models;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 public class ArrayResponseModel
@@ -16,6 +17,18 @@ public class ArrayResponseModel
 	
 	private Object object;
 	
+	private BigDecimal numericData;
+	
+	public BigDecimal getNumericData() 
+	{
+		return numericData;
+	}
+
+	public void setNumericData(BigDecimal numericData) 
+	{
+		this.numericData = numericData;
+	}
+
 	public Object getObject() 
 	{
 		return object;

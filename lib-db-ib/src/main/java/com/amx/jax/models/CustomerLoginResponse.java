@@ -2,14 +2,20 @@ package com.amx.jax.models;
 
 import java.math.BigDecimal;
 
+import com.amx.jax.swagger.ApiMockModelProperty;
+
 public class CustomerLoginResponse
 {
+	@ApiMockModelProperty(example = "245", value = "Customer Sequence Number")
 	public BigDecimal userSeqNum;
 
+	@ApiMockModelProperty(example = "354", value = "Customer AMIB Ref Number")
 	public BigDecimal amibRef;
-
+	
+	@ApiMockModelProperty(example = "amibmotor@almullagroup.com", value = "AMIB email ID")
 	private String contactUsEmail;
 
+	@ApiMockModelProperty(example = "68541445", value = "AMI")
 	private String contactUsHelpLineNumber;
 
 	public BigDecimal getUserSeqNum()

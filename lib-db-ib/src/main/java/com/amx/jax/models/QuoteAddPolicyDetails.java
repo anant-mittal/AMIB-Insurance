@@ -3,18 +3,26 @@ package com.amx.jax.models;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
+import com.amx.jax.swagger.ApiMockModelProperty;
+
 public class QuoteAddPolicyDetails
 {
+	@ApiMockModelProperty(example = "text", value = "Replacement Type Visibility Text/Dropdown")
 	private String replacTypeVisibility;
 
+	@ApiMockModelProperty(example = "WOL", value = "Policy Type Code")
 	private String addPolicyTypeCode;
 
+	@ApiMockModelProperty(example = "WAIVER OF LIABILITY", value = "Policy Type Desc")
 	private String addPolicyTypeDesc;
 
+	@ApiMockModelProperty(example = "true", value = "Check if AMIB policy type is nable or disable")
 	private boolean addPolicyTypeEnable;
 
+	@ApiMockModelProperty(example = "15", value = "Yearly Premium Amount")
 	private BigDecimal yearlyPremium;
 
+	@ApiMockModelProperty(example = "", value = "")
 	private String replacementTypeCode;
 
 	public String getReplacementTypeCode()

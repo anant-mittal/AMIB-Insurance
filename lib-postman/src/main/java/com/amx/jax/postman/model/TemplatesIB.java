@@ -16,12 +16,14 @@ public enum TemplatesIB implements ITemplate {
 	QUOTE_SUBMIT_EMAIL_TO_AMIB("quote-submit-amib-email"),
 	POLICY_DUE_REMINDER("policy-due-reminder"),
 	KNET_SUCCESS_EMAIL("knet-success-email"),
-	QUOTE_SUBMIT("quote-submit-email"),
+	QUOTE_READY_AMIB("quote-submit-email"),
 	TRNX_RECEIPT("TransactionReceipt", PDFConverter.JASPER, "TransactionReceipt.json"),
 	POLICY_RECEIPT("PolicyReceipt", PDFConverter.JASPER, "PolicyReceipt.json"),
-	//TODO dummy example of remit
+	CONTACT_US("ContactForm"),
 	REMIT_RECEIPT_JASPER("TransactionReceipt_jasper", PDFConverter.JASPER, "TransactionReceipt.json");
 		
+	
+	
 	String fileName;
 	PDFConverter converter;
 	String sampleJSON;

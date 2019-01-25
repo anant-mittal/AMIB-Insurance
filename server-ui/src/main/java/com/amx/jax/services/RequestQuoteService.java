@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.amx.jax.WebAppStatus.WebAppStatusCodes;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.HardCodedValues;
-import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.PersonalDetailsDao;
 import com.amx.jax.dao.RequestQuoteDao;
 import com.amx.jax.models.ArrayResponseModel;
@@ -23,7 +23,6 @@ import com.amx.jax.models.DownloadImageModel;
 import com.amx.jax.models.ImageModel;
 import com.amx.jax.models.IncompleteApplModel;
 import com.amx.jax.models.InsuranceCompanyDetails;
-import com.amx.jax.models.MetaData;
 import com.amx.jax.models.PersonalDetails;
 import com.amx.jax.models.RequestQuoteInfo;
 import com.amx.jax.models.RequestQuoteModel;
@@ -33,6 +32,7 @@ import com.amx.jax.models.VehicleDetailsGetModel;
 import com.amx.jax.models.VehicleDetailsHeaderModel;
 import com.amx.jax.models.VehicleDetailsUpdateModel;
 import com.amx.jax.ui.session.UserSession;
+import com.amx.jax.utility.CodeAvaibility;
 
 @Service
 public class RequestQuoteService
@@ -40,8 +40,8 @@ public class RequestQuoteService
 
 	private static final Logger logger = LoggerFactory.getLogger(RequestQuoteService.class);
 
-	String TAG = "com.amx.jax.services.RequestQuoteService :- ";
-
+	String TAG = "RequestQuoteService :: ";
+	
 	@Autowired
 	public RequestQuoteDao requestQuoteDao;
 
@@ -50,9 +50,6 @@ public class RequestQuoteService
 
 	@Autowired
 	private EmailSmsService emailSmsService;
-
-	@Autowired
-	MetaData metaData;
 
 	@Autowired
 	UserSession userSession;
@@ -66,27 +63,25 @@ public class RequestQuoteService
 
 		try
 		{
-			IncompleteApplModel incompleteApplModel = requestQuoteDao.getIncompleteApplication(userSession.getCivilId() , metaData.getUserType() , userSession.getCustomerSequenceNumber());
+			IncompleteApplModel incompleteApplModel = requestQuoteDao.getIncompleteApplication(userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber());
+			if(incompleteApplModel.getErrorCode() != null)
+			{
+				resp.setMessageKey(incompleteApplModel.getErrorCode());
+				resp.setMessage(incompleteApplModel.getErrorMessage());
+				return resp;
+			}
+			
 			requestQuoteInfo.setAppSeqNumber(incompleteApplModel.getAppSeqNumber());
 			requestQuoteModel.setRequestQuoteInfo(requestQuoteInfo);
-
-			if (null == incompleteApplModel.getErrorCode())
-			{
-				resp.setStatusKey(ApiConstants.SUCCESS);
-			}
-			else
-			{
-				resp.setStatusKey(ApiConstants.FAILURE);
-			}
-			resp.setMessageKey(incompleteApplModel.getErrorCode());
-			resp.setMessage(incompleteApplModel.getErrorMessage());
+			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			resp.setData(requestQuoteInfo);
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG+"getIncompleteApplication :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
@@ -97,14 +92,14 @@ public class RequestQuoteService
 
 		try
 		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getMake();
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getMake(userSession.getLanguageId());
 			if (null == arrayResponseModel.getErrorCode())
 			{
-				resp.setStatusKey(ApiConstants.SUCCESS);
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			}
 			else
 			{
-				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setStatusKey(arrayResponseModel.getErrorCode());
 			}
 			resp.setMessageKey(arrayResponseModel.getErrorCode());
 			resp.setMessage(arrayResponseModel.getErrorMessage());
@@ -113,9 +108,10 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG+"getMake :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 
@@ -127,15 +123,15 @@ public class RequestQuoteService
 
 		try
 		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getModel(make);
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getModel(make, userSession.getLanguageId());
 			if (null == arrayResponseModel.getErrorCode())
 			{
-				resp.setStatusKey(ApiConstants.SUCCESS);
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 				resp.setResults(arrayResponseModel.getDataArray());
 			}
 			else
 			{
-				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setStatusKey(arrayResponseModel.getErrorCode());
 			}
 			resp.setMessageKey(arrayResponseModel.getErrorCode());
 			resp.setMessage(arrayResponseModel.getErrorMessage());
@@ -143,9 +139,10 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG+"getModel :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 
@@ -157,15 +154,15 @@ public class RequestQuoteService
 
 		try
 		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getFuleType();
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getFuleType(userSession.getLanguageId());
 			if (null == arrayResponseModel.getErrorCode())
 			{
-				resp.setStatusKey(ApiConstants.SUCCESS);
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 				resp.setResults(arrayResponseModel.getDataArray());
 			}
 			else
 			{
-				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setStatusKey(arrayResponseModel.getErrorCode());
 			}
 			resp.setMessageKey(arrayResponseModel.getErrorCode());
 			resp.setMessage(arrayResponseModel.getErrorMessage());
@@ -173,9 +170,10 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG+"getFuleType :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
@@ -186,15 +184,15 @@ public class RequestQuoteService
 
 		try
 		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getPurpose();
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getPurpose(userSession.getLanguageId());
 			if (null == arrayResponseModel.getErrorCode())
 			{
-				resp.setStatusKey(ApiConstants.SUCCESS);
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 				resp.setResults(arrayResponseModel.getDataArray());
 			}
 			else
 			{
-				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setStatusKey(arrayResponseModel.getErrorCode());
 			}
 			resp.setMessageKey(arrayResponseModel.getErrorCode());
 			resp.setMessage(arrayResponseModel.getErrorMessage());
@@ -202,9 +200,10 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG+"getPurpose :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
@@ -215,15 +214,15 @@ public class RequestQuoteService
 
 		try
 		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getShape();
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getShape(userSession.getLanguageId());
 			if (null == arrayResponseModel.getErrorCode())
 			{
-				resp.setStatusKey(ApiConstants.SUCCESS);
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 				resp.setResults(arrayResponseModel.getDataArray());
 			}
 			else
 			{
-				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setStatusKey(arrayResponseModel.getErrorCode());
 			}
 			resp.setMessageKey(arrayResponseModel.getErrorCode());
 			resp.setMessage(arrayResponseModel.getErrorMessage());
@@ -231,9 +230,10 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG+"getShape :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
@@ -244,15 +244,15 @@ public class RequestQuoteService
 
 		try
 		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getColour();
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getColour(userSession.getLanguageId());
 			if (null == arrayResponseModel.getErrorCode())
 			{
-				resp.setStatusKey(ApiConstants.SUCCESS);
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 				resp.setResults(arrayResponseModel.getDataArray());
 			}
 			else
 			{
-				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setStatusKey(arrayResponseModel.getErrorCode());
 			}
 			resp.setMessageKey(arrayResponseModel.getErrorCode());
 			resp.setMessage(arrayResponseModel.getErrorMessage());
@@ -260,9 +260,10 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG+"getShape :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
@@ -273,15 +274,15 @@ public class RequestQuoteService
 
 		try
 		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getVehicleCondition();
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getVehicleCondition(userSession.getLanguageId());
 			if (null == arrayResponseModel.getErrorCode())
 			{
-				resp.setStatusKey(ApiConstants.SUCCESS);
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 				resp.setResults(arrayResponseModel.getDataArray());
 			}
 			else
 			{
-				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setStatusKey(arrayResponseModel.getErrorCode());
 			}
 			resp.setMessageKey(arrayResponseModel.getErrorCode());
 			resp.setMessage(arrayResponseModel.getErrorMessage());
@@ -289,9 +290,10 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG+"getVehicleCondition :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
@@ -299,35 +301,39 @@ public class RequestQuoteService
 	public AmxApiResponse<?, Object> getMaxVehicleAgeAllowed()
 	{
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
-
-		try
+		ArrayResponseModel arrayResponseModel = requestQuoteDao.getMaxVehicleAgeAllowed();
+		if (null != arrayResponseModel.getErrorCode())
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			resp.setResults(requestQuoteDao.getMaxVehicleAgeAllowed());
+			resp.setMessageKey(arrayResponseModel.getErrorCode());
+			resp.setMessage(arrayResponseModel.getErrorMessage());
+			return resp;
 		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
-		}
+		resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
+		resp.setResults(arrayResponseModel.getDataArray());
 		return resp;
 	}
 
 	public AmxApiResponse<?, Object> getPolicyDuration()
 	{
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
-
-		try
+		try 
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			resp.setResults(requestQuoteDao.getPolicyDuration());
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getPolicyDuration();
+			if (null != arrayResponseModel.getErrorCode())
+			{
+				resp.setMessageKey(arrayResponseModel.getErrorCode());
+				resp.setMessage(arrayResponseModel.getErrorMessage());
+				return resp;
+			}
+			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
+			resp.setResults(arrayResponseModel.getDataArray());
 		}
-		catch (Exception e)
+		catch (Exception e) 
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "getPolicyDuration :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
@@ -339,12 +345,18 @@ public class RequestQuoteService
 
 		try
 		{
-			IncompleteApplModel incompleteApplModel = requestQuoteDao.getIncompleteApplication(userSession.getCivilId() , metaData.getUserType() , userSession.getCustomerSequenceNumber());
+			IncompleteApplModel incompleteApplModel = requestQuoteDao.getIncompleteApplication(userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber());
+			if(incompleteApplModel.getErrorCode() != null)
+			{
+				resp.setMessageKey(incompleteApplModel.getErrorCode());
+				resp.setMessage(incompleteApplModel.getErrorMessage());
+				return resp;
+			}
 			BigDecimal appSeqNumber = incompleteApplModel.getAppSeqNumber();
-			logger.info(TAG + " getRequestQuoteDetails :: appSeqNumber :" + appSeqNumber);
-
+			
+			
 			AmxApiResponse<?, Object> respInfoDetails = getIncompleteApplication();
-			if (respInfoDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			if (!respInfoDetails.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				return respInfoDetails;
 			}
@@ -354,7 +366,7 @@ public class RequestQuoteService
 			}
 
 			AmxApiResponse<?, Object> respVehicleDetails = getAppVehicleDetails(appSeqNumber);
-			if (respVehicleDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			if (!respVehicleDetails.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				return respVehicleDetails;
 			}
@@ -371,7 +383,7 @@ public class RequestQuoteService
 			}
 
 			AmxApiResponse<?, Object> respPersonalDetails = getProfileDetails();
-			if (respPersonalDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			if (!respPersonalDetails.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				return respPersonalDetails;
 			}
@@ -381,7 +393,7 @@ public class RequestQuoteService
 			}
 
 			AmxApiResponse<?, Object> respImageDetails = getImageDetails(appSeqNumber);
-			if (respImageDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			if (!respImageDetails.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				return respImageDetails;
 			}
@@ -391,7 +403,7 @@ public class RequestQuoteService
 			}
 
 			AmxApiResponse<?, Object> insuranceCompDetails = getInsuranceCompanyDetails(appSeqNumber);
-			if (insuranceCompDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			if (!insuranceCompDetails.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				return insuranceCompDetails;
 			}
@@ -405,9 +417,10 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "getRequestQuoteDetails :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
@@ -419,16 +432,10 @@ public class RequestQuoteService
 
 		try
 		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getAppVehicleDetails(appSeqNumber);
-
-			logger.info(TAG + " getAppVehicleDetails :: arrayResponseModel.getErrorCode() :" + arrayResponseModel.getErrorCode());
-
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getAppVehicleDetails(appSeqNumber, userSession.getLanguageId());
 			if (null == arrayResponseModel.getErrorCode())
 			{
 				ArrayList<VehicleDetailsGetModel> vehicleDetailsArray = arrayResponseModel.getDataArray();
-				
-				logger.info(TAG + " getAppVehicleDetails :: vehicleDetailsArray.size() :" + vehicleDetailsArray.size());
-				
 				if (vehicleDetailsArray.size() >= 1)
 				{
 					VehicleDetailsGetModel vehicleDetailsGetModel = vehicleDetailsArray.get(0);
@@ -438,7 +445,9 @@ public class RequestQuoteService
 					vehicleDetails.setModelYear(vehicleDetailsGetModel.getModelNumber());
 					vehicleDetails.setVehicleValue(vehicleDetailsGetModel.getMaxInsmat());
 					vehicleDetails.setPolicyDuration(vehicleDetailsGetModel.getPolicyPeriod());
-					vehicleDetails.setPurposeCode(vehicleDetailsGetModel.getPurposeCode());
+					
+					vehicleDetails.setPurposeCode(CodeAvaibility.purposeCodeCheck(vehicleDetailsGetModel.getPurposeCode() , getPurpose().getResults()));
+					
 					vehicleDetails.setColourCode(vehicleDetailsGetModel.getColourCode());
 					vehicleDetails.setShapeCode(vehicleDetailsGetModel.getShapeCode());
 					vehicleDetails.setSeatingCapacity(vehicleDetailsGetModel.getNoPass());
@@ -455,14 +464,12 @@ public class RequestQuoteService
 					{
 						vehicleDetails.setApplicationType(null);
 					}
-					
-					logger.info(TAG + " getAppVehicleDetails :: vehicleDetails :" + vehicleDetails.toString());
 				}
-				resp.setStatusKey(ApiConstants.SUCCESS);
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			}
 			else
 			{
-				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setStatusKey(arrayResponseModel.getErrorCode());
 			}
 			resp.setMessageKey(arrayResponseModel.getErrorCode());
 			resp.setMessage(arrayResponseModel.getErrorMessage());
@@ -470,9 +477,10 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "getAppVehicleDetails :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
@@ -486,19 +494,16 @@ public class RequestQuoteService
 		try
 		{
 
-			logger.info(TAG + " setAppVehicleDetails :: oldDocNumber1 :" + oldDocNumber);
 			if (null == oldDocNumber)
 			{
-				ArrayResponseModel arrayResponseModel = requestQuoteDao.getAppVehicleDetails(appSeqNumber);
+				ArrayResponseModel arrayResponseModel = requestQuoteDao.getAppVehicleDetails(appSeqNumber, userSession.getLanguageId());
 				if (null == arrayResponseModel.getErrorCode())
 				{
 					ArrayList<VehicleDetailsGetModel> vehicleDetailsArray = arrayResponseModel.getDataArray();
-					logger.info(TAG + " getAppVehicleDetails :: vehicleDetailsArray :" + vehicleDetailsArray.toString());
 					if (vehicleDetailsArray.size() >= 1)
 					{
 						VehicleDetailsGetModel vehicleDetailsGetModel = vehicleDetailsArray.get(0);
 						oldDocNumber = vehicleDetailsGetModel.getOldDocNumber();
-						logger.info(TAG + " setAppVehicleDetails :: oldDocNumber2 :" + oldDocNumber);
 					}
 				}
 			}
@@ -509,13 +514,12 @@ public class RequestQuoteService
 				if (null == appSeqNumber)
 				{
 					appSeqNumber = vehicleDetailsHeaderModel.getAppSeqNumber();
-					logger.info(TAG + " setAppVehicleDetails :: appSeqNumber2 :" + appSeqNumber);
 				}
-				resp.setStatusKey(ApiConstants.SUCCESS);
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			}
 			else
 			{
-				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setStatusKey(vehicleDetailsHeaderModel.getErrorCode());
 				resp.setMessageKey(vehicleDetailsHeaderModel.getErrorCode());
 				resp.setMessage(vehicleDetailsHeaderModel.getErrorMessage());
 				return resp;
@@ -524,11 +528,11 @@ public class RequestQuoteService
 			VehicleDetailsUpdateModel vehicleDetailsUpdateModel = requestQuoteDao.insUpdateVehicleDetails(appSeqNumber, vehicleDetails , userSession.getCivilId());
 			if (null == vehicleDetailsUpdateModel.getErrorCode())
 			{
-				resp.setStatusKey(ApiConstants.SUCCESS);
-			}
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
+			}	
 			else
 			{
-				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setStatusKey(vehicleDetailsUpdateModel.getErrorCode());
 				resp.setMessageKey(vehicleDetailsUpdateModel.getErrorCode());
 				resp.setMessage(vehicleDetailsUpdateModel.getErrorMessage());
 				return resp;
@@ -545,9 +549,10 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "setAppVehicleDetails :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
@@ -557,36 +562,51 @@ public class RequestQuoteService
 		AmxApiResponse<PersonalDetails, Object> resp = new AmxApiResponse<PersonalDetails, Object>();
 		PersonalDetails personalDetails = new PersonalDetails();
 		CustomerProfileDetailModel customerProfileDetailModel = new CustomerProfileDetailModel();
-		customerProfileDetailModel = personalDetailsDao.getProfileDetails(userSession.getCivilId() , metaData.getUserType() , userSession.getCustomerSequenceNumber());
-
-		logger.info(TAG + " getProfileDetails :: customerProfileDetailModel :" + customerProfileDetailModel.toString());
-
-		personalDetails.setAreaCode(customerProfileDetailModel.getAreaCode());
-		personalDetails.setBusinessCode(customerProfileDetailModel.getBusinessCode());
-		personalDetails.setEmail(customerProfileDetailModel.getEmail());
-		personalDetails.setEnglishName(customerProfileDetailModel.getEnglishName());
-		personalDetails.setGenderCode(customerProfileDetailModel.getGenderCode());
-		personalDetails.setGovCode(customerProfileDetailModel.getGovCode());
-		personalDetails.setIdExpiryDate(DateFormats.uiFormattedDate(customerProfileDetailModel.getIdExpiryDate()));
-		personalDetails.setMobile(customerProfileDetailModel.getMobile());
-		personalDetails.setNatyCode(customerProfileDetailModel.getNatyCode());
-		personalDetails.setNativeArabicName(customerProfileDetailModel.getNativeArabicName());
-		
-		logger.info(TAG + " getProfileDetails :: personalDetails :" + personalDetails.toString());
-		
-		userSession.setCustomerEmailId(customerProfileDetailModel.getEmail());
-
-		if (customerProfileDetailModel.getStatus())
+		try 
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
+			customerProfileDetailModel = personalDetailsDao.getProfileDetails(userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber(), userSession.getLanguageId());
+			if (customerProfileDetailModel.getErrorCode() != null)
+			{
+				resp.setStatusKey(customerProfileDetailModel.getErrorCode());
+				resp.setMessageKey(customerProfileDetailModel.getErrorCode());
+				resp.setMessage(customerProfileDetailModel.getErrorCode());
+				return resp;
+			}
+			
+			
+			personalDetails.setAreaCode(customerProfileDetailModel.getAreaCode());
+			personalDetails.setBusinessCode(customerProfileDetailModel.getBusinessCode());
+			personalDetails.setEmail(customerProfileDetailModel.getEmail());
+			personalDetails.setEnglishName(customerProfileDetailModel.getEnglishName());
+			personalDetails.setGenderCode(customerProfileDetailModel.getGenderCode());
+			personalDetails.setGovCode(customerProfileDetailModel.getGovCode());
+			personalDetails.setIdExpiryDate(DateFormats.uiFormattedDate(customerProfileDetailModel.getIdExpiryDate()));
+			personalDetails.setMobile(customerProfileDetailModel.getMobile());
+			personalDetails.setNatyCode(customerProfileDetailModel.getNatyCode());
+			personalDetails.setNativeArabicName(customerProfileDetailModel.getNativeArabicName());
+			
+			userSession.setCustomerEmailId(customerProfileDetailModel.getEmail());
+
+			if (customerProfileDetailModel.getErrorCode() == null)
+			{
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
+			}
+			else
+			{
+				resp.setStatusKey(customerProfileDetailModel.getErrorCode());
+			}
+			resp.setData(personalDetails);
+			resp.setMessageKey(customerProfileDetailModel.getErrorCode());
+			resp.setMessage(customerProfileDetailModel.getErrorCode());
 		}
-		else
+		catch (Exception e) 
 		{
-			resp.setStatusKey(ApiConstants.FAILURE);
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "getProfileDetails :: exception :" + e);
+			e.printStackTrace();
 		}
-		resp.setData(personalDetails);
-		resp.setMessageKey(customerProfileDetailModel.getErrorCode());
-		resp.setMessage(customerProfileDetailModel.getErrorCode());
+		
 		return resp;
 	}
 
@@ -597,136 +617,153 @@ public class RequestQuoteService
 		RequestQuoteModel requestQuoteModel = new RequestQuoteModel();
 		RequestQuoteInfo requestQuoteInfo = new RequestQuoteInfo();
 		boolean custSeqNumberAvailable = false;
-
-		if (null != personalDetails.getIdExpiryDate())
+	
+		try 
 		{
-			String dateFromDb = personalDetails.getIdExpiryDate();
-			if (DateFormats.checkExpiryDate(dateFromDb))
+			if (null != personalDetails.getIdExpiryDate())
 			{
-				resp.setStatusKey(ApiConstants.FAILURE);
-				resp.setMessageKey(MessageKey.KEY_CIVIL_ID_EXPIRED);
+				String dateFromDb = personalDetails.getIdExpiryDate();
+				if (DateFormats.checkExpiryDate(dateFromDb))
+				{
+					resp.setStatusKey(WebAppStatusCodes.CIVIL_ID_EXPIRED.toString());
+					resp.setMessageKey(WebAppStatusCodes.CIVIL_ID_EXPIRED.toString());
+					return resp;
+				}
+			}
+			customerProfileDetailModel.setEnglishName(personalDetails.getEnglishName());
+			customerProfileDetailModel.setNativeArabicName(personalDetails.getNativeArabicName());
+			customerProfileDetailModel.setGenderCode(personalDetails.getGenderCode());
+			customerProfileDetailModel.setIdExpiryDate(DateFormats.setDbSqlFormatDate(personalDetails.getIdExpiryDate().toString()));
+			customerProfileDetailModel.setBusinessCode(personalDetails.getBusinessCode());
+			customerProfileDetailModel.setNatyCode(personalDetails.getNatyCode());
+			customerProfileDetailModel.setGovCode(personalDetails.getGovCode());
+			customerProfileDetailModel.setAreaCode(personalDetails.getAreaCode());
+			customerProfileDetailModel.setMobile(personalDetails.getMobile());
+			customerProfileDetailModel.setEmail(personalDetails.getEmail());
+
+			if (null == userSession.getCustomerSequenceNumber() || userSession.getCustomerSequenceNumber().toString().equals(""))
+			{
+				custSeqNumberAvailable = false;
+			}
+
+			customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel , userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber(), userSession.getLanguageId());
+			if (customerProfileDetailModel.getErrorCode() != null)
+			{
+				resp.setStatusKey(customerProfileDetailModel.getErrorCode());
+				resp.setMessageKey(customerProfileDetailModel.getErrorCode());
+				resp.setMessage(customerProfileDetailModel.getErrorCode());
 				return resp;
 			}
-		}
-		customerProfileDetailModel.setEnglishName(personalDetails.getEnglishName());
-		customerProfileDetailModel.setNativeArabicName(personalDetails.getNativeArabicName());
-		customerProfileDetailModel.setGenderCode(personalDetails.getGenderCode());
-		customerProfileDetailModel.setIdExpiryDate(DateFormats.setDbSqlFormatDate(personalDetails.getIdExpiryDate().toString()));
-		customerProfileDetailModel.setBusinessCode(personalDetails.getBusinessCode());
-		customerProfileDetailModel.setNatyCode(personalDetails.getNatyCode());
-		customerProfileDetailModel.setGovCode(personalDetails.getGovCode());
-		customerProfileDetailModel.setAreaCode(personalDetails.getAreaCode());
-		customerProfileDetailModel.setMobile(personalDetails.getMobile());
-		customerProfileDetailModel.setEmail(personalDetails.getEmail());
+			
+			userSession.setCustomerSequenceNumber(customerProfileDetailModel.getCustSequenceNumber());
+			
+			if (!custSeqNumberAvailable)
+			{
+				AmxApiResponse<ResponseInfo, Object> updateCustSeqNum = updateCustomerSequenceNumber(customerProfileDetailModel.getCustSequenceNumber(), appSeqNumber , userSession.getCivilId());
+				if (!updateCustSeqNum.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+				{
+					return updateCustSeqNum;
+				}
+			}
 
-		logger.info(TAG + " setProfileDetails :: metaData.getCustomerSequenceNumber() :" + userSession.getCustomerSequenceNumber());
-		if (null == userSession.getCustomerSequenceNumber() || userSession.getCustomerSequenceNumber().toString().equals(""))
+			if (null == customerProfileDetailModel.getErrorCode())
+			{
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
+			}
+			else
+			{
+				resp.setStatusKey(customerProfileDetailModel.getErrorCode());
+			}
+
+			requestQuoteInfo.setAppSeqNumber(appSeqNumber);
+			requestQuoteModel.setRequestQuoteInfo(requestQuoteInfo);
+			requestQuoteModel.setPersonalDetails(personalDetails);
+			requestQuoteModel.setVehicleDetails(null);
+			requestQuoteModel.setVehicleImageDetails(null);
+
+			resp.setData(requestQuoteModel);
+			resp.setMessageKey(customerProfileDetailModel.getErrorCode());
+			resp.setMessage(customerProfileDetailModel.getErrorMessage());
+		}
+		catch (Exception e) 
 		{
-			custSeqNumberAvailable = false;
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "setProfileDetails :: exception :" + e);
+			e.printStackTrace();
 		}
-
-		logger.info(TAG + " setProfileDetails :: custSeqNumberAvailable :" + custSeqNumberAvailable);
-		customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel , userSession.getCivilId() , metaData.getUserType() , userSession.getCustomerSequenceNumber());
-		userSession.setCustomerSequenceNumber(customerProfileDetailModel.getCustSequenceNumber());
-		
-		if (!custSeqNumberAvailable)
-			{
-			logger.info(TAG + " setProfileDetails :: customerProfileDetailModel.getCustSequenceNumber() :" + customerProfileDetailModel.getCustSequenceNumber());
-			logger.info(TAG + " setProfileDetails :: appSeqNumber :" + appSeqNumber);
-			AmxApiResponse<ResponseInfo, Object> updateCustSeqNum = updateCustomerSequenceNumber(customerProfileDetailModel.getCustSequenceNumber(), appSeqNumber , userSession.getCivilId());
-			if (updateCustSeqNum.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-			{
-				return updateCustSeqNum;
-			}
-			}
-
-		if (null == customerProfileDetailModel.getErrorCode())
-			{
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			}
-		else
-			{
-			resp.setStatusKey(ApiConstants.FAILURE);
-			}
-
-		requestQuoteInfo.setAppSeqNumber(appSeqNumber);
-		requestQuoteModel.setRequestQuoteInfo(requestQuoteInfo);
-		requestQuoteModel.setPersonalDetails(personalDetails);
-		requestQuoteModel.setVehicleDetails(null);
-		requestQuoteModel.setVehicleImageDetails(null);
-
-		resp.setData(requestQuoteModel);
-		resp.setMessageKey(customerProfileDetailModel.getErrorCode());
-		resp.setMessage(customerProfileDetailModel.getErrorMessage());
+				
 		return resp;
-			}
+	}
 
 	public AmxApiResponse<?, Object> getImageMetaData()
-			{
+	{
 		AmxApiResponse<?, Object> resp = new AmxApiResponse<Object, Object>();
 		try
 		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getImageMetaData();
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getImageMetaData(userSession.getLanguageId());
 			if (null == arrayResponseModel.getErrorCode())
 			{
-				resp.setStatusKey(ApiConstants.SUCCESS);
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 				resp.setMeta(arrayResponseModel.getDataArray());
 			}
 			else
 			{
-				resp.setStatusKey(ApiConstants.FAILURE);
-		}
+				resp.setStatusKey(arrayResponseModel.getErrorCode());
+			}
 			resp.setMessageKey(arrayResponseModel.getErrorCode());
-			resp.setMessage(arrayResponseModel.getErrorCode());
+			resp.setMessage(arrayResponseModel.getErrorMessage());
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "getImageMetaData :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
-			}
+	}
 
 	public AmxApiResponse<?, Object> getImageDetails(BigDecimal appSeqNumber)
-			{
+	{
 		AmxApiResponse<?, Object> resp = new AmxApiResponse<Object, Object>();
 		try
 		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getImageDetails(appSeqNumber);
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getImageDetails(appSeqNumber, userSession.getLanguageId());
 			if (null == arrayResponseModel.getErrorCode())
 			{
-				resp.setStatusKey(ApiConstants.SUCCESS);
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 				resp.setResults(arrayResponseModel.getDataArray());
 			}
 			else
 			{
-				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setStatusKey(arrayResponseModel.getErrorCode());
 			}
 			resp.setMessageKey(arrayResponseModel.getErrorCode());
-			resp.setMessage(arrayResponseModel.getErrorCode());
+			resp.setMessage(arrayResponseModel.getErrorMessage());
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG+"getImageDetails :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
-			}
+	}
 
 	public DownloadImageModel downloadVehicleImage(BigDecimal docSeqNumber)
-			{
+	{
 		try
 		{
 			return requestQuoteDao.downloadVehicleImage(docSeqNumber);
-			}
-		catch (Exception e)
-			{
-			e.printStackTrace();
-			}
-		return null;
 		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	public AmxApiResponse<?, Object> uploadVehicleImage(MultipartFile file, BigDecimal appSeqNumber, String docTypeCode, BigDecimal docSeqNumber)
 	{
@@ -737,10 +774,10 @@ public class RequestQuoteService
 		{
 			ImageModel imageModel = requestQuoteDao.uploadVehicleImage(file, appSeqNumber, docTypeCode, docSeqNumber , userSession.getCivilId());
 			if (null == imageModel.getErrorCode())
-		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
+			{
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 				AmxApiResponse<?, Object> respImageDetails = getImageDetails(appSeqNumber);
-				if (respImageDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+				if (!respImageDetails.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 				{
 					return respImageDetails;
 				}
@@ -748,26 +785,27 @@ public class RequestQuoteService
 				{
 					requestQuoteModel.setVehicleImageDetails(respImageDetails.getResults());
 				}
-		}
-		else
-		{
-			resp.setStatusKey(ApiConstants.FAILURE);
-		}
+			}
+			else
+			{
+				resp.setStatusKey(imageModel.getErrorCode());
+			}
 
 			requestQuoteInfo.setAppSeqNumber(appSeqNumber);
 			requestQuoteModel.setRequestQuoteInfo(requestQuoteInfo);
 			requestQuoteModel.setPersonalDetails(null);
 			requestQuoteModel.setVehicleDetails(null);
 
-		resp.setData(requestQuoteModel);
+			resp.setData(requestQuoteModel);
 			resp.setMessageKey(imageModel.getErrorCode());
 			resp.setMessage(imageModel.getErrorCode());
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG+"uploadVehicleImage :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
@@ -777,41 +815,52 @@ public class RequestQuoteService
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
 		try
 		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getInsuranceCompanyDetails(appSeqNumber);
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getInsuranceCompanyDetails(appSeqNumber, userSession.getLanguageId());
 
 			if (null == arrayResponseModel.getErrorCode())
 			{
 				resp.setData(arrayResponseModel.getDataArray());
-				resp.setStatusKey(ApiConstants.SUCCESS);
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			}
 			else
 			{
-				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setStatusKey(arrayResponseModel.getErrorCode());
 			}
 			resp.setMessageKey(arrayResponseModel.getErrorCode());
 			resp.setMessage(arrayResponseModel.getErrorMessage());
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG+"getInsuranceCompanyDetails :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
 	
 	public AmxApiResponse<ResponseInfo, Object> updateCustomerSequenceNumber(BigDecimal custSeqNumber, BigDecimal appSeqNumber , String civilId)
 	{
-		CustomerProfileDetailModel customerProfileDetailModel = requestQuoteDao.updateCustomerSequenceNumber(custSeqNumber, appSeqNumber , civilId);
 		AmxApiResponse<ResponseInfo, Object> resp = new AmxApiResponse<ResponseInfo, Object>();
-		if (null == customerProfileDetailModel.getErrorCode())
+		try 
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
+			CustomerProfileDetailModel customerProfileDetailModel = requestQuoteDao.updateCustomerSequenceNumber(custSeqNumber, appSeqNumber , civilId);
+			if (null == customerProfileDetailModel.getErrorCode())
+			{
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
+			}
+			else
+			{
+				resp.setStatusKey(customerProfileDetailModel.getErrorCode());
+				resp.setMessageKey(customerProfileDetailModel.getErrorCode());
+			}
 		}
-		else
+		catch (Exception e) 
 		{
-			resp.setStatusKey(ApiConstants.FAILURE);
-			resp.setMessageKey(customerProfileDetailModel.getErrorCode());
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "getCompanySetUp :: exception :" + e);
+			e.printStackTrace();
 		}
 		return resp;
 	}
@@ -820,119 +869,115 @@ public class RequestQuoteService
 	{
 		String makeDesc = "";
 		String subMakeDesc = "";
-		String urlDetails = "https://www.javatpoint.com/spring-security-login-logout";
-		
-		logger.info(TAG + " submitRequestQuote :: appSeqNumber :" + appSeqNumber);
-		logger.info(TAG + " submitRequestQuote :: insuranceCompCode :" + insuranceCompCode);
-		
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
 		
-		AmxApiResponse<?, Object> updateInsuranceProvider = updateInsuranceProvider(appSeqNumber, insuranceCompCode , userSession.getCivilId());
-		if (updateInsuranceProvider.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+		try 
 		{
-			return updateInsuranceProvider;
-		}
-		
-		ArrayResponseModel arrayResponseModel = requestQuoteDao.submitRequestQuote(appSeqNumber , userSession.getCivilId());
-		if (null == arrayResponseModel.getErrorCode())
+			AmxApiResponse<?, Object> updateInsuranceProvider = updateInsuranceProvider(appSeqNumber, insuranceCompCode , userSession.getCivilId());
+			if (!updateInsuranceProvider.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
-			logger.info(TAG + " submitRequestQuote :: arrayResponseModel.getErrorCode() :" + arrayResponseModel.getErrorCode());
-			
-			ArrayResponseModel getVehicleDetailsArray = requestQuoteDao.getAppVehicleDetails(appSeqNumber);
-			if (null == getVehicleDetailsArray.getErrorCode())
-			{
-				logger.info(TAG + " submitRequestQuote :: getVehicleDetailsArray.getErrorCode() :" + getVehicleDetailsArray.getErrorCode());
-			
-				ArrayList<VehicleDetailsGetModel> vehicleDetailsArray = getVehicleDetailsArray.getDataArray();
-				if (vehicleDetailsArray.size() >= 1)
-				{
-					VehicleDetailsGetModel vehicleDetailsGetModel = vehicleDetailsArray.get(0);
-					makeDesc = vehicleDetailsGetModel.getMakeDesc();
-					subMakeDesc = vehicleDetailsGetModel.getSubMakeDesc();
-					
-					logger.info(TAG + " submitRequestQuote :: makeDesc:" + makeDesc);
-					logger.info(TAG + " submitRequestQuote :: subMakeDesc :" + subMakeDesc);
-				}
-				resp.setStatusKey(ApiConstants.SUCCESS);
+				return updateInsuranceProvider;
 			}
-
-			logger.info(TAG + " submitRequestQuote :: makeDesc :" + makeDesc);
-			logger.info(TAG + " submitRequestQuote :: subMakeDesc :" + subMakeDesc);
-			logger.info(TAG + " submitRequestQuote :: urlDetails :" + urlDetails);
 			
-			emailSmsService.emailToCustomerOnCompilitionRequestQuote(makeDesc,subMakeDesc,appSeqNumber);
-			emailSmsService.emailToAmibOnCompilitionRequestQuote(makeDesc,subMakeDesc,appSeqNumber);
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.submitRequestQuote(appSeqNumber , userSession.getCivilId());
+			if (null == arrayResponseModel.getErrorCode())
+			{
+				ArrayResponseModel getVehicleDetailsArray = requestQuoteDao.getAppVehicleDetails(appSeqNumber, userSession.getLanguageId());
+				if (null == getVehicleDetailsArray.getErrorCode())
+				{
+				
+					ArrayList<VehicleDetailsGetModel> vehicleDetailsArray = getVehicleDetailsArray.getDataArray();
+					if (vehicleDetailsArray.size() >= 1)
+					{
+						VehicleDetailsGetModel vehicleDetailsGetModel = vehicleDetailsArray.get(0);
+						makeDesc = vehicleDetailsGetModel.getMakeDesc();
+						subMakeDesc = vehicleDetailsGetModel.getSubMakeDesc();
+					}
+					resp.setStatusKey(ApiConstants.SUCCESS);
+				}
+				
+				emailSmsService.emailToCustomerOnCompilitionRequestQuote(makeDesc,subMakeDesc,appSeqNumber);
+				emailSmsService.emailToAmibOnCompilitionRequestQuote(makeDesc,subMakeDesc,appSeqNumber);
+				
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
+				
 			}
 			else
 			{
-				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setStatusKey(arrayResponseModel.getErrorCode());
 			}
-		resp.setMessageKey(arrayResponseModel.getErrorCode());
-		resp.setMessage(arrayResponseModel.getErrorMessage());
-
-		return resp;
+			resp.setMessageKey(arrayResponseModel.getErrorCode());
+			resp.setMessage(arrayResponseModel.getErrorMessage());
 		}
+		catch (Exception e) 
+		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "submitRequestQuote :: exception :" + e);
+			e.printStackTrace();
+		}
+		return resp;
+	}
 
 	public AmxApiResponse<?, Object> updateInsuranceProvider(BigDecimal appSeqNumber, BigDecimal insuranceCompCode , String civilId)
-		{
-		logger.info(TAG + " updateInsuranceProvider :: appSeqNumber      :" + appSeqNumber);
-		logger.info(TAG + " updateInsuranceProvider :: insuranceCompCode :" + insuranceCompCode);
+	{
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
 
-		AmxApiResponse<?, Object> getInsuranceCompanyDetails = getInsuranceCompanyDetails(appSeqNumber);
-		if (getInsuranceCompanyDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+		try 
 		{
-			return getInsuranceCompanyDetails;
-		}
-		else
-		{
-			ArrayList<InsuranceCompanyDetails> dataArray = (ArrayList<InsuranceCompanyDetails>) getInsuranceCompanyDetails.getData();
-			for (int i = 0; i < dataArray.size(); i++)
+			AmxApiResponse<?, Object> getInsuranceCompanyDetails = getInsuranceCompanyDetails(appSeqNumber);
+			if (!getInsuranceCompanyDetails.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
-				String status = "";
-				InsuranceCompanyDetails insuranceCompanyDetails = dataArray.get(i);
+				return getInsuranceCompanyDetails;
+			}
+			else
+			{
+				ArrayList<InsuranceCompanyDetails> dataArray = (ArrayList<InsuranceCompanyDetails>) getInsuranceCompanyDetails.getData();
+				for (int i = 0; i < dataArray.size(); i++)
+				{
+					String status = "";
+					InsuranceCompanyDetails insuranceCompanyDetails = dataArray.get(i);
 
-				logger.info(TAG + " updateInsuranceProvider :: getCompanyCode     :" + insuranceCompanyDetails.getCompanyCode());
-				logger.info(TAG + " updateInsuranceProvider :: insuranceCompCodee :" + insuranceCompCode);
-				
-				if(null != insuranceCompCode && null != insuranceCompanyDetails.getCompanyCode() && insuranceCompanyDetails.getCompanyCode().toString().equalsIgnoreCase(HardCodedValues.COMPANY_CODE))
-				{
-					logger.info(TAG + " updateInsuranceProvider :: AMIB :: getCompanyCode     :" + insuranceCompanyDetails.getCompanyCode());
-					logger.info(TAG + " updateInsuranceProvider :: AMIB :: insuranceCompCodee :" + insuranceCompCode);
-				}
-				else
-				{
-					logger.info(TAG + " updateInsuranceProvider :: NON AMIB :: getCompanyCode     :" + insuranceCompanyDetails.getCompanyCode());
-					logger.info(TAG + " updateInsuranceProvider :: NON AMIB :: insuranceCompCodee :" + insuranceCompCode);
-					
-					if (null != insuranceCompCode && null != insuranceCompanyDetails.getCompanyCode() && insuranceCompCode.equals(insuranceCompanyDetails.getCompanyCode()))
+					if(null != insuranceCompCode && null != insuranceCompanyDetails.getCompanyCode() && insuranceCompanyDetails.getCompanyCode().toString().equalsIgnoreCase(HardCodedValues.COMPANY_CODE))
 					{
-						logger.info(TAG + " submitRequestQuote :: EqualsCheck :" + insuranceCompCode.equals(insuranceCompanyDetails.getCompanyCode()));
-						status = "Y";
+						logger.info(" updateInsuranceProvider :: AMIB :: getCompanyCode     :" + insuranceCompanyDetails.getCompanyCode());
+						logger.info(" updateInsuranceProvider :: AMIB :: insuranceCompCodee :" + insuranceCompCode);
 					}
 					else
 					{
-						status = "N";
-					}
-					
-					ArrayResponseModel updateInsuranceProvider = requestQuoteDao.updateInsuranceProvider(appSeqNumber, insuranceCompanyDetails.getCompanyCode(), status , civilId);
-					if (updateInsuranceProvider.getErrorCode() != null)
-					{
-						if (null == updateInsuranceProvider.getErrorCode())
+						if (null != insuranceCompCode && null != insuranceCompanyDetails.getCompanyCode() && insuranceCompCode.equals(insuranceCompanyDetails.getCompanyCode()))
 						{
-							resp.setStatusKey(ApiConstants.SUCCESS);
+							status = "Y";
 						}
 						else
 						{
-			resp.setStatusKey(ApiConstants.FAILURE);
-		}
-						resp.setMessageKey(updateInsuranceProvider.getErrorCode());
-						resp.setMessage(updateInsuranceProvider.getErrorMessage());
+							status = "N";
+						}
+						
+						ArrayResponseModel updateInsuranceProvider = requestQuoteDao.updateInsuranceProvider(appSeqNumber, insuranceCompanyDetails.getCompanyCode(), status , civilId);
+						if (updateInsuranceProvider.getErrorCode() != null)
+						{
+							if (null == updateInsuranceProvider.getErrorCode())
+							{
+								resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
+							}
+							else
+							{
+								resp.setStatusKey(updateInsuranceProvider.getErrorCode());
+							}
+							resp.setMessageKey(updateInsuranceProvider.getErrorCode());
+							resp.setMessage(updateInsuranceProvider.getErrorMessage());
+						}
 					}
 				}
 			}
+		}
+		catch (Exception e) 
+		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "updateInsuranceProvider :: exception :" + e);
+			e.printStackTrace();
 		}
 		return resp;
 	}
@@ -941,13 +986,13 @@ public class RequestQuoteService
 	{
 		BigDecimal insuranceCompCode = null;
 		BigDecimal appSeqNumber = null;
-		logger.info(TAG + " getRenewPolicyDetails :: oldDocNumber :" + oldDocNumber);
+		//logger.info(" getRenewPolicyDetails :: oldDocNumber :" + oldDocNumber);
 	
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
 		try
-	{
+		{
 			AmxApiResponse<?, Object> getVehicleDetails = getRenewPolicyVehicleDetails(oldDocNumber);
-			if (getVehicleDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			if (!getVehicleDetails.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				return getVehicleDetails;
 			}
@@ -956,11 +1001,11 @@ public class RequestQuoteService
 				if (null != getVehicleDetails.getMeta())
 				{
 					insuranceCompCode = (BigDecimal) getVehicleDetails.getMeta();
-					logger.info(TAG + " getRenewPolicyDetails :: insuranceCompCode :" + insuranceCompCode);
-	}
+					//logger.info(" getRenewPolicyDetails :: insuranceCompCode :" + insuranceCompCode);
+				}
 	
 				AmxApiResponse<?, Object> submitVehicleDetails = setAppVehicleDetails(appSeqNumber, (VehicleDetails) getVehicleDetails.getData(), oldDocNumber);
-				if (submitVehicleDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+				if (!submitVehicleDetails.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 				{
 					return submitVehicleDetails;
 				}
@@ -969,35 +1014,36 @@ public class RequestQuoteService
 					RequestQuoteModel requestQuoteModel = (RequestQuoteModel) submitVehicleDetails.getData();
 					RequestQuoteInfo requestQuoteInfo = requestQuoteModel.getRequestQuoteInfo();
 					appSeqNumber = requestQuoteInfo.getAppSeqNumber();
-					logger.info(TAG + " getRenewPolicyDetails :: appSeqNumber1 :" + appSeqNumber);
+					//logger.info(" getRenewPolicyDetails :: appSeqNumber1 :" + appSeqNumber);
 				}
 	
 				AmxApiResponse<?, Object> respPersonalDetails = getProfileDetails();
-				if (respPersonalDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+				if (!respPersonalDetails.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 				{
 					return respPersonalDetails;
 				}
 				else
 				{
 					AmxApiResponse<?, Object> setPersonalDetails = setProfileDetails(appSeqNumber, (PersonalDetails) respPersonalDetails.getData());
-					if (setPersonalDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+					if (!setPersonalDetails.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 					{
 						return setPersonalDetails;
 					}
 				}
 
 				AmxApiResponse<?, Object> updateInsuranceProvider = updateInsuranceProvider(appSeqNumber, insuranceCompCode , userSession.getCivilId());
-				if (updateInsuranceProvider.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
-	{
+				if (!updateInsuranceProvider.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+				{
 					return updateInsuranceProvider;
 				}
 			}
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
 			resp.setMessage(e.toString());
-			return resp;
+			logger.info(TAG + "getRenewPolicyDetails :: exception :" + e);
+			e.printStackTrace();
 		}
 		return resp;
 	}
@@ -1007,9 +1053,10 @@ public class RequestQuoteService
 		AmxApiResponse<VehicleDetails, Object> resp = new AmxApiResponse<VehicleDetails, Object>();
 		VehicleDetails vehicleDetails = new VehicleDetails();
 		BigDecimal companyCode = null;
+		
 		try
 		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getRenewPolicyVehicleDetails(appDocNumberDet);
+			ArrayResponseModel arrayResponseModel = requestQuoteDao.getRenewPolicyVehicleDetails(appDocNumberDet, userSession.getLanguageId());
 			if (null == arrayResponseModel.getErrorCode())
 			{
 				if (null != arrayResponseModel && null != arrayResponseModel.getDataArray() && arrayResponseModel.getDataArray().size() > 0)
@@ -1022,11 +1069,7 @@ public class RequestQuoteService
 					companyCode = new BigDecimal(arrayResponseModel.getData());
 				}
 
-			resp.setStatusKey(ApiConstants.SUCCESS);
-		}
-			else
-			{
-				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			}
 			resp.setMessageKey(arrayResponseModel.getErrorCode());
 			resp.setMessage(arrayResponseModel.getErrorMessage());
@@ -1035,9 +1078,10 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "getRenewPolicyVehicleDetails :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}

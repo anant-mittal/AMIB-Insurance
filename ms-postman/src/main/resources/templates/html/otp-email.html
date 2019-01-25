@@ -264,10 +264,11 @@ a {
 	.invoice {
 		width: 100% !important;
 	}
+	
 }
 </style>
 </head>
-<body itemtype="http://schema.org/EmailMessage">
+<body id="body" itemtype="http://schema.org/EmailMessage">
 
 
 	<table class="body-wrap">
@@ -312,8 +313,8 @@ a {
 										<td class="content-block">Thanks and Regards,<br /> <strong class="upper"><span
 												th:text="${data.companyName}" th:remove="tag"></span>,</strong><br />
 											<span th:text="${data.country}" th:remove="tag"></span><br />
-											<span th:text="${data.contactUsEmail}" th:remove="tag"></span><br />
-											<a th:href="@{'https://' +${data.amibWebLink}}"><span
+											<a style="color:black; text-decoration:none"><span th:text="${data.contactUsEmail}"></span></a><br/>
+											<a style="text-decoration:underline;color:#083d8d;"th:href="@{'https://' +${data.amibWebLink}}"><span
 												th:text="${data.amibWebLink}"></span></a>
 										</td>
 									</tr>

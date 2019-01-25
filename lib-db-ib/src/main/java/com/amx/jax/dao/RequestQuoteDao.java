@@ -1,6 +1,7 @@
 
 package com.amx.jax.dao;
 
+import java.io.File;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.sql.Blob;
@@ -15,10 +16,14 @@ import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.HardCodedValues;
+import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CodeDesc;
 import com.amx.jax.models.Colour;
@@ -32,7 +37,6 @@ import com.amx.jax.models.ImageStatus;
 import com.amx.jax.models.IncompleteApplModel;
 import com.amx.jax.models.InsuranceCompanyDetails;
 import com.amx.jax.models.Make;
-import com.amx.jax.models.MetaData;
 import com.amx.jax.models.Model;
 import com.amx.jax.models.Purpose;
 import com.amx.jax.models.Shape;
@@ -48,7 +52,7 @@ import oracle.jdbc.OracleTypes;
 @Component
 public class RequestQuoteDao
 {
-	String TAG = "com.amx.jax.dao.RequestQuoteDao :: ";
+	String TAG = "RequestQuoteDao :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(RequestQuoteDao.class);
 
@@ -58,8 +62,7 @@ public class RequestQuoteDao
 	Connection connection;
 
 	@Autowired
-	MetaData metaData;
-	
+	IMetaService metaService;
 
 	public IncompleteApplModel getIncompleteApplication(String civilId , String userType , BigDecimal custSeqNum)
 	{
@@ -71,8 +74,8 @@ public class RequestQuoteDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(3, userType);
 			callableStatement.setString(4, civilId);
 			callableStatement.setBigDecimal(5, custSeqNum);
@@ -85,22 +88,13 @@ public class RequestQuoteDao
 			incompleteApplModel.setAppStage(callableStatement.getString(7));
 			incompleteApplModel.setErrorCode(callableStatement.getString(8));
 			incompleteApplModel.setErrorMessage(callableStatement.getString(9));
-
-			logger.info(TAG + " getIncompleteApplication :: callableStatement.getBigDecimal(6) :" + callableStatement.getBigDecimal(6));
-
-			if (callableStatement.getString(8) == null)
-			{
-				incompleteApplModel.setStatus(true);
-			}
-			else
-			{
-				incompleteApplModel.setStatus(false);
-			}
 		}
 		catch (Exception e)
 		{
+			incompleteApplModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			incompleteApplModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getIncompleteApplication :: exception :" + e);
 			e.printStackTrace();
-			logger.info(TAG + " getIncompleteApplication :: e.printStackTrace() :" + e);
 		}
 		finally
 		{
@@ -109,7 +103,7 @@ public class RequestQuoteDao
 		return incompleteApplModel;
 	}
 
-	public ArrayResponseModel getMake()
+	public ArrayResponseModel getMake(BigDecimal languageId)
 	{
 		getConnection();
 
@@ -120,9 +114,9 @@ public class RequestQuoteDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
-			callableStatement.setBigDecimal(3, metaData.getLanguageId());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
+			callableStatement.setBigDecimal(3, languageId);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -143,6 +137,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getMake :: exception :" + e);
 			e.printStackTrace();
 		}
 
@@ -154,7 +151,7 @@ public class RequestQuoteDao
 		return arrayResponseModel;
 	}
 
-	public ArrayResponseModel getModel(String make)
+	public ArrayResponseModel getModel(String make , BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -164,10 +161,10 @@ public class RequestQuoteDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(3, make);
-			callableStatement.setBigDecimal(4, metaData.getLanguageId());
+			callableStatement.setBigDecimal(4, languageId);
 			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
@@ -184,7 +181,6 @@ public class RequestQuoteDao
 				model.setShapeCode(rs.getString(5));
 				model.setVehicleTypeDesc(rs.getString(8));
 				model.setShapeDesc(rs.getString(9));
-				logger.info(TAG + " getModel :: model :" + model.toString());
 				modelArray.add(model);
 			}
 			arrayResponseModel.setDataArray(modelArray);
@@ -193,6 +189,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getModel :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -202,7 +201,7 @@ public class RequestQuoteDao
 		return arrayResponseModel;
 	}
 
-	public ArrayResponseModel getFuleType()
+	public ArrayResponseModel getFuleType(BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -212,9 +211,9 @@ public class RequestQuoteDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
-			callableStatement.setBigDecimal(3, metaData.getLanguageId());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
+			callableStatement.setBigDecimal(3, languageId);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -234,6 +233,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getFuleType :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -243,7 +245,7 @@ public class RequestQuoteDao
 		return arrayResponseModel;
 	}
 
-	public ArrayResponseModel getPurpose()
+	public ArrayResponseModel getPurpose(BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -253,9 +255,9 @@ public class RequestQuoteDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
-			callableStatement.setBigDecimal(3, metaData.getLanguageId());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
+			callableStatement.setBigDecimal(3, languageId);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -276,6 +278,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getPurpose :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -286,7 +291,7 @@ public class RequestQuoteDao
 		return arrayResponseModel;
 	}
 
-	public ArrayResponseModel getShape()
+	public ArrayResponseModel getShape(BigDecimal languageId)
 	{
 		getConnection();
 
@@ -297,9 +302,9 @@ public class RequestQuoteDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
-			callableStatement.setBigDecimal(3, metaData.getLanguageId());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
+			callableStatement.setBigDecimal(3, languageId);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -319,6 +324,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getShape :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -328,7 +336,7 @@ public class RequestQuoteDao
 		return arrayResponseModel;
 	}
 
-	public ArrayResponseModel getColour()
+	public ArrayResponseModel getColour(BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -338,9 +346,9 @@ public class RequestQuoteDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
-			callableStatement.setBigDecimal(3, metaData.getLanguageId());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
+			callableStatement.setBigDecimal(3, languageId);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -360,6 +368,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getColour :: exception :" + e);
 			e.printStackTrace();
 		}
 
@@ -371,7 +382,7 @@ public class RequestQuoteDao
 		return arrayResponseModel;
 	}
 
-	public ArrayResponseModel getVehicleCondition()
+	public ArrayResponseModel getVehicleCondition(BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -381,9 +392,9 @@ public class RequestQuoteDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
-			callableStatement.setBigDecimal(3, metaData.getLanguageId());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
+			callableStatement.setBigDecimal(3, languageId);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -403,6 +414,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getVehicleCondition :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -412,11 +426,12 @@ public class RequestQuoteDao
 		return arrayResponseModel;
 	}
 
-	public ArrayList getMaxVehicleAgeAllowed()
+	public ArrayResponseModel getMaxVehicleAgeAllowed()
 	{
 		getConnection();
 		Statement statement = null;
 		int ageAllowed = 0;
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		ArrayList<CodeDesc> maxVehicleAgeArray = new ArrayList<CodeDesc>();
 		String query = "SELECT A.MAX_ALLOWED_VEHICLE_AGE FROM IRB_V_ONLMAX_VEHAGE A";
 		try
@@ -429,7 +444,8 @@ public class RequestQuoteDao
 			}
 			Calendar now = Calendar.getInstance();
 			int year = now.get(Calendar.YEAR);
-			int allowedAgeIsTillNextYear = year + 1;
+			//int allowedAgeIsTillNextYear = year + 1;
+			int allowedAgeIsTillNextYear = year; // Suggested By Ashok Sir After Production
 
 			for (int i = ageAllowed; i > 0; i--)
 			{
@@ -439,24 +455,29 @@ public class RequestQuoteDao
 				maxVehicleAgeArray.add(codeDesc);
 				allowedAgeIsTillNextYear--;
 			}
+			arrayResponseModel.setDataArray(maxVehicleAgeArray);
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getMaxVehicleAgeAllowed :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
 		{
 			CloseConnection(statement, connection);
 		}
-		return maxVehicleAgeArray;
+		return arrayResponseModel;
 	}
 
-	public ArrayList getPolicyDuration()
+	public ArrayResponseModel getPolicyDuration()
 	{
 		getConnection();
 		Statement statement = null;
 		int maxAllowedYear = 0;
-		ArrayList<CodeDesc> maxVehicleAgeArray = new ArrayList<CodeDesc>();
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
+		ArrayList<CodeDesc> maxPolicyDuration = new ArrayList<CodeDesc>();
 		String query = "SELECT MAX_ALLOWED_YEAR FROM IRB_V_ONLMAX_POLPERIOD";
 		try
 		{
@@ -471,21 +492,25 @@ public class RequestQuoteDao
 				CodeDesc codeDesc = new CodeDesc();
 				codeDesc.setCode("" + i);
 				codeDesc.setDesc("" + i);
-				maxVehicleAgeArray.add(codeDesc);
+				maxPolicyDuration.add(codeDesc);
 			}
+			arrayResponseModel.setDataArray(maxPolicyDuration);
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getPolicyDuration :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
 		{
 			CloseConnection(statement, connection);
 		}
-		return maxVehicleAgeArray;
+		return arrayResponseModel;
 	}
 
-	public ArrayResponseModel getAppVehicleDetails(BigDecimal appSeqNumber)
+	public ArrayResponseModel getAppVehicleDetails(BigDecimal appSeqNumber,BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -495,10 +520,10 @@ public class RequestQuoteDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, appSeqNumber);
-			callableStatement.setBigDecimal(4, metaData.getLanguageId());
+			callableStatement.setBigDecimal(4, languageId);
 			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
@@ -542,9 +567,9 @@ public class RequestQuoteDao
 				vehicleDetailsModel.setNoPass(rs.getBigDecimal(32));
 				vehicleDetailsModel.setReplacementType(rs.getString(33));
 				vehicleDetailsModel.setReplacementTypeDesc(rs.getString(34));
-				vehicleDetailsModel.setMaxInsmat(Utility.round(rs.getBigDecimal(35), metaData.getDecplc()));
+				vehicleDetailsModel.setMaxInsmat(Utility.round(rs.getBigDecimal(35), metaService.getTenantProfile().getDecplc()));
 				vehicleDetailsModel.setVehicleTypeDesc(rs.getString(36));
-				logger.info(TAG + " getAppVehicleDetails :: vehicleDetailsModel :" + vehicleDetailsModel.toString());
+				//logger.info(TAG + " getAppVehicleDetails :: vehicleDetailsModel :" + vehicleDetailsModel.toString());
 				vehicleDetailsArray.add(vehicleDetailsModel);
 			}
 			arrayResponseModel.setDataArray(vehicleDetailsArray);
@@ -553,6 +578,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getAppVehicleDetails :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -572,8 +600,8 @@ public class RequestQuoteDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, appSeqNumber);
 			if (null == oldDocNumber)// Suggested By Ashok
 			{
@@ -589,8 +617,8 @@ public class RequestQuoteDao
 			callableStatement.setBigDecimal(8, oldDocNumber);
 			callableStatement.setBigDecimal(9, userSeqNum);
 			callableStatement.setString(10, HardCodedValues.ONLINE_LOC_CODE);
-			callableStatement.setString(11, metaData.getDeviceType());
-			callableStatement.setString(12, metaData.getDeviceId());
+			callableStatement.setString(11, metaService.getUserDeviceInfo().getDeviceType());
+			callableStatement.setString(12, metaService.getUserDeviceInfo().getDeviceId());
 			callableStatement.setString(13, civilId);
 			callableStatement.registerOutParameter(3, java.sql.Types.NUMERIC);
 			callableStatement.registerOutParameter(14, java.sql.Types.VARCHAR);
@@ -606,6 +634,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			vehicleDetailsHeaderModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			vehicleDetailsHeaderModel.setErrorMessage(e.toString());
+			logger.info(TAG+"setVehicleDetailsHeader :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -621,12 +652,11 @@ public class RequestQuoteDao
 		CallableStatement callableStatement = null;
 		VehicleDetailsUpdateModel vehicleDetailsUpdateModel = new VehicleDetailsUpdateModel();
 		String callProcedure = "{call IRB_INSUPD_VEHDTLS(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
-		logger.info(TAG + " insUpdateVehicleDetails :: metaData :" + metaData.toString());
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, appSeqNumber);
 			callableStatement.setString(4, vehicleDetails.getMakeCode());
 			callableStatement.setString(5, vehicleDetails.getSubMakeCode());
@@ -643,9 +673,9 @@ public class RequestQuoteDao
 			callableStatement.setBigDecimal(16, null);// As Per AshokSir
 			callableStatement.setBigDecimal(17, null);// As Per AshokSir
 			callableStatement.setString(18, null);// Hard Coded As Per Ashok Sir
-			callableStatement.setBigDecimal(19, Utility.round(vehicleDetails.getVehicleValue(), metaData.getDecplc()));
-			callableStatement.setString(20, metaData.getDeviceType());
-			callableStatement.setString(21, metaData.getDeviceId());
+			callableStatement.setBigDecimal(19, Utility.round(vehicleDetails.getVehicleValue(), metaService.getTenantProfile().getDecplc()));
+			callableStatement.setString(20, metaService.getUserDeviceInfo().getDeviceType());
+			callableStatement.setString(21, metaService.getUserDeviceInfo().getDeviceId());
 			callableStatement.setString(22, civilId);
 			callableStatement.registerOutParameter(23, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(24, java.sql.Types.VARCHAR);
@@ -655,6 +685,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			vehicleDetailsUpdateModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			vehicleDetailsUpdateModel.setErrorMessage(e.toString());
+			logger.info(TAG+"insUpdateVehicleDetails :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -664,7 +697,7 @@ public class RequestQuoteDao
 		return vehicleDetailsUpdateModel;
 	}
 
-	public ArrayResponseModel getImageMetaData()
+	public ArrayResponseModel getImageMetaData(BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -676,9 +709,9 @@ public class RequestQuoteDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
-			callableStatement.setBigDecimal(3, metaData.getLanguageId());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
+			callableStatement.setBigDecimal(3, languageId);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -696,6 +729,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getAppVehicleDetails :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -705,7 +741,7 @@ public class RequestQuoteDao
 		return arrayResponseModel;
 	}
 
-	public ArrayResponseModel getImageDetails(BigDecimal appSeqNumber)
+	public ArrayResponseModel getImageDetails(BigDecimal appSeqNumber, BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -716,9 +752,9 @@ public class RequestQuoteDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
-			callableStatement.setBigDecimal(3, metaData.getLanguageId());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
+			callableStatement.setBigDecimal(3, languageId);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -729,9 +765,40 @@ public class RequestQuoteDao
 			{
 				ImageDetails imageDetails = new ImageDetails();
 				imageDetails.setDocTypeCode(rs.getString(1));
-				ImageStatus imageStatus = imageUploadedStatus(appSeqNumber, rs.getString(1));
-				imageDetails.setIsImageMandatory(rs.getString(3));
+				imageDetails.setDocTypeDesc(rs.getString(2));
+				
+				ArrayResponseModel arrayResponseImageStatus = imageUploadedStatus(appSeqNumber, rs.getString(1));
+				if(null != arrayResponseImageStatus.getErrorCode())
+				{
+					arrayResponseModel.setErrorCode(arrayResponseImageStatus.getErrorCode());
+					arrayResponseModel.setErrorMessage(arrayResponseImageStatus.getErrorMessage());
+					return arrayResponseModel;
+				}
+				
+				ImageStatus imageStatus = (ImageStatus)arrayResponseImageStatus.getObject();
+				if(rs.getString(1).equalsIgnoreCase("DFT"))
+				{
+					imageDetails.setIsImageMandatory(null);
+				}
+				else
+				{
+					imageDetails.setIsImageMandatory(rs.getString(3));
+				}
+				
+				/*if(null != rs.getString(3) && !rs.getString(3).equals(""))//Suggested By Ashok Sir
+				{
+					imageDetails.setIsImageMandatory(rs.getString(3));
+				}
+				else
+				{
+					imageDetails.setIsImageMandatory("N");
+				}*/
+				
+				
+				imageDetails.setDisplayOrder(rs.getBigDecimal(4));
+				imageDetails.setStatus(rs.getString(5));
 				imageDetails.setImageSubmittedDate(imageStatus.getImageDate());
+				
 				if (null != imageStatus.getDocSeqNumber() && !imageStatus.getDocSeqNumber().toString().equals("0") && !imageStatus.getDocSeqNumber().toString().equals(""))
 				{
 					imageDetails.setDocSeqNumber(imageStatus.getDocSeqNumber());
@@ -740,9 +807,7 @@ public class RequestQuoteDao
 				{
 					imageDetails.setDocSeqNumber(null);
 				}
-
-				logger.info(TAG + " getImageDetails :: imageDetails)  :" + imageDetails.toString());
-
+				
 				imageMetaInfoArray.add(imageDetails);
 			}
 			arrayResponseModel.setDataArray(imageMetaInfoArray);
@@ -750,6 +815,49 @@ public class RequestQuoteDao
 			arrayResponseModel.setErrorMessage(callableStatement.getString(5));
 		}
 		catch (Exception e)
+		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getAppVehicleDetails :: exception :" + e);
+			e.printStackTrace();
+		}
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		return arrayResponseModel;
+	}
+
+	public ArrayResponseModel imageUploadedStatus(BigDecimal appSeqNumber, String docType)
+	{
+		getConnection();
+		CallableStatement callableStatement = null;
+		ImageStatus imageStatus = new ImageStatus();
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
+		
+		String callProcedure = "{call IRB_CHECK_IMAGE_UPLOADED(?,?,?,?,?,?)}";
+		String epochDate = null;
+		try
+		{
+			callableStatement = connection.prepareCall(callProcedure);
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
+			callableStatement.setBigDecimal(3, appSeqNumber);
+			callableStatement.setString(4, docType);
+			callableStatement.registerOutParameter(5, java.sql.Types.NUMERIC);
+			callableStatement.registerOutParameter(6, java.sql.Types.TIMESTAMP);
+			callableStatement.executeUpdate();
+
+			if (null != callableStatement.getTimestamp(6))
+			{
+				epochDate = DateFormats.convertTimeStampToEpoc(callableStatement.getTimestamp(6).toString());
+			}
+			imageStatus.setDocSeqNumber(callableStatement.getBigDecimal(5));
+			imageStatus.setImageDate(epochDate);
+
+			arrayResponseModel.setObject(imageStatus);
+		}
+		catch (SQLException e)
 		{
 			e.printStackTrace();
 		}
@@ -760,51 +868,8 @@ public class RequestQuoteDao
 		return arrayResponseModel;
 	}
 
-	public ImageStatus imageUploadedStatus(BigDecimal appSeqNumber, String docType)
-	{
-		getConnection();
-		CallableStatement callableStatement = null;
-		ImageStatus imageStatus = new ImageStatus();
-		String callProcedure = "{call IRB_CHECK_IMAGE_UPLOADED(?,?,?,?,?,?)}";
-		String epochDate = null;
-		try
-		{
-			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
-			callableStatement.setBigDecimal(3, appSeqNumber);
-			callableStatement.setString(4, docType);
-			callableStatement.registerOutParameter(5, java.sql.Types.NUMERIC);
-			callableStatement.registerOutParameter(6, java.sql.Types.TIMESTAMP);
-			callableStatement.executeUpdate();
-
-			logger.info(TAG + " setUploadImage :: DocSeqNum)  :" + callableStatement.getBigDecimal(5));
-			logger.info(TAG + " setUploadImage :: DocSeqNum)  :" + callableStatement.getTimestamp(6));
-			if (null != callableStatement.getTimestamp(6))
-			{
-				epochDate = DateFormats.convertTimeStampToEpoc(callableStatement.getTimestamp(6).toString());
-			}
-			imageStatus.setDocSeqNumber(callableStatement.getBigDecimal(5));
-			imageStatus.setImageDate(epochDate);
-
-			return imageStatus;
-
-		}
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
-		finally
-		{
-			CloseConnection(callableStatement, connection);
-		}
-		return null;
-	}
-
 	public DownloadImageModel downloadVehicleImage(BigDecimal docSeqNumber)
 	{
-		logger.info(TAG + " downloadVehicleImage :: docSeqNumber :" + docSeqNumber);
-
 		getConnection();
 		Blob imageBlob = null;
 		String imageType;
@@ -817,8 +882,8 @@ public class RequestQuoteDao
 		{
 
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, docSeqNumber);
 			callableStatement.registerOutParameter(4, OracleTypes.BLOB);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
@@ -841,9 +906,7 @@ public class RequestQuoteDao
 				return null;
 			}
 			downloadImageModel.setImageType(imageType);
-
-			logger.info(TAG + " getUploadedImage :: imageType :" + imageType);
-
+		
 		}
 		catch (SQLException e)
 		{
@@ -867,15 +930,44 @@ public class RequestQuoteDao
 		{
 			InputStream inputStream = file.getInputStream();
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, appSeqNumber);
 			callableStatement.setString(4, docTypeCode);
 			callableStatement.setBigDecimal(5, docSeqNumber);
 			callableStatement.setBlob(6, inputStream, inputStream.available());
-			callableStatement.setString(7, file.getContentType().toString());
-			callableStatement.setString(8, metaData.getDeviceType());
-			callableStatement.setString(9, metaData.getDeviceId());
+			
+			String imageType = file.getContentType().toString();
+			logger.info(TAG + " uploadVehicleImage :: imageType :" + imageType);
+			
+			if (imageType.contains("image")) 
+			{
+				callableStatement.setString(7, file.getContentType().toString());
+			} 
+			else
+			{
+				String extension = getFileExtension(file.getOriginalFilename());
+				logger.info(TAG + " uploadVehicleImage :: extension 3 :" + extension);
+				if(extension.equalsIgnoreCase("jpeg"))
+				{
+					logger.info(TAG + " uploadVehicleImage :: jpeg");
+					callableStatement.setString(7, "image/jpeg");
+				}
+				else if(extension.equalsIgnoreCase("jpg"))
+				{
+					logger.info(TAG + " uploadVehicleImage :: jpg");
+					callableStatement.setString(7, "image/jpg");
+				}
+				else if(extension.equalsIgnoreCase("png"))
+				{
+					logger.info(TAG + " uploadVehicleImage :: png");
+					callableStatement.setString(7, "image/png");
+				}
+			}
+			
+			
+			callableStatement.setString(8, metaService.getUserDeviceInfo().getDeviceType());
+			callableStatement.setString(9, metaService.getUserDeviceInfo().getDeviceId());
 			callableStatement.setString(10, civilId);
 			callableStatement.registerOutParameter(11, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(12, java.sql.Types.VARCHAR);
@@ -888,6 +980,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			imageModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			imageModel.setErrorMessage(e.toString());
+			logger.info(TAG+"uploadVehicleImage :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -905,7 +1000,7 @@ public class RequestQuoteDao
 		return imageModel;
 	}
 
-	public ArrayResponseModel getInsuranceCompanyDetails(BigDecimal appSeqNumber)
+	public ArrayResponseModel getInsuranceCompanyDetails(BigDecimal appSeqNumber, BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -918,9 +1013,9 @@ public class RequestQuoteDao
 		{
 
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
-			callableStatement.setBigDecimal(3, metaData.getLanguageId());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
+			callableStatement.setBigDecimal(3, languageId);
 			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
@@ -963,6 +1058,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"uploadVehicleImage :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -988,13 +1086,13 @@ public class RequestQuoteDao
 		{
 			callableStatement = connection.prepareCall(callFunction);
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
-			callableStatement.setBigDecimal(2, metaData.getCountryId());
-			callableStatement.setBigDecimal(3, metaData.getCompCd());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(4, appSeqNumber);
 			callableStatement.setBigDecimal(5, companyCode);
 			callableStatement.executeUpdate();
 			result = callableStatement.getString(1);
-			logger.info(TAG + " appSelectedProvider :: result :" + result);
+			//logger.info(TAG + " appSelectedProvider :: result :" + result);
 			if (result.toString().equalsIgnoreCase("Y"))
 			{
 				return "Y";
@@ -1025,13 +1123,13 @@ public class RequestQuoteDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, appSeqNumber);
 			callableStatement.setBigDecimal(4, insuranceCompCode);
 			callableStatement.setString(5, prefIndic);
-			callableStatement.setString(6, metaData.getDeviceType());
-			callableStatement.setString(7, metaData.getDeviceId());
+			callableStatement.setString(6, metaService.getUserDeviceInfo().getDeviceType());
+			callableStatement.setString(7, metaService.getUserDeviceInfo().getDeviceId());
 			callableStatement.setString(8, civilId);
 			callableStatement.registerOutParameter(9, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(10, java.sql.Types.VARCHAR);
@@ -1041,6 +1139,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"uploadVehicleImage :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -1060,11 +1161,11 @@ public class RequestQuoteDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, appSeqNumber);
-			callableStatement.setString(4, metaData.getDeviceType());
-			callableStatement.setString(5, metaData.getDeviceId());
+			callableStatement.setString(4, metaService.getUserDeviceInfo().getDeviceType());
+			callableStatement.setString(5, metaService.getUserDeviceInfo().getDeviceId());
 			callableStatement.setString(6, civilId);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
@@ -1075,6 +1176,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"uploadVehicleImage :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -1094,12 +1198,12 @@ public class RequestQuoteDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, appSeqNumber);
 			callableStatement.setBigDecimal(4, custSeqNumber);
-			callableStatement.setString(5, metaData.getDeviceType());
-			callableStatement.setString(6, metaData.getDeviceId());
+			callableStatement.setString(5, metaService.getUserDeviceInfo().getDeviceType());
+			callableStatement.setString(6, metaService.getUserDeviceInfo().getDeviceId());
 			callableStatement.setString(7, civilId);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(9, java.sql.Types.VARCHAR);
@@ -1111,6 +1215,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			customerProfileDetailModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			customerProfileDetailModel.setErrorMessage(e.toString());
+			logger.info(TAG+"updateCustomerSequenceNumber :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -1120,7 +1227,7 @@ public class RequestQuoteDao
 		return customerProfileDetailModel;
 	}
 
-	public ArrayResponseModel getRenewPolicyVehicleDetails(BigDecimal appDocNumberDet)
+	public ArrayResponseModel getRenewPolicyVehicleDetails(BigDecimal appDocNumberDet, BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -1132,10 +1239,10 @@ public class RequestQuoteDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, appDocNumberDet);
-			callableStatement.setBigDecimal(4, metaData.getLanguageId());
+			callableStatement.setBigDecimal(4, languageId);
 			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
@@ -1174,6 +1281,9 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"updateCustomerSequenceNumber :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -1238,4 +1348,11 @@ public class RequestQuoteDao
 			e.printStackTrace();
 		}
 	}
+	
+	private static String getFileExtension(String fileName) 
+	{
+        if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
+        return fileName.substring(fileName.lastIndexOf(".")+1);
+        else return "";
+    }
 }

@@ -4,26 +4,27 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.amx.jax.WebAppStatus.WebAppStatusCodes;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.dao.MyQuoteDao;
 import com.amx.jax.dao.PayMentDao;
+import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.ArrayResponseModel;
-import com.amx.jax.models.MetaData;
 import com.amx.jax.models.MyQuoteModel;
 import com.amx.jax.models.PaymentDetails;
 import com.amx.jax.models.PaymentReceipt;
 import com.amx.jax.models.PaymentStatus;
 import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.ui.session.UserSession;
+import com.amx.jax.utility.Utility;
 
 @Service
 public class PayMentService
@@ -33,7 +34,7 @@ public class PayMentService
 	private static final Logger logger = LoggerFactory.getLogger(PayMentService.class);
 	
 	@Autowired
-	MetaData metaData;
+	IMetaService metaService;
 	
 	@Autowired
 	PayMentDao payMentDao;
@@ -56,23 +57,28 @@ public class PayMentService
 		try
 		{
 			MyQuoteModel myQuoteModel = new MyQuoteModel();
-			ArrayList<MyQuoteModel> getUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber());
-			for (int i = 0; i < getUserQuote.size(); i++)
+			ArrayResponseModel arrayResponseUserQuote = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber(), userSession.getLanguageId());
+			if(arrayResponseUserQuote.getErrorCode() == null)
 			{
-				MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
-				logger.info(TAG + " insertPaymentDetals :: myQuoteModelFromDb :" + myQuoteModelFromDb.toString());
-				if (null != quoteSeqNum && !quoteSeqNum.toString().equals(""))
+				ArrayList<MyQuoteModel> getUserQuote = arrayResponseUserQuote.getDataArray();
+				for (int i = 0; i < getUserQuote.size(); i++)
 				{
-					if (null != myQuoteModelFromDb.getQuoteSeqNumber() && myQuoteModelFromDb.getQuoteSeqNumber().equals(quoteSeqNum))
+					MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
+					if (null != quoteSeqNum && !quoteSeqNum.toString().equals(""))
 					{
-						myQuoteModel = myQuoteModelFromDb;
+						if (null != myQuoteModelFromDb.getQuoteSeqNumber() && myQuoteModelFromDb.getQuoteSeqNumber().equals(quoteSeqNum))
+						{
+							myQuoteModel = myQuoteModelFromDb;
+						}
 					}
 				}
 			}
-			
-			logger.info(TAG + " insertPaymentDetals :: quoteSeqNum :" + quoteSeqNum);
-			logger.info(TAG + " insertPaymentDetals :: getAppSeqNumber :" + myQuoteModel.getAppSeqNumber());
-			logger.info(TAG + " insertPaymentDetals :: getVerNumber :" + myQuoteModel.getVerNumber());
+			else
+			{
+				resp.setMessageKey(arrayResponseUserQuote.getErrorCode());
+				resp.setMessage(arrayResponseUserQuote.getErrorMessage());
+				return resp;
+			}
 			
 			PaymentDetails insertPaymentDetails = new PaymentDetails();
 			insertPaymentDetails.setAppSeqNum(myQuoteModel.getAppSeqNumber());
@@ -86,20 +92,20 @@ public class PayMentService
 			if(null == paymentDetails.getErrorCode())
 			{
 				resp.setData(paymentDetails);
-				logger.info(TAG + " insertPaymentDetals :: updatePaymentDetailRet :" + paymentDetails);
 			}
 			else
 			{
 				resp.setMessageKey(paymentDetails.getErrorCode());
 				resp.setMessage(paymentDetails.getErrorMessage());
-				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setStatusKey(paymentDetails.getErrorCode());
 			}
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "insertPaymentDetals :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
@@ -116,19 +122,15 @@ public class PayMentService
 		AmxApiResponse<PaymentDetails, Object> resp = new AmxApiResponse<PaymentDetails, Object>();
 		try
 		{
-			logger.info(TAG + " cretaeAmibCust :: getCustomerSequenceNumber  :" + userSession.getCustomerSequenceNumber());
-			logger.info(TAG + " cretaeAmibCust :: getCivilId  :" + userSession.getCivilId());
-			
 			ResponseInfo validate = payMentDao.cretaeAmibCust(userSession.getCustomerSequenceNumber(), userSession.getCivilId());
-			logger.info(TAG + " cretaeAmibCust :: validate  :" + validate.toString());
 			
 			if(null == validate.getErrorCode())
 			{
-				resp.setStatusKey(ApiConstants.SUCCESS);
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			}
 			else
 			{
-				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setStatusKey(validate.getErrorMessage());
 				resp.setMessageKey(validate.getErrorCode());
 				resp.setMessage(validate.getErrorMessage());
 			}
@@ -136,8 +138,9 @@ public class PayMentService
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG+"cretaeAmibCust :: exception :" + e);
 		}
 		return resp;
 	}
@@ -150,24 +153,23 @@ public class PayMentService
 		{
 			logger.info(TAG + " processReceipt :: paySeqNum  :" + paySeqNum);
 			ResponseInfo validate = payMentDao.processReceipt(userSession.getCustomerSequenceNumber(), userSession.getCivilId() , paySeqNum);
-			logger.info(TAG + " processReceipt :: validate  :" + validate.toString());
-			
 			if(null == validate.getErrorCode())
 			{
-				resp.setStatusKey(ApiConstants.SUCCESS);
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			}
 			else
 			{
-				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setStatusKey(validate.getErrorCode());
 				resp.setMessageKey(validate.getErrorCode());
 				resp.setMessage(validate.getErrorMessage());
 			}
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "processReceipt :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
@@ -178,27 +180,25 @@ public class PayMentService
 		AmxApiResponse<PaymentDetails, Object> resp = new AmxApiResponse<PaymentDetails, Object>();
 		try
 		{
-			
 			logger.info(TAG + " createAmibPolicy :: paySeqNum  :" + paySeqNum);
 			ResponseInfo validate = payMentDao.createAmibPolicy(userSession.getCustomerSequenceNumber(), userSession.getCivilId() , paySeqNum);
-			logger.info(TAG + " createAmibPolicy :: validate  :" + validate.toString());
-			
 			if(null == validate.getErrorCode())
 			{
-				resp.setStatusKey(ApiConstants.SUCCESS);
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			}
 			else
 			{
-				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setStatusKey(validate.getErrorCode());
 				resp.setMessageKey(validate.getErrorCode());
 				resp.setMessage(validate.getErrorMessage());
 			}
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "createAmibPolicy :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
@@ -210,24 +210,23 @@ public class PayMentService
 		{
 			logger.info(TAG + " preparePrintData :: paySeqNum  :" + paySeqNum);
 			ResponseInfo validate = payMentDao.preparePrintData(paySeqNum);
-			logger.info(TAG + " preparePrintData :: validate  :" + validate.toString());
-			
 			if(null == validate.getErrorCode())
 			{
-				resp.setStatusKey(ApiConstants.SUCCESS);
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 			}
 			else
 			{
-				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setStatusKey(validate.getErrorCode());
 				resp.setMessageKey(validate.getErrorCode());
 				resp.setMessage(validate.getErrorMessage());
 			}
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "preparePrintData :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
@@ -240,72 +239,95 @@ public class PayMentService
 		try
 		{
 			ArrayResponseModel arrayResponseModel = payMentDao.getPaymentStatus(paySeqNum);
-			logger.info(TAG + " getPaymentStatus :: arrayResponseModel  :" + arrayResponseModel.toString());
+			paymentStatus.setPaymentProcedureStatus("N");
+			
+			logger.info(TAG + " getPaymentStatus :: arrayResponseModel :" + arrayResponseModel.getErrorCode());
+			
 			if(null == arrayResponseModel.getErrorCode())
 			{
 				paymentStatus = (PaymentStatus) arrayResponseModel.getObject();
-				logger.info(TAG + " getPaymentStatus :: paymentStatus  :" + paymentStatus.toString());
+				paymentStatus.setPaymentProcedureStatus("N");
 				
 				if(paymentStatus.getPaymentStatus().equalsIgnoreCase("CAPTURED"))
 				{
-					emailSmsService.emialToCustonSuccessPg(paymentStatus.getTotalAmount(),
-							paymentStatus.getTransactionId(), paymentStatus.getAppSeqNumber(), receiptData(paySeqNum));
-
-					AmxApiResponse<? , Object> createAmibResp = payMentService.cretaeAmibCust();
-					if (createAmibResp.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+					try
 					{
-						emailSmsService.failedPGProcedureAfterCapture(paymentStatus , createAmibResp.getMessageKey() , createAmibResp.getMessage() , "CREATE AMIB PROCEDURE" , paySeqNum.toString());
-					}
-					else
-					{
-						AmxApiResponse<? , Object> processTeceiptResp = payMentService.processReceipt(paySeqNum);
-						if (processTeceiptResp.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+						logger.info(TAG + " getPaymentStatus :: paymentStatus 4 :" + paymentStatus.toString());
+						
+						AmxApiResponse<? , Object> createAmibResp = payMentService.cretaeAmibCust();
+						if (!createAmibResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 						{
-							emailSmsService.failedPGProcedureAfterCapture(paymentStatus , processTeceiptResp.getMessageKey() , processTeceiptResp.getMessage() , "PROCESS RECEIPT PROCEDURE" , paySeqNum.toString());
+							emailSmsService.failedPGProcedureAfterCapture(paymentStatus , createAmibResp.getMessageKey() , createAmibResp.getMessage() , "CREATE AMIB PROCEDURE" , paySeqNum.toString());
+							paymentStatus.setPaymentProcedureStatus("Y");
 						}
 						else
 						{
-							AmxApiResponse<? , Object> createAmibPolicyResp = payMentService.createAmibPolicy(paySeqNum);
-							if (createAmibPolicyResp.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+							AmxApiResponse<? , Object> processTeceiptResp = payMentService.processReceipt(paySeqNum);
+							if (!processTeceiptResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 							{
-								emailSmsService.failedPGProcedureAfterCapture(paymentStatus , createAmibPolicyResp.getMessageKey() , createAmibPolicyResp.getMessage() , "CREATE AMIB PLOICY PROCEDURE" , paySeqNum.toString());
+								emailSmsService.failedPGProcedureAfterCapture(paymentStatus , processTeceiptResp.getMessageKey() , processTeceiptResp.getMessage() , "PROCESS RECEIPT PROCEDURE" , paySeqNum.toString());
+								paymentStatus.setPaymentProcedureStatus("Y");
 							}
 							else
 							{
-								AmxApiResponse<? , Object> preparePrintData = payMentService.preparePrintData(paySeqNum);
-								if (preparePrintData.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+								AmxApiResponse<? , Object> createAmibPolicyResp = payMentService.createAmibPolicy(paySeqNum);
+								if (!createAmibPolicyResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 								{
-									emailSmsService.failedPGProcedureAfterCapture(paymentStatus , preparePrintData.getMessageKey() , preparePrintData.getMessage() , "PREPARE STATEMENT PROCEDURE" , paySeqNum.toString());
+									emailSmsService.failedPGProcedureAfterCapture(paymentStatus , createAmibPolicyResp.getMessageKey() , createAmibPolicyResp.getMessage() , "CREATE AMIB PLOICY PROCEDURE" , paySeqNum.toString());
+									paymentStatus.setPaymentProcedureStatus("Y");
+								}
+								else
+								{
+									AmxApiResponse<? , Object> preparePrintData = payMentService.preparePrintData(paySeqNum);
+									if (!preparePrintData.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
+									{
+										emailSmsService.failedPGProcedureAfterCapture(paymentStatus , preparePrintData.getMessageKey() , preparePrintData.getMessage() , "PREPARE STATEMENT PROCEDURE" , paySeqNum.toString());
+									}
 								}
 							}
 						}
 					}
+					catch (Exception e)
+					{
+						e.printStackTrace();
+					}
+					
+					try
+					{
+						emailSmsService.emialToCustonSuccessPg(paymentStatus.getTotalAmount(),
+								paymentStatus.getTransactionId(), paymentStatus.getAppSeqNumber(), receiptData(paySeqNum));
+					}
+					catch (Exception e)
+					{
+						e.printStackTrace();
+					}
 				}
 				
+				logger.info(TAG + " getPaymentStatus :: paymentStatus 12 :" + paymentStatus.toString());
 				resp.setData(paymentStatus);
 				resp.setStatusKey(ApiConstants.SUCCESS);
 			}
 			else
 			{
-				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setStatusKey(arrayResponseModel.getErrorCode());
 				resp.setMessageKey(arrayResponseModel.getErrorCode());
 			}
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "getPaymentStatus :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
 	
-	private ArrayList<Map> receiptData(BigDecimal paySeqNum) 
+	public ArrayList<Map> receiptData(BigDecimal paySeqNum) 
 	{
 		PaymentReceipt paymentReceipt = null;
 		
 		logger.info(TAG + " receiptData :: paySeqNum  :" + paySeqNum);
-		
 		AmxApiResponse<?, Object> receiptData  = payMentService.paymentReceiptData(paySeqNum);
 		if (receiptData.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
@@ -321,14 +343,14 @@ public class PayMentService
 		model.put(DetailsConstants.customerId, paymentReceipt.getCustomerId());
 		model.put(DetailsConstants.paymentDate, paymentReceipt.getPaymentDate());
 		model.put(DetailsConstants.paymentMode, paymentReceipt.getPaymentMode());
-		model.put(DetailsConstants.amountPaidNumber, paymentReceipt.getAmountPaidNumber());
+		model.put(DetailsConstants.amountPaidNumber, Utility.getAmountInCurrency(paymentReceipt.getAmountPaidNumber(), metaService.getTenantProfile().getDecplc() , metaService.getTenantProfile().getCurrency()));
 		model.put(DetailsConstants.amountPaidWord, paymentReceipt.getAmountPaidWord());
 		model.put(DetailsConstants.paymentId, paymentReceipt.getPaymentId());
 		model.put(DetailsConstants.customerName, paymentReceipt.getCustomerName());
 		model.put(DetailsConstants.civilId, paymentReceipt.getCivilId());
 		model.put(DetailsConstants.mobileNumber, paymentReceipt.getMobileNumber());
 		model.put(DetailsConstants.emialId, paymentReceipt.getEmialId());
-		model.put(DetailsConstants.policyDuration, paymentReceipt.getPolicyDuration());
+		model.put(DetailsConstants.policyDuration, (paymentReceipt.getPolicyDuration() + " Year"));
 		model.put(DetailsConstants.governate, paymentReceipt.getGovernate());
 		model.put(DetailsConstants.areaDesc, paymentReceipt.getAreaDesc());
 		model.put(DetailsConstants.address, paymentReceipt.getAddress());
@@ -349,7 +371,7 @@ public class PayMentService
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<>();
 		try
 		{
-			ArrayResponseModel arrayResponseModel = payMentDao.paymentReceiptData(paySeqNum);
+			ArrayResponseModel arrayResponseModel = payMentDao.paymentReceiptData(paySeqNum, userSession.getLanguageId());
 			if(null == arrayResponseModel.getErrorCode())
 			{
 				resp.setData(arrayResponseModel.getObject());
@@ -357,15 +379,16 @@ public class PayMentService
 			}
 			else
 			{
-				resp.setStatusKey(ApiConstants.FAILURE);
+				resp.setStatusKey(arrayResponseModel.getErrorCode());
 				resp.setMessageKey(arrayResponseModel.getErrorCode());
 			}
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "paymentReceiptData :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}

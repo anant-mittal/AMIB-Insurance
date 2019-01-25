@@ -2,14 +2,20 @@ package com.amx.jax.models;
 
 import java.math.BigDecimal;
 
+import com.amx.jax.swagger.ApiMockModelProperty;
+
 public class InsuranceCompanyDetails
 {
+	@ApiMockModelProperty(example = "100008", value = "Insurance Provider Company Code")
 	private BigDecimal companyCode;
 
+	@ApiMockModelProperty(example = "TAAZUR TAKAFUL INS CO", value = "Insurance Provider Company Desc")
 	private String companyName;
 
+	@ApiMockModelProperty(example = "TTIC", value = "Insurance Provider Company Short Code for Icon")
 	private String companyShortCode;
 
+	@ApiMockModelProperty(example = "Y", value = "Insurance Provider Company Short Code for Icon")
 	private String insuranceSelected;
 
 	public BigDecimal getCompanyCode()

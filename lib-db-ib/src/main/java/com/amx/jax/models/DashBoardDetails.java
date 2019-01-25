@@ -4,6 +4,13 @@ public class DashBoardDetails
 {
 	private RequestQuoteDetrails requestQuoteDetails;
 
+	private ActivePolicyDetails activePolicyDetails;
+
+	private MyProfileDetails myProfileDetails;
+
+	private MyQuotesDetaills myQuotesDetaills;
+
+	
 	public RequestQuoteDetrails getRequestQuoteDetails()
 	{
 		return requestQuoteDetails;
@@ -13,12 +20,6 @@ public class DashBoardDetails
 	{
 		this.requestQuoteDetails = requestQuoteDetails;
 	}
-
-	private ActivePolicyDetails activePolicyDetails;
-
-	private MyProfileDetails myProfileDetails;
-
-	private MyQuotesDetaills myQuotesDetaills;
 
 	public ActivePolicyDetails getActivePolicyDetails()
 	{

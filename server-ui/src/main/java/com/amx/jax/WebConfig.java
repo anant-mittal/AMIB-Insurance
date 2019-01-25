@@ -1,16 +1,22 @@
 
 package com.amx.jax;
 
+import java.math.BigDecimal;
 import java.util.regex.Pattern;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import com.amx.jax.http.CommonHttpRequest;
 
 @Configuration
 @PropertySource("classpath:application-lib.properties")
 public class WebConfig {
 
+	private static final Logger logger = LoggerFactory.getLogger(WebConfig.class);
+	
 	public static final Pattern pattern = Pattern.compile("^\\$\\{(.*)\\}$");
 
 	public static final String APP_NAME = "${app.name}";
@@ -31,7 +37,7 @@ public class WebConfig {
 
 	public static final String APP_COMP = "${app.company.code}";
 
-	// public static final String CONFIG_EMAIL = "${spring.mail.username}";
+	public static final String CONFIG_EMAIL = "${spring.mail.username}";
 
 	public static final String PAYMENT_URL = "${jax.payment.url}";
 
@@ -46,6 +52,9 @@ public class WebConfig {
 
 	@Value(APP_COMP)
 	private String appComp;
+	
+	@Autowired
+	CommonHttpRequest httpService;
 
 	/*
 	 * @Value(CONFIG_EMAIL) private String configEmail;
@@ -123,5 +132,5 @@ public class WebConfig {
 	public Boolean isCache() {
 		return cache;
 	}
-
+	
 }

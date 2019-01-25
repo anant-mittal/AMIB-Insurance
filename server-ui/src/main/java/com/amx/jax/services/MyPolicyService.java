@@ -8,13 +8,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.amx.jax.WebAppStatus.WebAppStatusCodes;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
-import com.amx.jax.constants.MessageKey;
+import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.dao.MyPolicyDao;
 import com.amx.jax.models.ActivePolicyModel;
+import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.DateFormats;
-import com.amx.jax.models.MetaData;
 import com.amx.jax.models.PersonalDetails;
 import com.amx.jax.models.PolicyReceiptDetails;
 import com.amx.jax.models.RequestQuoteInfo;
@@ -25,12 +26,9 @@ import com.amx.jax.ui.session.UserSession;
 @Service
 public class MyPolicyService
 {
-	String TAG = "com.amx.jax.services :: MyPolicyService :: ";
+	String TAG = "MyPolicyService :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(MyPolicyService.class);
-
-	@Autowired
-	MetaData metaData;
 
 	@Autowired
 	UserSession userSession;
@@ -43,20 +41,35 @@ public class MyPolicyService
 
 	public AmxApiResponse<ActivePolicyModel, Object> getUserActivePolicy()
 	{
-		logger.info(TAG + " MyPolicyService ::");
-		
 		AmxApiResponse<ActivePolicyModel, Object> resp = new AmxApiResponse<ActivePolicyModel, Object>();
 		try
 		{
-			resp.setResults(myPolicyDao.getUserActivePolicy(userSession.getUserAmibCustRef(), userSession.getCivilId() , metaData.getUserType() , userSession.getCustomerSequenceNumber()));
-			resp.setStatusKey(ApiConstants.SUCCESS);
 			
+			ArrayResponseModel userActivePolicyDetails =  myPolicyDao.getUserActivePolicy(userSession.getUserAmibCustRef(), userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber(), userSession.getLanguageId()); 
+			if(null != userActivePolicyDetails.getErrorCode())
+			{
+				resp.setMessageKey(userActivePolicyDetails.getErrorCode());
+				resp.setMessage(userActivePolicyDetails.getErrorMessage());
+				return resp;
+			}
+			
+			if(null == userSession.getUserAmibCustRef())
+			{
+				if(null != userActivePolicyDetails.getData())
+				{
+					BigDecimal amibRef = new BigDecimal(userActivePolicyDetails.getData());
+					userSession.setUserAmibCustRef(amibRef);
+				}
+			}
+			resp.setResults(userActivePolicyDetails.getDataArray());
+			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG + "getUserActivePolicy :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
@@ -64,7 +77,6 @@ public class MyPolicyService
 	
 	public AmxApiResponse<?, Object> renewInsuranceOldPolicy(BigDecimal oldDocNumber)
 	{
-		logger.info(TAG + " getRenewPolicyDetails :: oldDocNumber :" + oldDocNumber);
 		BigDecimal insuranceCompCode = null;
 		BigDecimal appSeqNumber = null;
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
@@ -72,20 +84,30 @@ public class MyPolicyService
 		try
 		{
 			AmxApiResponse<?, Object> respPersonalDetails = requestQuoteService.getProfileDetails();
-			if (respPersonalDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+			if (!respPersonalDetails.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				return respPersonalDetails;
 			}
 			else
 			{
-				String checkRenewableApplicable = myPolicyDao.checkRenewableApplicable(oldDocNumber , userSession.getCivilId() , metaData.getUserType() , userSession.getCustomerSequenceNumber());
-				logger.info(TAG + " renewInsuranceOldPolicy :: checkRenewableApplicable :" + checkRenewableApplicable);
-				if(null != checkRenewableApplicable && !checkRenewableApplicable.equals(""))
+				ArrayResponseModel arrayResponseModel =  myPolicyDao.checkRenewableApplicable(oldDocNumber , userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber()); 
+				if(null != arrayResponseModel.getErrorCode())
 				{
-					resp.setStatusKey(ApiConstants.FAILURE);
-					resp.setMessageKey(checkRenewableApplicable);
+					resp.setMessageKey(arrayResponseModel.getErrorCode());
+					resp.setMessage(arrayResponseModel.getErrorMessage());
 					return resp;
 				}
+				else
+				{
+					String checkRenewableApplicable = arrayResponseModel.getData();
+					if(null != checkRenewableApplicable && !checkRenewableApplicable.equals(""))
+					{
+						resp.setStatusKey(checkRenewableApplicable);
+						resp.setMessageKey(checkRenewableApplicable);
+						return resp;
+					}
+				}
+				
 				
 				PersonalDetails personalDetails = (PersonalDetails) respPersonalDetails.getData();
 				if (null != personalDetails.getIdExpiryDate())
@@ -93,14 +115,14 @@ public class MyPolicyService
 					String dateFromDb = personalDetails.getIdExpiryDate();
 					if (DateFormats.checkExpiryDate(dateFromDb))
 					{
-						resp.setStatusKey(ApiConstants.FAILURE);
-						resp.setMessageKey(MessageKey.KEY_CIVIL_ID_EXPIRED);
+						resp.setStatusKey(WebAppStatusCodes.CIVIL_ID_EXPIRED.toString());
+						resp.setMessageKey(WebAppStatusCodes.CIVIL_ID_EXPIRED.toString());
 						return resp;
 					}
 				}
 
 				AmxApiResponse<?, Object> getVehicleDetails = requestQuoteService.getRenewPolicyVehicleDetails(oldDocNumber);
-				if (getVehicleDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+				if (!getVehicleDetails.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 				{
 					return getVehicleDetails;
 				}
@@ -112,7 +134,7 @@ public class MyPolicyService
 					}
 
 					AmxApiResponse<?, Object> submitVehicleDetails = requestQuoteService.setAppVehicleDetails(appSeqNumber, (VehicleDetails) getVehicleDetails.getData(), oldDocNumber);
-					if (submitVehicleDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+					if (!submitVehicleDetails.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 					{
 						return submitVehicleDetails;
 					}
@@ -124,40 +146,45 @@ public class MyPolicyService
 					}
 					
 					AmxApiResponse<?, Object> setPersonalDetails = requestQuoteService.setProfileDetails(appSeqNumber, (PersonalDetails) respPersonalDetails.getData());
-					if (setPersonalDetails.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+					if (!setPersonalDetails.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 					{
 						return setPersonalDetails;
 					}
 					
 					AmxApiResponse<?, Object> updateInsuranceProvider = requestQuoteService.updateInsuranceProvider(appSeqNumber, insuranceCompCode , userSession.getCivilId());
-					if (updateInsuranceProvider.getStatusKey().equalsIgnoreCase(ApiConstants.FAILURE))
+					if (!updateInsuranceProvider.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 					{
 						return updateInsuranceProvider;
 					}
 				}
 			}
+			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
 			resp.setMessage(e.toString());
-			return resp;
+			logger.info(TAG + "renewInsuranceOldPolicy :: exception :" + e);
+			e.printStackTrace();
 		}
 		return resp;
 	}
 	
-	public PolicyReceiptDetails downloadPolicyReceipt(BigDecimal docNumber)
+	public ArrayResponseModel downloadPolicyReceipt(BigDecimal docNumber)
 	{
-		PolicyReceiptDetails policyReceiptDetails = null;
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		try
 		{
-			policyReceiptDetails = myPolicyDao.downloadPolicyReceipt(docNumber);
+			logger.info("MyPolicyService :: downloadPolicyReceipt :: getLanguageId :" + userSession.getLanguageId());
+			arrayResponseModel = myPolicyDao.downloadPolicyReceipt(docNumber, userSession.getLanguageId());
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"downloadPolicyReceipt :: exception :" + e);
 			e.printStackTrace();
 		}
-		return policyReceiptDetails;
+		return arrayResponseModel;
 	}
-	
 }

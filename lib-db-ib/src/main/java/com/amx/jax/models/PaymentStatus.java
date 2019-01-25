@@ -7,6 +7,15 @@ public class PaymentStatus
 	
 	private String paymentStatus;
 	
+	@Override
+	public String toString() {
+		return "PaymentStatus [paymentStatus=" + paymentStatus + ", paymentDate=" + paymentDate + ", payId=" + payId
+				+ ", refId=" + refId + ", modePremium=" + modePremium + ", supervisionFees=" + supervisionFees
+				+ ", issueFees=" + issueFees + ", additionalPremium=" + additionalPremium + ", discount=" + discount
+				+ ", totalAmount=" + totalAmount + ", transactionId=" + transactionId + ", appSeqNumber=" + appSeqNumber
+				+ ", paymentProcedureStatus=" + paymentProcedureStatus + ", payToken=" + payToken + "]";
+	}
+
 	private String paymentDate;
 
 	private String payId;
@@ -29,6 +38,16 @@ public class PaymentStatus
 	
 	private BigDecimal appSeqNumber;
 	
+	private String paymentProcedureStatus;
+	
+	public String getPaymentProcedureStatus() {
+		return paymentProcedureStatus;
+	}
+
+	public void setPaymentProcedureStatus(String paymentProcedureStatus) {
+		this.paymentProcedureStatus = paymentProcedureStatus;
+	}
+
 	public BigDecimal getAppSeqNumber() {
 		return appSeqNumber;
 	}
@@ -135,11 +154,5 @@ public class PaymentStatus
 		this.totalAmount = totalAmount;
 	}
 	
-	@Override
-	public String toString() {
-		return "PaymentStatus [paymentStatus=" + paymentStatus + ", paymentDate=" + paymentDate + ", payId=" + payId
-				+ ", refId=" + refId + ", modePremium=" + modePremium + ", supervisionFees=" + supervisionFees
-				+ ", issueFees=" + issueFees + ", additionalPremium=" + additionalPremium + ", discount=" + discount
-				+ ", totalAmount=" + totalAmount + ", transactionId=" + transactionId + ", payToken=" + payToken + "]";
-	}
+	
 }

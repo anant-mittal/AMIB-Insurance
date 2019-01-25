@@ -301,7 +301,8 @@ a {
 									<tr>
 										<td class="content-block note"><span>NOTE:</span><span> In case you are facing issue to download/view the transaction receipt, </span><br/>
 										<span>please contact AMIB team <span class="note"  th:text="${data.contactUsMobile}"></span> or </span>
-										<a style="color:green" th:href="@{'https://' +${data.contactUsEmail}}"><span th:text="${data.contactUsEmail}"></span></a> 
+										<a style="color:green; text-decoration:none"><span th:text="${data.contactUsEmail}"></span></a>
+										<!-- <span style="color:green" th:text="${data.contactUsEmail}" th:remove="tag"></span> -->
 										for more details.
 										</td>
 									</tr>
@@ -309,8 +310,8 @@ a {
 										<td class="content-block">Thanks and Regards,<br/>
 											<strong class="upper"><span th:text="${data.companyName}" th:remove="tag"></span>,</strong><br/>
 											<span th:text="${data.country}" th:remove="tag"></span><br/>
-											<span th:text="${data.contactUsEmail}" th:remove="tag"></span><br/>
-											<a th:href="@{'https://' +${data.amibWebLink}}"><span th:text="${data.amibWebLink}"></span></a>
+												<a style="color:black; text-decoration:none"><span th:text="${data.contactUsEmail}"></span></a><br/>
+												<a th:href="@{'https://' +${data.amibWebLink}}"><span th:text="${data.amibWebLink}"></span></a>
 											</td>
 									</tr>
 								</table>

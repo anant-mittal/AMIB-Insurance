@@ -6,56 +6,55 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-import com.amx.jax.constants.DetailsConstants;
+
+import com.amx.jax.constants.ApiConstants;
+import com.amx.jax.meta.IMetaService;
+import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CompanySetUp;
 import com.amx.jax.models.CustomerDetailModel;
 import com.amx.jax.models.CustomerLoginModel;
 import com.amx.jax.models.CustomerRegistrationModel;
 import com.amx.jax.models.FailureException;
-import com.amx.jax.models.MetaData;
 import com.amx.jax.models.ResponseInfo;
 import oracle.jdbc.OracleTypes;
 
 @Repository
 public class CustomerRegistrationDao
 {
-	static String TAG = "com.insurance.user_registartion.dao :: CustomerRegistrationDao :: ";
-
+	static String TAG = "CustomerRegistrationDao :: ";
 	private static final Logger logger = LoggerFactory.getLogger(CustomerRegistrationDao.class);
 
 	@Autowired
 	JdbcTemplate jdbcTemplate;
 
 	@Autowired
-	MetaData metaData;
-
-	
-	
+	IMetaService metaService;
 	
 	Connection connection;
 
-	public ArrayList<CompanySetUp> getCompanySetUp(BigDecimal langId)
+	//public ArrayList<CompanySetUp> getCompanySetUp(BigDecimal langId , String companyCode)
+	public ArrayResponseModel getCompanySetUp(BigDecimal langId , String companyCode)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
-		String callProcedure = "{call IRB_GET_COMPANY_SETUP(?,?,?,?,?)}";
 		ArrayList<CompanySetUp> companySetUpArray = new ArrayList<CompanySetUp>();
-
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
+		
+		String callProcedure = "{call IRB_GET_COMPANY_SETUP(?,?,?,?,?)}";
+		
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setString(1, "AMIB");
+			callableStatement.setString(1,companyCode);
 			callableStatement.setBigDecimal(2, langId);
 			callableStatement.registerOutParameter(3, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(4, java.sql.Types.VARCHAR);
@@ -89,23 +88,29 @@ public class CustomerRegistrationDao
 				companySetUp.setHelpLineNumber(rs.getString(19));
 				companySetUp.setWebSite(rs.getString(20));
 				companySetUp.setEmailSenderId(rs.getString(21));
-
 				companySetUpArray.add(companySetUp);
 			}
+			arrayResponseModel.setDataArray(companySetUpArray);
+			arrayResponseModel.setErrorCode(callableStatement.getString(4));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(5));
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getCompanySetUp :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return companySetUpArray;
+		return arrayResponseModel;
 	}
 
-	public boolean isValidCivilId(String civilid)
+	public ArrayResponseModel isValidCivilId(String civilid)
 	{
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callFunction = "{ ? = call O_VALIDATE_CIVILID(?)}";
@@ -117,81 +122,70 @@ public class CustomerRegistrationDao
 			callableStatement.setString(2, civilid);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
-
-			if (null == result)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			arrayResponseModel.setData(result);
 		}
 		catch (SQLException e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"isValidCivilId :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return false;
+		return arrayResponseModel;
 	}
 
-	public boolean isCivilIdExist(String civilid , String userType)
+	//public boolean isCivilIdExist(String civilid , String userType)
+	public ArrayResponseModel isCivilIdExist(String civilid , String userType)
 	{
 
 		getConnection();
 		CallableStatement callableStatement = null;
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		String callFunction = "{ ? = call IRB_IF_ONLINE_USEREXIST(?,?,?,?)}";
 
 		try
 		{
 			callableStatement = connection.prepareCall(callFunction);
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
-			logger.info(TAG + " isCivilIdExist :: metaData.getCivilId    :" + metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCountryId());
-			logger.info(TAG + " isCivilIdExist :: metaData.getCivilId    :" + metaData.getCompCd());
-			callableStatement.setBigDecimal(3, metaData.getCompCd());
-			logger.info(TAG + " isCivilIdExist :: userType    :" + userType);
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(4, userType);
 			callableStatement.setString(5, civilid);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
-			logger.info(TAG + " isCivilIdExist :: result    :" + result);
-			
-			if (result.equalsIgnoreCase("Y"))
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			arrayResponseModel.setData(result);
 		}
 		catch (SQLException e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"isValidCivilId :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return false;
+		return arrayResponseModel;
 	}
 
-	public ResponseInfo isValidMobileNumber(String mobileNumber)
+	public ArrayResponseModel isValidMobileNumber(String mobileNumber)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		String callProcedure = "{call IRB_VALIDATE_MOBILE(?,?,?,?,?)}";
 		ResponseInfo validate = new ResponseInfo();
 
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(3, mobileNumber);
 			callableStatement.registerOutParameter(4, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
@@ -199,21 +193,15 @@ public class CustomerRegistrationDao
 			String errorCode = callableStatement.getString(4);
 			String errorMessage = callableStatement.getString(5);
 
-			if (null == errorCode)
-			{
-				validate.setValid(true);
-				return validate;
-			}
-			else
-			{
-				validate.setValid(false);
-				validate.setErrorCode(errorCode);
-				validate.setErrorMessage(errorMessage);
-				return validate;
-			}
+			arrayResponseModel.setErrorCode(errorCode);
+			arrayResponseModel.setErrorMessage(errorMessage);
+			
 		}
 		catch (SQLException e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"isValidCivilId :: exception :" + e);
 			e.printStackTrace();
 		}
 
@@ -221,13 +209,15 @@ public class CustomerRegistrationDao
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return validate;
+		return arrayResponseModel;
 	}
 
-	public boolean isMobileNumberExist(String mobilenumber , String userType)
+	//public boolean isMobileNumberExist(String mobilenumber , String userType)
+	public ArrayResponseModel isMobileNumberExist(String mobilenumber , String userType)
 	{
 
 		getConnection();
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		CallableStatement callableStatement = null;
 		String callFunction = "{ ? = call IRB_IF_DUP_MOBILE(?,?,?,?)}";
 
@@ -235,106 +225,96 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callFunction);
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
-			callableStatement.setBigDecimal(2, metaData.getCountryId());
-			callableStatement.setBigDecimal(3, metaData.getCompCd());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(4, userType);
 			callableStatement.setString(5, mobilenumber);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
-
-			if (result.equalsIgnoreCase("Y"))
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			arrayResponseModel.setData(result);
+			
 		}
 		catch (SQLException e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"isMobileNumberExist :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return false;
+		return arrayResponseModel;
 	}
 
-	public boolean isEmailIdExist(String email , String userType)
+	public ArrayResponseModel isEmailIdExist(String email , String userType)
 	{
-
 		getConnection();
 		CallableStatement callableStatement = null;
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		String callFunction = "{ ? = call IRB_IF_DUP_EMAIL(?,?,?,?)}";
 
 		try
 		{
 			callableStatement = connection.prepareCall(callFunction);
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
-			callableStatement.setBigDecimal(2, metaData.getCountryId());
-			callableStatement.setBigDecimal(3, metaData.getCompCd());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(4, userType);
 			callableStatement.setString(5, email);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
-
-			if (result.equalsIgnoreCase("Y"))
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			arrayResponseModel.setData(result);
+			
 		}
 		catch (SQLException e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"isEmailIdExist :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return false;
+		return arrayResponseModel;
 	}
 
-	public boolean isOtpEnabled(String civilId , String userType)
+	public ArrayResponseModel isOtpEnabled(String civilId , String userType)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
+		
 		String callFunction = "{ ? = call IRB_IF_OTP_ENABLED(?,?,?,?)}";
 
 		try
 		{
 			callableStatement = connection.prepareCall(callFunction);
 			callableStatement.registerOutParameter(1, java.sql.Types.VARCHAR);
-			callableStatement.setBigDecimal(2, metaData.getCountryId());
-			callableStatement.setBigDecimal(3, metaData.getCompCd());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(3, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(4, userType);
 			callableStatement.setString(5, civilId);
 			callableStatement.executeUpdate();
 			String result = callableStatement.getString(1);
-
-			if (result.equalsIgnoreCase("Y"))
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
+			arrayResponseModel.setData(result);
+			
 		}
 		catch (SQLException e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"isOtpEnabled :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return false;
+		return arrayResponseModel;
 	}
 
 	public ResponseInfo setOtpCount(String civilId , String userType)
@@ -347,8 +327,8 @@ public class CustomerRegistrationDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(3, userType);
 			callableStatement.setString(4, civilId);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
@@ -359,14 +339,12 @@ public class CustomerRegistrationDao
 
 			if (null == errorCode)
 			{
-				validate.setValid(true);
 				validate.setErrorCode(errorCode);
 				validate.setErrorMessage(errorMessage);
 				return validate;
 			}
 			else
 			{
-				validate.setValid(false);
 				validate.setErrorCode(errorCode);
 				validate.setErrorMessage(errorMessage);
 				return validate;
@@ -374,6 +352,9 @@ public class CustomerRegistrationDao
 		}
 		catch (SQLException e)
 		{
+			validate.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			validate.setErrorMessage(e.toString());
+			logger.info(TAG+"setOtpCount :: exception :" + e);
 			e.printStackTrace();
 		}
 
@@ -384,7 +365,7 @@ public class CustomerRegistrationDao
 		return validate;
 	}
 
-	public CustomerRegistrationModel addNewCustomer(CustomerRegistrationModel customerRegistrationModel)
+	public CustomerRegistrationModel addNewCustomer(CustomerRegistrationModel customerRegistrationModel , BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -414,7 +395,7 @@ public class CustomerRegistrationDao
 			callableStatement.setString(7, "");
 			callableStatement.setString(8, emailId);
 			callableStatement.setString(9, "");
-			callableStatement.setBigDecimal(10, metaData.getLanguageId());
+			callableStatement.setBigDecimal(10, languageId);
 			callableStatement.setString(11, deviceType);
 			callableStatement.setDate(12, getCurrentDate());
 			callableStatement.setString(13, createdDeviceId);
@@ -444,6 +425,9 @@ public class CustomerRegistrationDao
 		}
 		catch (Exception e)
 		{
+			customerRegistrationModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			customerRegistrationModel.setErrorMessage(e.toString());
+			logger.info(TAG+"addNewCustomer :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -453,7 +437,7 @@ public class CustomerRegistrationDao
 		return customerRegistrationModel;
 	}
 
-	public CustomerDetailModel getUserDetails(String civilId , String userType , BigDecimal userSeqNum)
+	public CustomerDetailModel getUserDetails(String civilId , String userType , BigDecimal userSeqNum , BigDecimal languageId)
 	{
 		getConnection();
 		CustomerDetailModel customerDetailModel = null;
@@ -465,11 +449,11 @@ public class CustomerRegistrationDao
 		{
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(3, userType);
 			callableStatement.setString(4, civilId);
-			callableStatement.setBigDecimal(5, metaData.getLanguageId());
+			callableStatement.setBigDecimal(5, languageId);
 			callableStatement.setBigDecimal(6, userSeqNum);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
@@ -517,6 +501,9 @@ public class CustomerRegistrationDao
 		}
 		catch (Exception e)
 		{
+			customerDetailModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			customerDetailModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getUserDetails :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -526,34 +513,48 @@ public class CustomerRegistrationDao
 		return customerDetailModel;
 	}
 
-	public CustomerLoginModel validateUserLogin(CustomerLoginModel customerLoginModel , String userType)
+	public CustomerLoginModel validateUserLogin(CustomerLoginModel customerLoginModel , String userType , BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
-		String callProcedure = "{call IRB_CHECK_LOGIN(?,?,?,?,?,?,?,?,?,?,?)}";
+		String callProcedure = "{call IRB_CHECK_LOGIN(?,?,?,?,?,?,?,?,?,?,?,?)}";
 
 		try
 		{
+			logger.info(TAG+"validateUserLogin :: getCountryId :" + metaService.getTenantProfile().getCountryId());
+			logger.info(TAG+"validateUserLogin :: getCompCd :" + metaService.getTenantProfile().getCompCd());
+			logger.info(TAG+"validateUserLogin :: userType :" + userType);
+			logger.info(TAG+"validateUserLogin :: getCivilId :" + customerLoginModel.getCivilId());
+			logger.info(TAG+"validateUserLogin :: getPassword :" + customerLoginModel.getPassword());
+			logger.info(TAG+"validateUserLogin :: getDeviceId :" + metaService.getUserDeviceInfo().getDeviceId());
+			logger.info(TAG+"validateUserLogin :: languageId :" + languageId);
+			
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(3, userType);
 			callableStatement.setString(4, customerLoginModel.getCivilId());
 			callableStatement.setString(5, customerLoginModel.getPassword());
-			callableStatement.setString(6, metaData.getDeviceId());
-			callableStatement.setString(7, metaData.getDeviceType());
-			callableStatement.registerOutParameter(8, java.sql.Types.INTEGER);
+			callableStatement.setString(6, metaService.getUserDeviceInfo().getDeviceId());
+			callableStatement.setString(7, metaService.getUserDeviceInfo().getDeviceType());
+			callableStatement.setBigDecimal(8, languageId);
 			callableStatement.registerOutParameter(9, java.sql.Types.INTEGER);
-			callableStatement.registerOutParameter(10, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(10, java.sql.Types.INTEGER);
 			callableStatement.registerOutParameter(11, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(12, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
 
-			BigDecimal userSequenceNumber = callableStatement.getBigDecimal(8);
-			BigDecimal amibRef = callableStatement.getBigDecimal(9);
-			String errorCode = callableStatement.getString(10);
-			String errorMessage = callableStatement.getString(11);
-
+			BigDecimal userSequenceNumber = callableStatement.getBigDecimal(9);
+			BigDecimal amibRef = callableStatement.getBigDecimal(10);
+			String errorCode = callableStatement.getString(11);
+			String errorMessage = callableStatement.getString(12);
+			
+			logger.info(TAG+"validateUserLogin :: userSequenceNumber :" + userSequenceNumber);
+			logger.info(TAG+"validateUserLogin :: amibRef :" + amibRef);
+			logger.info(TAG+"validateUserLogin :: errorCode :" + errorCode);
+			logger.info(TAG+"validateUserLogin :: errorMessage :" + errorMessage);
+			
 			customerLoginModel = new CustomerLoginModel();
 
 			if (errorCode == null)
@@ -572,6 +573,9 @@ public class CustomerRegistrationDao
 		}
 		catch (Exception e)
 		{
+			customerLoginModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			customerLoginModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getCompanySetUp :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -590,15 +594,15 @@ public class CustomerRegistrationDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setString(3, userType);
 			callableStatement.setString(4, civilId);
 			callableStatement.setString(5, customerDetailModel.getPassword());
 			callableStatement.setBigDecimal(6, null);
 			callableStatement.setDate(7, getCurrentDate());
-			callableStatement.setString(8, metaData.getDeviceId());
-			callableStatement.setString(9, metaData.getDeviceType());
+			callableStatement.setString(8, metaService.getUserDeviceInfo().getDeviceId());
+			callableStatement.setString(9, metaService.getUserDeviceInfo().getDeviceType());
 			callableStatement.setString(10, civilId);
 			callableStatement.registerOutParameter(11, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(12, java.sql.Types.VARCHAR);
@@ -611,7 +615,7 @@ public class CustomerRegistrationDao
 
 			logger.info(TAG + " updatePassword :: errorCode     :" + errorCode);
 			logger.info(TAG + " updatePassword :: errorMessage  :" + errorMessage);
-
+			
 			customerDetailModel.setErrorCode(errorCode);
 			customerDetailModel.setErrorMessage(errorMessage);
 
@@ -627,6 +631,9 @@ public class CustomerRegistrationDao
 		}
 		catch (Exception e)
 		{
+			customerDetailModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			customerDetailModel.setErrorMessage(e.toString());
+			logger.info(TAG+"updatePassword :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -686,6 +693,9 @@ public class CustomerRegistrationDao
 		}
 		catch (Exception e)
 		{
+			failureException.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			failureException.setErrorMessage(e.toString());
+			logger.info(TAG+"setFailedException :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally

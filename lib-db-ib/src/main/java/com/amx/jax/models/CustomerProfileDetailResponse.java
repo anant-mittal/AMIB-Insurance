@@ -4,38 +4,55 @@ package com.amx.jax.models;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.amx.jax.swagger.ApiMockModelProperty;
+
 
 public class CustomerProfileDetailResponse
 {
 
+	@ApiMockModelProperty(example = "Amana Devadi", value = "customer english name")
 	private String englishName;
 
+	@ApiMockModelProperty(example = "Adm", value = "customer native arabic name")
 	private String nativeArabicName;
 
+	@ApiMockModelProperty(example = "F", value = "customer gender code")
 	private String genderCode;
 
+	@ApiMockModelProperty(example = "FEMALE", value = "customer gender desc")
 	private String genderDesc;
 
+	@ApiMockModelProperty(example = "13-Dec-18", value = "civil id expiry date")
 	private String idExpiryDate;
 
+	@ApiMockModelProperty(example = "ACH", value = "customer profession code")
 	private String businessCode;
 
+	@ApiMockModelProperty(example = "ARCHITECT", value = "customer profession desc")
 	private String businessDesc;
 
+	@ApiMockModelProperty(example = "IND", value = "customer nationality code")
 	private String natyCode;
 
+	@ApiMockModelProperty(example = "INDIAN", value = "customer nationality desc")
 	private String natyDesc;
 
+	@ApiMockModelProperty(example = "FAR", value = "governate code")
 	private String govCode;
 
+	@ApiMockModelProperty(example = "AL FARWANYA", value = "governate desc")
 	private String govDesc;
 
+	@ApiMockModelProperty(example = "AIR", value = "customer area code")
 	private String areaCode;
 
+	@ApiMockModelProperty(example = "AIR PORT", value = "customer area desc")
 	private String areaDesc;
 
+	@ApiMockModelProperty(example = "98345678", value = "customer registered mobile number")
 	private String mobile;
 
+	@ApiMockModelProperty(example = "amx@gmail.com", value = "customer registered email id")
 	private String email;
 
 	private BigDecimal languageId;

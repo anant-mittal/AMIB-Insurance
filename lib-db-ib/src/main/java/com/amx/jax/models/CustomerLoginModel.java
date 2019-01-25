@@ -28,6 +28,18 @@ public class CustomerLoginModel
 	public String deviceType;
 
 	public boolean status;
+	
+	public BigDecimal languageId;
+	
+	public BigDecimal getLanguageId() 
+	{
+		return languageId;
+	}
+
+	public void setLanguageId(BigDecimal languageId) 
+	{
+		this.languageId = languageId;
+	}
 
 	public BigDecimal getCountryId()
 	{
@@ -149,11 +161,13 @@ public class CustomerLoginModel
 		this.deviceType = deviceType;
 	}
 
+
 	@Override
-	public String toString()
-	{
-		return "CustomerLoginModel [CountryId=" + CountryId + ", CompCd=" + CompCd + ", UserType=" + UserType + ", CivilId=" + CivilId + ", Password=" + Password + ", userSeqNum=" + userSeqNum + ", amibRef=" + amibRef + ", errorCode=" + errorCode + ", errorMessage=" + errorMessage + ", status="
-				+ status + "]";
+	public String toString() {
+		return "CustomerLoginModel [CountryId=" + CountryId + ", CompCd=" + CompCd + ", UserType=" + UserType
+				+ ", CivilId=" + CivilId + ", Password=" + Password + ", userSeqNum=" + userSeqNum + ", amibRef="
+				+ amibRef + ", errorCode=" + errorCode + ", errorMessage=" + errorMessage + ", deviceId=" + deviceId
+				+ ", deviceType=" + deviceType + ", status=" + status + ", languageId=" + languageId + "]";
 	}
 
 }

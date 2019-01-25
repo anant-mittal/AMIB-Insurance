@@ -11,8 +11,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+
+import com.amx.jax.constants.ApiConstants;
+import com.amx.jax.meta.IMetaService;
+import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.DateFormats;
-import com.amx.jax.models.MetaData;
 import com.amx.jax.models.MyQuoteModel;
 import com.amx.jax.utility.Utility;
 import oracle.jdbc.OracleTypes;
@@ -20,7 +23,7 @@ import oracle.jdbc.OracleTypes;
 @Repository
 public class MyQuoteDao
 {
-	String TAG = "com.amx.jax.dao.MyQuoteDao :: ";
+	String TAG = "MyQuoteDao :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(MyQuoteDao.class);
 
@@ -28,26 +31,26 @@ public class MyQuoteDao
 	JdbcTemplate jdbcTemplate;
 
 	@Autowired
-	MetaData metaData;
+	IMetaService metaService;
 
 	Connection connection;
 
-	public ArrayList<MyQuoteModel> getUserQuote(BigDecimal customerSeqNum)
+	public ArrayResponseModel getUserQuote(BigDecimal customerSeqNum, BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
 		String callProcedure = "{call IRB_GET_MYQUOTES(?,?,?,?,?,?,?)}";//
 		ArrayList<MyQuoteModel> activePolicyArray = new ArrayList<MyQuoteModel>();
 
 		try
 		{
-			logger.info(TAG + " getUserQuote :: metaData :" + metaData.toString());
 			callableStatement = connection.prepareCall(callProcedure);
 
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, customerSeqNum);
-			callableStatement.setBigDecimal(4, metaData.getLanguageId());
+			callableStatement.setBigDecimal(4, languageId);
 			callableStatement.registerOutParameter(5, OracleTypes.CURSOR);
 			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
@@ -59,7 +62,6 @@ public class MyQuoteDao
 				MyQuoteModel myQuoteModel = new MyQuoteModel();
 				myQuoteModel.setCountryId(rs.getBigDecimal(1));
 				myQuoteModel.setCompCd(rs.getBigDecimal(2));
-				logger.info(TAG + " getUserQuote :: getAppSeqNumber :" + rs.getBigDecimal(3));
 				myQuoteModel.setAppSeqNumber(rs.getBigDecimal(3));
 				myQuoteModel.setAppDate(DateFormats.uiFormattedDate(rs.getDate(4)));
 				myQuoteModel.setAppType(rs.getString(5));
@@ -67,7 +69,6 @@ public class MyQuoteDao
 				myQuoteModel.setAppStatus(rs.getString(7));
 				myQuoteModel.setStatus(rs.getString(8));
 				myQuoteModel.setQuoteDate(DateFormats.uiFormattedDate(rs.getDate(9)));
-				logger.info(TAG + " getUserQuote :: getQuoteSeqNumber :" + rs.getBigDecimal(10));
 				myQuoteModel.setQuoteSeqNumber(rs.getBigDecimal(10));
 				myQuoteModel.setVerNumber(rs.getBigDecimal(11));
 				myQuoteModel.setCompanyCode(rs.getBigDecimal(12));
@@ -94,27 +95,33 @@ public class MyQuoteDao
 				myQuoteModel.setVehicleValue(rs.getBigDecimal(33));
 				myQuoteModel.setBasicPremium(rs.getBigDecimal(34));
 				myQuoteModel.setSupervisionFees(rs.getBigDecimal(35));
-				myQuoteModel.setIssueFee(Utility.round(rs.getBigDecimal(36), metaData.getDecplc()));
-				myQuoteModel.setDiscount(Utility.round(rs.getBigDecimal(37), metaData.getDecplc()));
+				myQuoteModel.setIssueFee(Utility.round(rs.getBigDecimal(36), metaService.getTenantProfile().getDecplc()));
+				myQuoteModel.setDiscount(Utility.round(rs.getBigDecimal(37), metaService.getTenantProfile().getDecplc()));
 				myQuoteModel.setAddCoveragePremium(rs.getBigDecimal(38));
-				myQuoteModel.setNetAmount(Utility.round(rs.getBigDecimal(39), metaData.getDecplc()));
+				myQuoteModel.setNetAmount(Utility.round(rs.getBigDecimal(39), metaService.getTenantProfile().getDecplc()));
 				myQuoteModel.setPolCondition(rs.getString(40));
 				myQuoteModel.setVehicleType(rs.getString(41));
-				myQuoteModel.setPaymentProcessError(rs.getString(42));
+				myQuoteModel.setPaymentProcessError(rs.getString(42));// if 'Y' error has occurred while payment and same error message is shown on Quote
 				activePolicyArray.add(myQuoteModel);
 				
-				logger.info(TAG + " getUserQuote :: myQuoteModel :" + myQuoteModel.toString());
+				//logger.info(TAG + " getUserQuote :: myQuoteModel :" + myQuoteModel.toString());
 			}
+			arrayResponseModel.setDataArray(activePolicyArray);
+			arrayResponseModel.setErrorCode(callableStatement.getString(6));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(7));
 		}
 		catch (Exception e)
 		{
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getUserQuote :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
 		{
 			CloseConnection(callableStatement, connection);
 		}
-		return activePolicyArray;
+		return arrayResponseModel;
 	}
 
 	private Connection getConnection()

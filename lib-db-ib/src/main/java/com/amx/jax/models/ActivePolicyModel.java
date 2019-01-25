@@ -2,98 +2,146 @@ package com.amx.jax.models;
 
 import java.math.BigDecimal;
 
+import com.amx.jax.swagger.ApiMockModelProperty;
+
 public class ActivePolicyModel
 {
+	@ApiMockModelProperty(example = "1", value = "Country Unique ID")
 	private BigDecimal countryId;
 
+	@ApiMockModelProperty(example = "10", value = "Company ID")
 	private BigDecimal compCd;
 
+	@ApiMockModelProperty(example = "40157", value = "Application Doc Number")
 	private BigDecimal docNumber;
 
+	@ApiMockModelProperty(example = "23-Nov-18", value = "Application Doc Date")
 	private String docDate;
 
+	@ApiMockModelProperty(example = "121", value = "Application Finance")
 	private BigDecimal finance;
 
+	@ApiMockModelProperty(example = "15", value = "Application Showroom")
 	private BigDecimal showRoom;
 
+	@ApiMockModelProperty(example = "55", value = "Sales Man")
 	private BigDecimal salesman;
 
+	@ApiMockModelProperty(example = "428689", value = "Customer AMIB Ref Number")
 	private BigDecimal userAmibCustRef;
 
+	@ApiMockModelProperty(example = "Tiren Kerki", value = "Insured English Name")
 	private String insuredEnglishName;
 
+	@ApiMockModelProperty(example = "Tiren Kerki", value = "Insured Arabic Name")
 	private String insuredArabicName;
 
+	@ApiMockModelProperty(example = "280052003608", value = "ID Number")
 	private BigDecimal idNumber;
 
+	@ApiMockModelProperty(example = "100008", value = "Insured Company Code")
 	private BigDecimal insCompanyCode;
 
+	@ApiMockModelProperty(example = "TAAZUR TAKAFUL INS CO", value = "Insurance Provider Company Desc")
 	private String insCompanyDesc;
 	
+	@ApiMockModelProperty(example = "TTIC", value = "Insurance Provider Company Short Code for Icon")
 	private String insCompanyPrefix;
 
+	@ApiMockModelProperty(example = "428689", value = "")
 	private BigDecimal dbcust;
 
+	@ApiMockModelProperty(example = "ACU", value = "Vehicle Details Make Code ")
 	private String makeCode;
 
+	@ApiMockModelProperty(example = "ACURA", value = "Vehicle Details Make Desc ")
 	private String makeDesc;
 
+	@ApiMockModelProperty(example = "TV6", value = "Vehicle Details Sub Make Code")
 	private String subMakeCode;
 
+	@ApiMockModelProperty(example = "TLX V6", value = "Vehicle Details Sub Make Desc")
 	private String subMakeDesc;
 
+	@ApiMockModelProperty(example = "2017", value = "Vehicle Model Year")
 	private BigDecimal modelYear;
 
+	@ApiMockModelProperty(example = "SAL", value = "Vehicle Shape Code")
 	private String shapeCode;
 
+	@ApiMockModelProperty(example = "SALON", value = "Vehicle Shape Desc")
 	private String shapeDesc;
 
+	@ApiMockModelProperty(example = "ADC", value = "Vehicle Colour Code")
 	private String colourCode;
 
+	@ApiMockModelProperty(example = "ADD COLUOR", value = "Vehicle Colour Desc")
 	private String colourDesc;
 
+	@ApiMockModelProperty(example = "4", value = "Vehicle Seating Capacity/ Nubmber of Passanger")
 	private BigDecimal noPass;
 
+	@ApiMockModelProperty(example = "12356451514541554", value = "Vehicle Chasis Number")
 	private String chassis;
 
+	@ApiMockModelProperty(example = "12345", value = "Vehicle KT Number")
 	private String ktNumber;
 
+	@ApiMockModelProperty(example = "N", value = "Vehicle Condition Code")
 	private String vehicleConditionCode;
 
+	@ApiMockModelProperty(example = "New", value = "Vehicle Condition Desc")
 	private String vehicleConditionDesc;
 
+	@ApiMockModelProperty(example = "BR", value = "Vehicle Purpose Code")
 	private String purposeCode;
 
+	@ApiMockModelProperty(example = "TAXI", value = "Vehicle Purpose Desc")
 	private String purposeDesc;
 
+	@ApiMockModelProperty(example = "1", value = "Vehicle SR Number")
 	private BigDecimal vehicleSrNumber;
 
+	@ApiMockModelProperty(example = "MOD", value = "Insurance policy type code")
 	private String policyTypeCode;
 
+	@ApiMockModelProperty(example = "MOTOR OWN DAMAGE", value = "Insurance policy type Desc")
 	private String policyTypeDesc;
 
+	@ApiMockModelProperty(example = "721805900712", value = "Insurance policy Number")
 	private String policyNumber;
 
+	@ApiMockModelProperty(example = "1200.000", value = "Max Insured Amount")
 	private BigDecimal maxInsuredAmount;
 
+	@ApiMockModelProperty(example = "23-Nov-18", value = "Insurance Policy Start Date")
 	private String startDate;
 
+	@ApiMockModelProperty(example = "22-Nov-19", value = "Insurance Policy End Date")
 	private String endDate;
 
+	@ApiMockModelProperty(example = "1", value = "Supervision Key")
 	private BigDecimal supervisionKey;
 
+	@ApiMockModelProperty(example = "10", value = "Insurance issue fees")
 	private BigDecimal issueFee;
 
+	@ApiMockModelProperty(example = "107", value = "Total Premium")
 	private BigDecimal premium;
 
+	@ApiMockModelProperty(example = "0", value = "Total Discount")
 	private BigDecimal discount;
 
+	@ApiMockModelProperty(example = "N", value = "To disable the field")
 	private String renewalIndic;
 	
+	@ApiMockModelProperty(example = "B", value = "Vehicle Fuel Type Code")
 	private String fuelCode;
 	
+	@ApiMockModelProperty(example = "BATTERY", value = "Vehicle Fuel Type Desc")
 	private String fuelDesc;
 	
+	@ApiMockModelProperty(example = "N", value = "Specify if insurance is to be renewed")
 	private String renewableApplCheck;
 	
 	public String getRenewableApplCheck()

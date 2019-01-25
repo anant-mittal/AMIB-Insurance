@@ -4,22 +4,20 @@ import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.amx.jax.constants.HardCodedValues;
+import com.amx.jax.constants.ApiConstants;
+import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.PaymentDetails;
 import com.amx.jax.models.PaymentReceipt;
 import com.amx.jax.models.PaymentStatus;
 import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.DateFormats;
-import com.amx.jax.models.MetaData;
 
 @Repository
 public class PayMentDao
@@ -32,8 +30,7 @@ public class PayMentDao
 	JdbcTemplate jdbcTemplate;
 
 	@Autowired
-	MetaData metaData;
-
+	IMetaService metaService;
 	
 	Connection connection;
 	
@@ -47,16 +44,16 @@ public class PayMentDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, insertPaymentDetails.getAppSeqNum());
 			callableStatement.setBigDecimal(4, insertPaymentDetails.getQuoteSeqNum());
 			callableStatement.setBigDecimal(5, insertPaymentDetails.getQouteVerNum());
 			callableStatement.setBigDecimal(6, insertPaymentDetails.getCustSeqNum());
 			callableStatement.setString(7, insertPaymentDetails.getPaymentMethod());//Suggested By Ashok Sir
 			callableStatement.setBigDecimal(8, insertPaymentDetails.getPaymentAmount());
-			callableStatement.setString(9, metaData.getDeviceType());
-			callableStatement.setString(10, metaData.getDeviceId());
+			callableStatement.setString(9, metaService.getUserDeviceInfo().getDeviceType());
+			callableStatement.setString(10, metaService.getUserDeviceInfo().getDeviceId());
 			callableStatement.setString(11, civilId);
 			callableStatement.registerOutParameter(12, java.sql.Types.NUMERIC);
 			callableStatement.registerOutParameter(13, java.sql.Types.VARCHAR);
@@ -73,6 +70,9 @@ public class PayMentDao
 		}
 		catch (Exception e)
 		{
+			insertPaymentDetails.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			insertPaymentDetails.setErrorMessage(e.toString());
+			logger.info(TAG+"insertPaymentDetals :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
@@ -96,24 +96,14 @@ public class PayMentDao
 		
 		try
 		{
-			logger.info(TAG + " updatePaymentDetals :: getPaySeqNum :" + insertPaymentDetails.getPaySeqNum());
-			logger.info(TAG + " updatePaymentDetals :: getPaymentId :" + insertPaymentDetails.getPaymentId());
-			logger.info(TAG + " updatePaymentDetals :: getApprovalNo :" + insertPaymentDetails.getApprovalNo());
-			logger.info(TAG + " updatePaymentDetals :: getApprovalDate :" + insertPaymentDetails.getApprovalDate());
-			logger.info(TAG + " updatePaymentDetals :: getResultCd :" + insertPaymentDetails.getResultCd());
-			logger.info(TAG + " updatePaymentDetals :: getTransId :" + insertPaymentDetails.getTransId());
-			logger.info(TAG + " updatePaymentDetals :: getRefId :" + insertPaymentDetails.getRefId());
-			logger.info(TAG + " updatePaymentDetals :: getPaymentToken :" + insertPaymentDetails.getPaymentToken());
-			
-			logger.info(TAG + " updatePaymentDetals :: getCountryId    :" + metaData.getCountryId());
-			logger.info(TAG + " updatePaymentDetals :: getCompCd       :" + metaData.getCompCd());
-			logger.info(TAG + " updatePaymentDetals :: getDeviceType   :" + metaData.getDeviceType());
-			logger.info(TAG + " updatePaymentDetals :: getDeviceId     :" + metaData.getDeviceId());
-			logger.info(TAG + " updatePaymentDetals :: civilId         :" + civilId);
+			logger.info(TAG + " updatePaymentDetals :: PaymentDetails       :" + insertPaymentDetails.toString());
+			logger.info(TAG + " updatePaymentDetals :: getTenantProfile     :" + metaService.getTenantProfile().toString());
+			logger.info(TAG + " updatePaymentDetals :: getUserDeviceInfo    :" + metaService.getUserDeviceInfo().toString());
+			logger.info(TAG + " updatePaymentDetals :: civilId              :" + civilId);
 			
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, insertPaymentDetails.getPaySeqNum());
 			callableStatement.setString(4, insertPaymentDetails.getPaymentId());
 			callableStatement.setString(5, insertPaymentDetails.getApprovalNo());
@@ -122,8 +112,8 @@ public class PayMentDao
 			callableStatement.setString(8, insertPaymentDetails.getTransId());
 			callableStatement.setString(9, insertPaymentDetails.getRefId());
 			callableStatement.setString(10, insertPaymentDetails.getPaymentToken());
-			callableStatement.setString(11, metaData.getDeviceType());
-			callableStatement.setString(12, metaData.getDeviceId());
+			callableStatement.setString(11, metaService.getUserDeviceInfo().getDeviceType());
+			callableStatement.setString(12, metaService.getUserDeviceInfo().getDeviceId());
 			callableStatement.setString(13, civilId);
 			callableStatement.registerOutParameter(14, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(15, java.sql.Types.VARCHAR);
@@ -156,12 +146,12 @@ public class PayMentDao
 		ResponseInfo validate = new ResponseInfo();
 		try
 		{
-			logger.info(TAG + " cretaeAmibCust :: custSeqNum :" + custSeqNum);
-			logger.info(TAG + " cretaeAmibCust :: civilId    :" + civilId);
+			//logger.info(TAG + " cretaeAmibCust :: custSeqNum :" + custSeqNum);
+			//logger.info(TAG + " cretaeAmibCust :: civilId    :" + civilId);
 			
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, custSeqNum);
 			callableStatement.setString(4, civilId);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
@@ -178,6 +168,9 @@ public class PayMentDao
 		catch (Exception e)
 		{
 			e.printStackTrace();
+			logger.info(TAG+"cretaeAmibCust :: exception :" + e);
+			validate.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			validate.setErrorMessage(e.toString());
 		}
 		finally
 		{
@@ -194,15 +187,15 @@ public class PayMentDao
 		ResponseInfo validate = new ResponseInfo();
 		try
 		{
-			logger.info(TAG + " processReceipt :: paySeqNum :" + paySeqNum);
-			logger.info(TAG + " processReceipt :: civilId   :" + civilId);
+			//logger.info(TAG + " processReceipt :: paySeqNum :" + paySeqNum);
+			//logger.info(TAG + " processReceipt :: civilId   :" + civilId);
 			
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, paySeqNum);
-			callableStatement.setString(4, metaData.getDeviceType());
-			callableStatement.setString(5, metaData.getDeviceId());
+			callableStatement.setString(4, metaService.getUserDeviceInfo().getDeviceType());
+			callableStatement.setString(5, metaService.getUserDeviceInfo().getDeviceId());
 			callableStatement.setString(6, civilId);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
@@ -218,6 +211,9 @@ public class PayMentDao
 		catch (Exception e)
 		{
 			e.printStackTrace();
+			logger.info(TAG+"processReceipt :: exception :" + e);
+			validate.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			validate.setErrorMessage(e.toString());
 		}
 		finally
 		{
@@ -235,15 +231,15 @@ public class PayMentDao
 		ResponseInfo validate = new ResponseInfo();
 		try
 		{
-			logger.info(TAG + " createAmibPolicy :: paySeqNum :" + paySeqNum);
-			logger.info(TAG + " createAmibPolicy :: civilId   :" + civilId);
+			//logger.info(TAG + " createAmibPolicy :: paySeqNum :" + paySeqNum);
+			//logger.info(TAG + " createAmibPolicy :: civilId   :" + civilId);
 			
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, paySeqNum);
-			callableStatement.setString(4, metaData.getDeviceType());
-			callableStatement.setString(5, metaData.getDeviceId());
+			callableStatement.setString(4, metaService.getUserDeviceInfo().getDeviceType());
+			callableStatement.setString(5, metaService.getUserDeviceInfo().getDeviceId());
 			callableStatement.setString(6, civilId);
 			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
@@ -259,6 +255,9 @@ public class PayMentDao
 		catch (Exception e)
 		{
 			e.printStackTrace();
+			logger.info(TAG+"createAmibPolicy :: exception :" + e);
+			validate.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			validate.setErrorMessage(e.toString());
 		}
 		finally
 		{
@@ -276,8 +275,8 @@ public class PayMentDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, paySeqNum);
 			callableStatement.registerOutParameter(4, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
@@ -293,6 +292,9 @@ public class PayMentDao
 		catch (Exception e)
 		{
 			e.printStackTrace();
+			logger.info(TAG+"preparePrintData :: exception :" + e);
+			validate.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			validate.setErrorMessage(e.toString());
 		}
 		finally
 		{
@@ -313,8 +315,8 @@ public class PayMentDao
 		{
 			
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, paySeqNum);
 			callableStatement.registerOutParameter(4, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(5, java.sql.Types.DATE);
@@ -348,7 +350,7 @@ public class PayMentDao
 			paymentStatus.setPayToken(callableStatement.getString(15));
 			paymentStatus.setAppSeqNumber(callableStatement.getBigDecimal(16));
 			
-			logger.info(TAG + " preparePrintData :: paymentStatus      :" + paymentStatus.toString());
+			//logger.info(TAG + " preparePrintData :: paymentStatus      :" + paymentStatus.toString());
 			logger.info(TAG + " preparePrintData :: Error Code         :" + callableStatement.getString(17));
 			logger.info(TAG + " preparePrintData :: Error Msg          :" + callableStatement.getString(18));
 			
@@ -359,6 +361,9 @@ public class PayMentDao
 		catch (Exception e)
 		{
 			e.printStackTrace();
+			logger.info(TAG+"preparePrintData :: exception :" + e);
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
 		}
 		finally
 		{
@@ -368,7 +373,7 @@ public class PayMentDao
 	}
 	
 	
-	public ArrayResponseModel paymentReceiptData(BigDecimal paySeqNum)
+	public ArrayResponseModel paymentReceiptData(BigDecimal paySeqNum, BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
@@ -379,16 +384,13 @@ public class PayMentDao
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
-			callableStatement.setBigDecimal(1, metaData.getCountryId());
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
 			
-			logger.info(TAG + " paymentReceiptData :: getCountryId   :" + metaData.getCountryId());
-			logger.info(TAG + " paymentReceiptData :: getCompCd      :" + metaData.getCompCd());
 			logger.info(TAG + " paymentReceiptData :: paySeqNum      :" + paySeqNum);
-			logger.info(TAG + " paymentReceiptData :: getLanguageId  :" + metaData.getLanguageId());
 			
-			callableStatement.setBigDecimal(2, metaData.getCompCd());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
 			callableStatement.setBigDecimal(3, paySeqNum);
-			callableStatement.setBigDecimal(4, metaData.getLanguageId());
+			callableStatement.setBigDecimal(4, languageId);
 			
 			callableStatement.registerOutParameter(5, java.sql.Types.NUMERIC);
 			callableStatement.registerOutParameter(6, java.sql.Types.NUMERIC);
@@ -453,16 +455,18 @@ public class PayMentDao
 			paymentReceiptModel.setModelYear(callableStatement.getBigDecimal(23));
 			paymentReceiptModel.setTrnsReceiptRef(callableStatement.getString(24));
 			
-			
 			arrayResponseModel.setErrorCode(callableStatement.getString(25));
 			arrayResponseModel.setErrorMessage(callableStatement.getString(26));
 			arrayResponseModel.setObject(paymentReceiptModel);
 			
-			logger.info(TAG + " paymentReceiptData :: paymentReceiptModel  :" + paymentReceiptModel.toString());
+			//logger.info(TAG + " paymentReceiptData :: paymentReceiptModel  :" + paymentReceiptModel.toString());
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
+			logger.info(TAG+"paymentReceiptData :: exception :" + e);
+			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
 		}
 		finally
 		{
@@ -528,6 +532,4 @@ public class PayMentDao
 			e.printStackTrace();
 		}
 	}
-	
-	
 }
