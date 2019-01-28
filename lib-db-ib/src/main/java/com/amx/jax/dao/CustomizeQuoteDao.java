@@ -89,7 +89,7 @@ public class CustomizeQuoteDao
 				quoteAddPolicyDetails.setYearlyPremium(rs.getBigDecimal(6));
 				quoteAddPolicyDetails.setReplacementTypeCode(rs.getString(9));
 				activePolicyArray.add(quoteAddPolicyDetails);
-				//logger.info(TAG + " getQuoteAdditionalPolicy :: QuoteAddPolicyDetails :" + quoteAddPolicyDetails.toString());
+				logger.info(TAG + " getQuoteAdditionalPolicy :: QuoteAddPolicyDetails :" + quoteAddPolicyDetails.toString());
 				arrayResponseModel.setDataArray(activePolicyArray);
 				
 			}
