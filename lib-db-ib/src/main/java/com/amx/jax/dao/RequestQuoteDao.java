@@ -797,6 +797,8 @@ public class RequestQuoteDao
 					imageDetails.setDocSeqNumber(null);
 				}
 				
+				logger.info("RequestQuoteDao :: getImageDetails :: imageDetails :" + imageDetails.toString());
+				
 				imageMetaInfoArray.add(imageDetails);
 			}
 			arrayResponseModel.setDataArray(imageMetaInfoArray);

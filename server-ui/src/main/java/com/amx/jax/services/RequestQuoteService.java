@@ -411,7 +411,6 @@ public class RequestQuoteService
 			{
 				requestQuoteModel.setInsuranceCompDetails(insuranceCompDetails.getData());
 			}
-
 			resp.setData(requestQuoteModel);
 
 		}
@@ -791,6 +790,8 @@ public class RequestQuoteService
 				resp.setStatusKey(imageModel.getErrorCode());
 			}
 
+			logger.info("RequestQuoteService :: uploadVehicleImage :: appSeqNumber :" + appSeqNumber);
+			
 			requestQuoteInfo.setAppSeqNumber(appSeqNumber);
 			requestQuoteModel.setRequestQuoteInfo(requestQuoteInfo);
 			requestQuoteModel.setPersonalDetails(null);
