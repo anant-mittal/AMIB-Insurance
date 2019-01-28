@@ -169,6 +169,8 @@ public class RequestQuoteController {
 
 				logger.info("RequestQuoteController :: downloadVehicleImage :: docSeqNumberDet :" + docSeqNumberDet);
 				DownloadImageModel downloadImageModel = requestQuoteService.downloadVehicleImage(docSeqNumberDet);
+				
+				
 				logger.info("RequestQuoteController :: downloadVehicleImage :: getImageByteArray :" + downloadImageModel.getImageByteArray());
 				byte[] imageByteArray = downloadImageModel.getImageByteArray();
 				logger.info("RequestQuoteController :: downloadVehicleImage :: getImageType :" + downloadImageModel.getImageType());
