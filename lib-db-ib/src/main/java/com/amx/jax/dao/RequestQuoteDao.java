@@ -776,25 +776,14 @@ public class RequestQuoteDao
 				}
 				
 				ImageStatus imageStatus = (ImageStatus)arrayResponseImageStatus.getObject();
-				if(rs.getString(1).equalsIgnoreCase("DFT"))
-				{
-					imageDetails.setIsImageMandatory(null);
-				}
-				else
-				{
-					imageDetails.setIsImageMandatory(rs.getString(3));
-				}
-				
-				/*if(null != rs.getString(3) && !rs.getString(3).equals(""))//Suggested By Ashok Sir
+				if(null != rs.getString(3) && !rs.getString(3).equals(""))//Suggested By Ashok Sir
 				{
 					imageDetails.setIsImageMandatory(rs.getString(3));
 				}
 				else
 				{
 					imageDetails.setIsImageMandatory("N");
-				}*/
-				
-				
+				}
 				imageDetails.setDisplayOrder(rs.getBigDecimal(4));
 				imageDetails.setStatus(rs.getString(5));
 				imageDetails.setImageSubmittedDate(imageStatus.getImageDate());

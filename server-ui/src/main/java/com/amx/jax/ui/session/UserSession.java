@@ -26,7 +26,7 @@ import com.sleepycat.je.utilint.Timestamp;
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class UserSession
 {
-	String TAG = "UserSession :: ";
+	//String TAG = "UserSession :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(UserSession.class);
 	
@@ -256,10 +256,10 @@ public class UserSession
 	{
 		if (isValid() && !this.indexedUser()) 
 		{
-			logger.info(TAG + " validateSessionUnique :: false");
+			//logger.info(TAG + " validateSessionUnique :: false");
 			return false;
 		}
-		logger.info(TAG + " validateSessionUnique :: true");
+		//logger.info(TAG + " validateSessionUnique :: true");
 		return true;
 	}
 	
@@ -310,7 +310,7 @@ public class UserSession
 	
 	@Override
 	public String toString() {
-		return "UserSession [TAG=" + TAG + ", loggedInUsers=" + loggedInUsers + ", httpService=" + httpService
+		return "UserSession [loggedInUsers=" + loggedInUsers + ", httpService=" + httpService
 				+ ", valid=" + valid + ", referrer=" + referrer + ", civilId=" + civilId + ", motpPrefix=" + motpPrefix
 				+ ", eotpPrefix=" + eotpPrefix + ", motp=" + motp + ", eotp=" + eotp + ", customerMobileNumber="
 				+ customerMobileNumber + ", customerEmailId=" + customerEmailId + ", changePasswordOtp="
@@ -367,7 +367,7 @@ public class UserSession
 	
 	public boolean isRequestAuthorized() 
 	{
-		logger.info(TAG + " isRequestAuthorized ::");
+		//logger.info(TAG + " isRequestAuthorized ::");
 		
 		if (WebSecurityConfig.isPublicUrl(request.getRequestURI())) 
 		{
@@ -376,7 +376,7 @@ public class UserSession
 		
 		if (!this.validateSessionUnique()) 
 		{
-			logger.info(TAG + " isRequestAuthorized :: this.validateSessionUnique() is False");
+			//logger.info(TAG + " isRequestAuthorized :: this.validateSessionUnique() is False");
 			this.unauthorize();
 			return false;
 		}

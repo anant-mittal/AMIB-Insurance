@@ -575,7 +575,7 @@ public class CustomerRegistrationDao
 		{
 			customerLoginModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
 			customerLoginModel.setErrorMessage(e.toString());
-			logger.info(TAG+"getCompanySetUp :: exception :" + e);
+			logger.info(TAG+"validateUserLogin :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
