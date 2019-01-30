@@ -4,32 +4,31 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import com.amx.jax.WebConfig;
 import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.dict.AmibTunnelEvents;
 import com.amx.jax.dict.Language;
-import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CompanySetUp;
 import com.amx.jax.postman.client.PostManClient;
 import com.amx.jax.postman.client.PushNotifyClient;
 import com.amx.jax.postman.model.Email;
-import com.amx.jax.postman.model.PushMessage;
 import com.amx.jax.postman.model.TemplatesIB;
-import com.amx.jax.postman.model.TemplatesMX;
+import com.amx.jax.tunnel.DBEvent;
 import com.amx.jax.tunnel.ITunnelSubscriber;
-import com.amx.jax.tunnel.TunnelEvent;
 import com.amx.jax.tunnel.TunnelEventMapping;
 import com.amx.jax.tunnel.TunnelEventXchange;
 import com.amx.utils.ArgUtil;
 import com.amx.utils.JsonUtil;
 
 @TunnelEventMapping(topic = AmibTunnelEvents.Names.RENEW_POLICY, scheme = TunnelEventXchange.TASK_WORKER)
-public class RenewPolicyListner implements ITunnelSubscriber<TunnelEvent> {
+public class RenewPolicyListner implements ITunnelSubscriber<DBEvent> {
 
 	private static final Logger logger = LoggerFactory.getLogger(RenewPolicyListner.class);
 	
@@ -59,7 +58,7 @@ public class RenewPolicyListner implements ITunnelSubscriber<TunnelEvent> {
 	// CUST_CD:CUST_NAME:MAKE_NAME:SUBMAKE_NAME:EXP_DATE:EMAIL:MOBILE:LANG_ID
 
 	@Override
-	public void onMessage(String channel, TunnelEvent event) {
+	public void onMessage(String channel, DBEvent event) {
 
 		LOGGER.info("======onMessage1==={} ====  {}", channel, JsonUtil.toJson(event));
 

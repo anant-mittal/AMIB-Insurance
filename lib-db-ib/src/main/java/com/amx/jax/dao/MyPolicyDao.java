@@ -53,12 +53,12 @@ public class MyPolicyDao
 				ArrayResponseModel arrayRespCustAmibCode = getCustomerAmibCode(civilId ,userType ,custSeqNum);
 				if(null != arrayRespCustAmibCode)
 				{
-					if(null != arrayRespCustAmibCode.getErrorCode())
+					if(null == arrayRespCustAmibCode.getErrorCode())
 					{
 						userAmibCustRef = arrayRespCustAmibCode.getNumericData();
 						if(null != userAmibCustRef)
 						{
-							//logger.info(TAG + " getUserActivePolicy :: userAmibCustRef received :" + userAmibCustRef);
+							logger.info(TAG + " getUserActivePolicy :: userAmibCustRef received :" + userAmibCustRef);
 							arrayResponseModel.setData(userAmibCustRef.toString());
 						}
 					}
@@ -168,6 +168,12 @@ public class MyPolicyDao
 	
 	public ArrayResponseModel getCustomerAmibCode(String civilId , String userType , BigDecimal custSeqNum)
 	{
+		logger.info(TAG + " getCustomerAmibCode :: civilId :" + civilId);
+		logger.info(TAG + " getCustomerAmibCode :: userType :" + userType);
+		logger.info(TAG + " getCustomerAmibCode :: custSeqNum :" + custSeqNum);
+		logger.info(TAG + " getCustomerAmibCode :: getCountryId :" + metaService.getTenantProfile().getCountryId());
+		logger.info(TAG + " getCustomerAmibCode :: getCompCd :" + metaService.getTenantProfile().getCompCd());
+		
 		CallableStatement callableStatement = null;
 		String callFunction = "{ ? = call IRB_GET_AMIB_CUSTCD(?,?,?,?,?)}";
 		BigDecimal userAmibCustRef = null; 
@@ -185,9 +191,9 @@ public class MyPolicyDao
 			callableStatement.executeUpdate();
 			
 			userAmibCustRef = callableStatement.getBigDecimal(1);
+			logger.info(TAG + " getCustomerAmibCode :: userAmibCustRef :" + userAmibCustRef);
 			arrayResponseModel.setNumericData(userAmibCustRef);
 			
-			//logger.info(TAG + " getCustomerAmibCode :: userAmibCustRef :" + userAmibCustRef);
 		}
 		catch (SQLException e)
 		{

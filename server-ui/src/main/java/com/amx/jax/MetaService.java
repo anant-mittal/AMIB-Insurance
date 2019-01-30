@@ -19,12 +19,13 @@ import com.amx.jax.meta.TenantProfile;
 import com.amx.jax.meta.UserDeviceInfos;
 import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CompanySetUp;
+import com.amx.jax.ui.session.UserSession;
 
 @Component
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class MetaService implements IMetaService {
 
-	private static final Logger logger = LoggerFactory.getLogger(MetaService.class);
+	//private static final Logger logger = LoggerFactory.getLogger(MetaService.class);
 	private static final long serialVersionUID = 8260115321460438947L;
 
 	@Autowired
@@ -38,6 +39,9 @@ public class MetaService implements IMetaService {
 
 	@Autowired
 	CommonHttpRequest httpService;
+	
+	@Autowired
+	UserSession userSession;
 
 	@Autowired
 	private CustomerRegistrationDao customerRegistrationDao;
@@ -66,8 +70,8 @@ public class MetaService implements IMetaService {
 	@Override
 	public UserDeviceInfos getUserDeviceInfo() 
 	{
-		logger.info("MetaService :: getUserDeviceInfo :: getIPAddress :" + httpService.getIPAddress());
-		logger.info("MetaService :: getUserDeviceInfo :: getDeviceId  :" + httpService.getDeviceId());
+		//logger.info("MetaService :: getUserDeviceInfo :: getIPAddress :" + httpService.getIPAddress());
+		//logger.info("MetaService :: getUserDeviceInfo :: getDeviceId  :" + httpService.getDeviceId());
 		
 		if (userDeviceInfos.getDeviceId() == null)
 		{
@@ -102,6 +106,10 @@ public class MetaService implements IMetaService {
 
 	public BigDecimal laguageSetUp() 
 	{
-		return new BigDecimal(0);
+		if(null != userSession.getLanguageId())
+		{
+			return userSession.getLanguageId();
+		}
+		return new BigDecimal(0);//Default Language is English
 	}
 }

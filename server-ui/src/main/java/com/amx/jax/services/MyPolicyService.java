@@ -45,6 +45,11 @@ public class MyPolicyService
 		try
 		{
 			
+			logger.info("MyPolicyService :: getUserActivePolicy :: getUserAmibCustRef :" + userSession.getUserAmibCustRef());
+			logger.info("MyPolicyService :: getUserActivePolicy :: getCivilId :" + userSession.getCivilId());
+			logger.info("MyPolicyService :: getUserActivePolicy :: getCustomerSequenceNumber :" + userSession.getCustomerSequenceNumber());
+			logger.info("MyPolicyService :: getUserActivePolicy :: getLanguageId :" + userSession.getLanguageId());
+			
 			ArrayResponseModel userActivePolicyDetails =  myPolicyDao.getUserActivePolicy(userSession.getUserAmibCustRef(), userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber(), userSession.getLanguageId()); 
 			if(null != userActivePolicyDetails.getErrorCode())
 			{
@@ -53,11 +58,14 @@ public class MyPolicyService
 				return resp;
 			}
 			
+			logger.info("MyPolicyService :: getUserActivePolicy :: getUserAmibCustRef 1 :" + userSession.getUserAmibCustRef());
 			if(null == userSession.getUserAmibCustRef())
 			{
+				logger.info("MyPolicyService :: getUserActivePolicy :: getUserAmibCustRef 2 :" + userSession.getUserAmibCustRef());
 				if(null != userActivePolicyDetails.getData())
 				{
 					BigDecimal amibRef = new BigDecimal(userActivePolicyDetails.getData());
+					logger.info("MyPolicyService :: getUserActivePolicy :: amibRef :" + amibRef);
 					userSession.setUserAmibCustRef(amibRef);
 				}
 			}

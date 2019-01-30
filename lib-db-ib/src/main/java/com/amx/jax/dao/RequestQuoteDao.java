@@ -776,25 +776,14 @@ public class RequestQuoteDao
 				}
 				
 				ImageStatus imageStatus = (ImageStatus)arrayResponseImageStatus.getObject();
-				if(rs.getString(1).equalsIgnoreCase("DFT"))
-				{
-					imageDetails.setIsImageMandatory(null);
-				}
-				else
-				{
-					imageDetails.setIsImageMandatory(rs.getString(3));
-				}
-				
-				/*if(null != rs.getString(3) && !rs.getString(3).equals(""))//Suggested By Ashok Sir
+				if(null != rs.getString(3) && !rs.getString(3).equals(""))//Suggested By Ashok Sir
 				{
 					imageDetails.setIsImageMandatory(rs.getString(3));
 				}
 				else
 				{
 					imageDetails.setIsImageMandatory("N");
-				}*/
-				
-				
+				}
 				imageDetails.setDisplayOrder(rs.getBigDecimal(4));
 				imageDetails.setStatus(rs.getString(5));
 				imageDetails.setImageSubmittedDate(imageStatus.getImageDate());
@@ -808,10 +797,14 @@ public class RequestQuoteDao
 					imageDetails.setDocSeqNumber(null);
 				}
 				
+				logger.info("RequestQuoteDao :: getImageDetails :: imageDetails :" + imageDetails.toString());
+				
 				imageMetaInfoArray.add(imageDetails);
 			}
 			arrayResponseModel.setDataArray(imageMetaInfoArray);
+			logger.info("RequestQuoteDao :: getImageDetails :: setErrorCode :" + callableStatement.getString(4));
 			arrayResponseModel.setErrorCode(callableStatement.getString(4));
+			logger.info("RequestQuoteDao :: getImageDetails :: setErrorMessage :" + callableStatement.getString(5));
 			arrayResponseModel.setErrorMessage(callableStatement.getString(5));
 		}
 		catch (Exception e)
@@ -973,9 +966,13 @@ public class RequestQuoteDao
 			callableStatement.registerOutParameter(12, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(5, java.sql.Types.NUMERIC);
 			callableStatement.executeUpdate();
-
+			
+			
+			logger.info(TAG + " uploadVehicleImage :: setDocSeqNumber :" +callableStatement.getBigDecimal(5));
 			imageModel.setDocSeqNumber(callableStatement.getBigDecimal(5));
+			logger.info(TAG + " uploadVehicleImage :: setErrorCode :" +callableStatement.getString(11));
 			imageModel.setErrorCode(callableStatement.getString(11));
+			logger.info(TAG + " uploadVehicleImage :: setErrorMessage :" +callableStatement.getString(12));
 			imageModel.setErrorMessage(callableStatement.getString(12));
 		}
 		catch (Exception e)

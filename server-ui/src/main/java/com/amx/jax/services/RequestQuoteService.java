@@ -411,7 +411,6 @@ public class RequestQuoteService
 			{
 				requestQuoteModel.setInsuranceCompDetails(insuranceCompDetails.getData());
 			}
-
 			resp.setData(requestQuoteModel);
 
 		}
@@ -775,22 +774,31 @@ public class RequestQuoteService
 			ImageModel imageModel = requestQuoteDao.uploadVehicleImage(file, appSeqNumber, docTypeCode, docSeqNumber , userSession.getCivilId());
 			if (null == imageModel.getErrorCode())
 			{
+				logger.info("RequestQuoteService :: uploadVehicleImage :: appSeqNumber 1 :" + appSeqNumber);
 				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
 				AmxApiResponse<?, Object> respImageDetails = getImageDetails(appSeqNumber);
 				if (!respImageDetails.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 				{
+					logger.info("RequestQuoteService :: uploadVehicleImage :: appSeqNumber 2 :" + appSeqNumber);
 					return respImageDetails;
 				}
 				else
 				{
+					logger.info("RequestQuoteService :: uploadVehicleImage :: appSeqNumber 3 :" + appSeqNumber);
 					requestQuoteModel.setVehicleImageDetails(respImageDetails.getResults());
 				}
 			}
 			else
 			{
+				logger.info("RequestQuoteService :: uploadVehicleImage :: appSeqNumber 4 :" + appSeqNumber);
+				resp.setMessageKey(imageModel.getErrorCode());
+				resp.setMessage(imageModel.getErrorCode());
 				resp.setStatusKey(imageModel.getErrorCode());
+				return resp;
 			}
 
+			logger.info("RequestQuoteService :: uploadVehicleImage :: appSeqNumber 5 :" + appSeqNumber);
+			
 			requestQuoteInfo.setAppSeqNumber(appSeqNumber);
 			requestQuoteModel.setRequestQuoteInfo(requestQuoteInfo);
 			requestQuoteModel.setPersonalDetails(null);
