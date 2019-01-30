@@ -93,7 +93,7 @@ public class RenewPolicyListner implements ITunnelSubscriber<DBEvent> {
 		modeldata.put(DetailsConstants.LANGUAGE_INFO, langId);
 		modeldata.put(DetailsConstants.COMPANY_NAME, getCompanySetUp.get(0).getCompanyName());
 		modeldata.put(DetailsConstants.URL_DETAILS, "");
-		logger.info("getTenantProfile :: getContactUsEmail :" + getCompanySetUp.get(0).getEmail());
+		logger.info("RenewPolicyListner :: getTenantProfile :: getContactUsEmail :" + getCompanySetUp.get(0).getEmail());
 		modeldata.put(DetailsConstants.CONTACT_US_EMAIL, getCompanySetUp.get(0).getEmail());
 		modeldata.put(DetailsConstants.CONTACT_US_MOBILE, getCompanySetUp.get(0).getHelpLineNumber());
 		modeldata.put(DetailsConstants.AMIB_WEBSITE_LINK, getCompanySetUp.get(0).getWebSite());
@@ -111,6 +111,7 @@ public class RenewPolicyListner implements ITunnelSubscriber<DBEvent> {
 			wrapper.put("data", modeldata);
 
 			email.setModel(wrapper);
+			logger.info("RenewPolicyListner :: getTenantProfile :: emailId :" + emailId);
 			email.addTo(emailId);
 			email.setHtml(true);
 			email.setITemplate(TemplatesIB.POLICY_DUE_REMINDER);
