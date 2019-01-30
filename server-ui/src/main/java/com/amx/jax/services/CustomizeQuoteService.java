@@ -427,6 +427,8 @@ public class CustomizeQuoteService
 					AmxApiResponse<PaymentDetails, Object> respInsertPayment = payMentService.insertPaymentDetals(customizeQuoteInfo.getQuoteSeqNumber(),totalPremium.getTotalAmount());
 					PaymentDetails paymentDetails = respInsertPayment.getData();
 					
+					logger.info("saveCustomizeQuoteDetails :: getPaySeqNum :" + paymentDetails.getPaySeqNum());
+					
 					Payment payment = new Payment();
 					payment.setDocFinYear(userSession.getCivilId().toString());//Civil Id Added
 					payment.setDocNo(paymentDetails.getPaySeqNum().toString());// PaySeqNum
