@@ -437,6 +437,7 @@ public class CustomizeQuoteService
 					payment.setPgCode(PayGServiceCode.KNET);
 					
 					String redirctUrl = payGService.getPaymentUrl(payment , HttpUtils.getServerName(request)+"/app/landing/myquotes/quote");
+					logger.info("saveCustomizeQuoteDetails :: redirctUrl :" + redirctUrl);
 					resp.setRedirectUrl(redirctUrl);
 					
 					/******************************************************PAYMENT GATEWAY***********************************************************/
