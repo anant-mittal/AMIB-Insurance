@@ -27,7 +27,6 @@ import com.amx.jax.models.PaymentStatus;
 import com.amx.jax.models.RequestOtpModel;
 import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.models.ResponseOtpModel;
-import com.amx.jax.postman.PostManService;
 import com.amx.jax.postman.client.PostManClient;
 import com.amx.jax.postman.model.Email;
 import com.amx.jax.postman.model.File;
@@ -56,9 +55,6 @@ public class EmailSmsService
 
 	@Autowired
 	private PostManClient postManClient;
-	
-	@Autowired
-	private PostManService postManService;
 	
 	@Autowired
 	private AppConfig appConfig;
@@ -170,9 +166,7 @@ public class EmailSmsService
 			SMS sms = new SMS();
 			sms.addTo(mobileNumber);
 			
-			//sendToSlack("mobile", sms.getTo().get(0), mobileOtpPrefix, mobileOtp);
-			sendToSlack("User Otp :- "+userSession.getCivilId(), sms.getTo().get(0), mobileOtpPrefix, mobileOtp);
-			
+			sendToSlack("mobile", sms.getTo().get(0), mobileOtpPrefix, mobileOtp);
 			model.put(DetailsConstants.MOBILE_OTP, mobileOtpToSend);
 			wrapper.put("data", model);
 			sms.setModel(wrapper);
@@ -880,8 +874,7 @@ public class EmailSmsService
 		msg.setChannel(Channel.NOTIPY);
 		try
 		{
-			//postManClient.notifySlack(msg);
-			postManService.notifySlack(msg);
+			postManClient.notifySlack(msg);
 		}
 		catch (Exception e)
 		{
