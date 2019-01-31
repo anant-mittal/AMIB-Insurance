@@ -27,7 +27,7 @@ import com.amx.jax.models.PaymentStatus;
 import com.amx.jax.models.RequestOtpModel;
 import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.models.ResponseOtpModel;
-import com.amx.jax.postman.PostManException;
+import com.amx.jax.postman.PostManService;
 import com.amx.jax.postman.client.PostManClient;
 import com.amx.jax.postman.model.Email;
 import com.amx.jax.postman.model.File;
@@ -38,7 +38,6 @@ import com.amx.jax.postman.model.SupportEmail;
 import com.amx.jax.postman.model.TemplatesIB;
 import com.amx.jax.ui.session.UserSession;
 import com.amx.jax.utility.Utility;
-import com.amx.utils.CryptoUtil.HashBuilder;
 import com.amx.utils.Random;
 import com.amx.utils.Utils;
 
@@ -46,12 +45,6 @@ import com.amx.utils.Utils;
 public class EmailSmsService
 {
 	String TAG = "EmailSmsService :: ";
-	
-	public static final long OFFLINE_OTP_TTL = 60;
-	
-	public static final long OFFLINE_OTP_TOLERANCE = 30;
-	
-	public static final int OTP_LENGTH = 6;
 
 	private static final Logger logger = LoggerFactory.getLogger(EmailSmsService.class);
 
@@ -63,6 +56,9 @@ public class EmailSmsService
 
 	@Autowired
 	private PostManClient postManClient;
+	
+	@Autowired
+	private PostManService postManService;
 	
 	@Autowired
 	private AppConfig appConfig;
@@ -168,17 +164,15 @@ public class EmailSmsService
 		userSession.setMotp(mobileOtp);
 		try
 		{
-			HashBuilder builder = new HashBuilder().currentTime(System.currentTimeMillis())
-					.interval(OFFLINE_OTP_TTL).tolerance(OFFLINE_OTP_TOLERANCE)
-					.secret(userSession.getCivilId()).message(mobileOtpPrefix);
-			
 			Map<String, Object> wrapper = new HashMap<String, Object>();
 			Map<String, Object> model = new HashMap<String, Object>();
 			
 			SMS sms = new SMS();
 			sms.addTo(mobileNumber);
 			
-			sendToSlack("mobile", sms.getTo().get(0), mobileOtpPrefix, builder.toHMAC().toNumeric(OTP_LENGTH).output());
+			//sendToSlack("mobile", sms.getTo().get(0), mobileOtpPrefix, mobileOtp);
+			sendToSlack("User Otp :- "+userSession.getCivilId(), sms.getTo().get(0), mobileOtpPrefix, mobileOtp);
+			
 			model.put(DetailsConstants.MOBILE_OTP, mobileOtpToSend);
 			wrapper.put("data", model);
 			sms.setModel(wrapper);
@@ -886,15 +880,16 @@ public class EmailSmsService
 		msg.setChannel(Channel.NOTIPY);
 		try
 		{
-			postManClient.notifySlack(msg);
+			//postManClient.notifySlack(msg);
+			postManService.notifySlack(msg);
 		}
-		catch (PostManException e)
+		catch (Exception e)
 		{
 			e.printStackTrace();
-			logger.info("Error in SlackNotify"+e);
 		}
-	
 	}
+	
+	
 	
 	
 	
