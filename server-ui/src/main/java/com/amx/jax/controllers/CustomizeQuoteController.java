@@ -112,6 +112,7 @@ public class CustomizeQuoteController {
 	@ApiOperation(value = "submits payment info to server", notes = "this api is not going to be consumed by ui end. this is internal called api for payment gateway")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@RequestMapping(value = "/remit/save-remittance", method = { RequestMethod.POST })
+	//@RequestMapping(value = "/callback/payg/payment/capture", method = { RequestMethod.POST })
 	public PaymentResponseDto onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse) 
 	{
 		try 
@@ -149,10 +150,11 @@ public class CustomizeQuoteController {
 		}
 		return paymentResponse;
 	}
-	
+
 	
 	@ApiOperation(value = "submits payment info to server", notes = "this api is not going to be consumed by ui end. this is internal called api for payment gateway")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
+	//@RequestMapping(value = "/remit/save-remittance", method = { RequestMethod.POST })
 	@RequestMapping(value = "/callback/payg/payment/capture", method = { RequestMethod.POST })
 	public PaymentResponseDto onPaymentCallbackNew(@RequestBody PaymentResponseDto paymentResponse) 
 	{
@@ -193,7 +195,6 @@ public class CustomizeQuoteController {
 	}
 	
 	
-
 	@ApiOperation(value = "return the payment status after payment through payment gateway", notes = "this api is called after payment "
 			+ "gets done by payment gateway and it will return the status of payment done, it will trigger an email to the customer of successfull payment transaction with transaction receipt pdf")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
