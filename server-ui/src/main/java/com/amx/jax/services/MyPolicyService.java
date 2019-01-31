@@ -129,6 +129,8 @@ public class MyPolicyService
 					}
 				}
 
+				
+				
 				AmxApiResponse<?, Object> getVehicleDetails = requestQuoteService.getRenewPolicyVehicleDetails(oldDocNumber);
 				if (!getVehicleDetails.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 				{
