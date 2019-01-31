@@ -18,10 +18,10 @@ public enum TemplatesIB implements ITemplate {
 	POLICY_DUE_REMINDER("policy-due-reminder"),
 	KNET_SUCCESS_EMAIL("knet-success-email"),
 	QUOTE_READY_AMIB("quote-submit-email"),
-	TRNX_RECEIPT("TransactionReceipt", PDFConverter.JASPER, "TransactionReceipt.json" , null),
-	POLICY_RECEIPT("PolicyReceipt", PDFConverter.JASPER, "PolicyReceipt.json" ,null),
+	TRNX_RECEIPT("TransactionReceipt", PDFConverter.JASPER, "TransactionReceipt.json"),
+	POLICY_RECEIPT("PolicyReceipt", PDFConverter.JASPER, "PolicyReceipt.json"),
 	CONTACT_US("ContactForm"),
-	REMIT_RECEIPT_JASPER("TransactionReceipt_jasper", PDFConverter.JASPER, "TransactionReceipt.json" , null);
+	REMIT_RECEIPT_JASPER("TransactionReceipt_jasper", PDFConverter.JASPER, "TransactionReceipt.json");
 		
 	
 	
