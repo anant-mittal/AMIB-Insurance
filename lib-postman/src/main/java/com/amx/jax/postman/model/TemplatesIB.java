@@ -31,6 +31,10 @@ public enum TemplatesIB implements ITemplate {
 	boolean thymleaf = true;
 	Channel channel = null;
 
+	public Channel getChannel() {
+		return channel;
+	}
+
 	@Override
 	public String getFileName() {
 		return fileName;
