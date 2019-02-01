@@ -789,7 +789,7 @@ public class EmailSmsService
 		}
 		
 		if (null != arrayResponseModel.getErrorCode()
-				&& arrayResponseModel.getErrorCode().equals(ApiConstants.ERROR_OCCURRED_ON_SERVER)) {
+				&& arrayResponseModel.getErrorCode().equals(ApiConstants.TECHNICAL_ERROR_ON_SERVER)) {
 			resp.setMessage(arrayResponseModel.getErrorCode());
 			resp.setMessageKey(arrayResponseModel.getErrorMessage());
 		}

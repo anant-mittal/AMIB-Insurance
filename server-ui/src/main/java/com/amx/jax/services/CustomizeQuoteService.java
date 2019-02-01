@@ -189,7 +189,7 @@ public class CustomizeQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"getCustomizedQuoteDetails :: exception :" + e);
 			e.printStackTrace();
@@ -227,7 +227,7 @@ public class CustomizeQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"getQuoteSeqList :: exception :" + e);
 			e.printStackTrace();
@@ -306,7 +306,7 @@ public class CustomizeQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"calculateCutomizeQuote :: exception :" + e);
 			e.printStackTrace();
@@ -335,7 +335,7 @@ public class CustomizeQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"getTermsAndCondition :: exception :" + e);
 			e.printStackTrace();
@@ -389,7 +389,7 @@ public class CustomizeQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"saveCustomizeQuote :: exception :" + e);
 			e.printStackTrace();
@@ -464,7 +464,7 @@ public class CustomizeQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"saveCustomizeQuoteDetails :: exception :" + e);
 			e.printStackTrace();
@@ -521,7 +521,7 @@ public class CustomizeQuoteService
 		}
 		catch (Exception e) 
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "getCompanySetUp :: exception :" + e);
 			e.printStackTrace();

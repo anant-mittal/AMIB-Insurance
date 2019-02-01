@@ -99,7 +99,7 @@ public class PersonalDetailsDao
 		}
 		catch (Exception e)
 		{
-			customerProfileDetailModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			customerProfileDetailModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			customerProfileDetailModel.setErrorMessage(e.toString());
 			logger.info(TAG+"getProfileDetails :: exception :" + e);
 			e.printStackTrace();
@@ -158,7 +158,7 @@ public class PersonalDetailsDao
 		}
 		catch (Exception e)
 		{
-			customerProfileDetailModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			customerProfileDetailModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			customerProfileDetailModel.setErrorMessage(e.toString());
 			logger.info(TAG+"updateProfileDetails :: exception :" + e);
 			e.printStackTrace();
@@ -205,7 +205,7 @@ public class PersonalDetailsDao
 		}
 		catch (Exception e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"getBusiness :: exception :" + e);
 			e.printStackTrace();
@@ -256,7 +256,7 @@ public class PersonalDetailsDao
 		}
 		catch (Exception e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"getNationality :: exception :" + e);
 			e.printStackTrace();
@@ -306,7 +306,7 @@ public class PersonalDetailsDao
 		}
 		catch (Exception e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"getNationality :: exception :" + e);
 			e.printStackTrace();
@@ -355,7 +355,7 @@ public class PersonalDetailsDao
 		}
 		catch (Exception e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"getArea :: exception :" + e);
 			e.printStackTrace();
@@ -405,7 +405,7 @@ public class PersonalDetailsDao
 		}
 		catch (Exception e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"getGender :: exception :" + e);
 			e.printStackTrace();

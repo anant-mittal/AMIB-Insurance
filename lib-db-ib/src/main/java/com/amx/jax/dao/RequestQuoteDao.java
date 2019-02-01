@@ -91,7 +91,7 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
-			incompleteApplModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			incompleteApplModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			incompleteApplModel.setErrorMessage(e.toString());
 			logger.info(TAG+"getIncompleteApplication :: exception :" + e);
 			e.printStackTrace();
@@ -137,7 +137,7 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"getMake :: exception :" + e);
 			e.printStackTrace();
@@ -189,7 +189,7 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"getModel :: exception :" + e);
 			e.printStackTrace();
@@ -233,7 +233,7 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"getFuleType :: exception :" + e);
 			e.printStackTrace();
@@ -278,7 +278,7 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"getPurpose :: exception :" + e);
 			e.printStackTrace();
@@ -324,7 +324,7 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"getShape :: exception :" + e);
 			e.printStackTrace();
@@ -368,7 +368,7 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"getColour :: exception :" + e);
 			e.printStackTrace();
@@ -414,7 +414,7 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"getVehicleCondition :: exception :" + e);
 			e.printStackTrace();
@@ -459,7 +459,7 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"getMaxVehicleAgeAllowed :: exception :" + e);
 			e.printStackTrace();
@@ -498,7 +498,7 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"getPolicyDuration :: exception :" + e);
 			e.printStackTrace();
@@ -578,7 +578,7 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"getAppVehicleDetails :: exception :" + e);
 			e.printStackTrace();
@@ -634,7 +634,7 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
-			vehicleDetailsHeaderModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			vehicleDetailsHeaderModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			vehicleDetailsHeaderModel.setErrorMessage(e.toString());
 			logger.info(TAG+"setVehicleDetailsHeader :: exception :" + e);
 			e.printStackTrace();
@@ -685,7 +685,7 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
-			vehicleDetailsUpdateModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			vehicleDetailsUpdateModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			vehicleDetailsUpdateModel.setErrorMessage(e.toString());
 			logger.info(TAG+"insUpdateVehicleDetails :: exception :" + e);
 			e.printStackTrace();
@@ -729,7 +729,7 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"getAppVehicleDetails :: exception :" + e);
 			e.printStackTrace();
@@ -809,7 +809,7 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"getAppVehicleDetails :: exception :" + e);
 			e.printStackTrace();
@@ -977,7 +977,7 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
-			imageModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			imageModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			imageModel.setErrorMessage(e.toString());
 			logger.info(TAG+"uploadVehicleImage :: exception :" + e);
 			e.printStackTrace();
@@ -1055,7 +1055,7 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"uploadVehicleImage :: exception :" + e);
 			e.printStackTrace();
@@ -1136,7 +1136,7 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"uploadVehicleImage :: exception :" + e);
 			e.printStackTrace();
@@ -1173,7 +1173,7 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"uploadVehicleImage :: exception :" + e);
 			e.printStackTrace();
@@ -1212,7 +1212,7 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
-			customerProfileDetailModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			customerProfileDetailModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			customerProfileDetailModel.setErrorMessage(e.toString());
 			logger.info(TAG+"updateCustomerSequenceNumber :: exception :" + e);
 			e.printStackTrace();
@@ -1278,7 +1278,7 @@ public class RequestQuoteDao
 		}
 		catch (Exception e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"updateCustomerSequenceNumber :: exception :" + e);
 			e.printStackTrace();
