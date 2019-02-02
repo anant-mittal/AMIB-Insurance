@@ -145,7 +145,7 @@ public class MyPolicyController {
 		catch (Exception e) 
 		{
 			e.printStackTrace();
-			return ApiConstants.ERROR_OCCURRED_ON_SERVER;
+			return ApiConstants.TECHNICAL_ERROR_ON_SERVER;
 		}
 		return null;
 	}

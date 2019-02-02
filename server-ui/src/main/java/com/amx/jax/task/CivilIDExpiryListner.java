@@ -4,32 +4,30 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import com.amx.jax.WebConfig;
 import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.dict.AmibTunnelEvents;
 import com.amx.jax.dict.Language;
-import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CompanySetUp;
 import com.amx.jax.postman.client.PostManClient;
 import com.amx.jax.postman.client.PushNotifyClient;
 import com.amx.jax.postman.model.Email;
-import com.amx.jax.postman.model.PushMessage;
 import com.amx.jax.postman.model.TemplatesIB;
-import com.amx.jax.postman.model.TemplatesMX;
+import com.amx.jax.tunnel.DBEvent;
 import com.amx.jax.tunnel.ITunnelSubscriber;
-import com.amx.jax.tunnel.TunnelEvent;
 import com.amx.jax.tunnel.TunnelEventMapping;
 import com.amx.jax.tunnel.TunnelEventXchange;
 import com.amx.utils.ArgUtil;
-import com.amx.utils.JsonUtil;
 
 @TunnelEventMapping(topic = AmibTunnelEvents.Names.QUOTE_READY, scheme = TunnelEventXchange.TASK_WORKER)
-public class CivilIDExpiryListner implements ITunnelSubscriber<TunnelEvent> {
+public class CivilIDExpiryListner implements ITunnelSubscriber<DBEvent> {
 
 	private static final Logger logger = LoggerFactory.getLogger(CivilIDExpiryListner.class);
 	
@@ -61,7 +59,7 @@ public class CivilIDExpiryListner implements ITunnelSubscriber<TunnelEvent> {
 	// APPL_ID:QUOTE_ID:QUOTE_VERNO:CUST_NAME:MAKE_NAME:SUBMAKE_NAME:EMAIL:MOBILE:LANG_ID
 
 	@Override
-	public void onMessage(String channel, TunnelEvent event) {
+	public void onMessage(String channel, DBEvent event) {
 		
 		String applId = ArgUtil.parseAsString(event.getData().get(APPL_ID));
 		String quoteId = ArgUtil.parseAsString(event.getData().get(QUOTE_ID));
@@ -96,7 +94,7 @@ public class CivilIDExpiryListner implements ITunnelSubscriber<TunnelEvent> {
 		modeldata.put(DetailsConstants.LANGUAGE_INFO, langId);
 		modeldata.put(DetailsConstants.COMPANY_NAME, getCompanySetUp.get(0).getCompanyName());
 		modeldata.put(DetailsConstants.URL_DETAILS, "");
-		logger.info("getTenantProfile :: getContactUsEmail :" + getCompanySetUp.get(0).getEmail());
+		logger.info("CivilIDExpiryListner :: getTenantProfile :: getContactUsEmail :" + getCompanySetUp.get(0).getEmail());
 		modeldata.put(DetailsConstants.CONTACT_US_EMAIL, getCompanySetUp.get(0).getEmail());
 		modeldata.put(DetailsConstants.CONTACT_US_MOBILE, getCompanySetUp.get(0).getHelpLineNumber());
 		modeldata.put(DetailsConstants.AMIB_WEBSITE_LINK, getCompanySetUp.get(0).getWebSite());
@@ -104,7 +102,7 @@ public class CivilIDExpiryListner implements ITunnelSubscriber<TunnelEvent> {
 
 		if (!ArgUtil.isEmpty(emailId)) {
 			Email email = new Email();
-			if ("2".equals(langId)) {
+			if ("1".equals(langId)) {
 				email.setLang(Language.AR);
 				modeldata.put("languageid", Language.AR);
 			} else {
@@ -113,6 +111,8 @@ public class CivilIDExpiryListner implements ITunnelSubscriber<TunnelEvent> {
 			}
 			wrapper.put("data", modeldata);
 
+			logger.info("CivilIDExpiryListner :: getTenantProfile :: emailId :" + emailId);
+			
 			email.setModel(wrapper);
 			email.addTo(emailId);
 			email.setHtml(true);
@@ -127,7 +127,7 @@ public class CivilIDExpiryListner implements ITunnelSubscriber<TunnelEvent> {
 			 * email.setSubject("Civil ID has been expired"); // Given by Umesh
 			 * email.setITemplate(TemplatesMX.CIVILID_EXPIRED); }
 			 */
-
+ 
 		}
 
 		

@@ -78,7 +78,7 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"getIncompleteApplication :: exception :" + e);
 			e.printStackTrace();
@@ -108,7 +108,7 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"getMake :: exception :" + e);
 			e.printStackTrace();
@@ -139,7 +139,7 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"getModel :: exception :" + e);
 			e.printStackTrace();
@@ -170,7 +170,7 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"getFuleType :: exception :" + e);
 			e.printStackTrace();
@@ -200,7 +200,7 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"getPurpose :: exception :" + e);
 			e.printStackTrace();
@@ -230,7 +230,7 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"getShape :: exception :" + e);
 			e.printStackTrace();
@@ -260,7 +260,7 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"getShape :: exception :" + e);
 			e.printStackTrace();
@@ -290,7 +290,7 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"getVehicleCondition :: exception :" + e);
 			e.printStackTrace();
@@ -330,7 +330,7 @@ public class RequestQuoteService
 		}
 		catch (Exception e) 
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "getPolicyDuration :: exception :" + e);
 			e.printStackTrace();
@@ -416,7 +416,7 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "getRequestQuoteDetails :: exception :" + e);
 			e.printStackTrace();
@@ -476,7 +476,7 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "getAppVehicleDetails :: exception :" + e);
 			e.printStackTrace();
@@ -548,7 +548,7 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "setAppVehicleDetails :: exception :" + e);
 			e.printStackTrace();
@@ -600,7 +600,7 @@ public class RequestQuoteService
 		}
 		catch (Exception e) 
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "getProfileDetails :: exception :" + e);
 			e.printStackTrace();
@@ -686,7 +686,7 @@ public class RequestQuoteService
 		}
 		catch (Exception e) 
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "setProfileDetails :: exception :" + e);
 			e.printStackTrace();
@@ -715,7 +715,7 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "getImageMetaData :: exception :" + e);
 			e.printStackTrace();
@@ -743,7 +743,7 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"getImageDetails :: exception :" + e);
 			e.printStackTrace();
@@ -810,7 +810,7 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"uploadVehicleImage :: exception :" + e);
 			e.printStackTrace();
@@ -839,7 +839,7 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"getInsuranceCompanyDetails :: exception :" + e);
 			e.printStackTrace();
@@ -865,7 +865,7 @@ public class RequestQuoteService
 		}
 		catch (Exception e) 
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "getCompanySetUp :: exception :" + e);
 			e.printStackTrace();
@@ -919,7 +919,7 @@ public class RequestQuoteService
 		}
 		catch (Exception e) 
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "submitRequestQuote :: exception :" + e);
 			e.printStackTrace();
@@ -982,7 +982,7 @@ public class RequestQuoteService
 		}
 		catch (Exception e) 
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "updateInsuranceProvider :: exception :" + e);
 			e.printStackTrace();
@@ -1048,7 +1048,7 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "getRenewPolicyDetails :: exception :" + e);
 			e.printStackTrace();
@@ -1086,7 +1086,7 @@ public class RequestQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "getRenewPolicyVehicleDetails :: exception :" + e);
 			e.printStackTrace();

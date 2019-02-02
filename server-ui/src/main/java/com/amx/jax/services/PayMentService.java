@@ -102,7 +102,7 @@ public class PayMentService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "insertPaymentDetals :: exception :" + e);
 			e.printStackTrace();
@@ -138,7 +138,7 @@ public class PayMentService
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"cretaeAmibCust :: exception :" + e);
 		}
@@ -166,7 +166,7 @@ public class PayMentService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "processReceipt :: exception :" + e);
 			e.printStackTrace();
@@ -195,7 +195,7 @@ public class PayMentService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "createAmibPolicy :: exception :" + e);
 			e.printStackTrace();
@@ -223,7 +223,7 @@ public class PayMentService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "preparePrintData :: exception :" + e);
 			e.printStackTrace();
@@ -315,7 +315,7 @@ public class PayMentService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "getPaymentStatus :: exception :" + e);
 			e.printStackTrace();
@@ -385,7 +385,7 @@ public class PayMentService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "paymentReceiptData :: exception :" + e);
 			e.printStackTrace();

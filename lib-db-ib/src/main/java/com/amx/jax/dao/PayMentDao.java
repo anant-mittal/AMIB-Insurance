@@ -70,7 +70,7 @@ public class PayMentDao
 		}
 		catch (Exception e)
 		{
-			insertPaymentDetails.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			insertPaymentDetails.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			insertPaymentDetails.setErrorMessage(e.toString());
 			logger.info(TAG+"insertPaymentDetals :: exception :" + e);
 			e.printStackTrace();
@@ -169,7 +169,7 @@ public class PayMentDao
 		{
 			e.printStackTrace();
 			logger.info(TAG+"cretaeAmibCust :: exception :" + e);
-			validate.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			validate.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			validate.setErrorMessage(e.toString());
 		}
 		finally
@@ -212,7 +212,7 @@ public class PayMentDao
 		{
 			e.printStackTrace();
 			logger.info(TAG+"processReceipt :: exception :" + e);
-			validate.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			validate.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			validate.setErrorMessage(e.toString());
 		}
 		finally
@@ -256,7 +256,7 @@ public class PayMentDao
 		{
 			e.printStackTrace();
 			logger.info(TAG+"createAmibPolicy :: exception :" + e);
-			validate.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			validate.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			validate.setErrorMessage(e.toString());
 		}
 		finally
@@ -293,7 +293,7 @@ public class PayMentDao
 		{
 			e.printStackTrace();
 			logger.info(TAG+"preparePrintData :: exception :" + e);
-			validate.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			validate.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			validate.setErrorMessage(e.toString());
 		}
 		finally
@@ -362,7 +362,7 @@ public class PayMentDao
 		{
 			e.printStackTrace();
 			logger.info(TAG+"preparePrintData :: exception :" + e);
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 		}
 		finally
@@ -465,7 +465,7 @@ public class PayMentDao
 		{
 			e.printStackTrace();
 			logger.info(TAG+"paymentReceiptData :: exception :" + e);
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 		}
 		finally

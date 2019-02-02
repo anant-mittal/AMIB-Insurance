@@ -26,8 +26,7 @@ public class DBEvents extends TunnelEvent {
 
 	@Override
 	public String toString() {
-		return "Event [event_code=" + eventCode + ", priority=" + priority + ", description=" + description + ", data="
-				+ data + "]";
+		return "Event [event_code=" + eventCode + ", priority=" + priority + ", description=" + description + "]";
 	}
 
 }

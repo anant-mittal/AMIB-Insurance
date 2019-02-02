@@ -96,7 +96,7 @@ public class CustomizeQuoteDao
 		}
 		catch (Exception e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"getQuoteAdditionalPolicy :: exception :" + e);
 			e.printStackTrace();
@@ -150,7 +150,7 @@ public class CustomizeQuoteDao
 		}
 		catch (Exception e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"getReplacementTypeList :: exception :" + e);
 			e.printStackTrace();
@@ -195,7 +195,7 @@ public class CustomizeQuoteDao
 		}
 		catch (Exception e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"getTermsAndCondition :: exception :" + e);
 			e.printStackTrace();
@@ -275,7 +275,7 @@ public class CustomizeQuoteDao
 		}
 		catch (Exception e)
 		{
-			validate.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			validate.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			validate.setErrorMessage(e.toString());
 			logger.info(TAG+"saveCustomizeQuote :: exception :" + e);
 			e.printStackTrace();
@@ -320,7 +320,7 @@ public class CustomizeQuoteDao
 		}
 		catch (Exception e)
 		{
-			validate.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			validate.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			validate.setErrorMessage(e.toString());
 			logger.info(TAG+"saveCustomizeQuote :: exception :" + e);
 		}

@@ -112,7 +112,7 @@ public class MyQuoteDao
 		}
 		catch (Exception e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"getUserQuote :: exception :" + e);
 			e.printStackTrace();

@@ -6,9 +6,6 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -18,14 +15,12 @@ import com.amx.jax.broker.entity.EventNotificationEntity;
 import com.amx.jax.broker.entity.EventNotificationView;
 import com.amx.jax.dict.Tenant;
 import com.amx.jax.logger.LoggerService;
-import com.amx.jax.tunnel.TunnelEvent;
+import com.amx.jax.tunnel.DBEvent;
 import com.amx.jax.tunnel.TunnelService;
 import com.amx.utils.StringUtils;
 import com.amx.utils.TimeUtils;
 import com.amx.utils.UniqueID;
 
-@Configuration
-@EnableScheduling
 @Component
 @Service
 public class BrokerService {
@@ -41,7 +36,6 @@ public class BrokerService {
 	@Autowired
 	TunnelService tunnelService;
 
-	@Scheduled(fixedDelay = BrokerConstants.PUSH_NOTIFICATION_FREQUENCY)
 	public void pushNewEventNotifications() {
 
 		String sessionId = UniqueID.generateString();
@@ -50,8 +44,6 @@ public class BrokerService {
 
 		int totalEvents = event_list.size();
 
-		logger.info("BrokerService :: pushNewEventNotifications :: totalEvents :"+totalEvents);
-		
 		// Increase Print Delay if its been long waiting for events
 		if (totalEvents > 0 || TimeUtils.isDead(printStamp, printDelay)) {
 			logger.info("Total {} Events fetched from DB, after waiting {} secs", totalEvents,printDelay);
@@ -78,17 +70,15 @@ public class BrokerService {
 				);
 
 				// Push to Message Queue
-				TunnelEvent event = new DBEvents();
+				DBEvent event = new DBEvent();
 				event.setEventCode(current_event_record.getEvent_code());
-				//event.setPriority(current_event_record.getEvent_priority());
+				event.setPriority(current_event_record.getEvent_priority());
 				event.setData(event_data_map);
-				//event.setDescription(current_event_record.getEvent_desc());
+				event.setDescription(current_event_record.getEvent_desc());
 
 				logger.debug("------------------ Event Data to push to Message Queue --------------------");
 				logger.debug(event.toString());
 
-				logger.info("BrokerService :: pushNewEventNotifications :: event :"+event.toString());
-				
 				tunnelService.task(current_event_record.getEvent_code(), event);
 
 				// Mark event record as success
@@ -113,10 +103,6 @@ public class BrokerService {
 		}
 	}
 
-	@Scheduled(
-			fixedDelay = BrokerConstants.DELETE_NOTIFICATION_FREQUENCY,
-			initialDelay = BrokerConstants.DELETE_NOTIFICATION_FREQUENCY
-	)
 	public void cleanUpEventNotificationRecords() {
 		logger.info("Delete proccess started on the table EX_EVENT_NOTIFICATION...");
 		try {

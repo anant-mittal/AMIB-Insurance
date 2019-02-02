@@ -68,7 +68,7 @@ public class DashBoardDao
 		}
 		catch (Exception e)
 		{
-			incompleteApplModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			incompleteApplModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			incompleteApplModel.setErrorMessage(e.toString());
 			logger.info(TAG+"getIncompleteApplication :: exception :" + e);
 			e.printStackTrace();

@@ -20,6 +20,6 @@ public class ApiConstants
 
 	public static String AUTHORIZATION_FAILURE = "AUTHORIZATION_FAILURE";
 	
-	public static String ERROR_OCCURRED_ON_SERVER = "ERROR_OCCURRED_ON_SERVER";
+	public static String TECHNICAL_ERROR_ON_SERVER = "TECHNICAL_ERROR_ON_SERVER";
 	
 }

@@ -91,7 +91,7 @@ public class CustomerRegistrationService {
 				resp.setMessageKey(arrayResponseModel.getErrorCode());
 			}
 		} catch (Exception e) {
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "getCompanySetUp :: exception :" + e);
 			e.printStackTrace();
@@ -104,7 +104,7 @@ public class CustomerRegistrationService {
 		try {
 			ArrayResponseModel arrayResponseModel = customerRegistrationDao.isValidCivilId(civilid);
 			if (null != arrayResponseModel.getErrorCode()
-					&& arrayResponseModel.getErrorCode().equals(ApiConstants.ERROR_OCCURRED_ON_SERVER)) {
+					&& arrayResponseModel.getErrorCode().equals(ApiConstants.TECHNICAL_ERROR_ON_SERVER)) {
 				resp.setMessage(arrayResponseModel.getErrorMessage());
 				resp.setMessageKey(arrayResponseModel.getErrorCode());
 				return resp;
@@ -121,7 +121,7 @@ public class CustomerRegistrationService {
 			}
 
 		} catch (Exception e) {
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "isValidCivilId :: exception :" + e);
 			e.printStackTrace();
@@ -136,7 +136,7 @@ public class CustomerRegistrationService {
 			ArrayResponseModel arrayResponseModel = customerRegistrationDao.isCivilIdExist(civilid,
 					HardCodedValues.USER_TYPE);
 			if (null != arrayResponseModel.getErrorCode()
-					&& arrayResponseModel.getErrorCode().equals(ApiConstants.ERROR_OCCURRED_ON_SERVER)) {
+					&& arrayResponseModel.getErrorCode().equals(ApiConstants.TECHNICAL_ERROR_ON_SERVER)) {
 				resp.setMessage(arrayResponseModel.getErrorMessage());
 				resp.setMessageKey(arrayResponseModel.getErrorCode());
 				return resp;
@@ -153,7 +153,7 @@ public class CustomerRegistrationService {
 			}
 
 		} catch (Exception e) {
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "isCivilIdExist :: exception :" + e);
 			e.printStackTrace();
@@ -184,7 +184,7 @@ public class CustomerRegistrationService {
 			validMobileNumber.setMessage(isValidMobileNumber.getErrorMessage());
 			validMobileNumber.setMessageKey(isValidMobileNumber.getErrorCode());
 		} catch (Exception e) {
-			validMobileNumber.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			validMobileNumber.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			validMobileNumber.setMessage(e.toString());
 			logger.info(TAG + "isValidMobileNumber :: exception :" + e);
 			e.printStackTrace();
@@ -200,7 +200,7 @@ public class CustomerRegistrationService {
 			ArrayResponseModel arrayResponseModel = customerRegistrationDao.isMobileNumberExist(mobileNumber,
 					HardCodedValues.USER_TYPE);
 			if (null != arrayResponseModel.getErrorCode()
-					&& arrayResponseModel.getErrorCode().equals(ApiConstants.ERROR_OCCURRED_ON_SERVER)) {
+					&& arrayResponseModel.getErrorCode().equals(ApiConstants.TECHNICAL_ERROR_ON_SERVER)) {
 				validMobileNumber.setMessage(arrayResponseModel.getErrorMessage());
 				validMobileNumber.setMessageKey(arrayResponseModel.getErrorCode());
 				return validMobileNumber;
@@ -220,7 +220,7 @@ public class CustomerRegistrationService {
 				validate.setContactUsEmail(metaService.getTenantProfile().getContactUsEmail());
 			}
 		} catch (Exception e) {
-			validMobileNumber.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			validMobileNumber.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			validMobileNumber.setMessage(e.toString());
 			logger.info(TAG + "isMobileNumberExist :: exception :" + e);
 			e.printStackTrace();
@@ -244,7 +244,7 @@ public class CustomerRegistrationService {
 			}
 			resp.setData(validate);
 		} catch (Exception e) {
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "isValidEmailId :: exception :" + e);
 			e.printStackTrace();
@@ -267,7 +267,7 @@ public class CustomerRegistrationService {
 					HardCodedValues.USER_TYPE);
 
 			if (null != arrayResponseModel.getErrorCode()
-					&& arrayResponseModel.getErrorCode().equals(ApiConstants.ERROR_OCCURRED_ON_SERVER)) {
+					&& arrayResponseModel.getErrorCode().equals(ApiConstants.TECHNICAL_ERROR_ON_SERVER)) {
 				resp.setMessage(arrayResponseModel.getErrorMessage());
 				resp.setMessageKey(arrayResponseModel.getErrorCode());
 				return resp;
@@ -289,7 +289,7 @@ public class CustomerRegistrationService {
 			}
 
 		} catch (Exception e) {
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "isEmailIdExist :: exception :" + e);
 			e.printStackTrace();
@@ -351,7 +351,7 @@ public class CustomerRegistrationService {
 
 			resp.setData(customerDetailResponse);
 		} catch (Exception e) {
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "getCustomerDetails :: exception :" + e);
 			e.printStackTrace();
@@ -406,7 +406,7 @@ public class CustomerRegistrationService {
 				return validateDOTP;
 			}
 		} catch (Exception e) {
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "registrationOtp :: exception :" + e);
 			e.printStackTrace();
@@ -464,7 +464,7 @@ public class CustomerRegistrationService {
 			customerRegistrationResponse.setUserSequenceNumber(customerRegistrationModel.getUserSequenceNumber());
 			resp.setData(customerRegistrationResponse);
 		} catch (Exception e) {
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "addNewCustomer :: exception :" + e);
 			e.printStackTrace();
@@ -550,7 +550,7 @@ public class CustomerRegistrationService {
 			customerLoginResponse.setUserSeqNum(customerLoginModel.getUserSeqNum());
 			resp.setData(customerLoginResponse);
 		} catch (Exception e) {
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "validateUserLogin :: exception :" + e);
 			e.printStackTrace();
@@ -621,7 +621,7 @@ public class CustomerRegistrationService {
 				}
 			}
 		} catch (Exception e) {
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "changePasswordOtpInitiate :: exception :" + e);
 			e.printStackTrace();
@@ -660,7 +660,7 @@ public class CustomerRegistrationService {
 				return updatePassword(changePasswordRequest);
 			}
 		} catch (Exception e) {
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "changePasswordLogedInUser :: exception :" + e);
 			e.printStackTrace();
@@ -690,7 +690,7 @@ public class CustomerRegistrationService {
 				resp.setData(null);
 			}
 		} catch (Exception e) {
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "updatePassword :: exception :" + e);
 			e.printStackTrace();
@@ -718,7 +718,7 @@ public class CustomerRegistrationService {
 				resp.setData(null);
 			}
 		} catch (Exception e) {
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "updateUserPassword :: exception :" + e);
 			e.printStackTrace();
@@ -813,13 +813,13 @@ public class CustomerRegistrationService {
 				}
 
 			} catch (Exception e) {
-				resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+				resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 				resp.setMessage(e.toString());
 				logger.info(TAG + "validateForRegistration :: exception :" + e);
 				e.printStackTrace();
 			}
 		} catch (Exception e) {
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "validateForRegistration :: exception :" + e);
 			e.printStackTrace();
