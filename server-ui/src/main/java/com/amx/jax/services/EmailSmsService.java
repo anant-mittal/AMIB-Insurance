@@ -38,7 +38,6 @@ import com.amx.jax.postman.model.SupportEmail;
 import com.amx.jax.postman.model.TemplatesIB;
 import com.amx.jax.ui.session.UserSession;
 import com.amx.jax.utility.Utility;
-import com.amx.jax.utils.ILangValues;
 import com.amx.utils.Random;
 import com.amx.utils.Utils;
 
