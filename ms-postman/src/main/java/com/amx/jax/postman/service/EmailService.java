@@ -150,18 +150,6 @@ public class EmailService {
 				LOGGER.debug("Sending {} Email to {}", email.getTemplate(), Utils.commaConcat(email.getTo()));
 			}
 			
-			System.out.println("EmailService :: sendEmail :: getTemplate :: "+email.getTemplate());
-			System.out.println("EmailService :: sendEmail :: getTo       :: "+email.getTo());
-			System.out.println("EmailService :: sendEmail :: getModel    :: "+email.getModel());
-			System.out.println("EmailService :: sendEmail :: getLang     :: "+email.getLang());
-			System.out.println("EmailService :: sendEmail :: getFrom     :: "+email.getFrom());
-			//System.out.println("EmailService :: sendEmail :: getLang     :: "+email.getLang());
-			//System.out.println("EmailService :: sendEmail :: getLang     :: "+email.getLang());
-			//System.out.println("EmailService :: sendEmail :: getLang     :: "+email.getLang());
-			//System.out.println("EmailService :: sendEmail :: getLang     :: "+email.getLang());
-			//System.out.println("EmailService :: sendEmail :: getLang     :: "+email.getLang());
-			//System.out.println("EmailService :: sendEmail :: getLang     :: "+email.getLang());
-			
 			to = email.getTo() != null ? email.getTo().get(0) : null;
 
 			if (email.getTemplate() != null) {

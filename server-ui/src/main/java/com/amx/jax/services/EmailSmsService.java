@@ -38,6 +38,7 @@ import com.amx.jax.postman.model.SupportEmail;
 import com.amx.jax.postman.model.TemplatesIB;
 import com.amx.jax.ui.session.UserSession;
 import com.amx.jax.utility.Utility;
+import com.amx.jax.utils.ILangValues;
 import com.amx.utils.Random;
 import com.amx.utils.Utils;
 
@@ -100,25 +101,54 @@ public class EmailSmsService
 		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaService.getTenantProfile().getAmibWebsiteLink());
 		model.put(DetailsConstants.EMAIL_OTP, emailOtpToSend);
 		model.put(DetailsConstants.COMPANY_NAME, getCompanyName());
-		model.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
 		
-		if(otpType.equalsIgnoreCase(DetailsConstants.REGISTRATION_OTP))
+		if(null != userSession.getLanguageId() &&  userSession.getLanguageId().toString().equals("1"))
 		{
-			model.put(DetailsConstants.PROCESS, "registration process");
-			model.put(DetailsConstants.OTP_USED_FOR, "registration");
+			model.put(DetailsConstants.COUNTRY_NAME, "الكويت");
+			
+			if(otpType.equalsIgnoreCase(DetailsConstants.REGISTRATION_OTP))
+			{
+				model.put(DetailsConstants.PROCESS, "عملية التسجيل");
+				model.put(DetailsConstants.OTP_USED_FOR, "التسجيل");
+			}
+			
+			if(otpType.equalsIgnoreCase(DetailsConstants.RESET_PASSOWRD_OTP))
+			{
+				model.put(DetailsConstants.PROCESS, "إعادة تعيين كلمة المرور");
+				model.put(DetailsConstants.OTP_USED_FOR, "إعادة ضبط كلمة المرور");
+			}
+			
+			if(otpType.equalsIgnoreCase(DetailsConstants.UPDATE_PROFILE_OTP))
+			{
+				model.put(DetailsConstants.PROCESS, "تحديث الملف");
+				model.put(DetailsConstants.OTP_USED_FOR, "تحديث التفاصيل");
+			}
+		}
+		else
+		{
+			model.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
+			
+			if(otpType.equalsIgnoreCase(DetailsConstants.REGISTRATION_OTP))
+			{
+				model.put(DetailsConstants.PROCESS, "registration process");
+				model.put(DetailsConstants.OTP_USED_FOR, "registration");
+			}
+			
+			if(otpType.equalsIgnoreCase(DetailsConstants.RESET_PASSOWRD_OTP))
+			{
+				model.put(DetailsConstants.PROCESS, "reset password process");
+				model.put(DetailsConstants.OTP_USED_FOR, "password reset");
+			}
+			
+			if(otpType.equalsIgnoreCase(DetailsConstants.UPDATE_PROFILE_OTP))
+			{
+				model.put(DetailsConstants.PROCESS, "update profile");
+				model.put(DetailsConstants.OTP_USED_FOR, "updating details");
+			}
 		}
 		
-		if(otpType.equalsIgnoreCase(DetailsConstants.RESET_PASSOWRD_OTP))
-		{
-			model.put(DetailsConstants.PROCESS, "reset password process");
-			model.put(DetailsConstants.OTP_USED_FOR, "password reset");
-		}
 		
-		if(otpType.equalsIgnoreCase(DetailsConstants.UPDATE_PROFILE_OTP))
-		{
-			model.put(DetailsConstants.PROCESS, "update profile");
-			model.put(DetailsConstants.OTP_USED_FOR, "updating details");
-		}
+		
 		
 		wrapper.put("data", model);
 		
@@ -131,8 +161,14 @@ public class EmailSmsService
 		email.setModel(wrapper);
 		email.setITemplate(TemplatesIB.OTP_EMAIL);
 		email.setHtml(true);
-		email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
-		
+		if(null != userSession.getLanguageId() &&  userSession.getLanguageId().toString().equals("1"))
+		{
+			email.setLang(Language.AR);
+		}
+		else
+		{
+			email.setLang(Language.EN);
+		}
 		postManClient.sendEmail(email);
 
 		return emailOtpPrefix;
@@ -542,7 +578,7 @@ public class EmailSmsService
 
 		String eOtpPrefix = sendEmailOtp(emailId , otpType);
 		String mOtpPrefix = sendMobileOtp(mobileNumber);
-
+		
 		responseOtpModel.setEotpPrefix(eOtpPrefix);
 		responseOtpModel.setMotpPrefix(mOtpPrefix);
 		userSession.setmOtpMobileNumber(mobileNumber);
