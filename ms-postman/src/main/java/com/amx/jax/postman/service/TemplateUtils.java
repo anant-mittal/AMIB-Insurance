@@ -53,13 +53,13 @@ public class TemplateUtils {
 	@Autowired
 	private ApplicationContext applicationContext;
 
-	@Value("classpath*:*templates/html/*.html")
+	@Value("classpath*:*/templates/html/*.html")
 	private Resource[] htmlFiles;
 
-	@Value("classpath*:*templates/json/*.json")
+	@Value("classpath*:*/templates/json/*.json")
 	private Resource[] jsonFiles;
 
-	@Value("classpath*:*templates/jasper/*.jrxml")
+	@Value("classpath*:*/templates/jasper/*.jrxml")
 	private Resource[] jasperFiles;
 
 	public String getTemplateFile(String file, Tenant tnt, Locale locale) {
