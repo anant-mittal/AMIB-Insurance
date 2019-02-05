@@ -20,6 +20,7 @@ import com.amx.jax.constants.Message;
 import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.dict.Language;
+import com.amx.jax.locale.IAmxLocale;
 import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CustomerDetailModel;
@@ -69,6 +70,9 @@ public class EmailSmsService
 	@Autowired
 	PayMentService payMentService;
 	
+	@Autowired
+	IAmxLocale iAmxLocale;
+	
 
 	/*
 	 * 
@@ -100,55 +104,22 @@ public class EmailSmsService
 		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaService.getTenantProfile().getAmibWebsiteLink());
 		model.put(DetailsConstants.EMAIL_OTP, emailOtpToSend);
 		model.put(DetailsConstants.COMPANY_NAME, getCompanyName());
-		
-		if(null != userSession.getLanguageId() &&  userSession.getLanguageId().toString().equals("1"))
+		model.put(DetailsConstants.COUNTRY_NAME, iAmxLocale.getCountry());
+		if(otpType.equalsIgnoreCase(DetailsConstants.REGISTRATION_OTP))
 		{
-			model.put(DetailsConstants.COUNTRY_NAME, "الكويت");
-			
-			if(otpType.equalsIgnoreCase(DetailsConstants.REGISTRATION_OTP))
-			{
-				model.put(DetailsConstants.PROCESS, "عملية التسجيل");
-				model.put(DetailsConstants.OTP_USED_FOR, "التسجيل");
-			}
-			
-			if(otpType.equalsIgnoreCase(DetailsConstants.RESET_PASSOWRD_OTP))
-			{
-				model.put(DetailsConstants.PROCESS, "إعادة تعيين كلمة المرور");
-				model.put(DetailsConstants.OTP_USED_FOR, "إعادة ضبط كلمة المرور");
-			}
-			
-			if(otpType.equalsIgnoreCase(DetailsConstants.UPDATE_PROFILE_OTP))
-			{
-				model.put(DetailsConstants.PROCESS, "تحديث الملف");
-				model.put(DetailsConstants.OTP_USED_FOR, "تحديث التفاصيل");
-			}
+			model.put(DetailsConstants.PROCESS, "registration process");
+			model.put(DetailsConstants.OTP_USED_FOR, "registration");
 		}
-		else
+		if(otpType.equalsIgnoreCase(DetailsConstants.RESET_PASSOWRD_OTP))
 		{
-			model.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
-			
-			if(otpType.equalsIgnoreCase(DetailsConstants.REGISTRATION_OTP))
-			{
-				model.put(DetailsConstants.PROCESS, "registration process");
-				model.put(DetailsConstants.OTP_USED_FOR, "registration");
-			}
-			
-			if(otpType.equalsIgnoreCase(DetailsConstants.RESET_PASSOWRD_OTP))
-			{
-				model.put(DetailsConstants.PROCESS, "reset password process");
-				model.put(DetailsConstants.OTP_USED_FOR, "password reset");
-			}
-			
-			if(otpType.equalsIgnoreCase(DetailsConstants.UPDATE_PROFILE_OTP))
-			{
-				model.put(DetailsConstants.PROCESS, "update profile");
-				model.put(DetailsConstants.OTP_USED_FOR, "updating details");
-			}
+			model.put(DetailsConstants.PROCESS, "reset password process");
+			model.put(DetailsConstants.OTP_USED_FOR, "password reset");
 		}
-		
-		
-		
-		
+		if(otpType.equalsIgnoreCase(DetailsConstants.UPDATE_PROFILE_OTP))
+		{
+			model.put(DetailsConstants.PROCESS, "update profile");
+			model.put(DetailsConstants.OTP_USED_FOR, "updating details");
+		}
 		wrapper.put("data", model);
 		
 		ArrayList<String> emailTo = new ArrayList<String>();
@@ -160,14 +131,7 @@ public class EmailSmsService
 		email.setModel(wrapper);
 		email.setITemplate(TemplatesIB.OTP_EMAIL);
 		email.setHtml(true);
-		if(null != userSession.getLanguageId() &&  userSession.getLanguageId().toString().equals("1"))
-		{
-			email.setLang(Language.AR);
-		}
-		else
-		{
-			email.setLang(Language.EN);
-		}
+		email.setLang(iAmxLocale.getLanguage());
 		postManClient.sendEmail(email);
 
 		return emailOtpPrefix;
@@ -950,20 +914,7 @@ public class EmailSmsService
 		email.setITemplate(TemplatesIB.CONTACT_US);
 		email.setHtml(true);
 		email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
-		
 		postManClient.sendEmail(email);
-		
-		
-		/*Notipy msg = new Notipy();
-		msg.setMessage(supportEmail.getSubject());
-		//msg.addLine("Tenant : " + AppContextUtil.getTenant());
-		msg.addLine("VisitorName : " + supportEmail.getVisitorName());
-		msg.addLine("VisitorEmail : " + supportEmail.getVisitorEmail());
-		msg.addLine("VisitorPhone : " + supportEmail.getVisitorPhone());
-		msg.addLine("VisitorMessage : " + supportEmail.getVisitorMessage());
-		msg.setSubject(supportEmail.getSubject());
-		msg.setChannel(Notipy.Channel.INQUIRY);
-		postManClient.notifySlack(msg);*/
 		return AmxApiResponse.build(email);
 	}
 	
