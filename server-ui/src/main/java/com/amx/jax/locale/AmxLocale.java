@@ -163,4 +163,6 @@ public class AmxLocale implements IAmxLocale
 		}
 		return "Al Mulla Insurance Brokerage Payment Success";
 	}
+	
+	//Test
 }
