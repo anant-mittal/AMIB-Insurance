@@ -107,18 +107,18 @@ public class EmailSmsService
 		model.put(DetailsConstants.COUNTRY_NAME, iAmxLocale.getCountry());
 		if(otpType.equalsIgnoreCase(DetailsConstants.REGISTRATION_OTP))
 		{
-			model.put(DetailsConstants.PROCESS, "registration process");
-			model.put(DetailsConstants.OTP_USED_FOR, "registration");
+			model.put(DetailsConstants.PROCESS, iAmxLocale.getregProcess());
+			model.put(DetailsConstants.OTP_USED_FOR, iAmxLocale.getOTP_used_for_reg());
 		}
 		if(otpType.equalsIgnoreCase(DetailsConstants.RESET_PASSOWRD_OTP))
 		{
-			model.put(DetailsConstants.PROCESS, "reset password process");
-			model.put(DetailsConstants.OTP_USED_FOR, "password reset");
+			model.put(DetailsConstants.PROCESS, iAmxLocale.resetpassProcess());
+			model.put(DetailsConstants.OTP_USED_FOR, iAmxLocale.getOTP_used_for_resetpass());
 		}
 		if(otpType.equalsIgnoreCase(DetailsConstants.UPDATE_PROFILE_OTP))
 		{
-			model.put(DetailsConstants.PROCESS, "update profile");
-			model.put(DetailsConstants.OTP_USED_FOR, "updating details");
+			model.put(DetailsConstants.PROCESS, iAmxLocale.updateprofileProcess());
+			model.put(DetailsConstants.OTP_USED_FOR, iAmxLocale.getOTP_used_for_updateprofile());
 		}
 		wrapper.put("data", model);
 		
@@ -127,7 +127,7 @@ public class EmailSmsService
 
 		Email email = new Email();
 		email.setTo(emailTo);
-		email.setSubject(DetailsConstants.REG_OTP_EMAIL_SUBJECT);
+		email.setSubject(iAmxLocale.reg_OTP_email_subject());
 		email.setModel(wrapper);
 		email.setITemplate(TemplatesIB.OTP_EMAIL);
 		email.setHtml(true);
@@ -174,7 +174,7 @@ public class EmailSmsService
 			wrapper.put("data", model);
 			sms.setModel(wrapper);
 			sms.setITemplate(TemplatesIB.OTP_SMS);
-			sms.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
+			sms.setLang(iAmxLocale.getLanguage());//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
 			postManClient.sendSMS(sms);
 			
 		}
@@ -212,7 +212,7 @@ public class EmailSmsService
 		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaService.getTenantProfile().getAmibWebsiteLink());
 		model.put(DetailsConstants.CONTACT_US_EMAIL, metaService.getTenantProfile().getContactUsEmail());
 		model.put(DetailsConstants.COMPANY_NAME, getCompanyName());
-		model.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
+		model.put(DetailsConstants.COUNTRY_NAME, iAmxLocale.getCountry());
 		wrapper.put("data", model);
 		
 		ArrayList<String> emailTo = new ArrayList<String>();
@@ -221,12 +221,12 @@ public class EmailSmsService
 		Email email = new Email();
 		//email.setFrom(emailIdFrom);
 		email.setTo(emailTo);
-		email.setSubject(DetailsConstants.REG_SUCCESS_EMAIL);
+		email.setSubject(iAmxLocale.reg_success_email_subject());
 		email.setModel(wrapper);
-		email.setMessage("Al Mulla Insurance Registration Completed Successfully.");
+		email.setMessage(iAmxLocale.reg_success_email_msg());
 		email.setITemplate(TemplatesIB.REG_SUCCESS_EMAIL);
 		email.setHtml(true);
-		email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
+		email.setLang(iAmxLocale.getLanguage());//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
 		postManClient.sendEmail(email);
 
 	}
@@ -256,7 +256,7 @@ public class EmailSmsService
 		model.put(DetailsConstants.CONTACT_US_EMAIL, metaService.getTenantProfile().getContactUsEmail());
 		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaService.getTenantProfile().getAmibWebsiteLink());
 		model.put(DetailsConstants.COMPANY_NAME, getCompanyName());
-		model.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
+		model.put(DetailsConstants.COUNTRY_NAME, iAmxLocale.getCountry());
 		wrapper.put("data", model);
 		
 		ArrayList<String> emailTo = new ArrayList<String>();
@@ -265,11 +265,11 @@ public class EmailSmsService
 		Email email = new Email();
 		//email.setFrom(emailIdFrom);
 		email.setTo(emailTo);
-		email.setSubject(DetailsConstants.FAILURE_REG_EMAIL_SUBJECT);
+		email.setSubject(iAmxLocale.reg_faliure_email_subject());
 		email.setModel(wrapper);
 		email.setITemplate(TemplatesIB.REG_INCOMPLETE_EMAIL);
 		email.setHtml(true);
-		email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
+		email.setLang(iAmxLocale.getLanguage());//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
 		postManClient.sendEmail(email);
 
 	}
@@ -303,7 +303,7 @@ public class EmailSmsService
 		model.put(DetailsConstants.CONTACT_US_MOBILE, metaService.getTenantProfile().getContactUsHelpLineNumber());
 		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaService.getTenantProfile().getAmibWebsiteLink());
 		model.put(DetailsConstants.COMPANY_NAME, getCompanyName());
-		model.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
+		model.put(DetailsConstants.COUNTRY_NAME, iAmxLocale.getCountry());
 		model.put(DetailsConstants.MAKE_DESC, makeDesc);
 		model.put(DetailsConstants.SUB_MAKE_DESC, subMakeDesc);
 		model.put(DetailsConstants.APPLICATION_ID, appSeqNumber);
@@ -317,11 +317,11 @@ public class EmailSmsService
 		Email email = new Email();
 		//email.setFrom(emailIdFrom);
 		email.setTo(emailTo);
-		email.setSubject("Quote Request - "+appSeqNumber);
+		email.setSubject(iAmxLocale.email_cust_compile_request_msg()+appSeqNumber);
 		email.setModel(wrapper);
 		email.setITemplate(TemplatesIB.QUOTE_SUBMIT_EMAIL_TO_UESR);
 		email.setHtml(true);
-		email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
+		email.setLang(iAmxLocale.getLanguage());//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
 		postManClient.sendEmail(email);
 
 	}
@@ -359,7 +359,7 @@ public class EmailSmsService
 		model.put(DetailsConstants.CONTACT_US_MOBILE, metaService.getTenantProfile().getContactUsHelpLineNumber());
 		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaService.getTenantProfile().getAmibWebsiteLink());
 		model.put(DetailsConstants.COMPANY_NAME, getCompanyName());
-		model.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
+		model.put(DetailsConstants.COUNTRY_NAME, iAmxLocale.getCountry());
 		model.put(DetailsConstants.MAKE_DESC, makeDesc);
 		model.put(DetailsConstants.SUB_MAKE_DESC, subMakeDesc);
 		model.put(DetailsConstants.APPLICATION_ID, appSeqNumber);
@@ -372,11 +372,11 @@ public class EmailSmsService
 
 		Email email = new Email();
 		email.setTo(emailTo);
-		email.setSubject("Customer Quote Request - "+appSeqNumber);
+		email.setSubject(iAmxLocale.email_cust_compile_request_msg()+appSeqNumber);
 		email.setModel(wrapper);
 		email.setITemplate(TemplatesIB.QUOTE_SUBMIT_EMAIL_TO_AMIB);
 		email.setHtml(true);
-		email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
+		email.setLang(iAmxLocale.getLanguage());//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
 		postManClient.sendEmail(email);
 
 	}
@@ -412,7 +412,7 @@ public class EmailSmsService
 		model.put(DetailsConstants.CONTACT_US_MOBILE, metaService.getTenantProfile().getContactUsHelpLineNumber());
 		model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaService.getTenantProfile().getAmibWebsiteLink());
 		model.put(DetailsConstants.COMPANY_NAME, getCompanyName());
-		model.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
+		model.put(DetailsConstants.COUNTRY_NAME, iAmxLocale.getCountry());
 		model.put(DetailsConstants.URL_DETAILS, "");//TODO
 		String amountWithCurrency = Utility.getAmountInCurrency(amount, metaService.getTenantProfile().getDecplc() , metaService.getTenantProfile().getCurrency());
 		model.put(DetailsConstants.POLICY_AMOUNT, amountWithCurrency);
@@ -431,12 +431,12 @@ public class EmailSmsService
 		
 		Email email = new Email();
 		email.setTo(emailTo);
-		email.setSubject("Al Mulla Insurance Brokerage Payment Success");
+		email.setSubject(iAmxLocale.email_cust_success_payment_subject());
 		email.setModel(wrapper);
 		email.setITemplate(TemplatesIB.KNET_SUCCESS_EMAIL);
 		email.setHtml(true);
 		email.addFile(file);
-		email.setLang(Language.EN);//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
+		email.setLang(iAmxLocale.getLanguage());//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
 		postManClient.sendEmail(email);
 
 	}
