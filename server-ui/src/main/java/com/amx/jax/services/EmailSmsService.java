@@ -961,13 +961,16 @@ public class EmailSmsService
 			CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getUserSequenceNumber(), userSession.getLanguageId());
 			if (null != customerDetailModel.getUserName() && !customerDetailModel.getUserName().equals(""))
 			{
+				logger.info("Customer Name in Arabic :  ",customerDetailModel.getUserName());
 				return customerDetailModel.getUserName();
 			}
+			logger.info("Customer Name in Arabic :  ",customerDetailModel.getUserName());
 		}
 		if(null != userSession.getLanguageId() && userSession.getLanguageId().toString().equals("1"))
 		{
 			return "زبون";
 		}
+		
 		return "Customer";
 	}
 	
