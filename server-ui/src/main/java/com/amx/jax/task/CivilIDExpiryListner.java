@@ -44,9 +44,6 @@ public class CivilIDExpiryListner implements ITunnelSubscriber<DBEvent> {
 	@Autowired
 	private CustomerRegistrationDao customerRegistrationDao;
 	
-	@Autowired
-	IAmxLocale iAmxLocale;
-
 
 	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
@@ -107,7 +104,15 @@ public class CivilIDExpiryListner implements ITunnelSubscriber<DBEvent> {
 		modeldata.put(DetailsConstants.CONTACT_US_EMAIL, getCompanySetUp.get(0).getEmail());
 		modeldata.put(DetailsConstants.CONTACT_US_MOBILE, getCompanySetUp.get(0).getHelpLineNumber());
 		modeldata.put(DetailsConstants.AMIB_WEBSITE_LINK, getCompanySetUp.get(0).getWebSite());
-		modeldata.put(DetailsConstants.COUNTRY_NAME, iAmxLocale.getCountry());
+		if ("1".equals(langId)) 
+		{
+			modeldata.put(DetailsConstants.COUNTRY_NAME, "الكويت");
+		} 
+		else 
+		{
+			modeldata.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
+		}
+		
 
 		if (!ArgUtil.isEmpty(emailId)) 
 		{
