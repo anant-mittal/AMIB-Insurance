@@ -54,7 +54,7 @@ public class MetaService implements IMetaService {
 		{
 			ArrayResponseModel arrayResponseModel = customerRegistrationDao.getCompanySetUp(laguageSetUp(),webConfig.getAppCompCode());
 			ArrayList<CompanySetUp> getCompanySetUp = arrayResponseModel.getDataArray();
-			
+			logger.info("MetaService :: getTenantProfile :: getCompanyName  :" + getCompanySetUp.get(0).getCompanyName());
 			tenantProfile.setCountryId(getCompanySetUp.get(0).getCntryCd());
 			tenantProfile.setCompCd(getCompanySetUp.get(0).getCompCd());
 			tenantProfile.setContactUsHelpLineNumber(getCompanySetUp.get(0).getHelpLineNumber());
@@ -106,6 +106,7 @@ public class MetaService implements IMetaService {
 
 	public BigDecimal laguageSetUp() 
 	{
+		logger.info("MetaService :: laguageSetUp :: getLanguageId :" + userSession.getLanguageId());
 		if(null != userSession.getLanguageId())
 		{
 			return userSession.getLanguageId();

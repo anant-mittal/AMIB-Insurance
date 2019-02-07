@@ -402,6 +402,18 @@ public class EmailSmsService
 		String customerMobileNumber = userSession.getCustomerMobileNumber();
 		String civilId = userSession.getCivilId();
 
+		metaService.getTenantProfile().setCountryId(null);
+		if(iAmxLocale.getLanguage().equals(Language.AR))
+		{
+			logger.info(TAG+"emialToCustonSuccessPg :: Language : AR");
+			userSession.setLanguageId(new BigDecimal(1));
+		}
+		else
+		{
+			logger.info(TAG+"emialToCustonSuccessPg :: Language : EN");
+			userSession.setLanguageId(new BigDecimal(0));
+		}
+		
 		Map<String, Object> wrapper = new HashMap<String, Object>();
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put(DetailsConstants.CUSTOMER_NAME, customerName());
@@ -418,7 +430,6 @@ public class EmailSmsService
 		model.put(DetailsConstants.POLICY_AMOUNT, amountWithCurrency);
 		model.put(DetailsConstants.TRANSACTION_ID, transecionId);
 		model.put(DetailsConstants.POLICY_APP_NO, policyAppNo);
-		
 		wrapper.put("data", model);
 		
 		ArrayList<String> emailTo = new ArrayList<String>();
