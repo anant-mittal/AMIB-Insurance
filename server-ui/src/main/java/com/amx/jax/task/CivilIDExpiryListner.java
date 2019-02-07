@@ -14,6 +14,7 @@ import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.dict.AmibTunnelEvents;
 import com.amx.jax.dict.Language;
+import com.amx.jax.locale.IAmxLocale;
 import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CompanySetUp;
 import com.amx.jax.postman.client.PostManClient;
@@ -42,6 +43,9 @@ public class CivilIDExpiryListner implements ITunnelSubscriber<DBEvent> {
 
 	@Autowired
 	private CustomerRegistrationDao customerRegistrationDao;
+	
+	@Autowired
+	IAmxLocale iAmxLocale;
 
 
 	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
@@ -59,8 +63,9 @@ public class CivilIDExpiryListner implements ITunnelSubscriber<DBEvent> {
 	// APPL_ID:QUOTE_ID:QUOTE_VERNO:CUST_NAME:MAKE_NAME:SUBMAKE_NAME:EMAIL:MOBILE:LANG_ID
 
 	@Override
-	public void onMessage(String channel, DBEvent event) {
-		
+	public void onMessage(String channel, DBEvent event) 
+	{
+		BigDecimal languageId;
 		String applId = ArgUtil.parseAsString(event.getData().get(APPL_ID));
 		String quoteId = ArgUtil.parseAsString(event.getData().get(QUOTE_ID));
 		String quoteVerNumber = ArgUtil.parseAsString(event.getData().get(QUOTE_VERNO));
@@ -71,12 +76,16 @@ public class CivilIDExpiryListner implements ITunnelSubscriber<DBEvent> {
 		String mobile = ArgUtil.parseAsString(event.getData().get(MOBILE));
 		String langId = ArgUtil.parseAsString(event.getData().get(LANG_ID));
 		
-		BigDecimal languageId;
-		if (null != langId && !langId.equals("")) {
+		if (null != langId && !langId.equals("")) 
+		{
 			languageId = new BigDecimal(langId);
-		} else {
+		} 
+		else 
+		{
 			languageId = new BigDecimal(0);
 		}
+		
+		logger.info("CivilIDExpiryListner :: getTenantProfile :: languageId :" + languageId);
 		
 		ArrayResponseModel arrayResponseModel = customerRegistrationDao.getCompanySetUp(languageId , webConfig.getAppCompCode());
 		ArrayList<CompanySetUp> getCompanySetUp = arrayResponseModel.getDataArray();
@@ -92,32 +101,44 @@ public class CivilIDExpiryListner implements ITunnelSubscriber<DBEvent> {
 		modeldata.put(DetailsConstants.CUSTOMER_EMAIL_ID, emailId);
 		modeldata.put(DetailsConstants.CUSTOMER_MOBILE_NO, mobile);
 		modeldata.put(DetailsConstants.LANGUAGE_INFO, langId);
+		logger.info("CivilIDExpiryListner :: getTenantProfile :: getCompanyName :" + getCompanySetUp.get(0).getCompanyName());
 		modeldata.put(DetailsConstants.COMPANY_NAME, getCompanySetUp.get(0).getCompanyName());
 		modeldata.put(DetailsConstants.URL_DETAILS, "");
-		logger.info("CivilIDExpiryListner :: getTenantProfile :: getContactUsEmail :" + getCompanySetUp.get(0).getEmail());
 		modeldata.put(DetailsConstants.CONTACT_US_EMAIL, getCompanySetUp.get(0).getEmail());
 		modeldata.put(DetailsConstants.CONTACT_US_MOBILE, getCompanySetUp.get(0).getHelpLineNumber());
 		modeldata.put(DetailsConstants.AMIB_WEBSITE_LINK, getCompanySetUp.get(0).getWebSite());
-		modeldata.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
+		modeldata.put(DetailsConstants.COUNTRY_NAME, iAmxLocale.getCountry());
 
-		if (!ArgUtil.isEmpty(emailId)) {
+		if (!ArgUtil.isEmpty(emailId)) 
+		{
 			Email email = new Email();
-			if ("1".equals(langId)) {
+			if ("1".equals(langId)) 
+			{
+				logger.info("CivilIDExpiryListner :: getTenantProfile :: Lang AR :" + langId);
 				email.setLang(Language.AR);
 				modeldata.put("languageid", Language.AR);
-			} else {
+			} 
+			else 
+			{
+				logger.info("CivilIDExpiryListner :: getTenantProfile :: Lang EN :" + langId);
 				email.setLang(Language.EN);
 				modeldata.put("languageid", Language.EN);
 			}
 			wrapper.put("data", modeldata);
-
-			logger.info("CivilIDExpiryListner :: getTenantProfile :: emailId :" + emailId);
-			
 			email.setModel(wrapper);
 			email.addTo(emailId);
 			email.setHtml(true);
 			email.setITemplate(TemplatesIB.QUOTE_READY_AMIB);
-			email.setSubject("Al Mulla Insurance Brokerage Quote for your Motor Policy Application :" + applId);
+			
+			if ("1".equals(langId)) 
+			{
+				email.setSubject("الملا للوساطة التأمين اقتبس عن تطبيق سياسة المحركات الخاصة بك:" + applId);
+			}
+			else
+			{
+				email.setSubject("Al Mulla Insurance Brokerage Quote for your Motor Policy Application :" + applId);
+			}
+			
 			postManClient.sendEmailAsync(email);
 
 			/*
