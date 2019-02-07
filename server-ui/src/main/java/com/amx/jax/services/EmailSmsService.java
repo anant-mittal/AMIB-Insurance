@@ -953,6 +953,10 @@ public class EmailSmsService
 				return customerDetailModel.getUserName();
 			}
 		}
+		if(null != userSession.getLanguageId() && userSession.getLanguageId().toString().equals("1"))
+		{
+			return "زبون";
+		}
 		return "Customer";
 	}
 	
@@ -960,6 +964,7 @@ public class EmailSmsService
 	{
 		if(null != metaService.getTenantProfile().getCompanyName() && !metaService.getTenantProfile().getCompanyName().toString().equals(""))
 		{
+			logger.info("EmailSmsService :: customerName :: getCompanyName :" + metaService.getTenantProfile().getCompanyName());
 			return metaService.getTenantProfile().getCompanyName().toLowerCase();
 		}
 		return "";

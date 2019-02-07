@@ -25,7 +25,7 @@ import com.amx.jax.ui.session.UserSession;
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class MetaService implements IMetaService {
 
-	//private static final Logger logger = LoggerFactory.getLogger(MetaService.class);
+	private static final Logger logger = LoggerFactory.getLogger(MetaService.class);
 	private static final long serialVersionUID = 8260115321460438947L;
 
 	@Autowired
