@@ -143,7 +143,6 @@ public class CivilIDExpiryListner implements ITunnelSubscriber<DBEvent> {
 			{
 				email.setSubject("Al Mulla Insurance Brokerage Quote for your Motor Policy Application :" + applId);
 			}
-			
 			postManClient.sendEmailAsync(email);
 
 			/*
