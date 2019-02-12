@@ -304,10 +304,13 @@ public class CustomerRegistrationService {
 			CustomerDetailResponse customerDetailResponse = new CustomerDetailResponse();
 			CustomerDetails customerDetails = new CustomerDetails();
 
-			if (null != userSession.getCivilId() && !userSession.getCivilId().equals("") && userSession.isValid()) {
+			if (null != userSession.getCivilId() && !userSession.getCivilId().equals("") && userSession.isValid()) 
+			{
 				CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(
 						userSession.getCivilId(), HardCodedValues.USER_TYPE, userSession.getUserSequenceNumber(),
 						userSession.getLanguageId());
+				
+				logger.info("User Sequence No is "+userSession.getUserSequenceNumber());
 
 				if (customerDetailModel.getErrorCode() == null) {
 					customerDetails.setCivilId(userSession.getCivilId());
