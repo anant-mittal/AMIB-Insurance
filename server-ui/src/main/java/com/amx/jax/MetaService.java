@@ -78,11 +78,13 @@ public class MetaService implements IMetaService {
 			userDeviceInfos.setDeviceId(httpService.getIPAddress());
 		}
 		
-		if(userDeviceInfos.getDeviceType() == null)
+		//if(userDeviceInfos.getDeviceType() == null)
 		{
+			logger.info("MetaService :: getUserDeviceInfo :: getAppType 3 :" + httpService.getUserDevice().getAppType());
+			
 			if(null == httpService.getUserDevice().getAppType())
 			{
-				logger.info("MetaService :: getUserDeviceInfo :: getAppType 3 :" + httpService.getUserDevice().getAppType());
+				logger.info("MetaService :: getUserDeviceInfo :: getAppType 4 :" + httpService.getUserDevice().getAppType());
 				
 				if(httpService.getUserDevice().getAppType().toString().equalsIgnoreCase("WEB"))
 				{
@@ -103,7 +105,7 @@ public class MetaService implements IMetaService {
 			}
 		}
 		
-		logger.info("MetaService :: getUserDeviceInfo :: getDeviceType 4 :" + userDeviceInfos.getDeviceType());
+		logger.info("MetaService :: getUserDeviceInfo :: getDeviceType 5 :" + userDeviceInfos.getDeviceType());
 		
 		return userDeviceInfos;
 	}
