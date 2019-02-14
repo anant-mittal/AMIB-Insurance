@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.dao.CustomerRegistrationDao;
-import com.amx.jax.def.CacheForThis;
 import com.amx.jax.http.CommonHttpRequest;
 import com.amx.jax.meta.IMetaService;
 import com.amx.jax.meta.TenantProfile;
@@ -45,7 +44,7 @@ public class MetaService implements IMetaService {
 
 	@Autowired
 	private CustomerRegistrationDao customerRegistrationDao;
-
+	
 	@Override
 	// @CacheForThis
 	public TenantProfile getTenantProfile() 
@@ -70,8 +69,9 @@ public class MetaService implements IMetaService {
 	@Override
 	public UserDeviceInfos getUserDeviceInfo() 
 	{
-		//logger.info("MetaService :: getUserDeviceInfo :: getIPAddress :" + httpService.getIPAddress());
-		//logger.info("MetaService :: getUserDeviceInfo :: getDeviceId  :" + httpService.getDeviceId());
+		logger.info("MetaService :: getUserDeviceInfo :: getIPAddress :" + httpService.getIPAddress());
+		
+		logger.info("MetaService :: getUserDeviceInfo :: getDeviceId  :" + httpService.getDeviceId());
 		
 		if (userDeviceInfos.getDeviceId() == null)
 		{
@@ -82,6 +82,8 @@ public class MetaService implements IMetaService {
 		{
 			if(null != httpService.getUserDevice().getAppType())
 			{
+				logger.info("MetaService :: getUserDeviceInfo :: getAppType  :" + httpService.getUserDevice().getAppType());
+				
 				if(httpService.getUserDevice().getAppType().toString().equalsIgnoreCase("WEB"))
 				{
 					userDeviceInfos.setDeviceType(HardCodedValues.DEVICE_TYPE_WEB);
@@ -100,6 +102,8 @@ public class MetaService implements IMetaService {
 				}
 			}
 		}
+		
+		logger.info("MetaService :: getUserDeviceInfo :: getDeviceType  :" + userDeviceInfos.getDeviceType());
 		
 		return userDeviceInfos;
 	}
