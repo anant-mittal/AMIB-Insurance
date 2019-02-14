@@ -200,8 +200,10 @@ public class CommonHttpRequest {
 		UserAgent agent = new UserAgent(OperatingSystem.UNKNOWN, Browser.UNKNOWN);
 		if (request != null) {
 			String browserDetails = request.getHeader("User-Agent");
+			logger.info("CommonHttpRequest :: getUserAgent :: browserDetails :" + browserDetails);
 			return UserAgent.parseUserAgentString(browserDetails);
 		}
+		logger.info("CommonHttpRequest :: getUserAgent :: agent :" + agent);
 		return agent;
 	}
 
@@ -271,7 +273,7 @@ public class CommonHttpRequest {
 			devicePlatform = DevicePlatform.WINDOWS;
 		}
 		userDevice.setPlatform(devicePlatform);
-		logger.info("CommonHttpRequest :: getUserDevice :: getPlatform :" + userDevice.getPlatform());
+		logger.info("CommonHttpRequest :: getUserDevice :: getPlatform :" + userDevice.getPlatform());//Not Comming In Device
 		
 		
 		
@@ -294,7 +296,7 @@ public class CommonHttpRequest {
 		{
 			deviceType = UserClient.DeviceType.COMPUTER;
 		}
-		logger.info("CommonHttpRequest :: getUserDevice :: deviceType :" + deviceType);
+		logger.info("CommonHttpRequest :: getUserDevice :: deviceType :" + deviceType);//Not Comming In Device
 		
 		userDevice.setType(deviceType);
 		userDevice.setFingerprint(this.getDeviceId());
