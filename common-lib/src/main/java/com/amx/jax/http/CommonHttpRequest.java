@@ -238,9 +238,9 @@ public class CommonHttpRequest {
 		} 
 		else 
 		{
-			isMobile = userAgent.getOperatingSystem().getDeviceType().equals(eu.bitwalker.useragentutils.DeviceType.MOBILE);
+			isMobile = userAgent.getOperatingSystem().getDeviceType().equals(eu.bitwalker.useragentutils.DeviceType.MOBILE);//Mobile
 			isTablet = userAgent.getOperatingSystem().getDeviceType().equals(eu.bitwalker.useragentutils.DeviceType.TABLET);
-			isAndroid = userAgent.getOperatingSystem().getGroup().equals(eu.bitwalker.useragentutils.OperatingSystem.ANDROID);
+			isAndroid = userAgent.getOperatingSystem().getGroup().equals(eu.bitwalker.useragentutils.OperatingSystem.ANDROID);//Android
 			isIOS = userAgent.getOperatingSystem().getGroup().equals(eu.bitwalker.useragentutils.OperatingSystem.IOS);
 		}
 
