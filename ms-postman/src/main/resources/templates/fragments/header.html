@@ -1,12 +1,11 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org" lang="ar">
+	xmlns:th="http://www.thymeleaf.org" lang="ar" th:fragment="header">
 <head>
 <meta name="viewport" content="width=device-width" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Alerts e.g. approaching your limit</title>
 <style>
-* {	
+* {
 	margin: 0;
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	box-sizing: border-box;
@@ -226,10 +225,12 @@ a {
 	border-bottom: 2px solid #333;
 	font-weight: 700;
 }
-.upper{
-    text-transform: uppercase;
+
+.upper {
+	text-transform: uppercase;
 }
-.capitalize{
+
+.capitalize {
 	text-transform: capitalize;
 }
 
@@ -266,7 +267,7 @@ a {
 }
 </style>
 </head>
-<body itemtype="http://schema.org/EmailMessage">
+<body id="body" itemtype="http://schema.org/EmailMessage">
 
 
 	<table class="body-wrap">
@@ -276,53 +277,7 @@ a {
 				<div class="content">
 					<table class="main" width="100%" cellpadding="0" cellspacing="0">
 						<tr>
-							<td class="alert alert-warning" align="center" bgcolor="#000000"><img th:attr="src=${'cid:' + _tu.prop('company.logo.path')}" /></td>
+							<td class="alert alert-warning" align="center" bgcolor="#000000"><img
+								th:attr="src=${'cid:' + _tu.prop('company.logo.path')}" /></td>
 						</tr>
 						<tr>
-							<td class="content-wrap">
-								<table width="100%" cellpadding="0" cellspacing="0">
-									<tr>
-										<td class="content-block"><strong><span
-												th:text="${data.customerName}"></span>عزيزي,
-										</strong></td>
-									</tr>
-									<tr>
-										<td class="content-block">شكرا لإختيارك<span class="capitalize"> <span th:text="${data.companyName}" th:remove="tag"></span>!</span></td>
-									</tr>
-									<tr>
-										<td class="content-block">
-										تم تقديم عرض السعر الخاض بك  <span th:text="${data.makeDesc}" th:remove="tag"></span>- <span th:text="${data.subMakeDesc}" th:remove="tag"></span> .										
-										
-										<br/>
-										</td>
-									</tr>
-									<tr>
-                                        <td class="content-block" align="center" style="padding:20px">
-                                            <a th:href="${_tu.prop('company.app.url')+'/app/landing/myquotes/quote?quoteSeqNumber='+data.quoteSeqNumber}" style="width:273px" class="btn-primary" target="_blank">ضغط هنا لعرض السعر</a>
-                                        </td>
-                                    </tr>
-									<tr>
-										<td class="content-block">شكراً مع تحيات ,<br />
-										 <strong class="upper"><span
-												th:text="${data.companyName}" th:remove="tag"></span>,</strong><br />
-											<span th:text="${data.country}" th:remove="tag"></span><br />
-											<a style="color:black; text-decoration:none"><span th:text="${data.contactUsEmail}"></span></a><br/>
-											<a style="text-decoration:underline;color:#083d8d;"th:href="@{'https://' +${data.amibWebLink}}"><span
-												th:text="${data.amibWebLink}"></span></a>
-										</td>
-									</tr>
-								</table>
-							</td>
-						</tr>
-					</table>
-					<div class="footer">
-						
-					</div>
-				</div>
-			</td>
-			<td></td>
-		</tr>
-	</table>
-
-</body>
-</html>	
