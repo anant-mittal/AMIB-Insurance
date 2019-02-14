@@ -315,12 +315,12 @@ public class CommonHttpRequest {
 				appType = AppType.IOS;
 				logger.info("CommonHttpRequest :: getUserDevice :: appType 2 :" + appType);
 			} 
-			else if (userDevice.getPlatform() == DevicePlatform.UNKNOWN && userDevice.getUserAgent().getBrowser() == Browser.UNKNOWN
+			/*else if (userDevice.getPlatform() == DevicePlatform.UNKNOWN && userDevice.getUserAgent().getBrowser() == Browser.UNKNOWN
 					&& userDevice.getUserAgent().getOperatingSystem() == OperatingSystem.UNKNOWN) 
 			{
 				appType = AppType.IOS;
 				logger.info("CommonHttpRequest :: getUserDevice :: appType 3 :" + appType);
-			} 
+			} */
 			else if (userDevice.getFingerprint() != null && !Constants.BLANK.equalsIgnoreCase(userDevice.getFingerprint())) 
 			{
 				if (userDevice.getFingerprint().length() == 16) 
