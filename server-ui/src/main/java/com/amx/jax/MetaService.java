@@ -80,7 +80,7 @@ public class MetaService implements IMetaService {
 		
 		if(userDeviceInfos.getDeviceType() == null)
 		{
-			if(null != httpService.getUserDevice().getAppType())
+			if(null == httpService.getUserDevice().getAppType())
 			{
 				logger.info("MetaService :: getUserDeviceInfo :: getAppType 3 :" + httpService.getUserDevice().getAppType());
 				
