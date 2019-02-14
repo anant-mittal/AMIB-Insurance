@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mobile.device.Device;
@@ -43,9 +44,12 @@ import eu.bitwalker.useragentutils.UserAgent;
 @Component
 public class CommonHttpRequest {
 
+	private static final Logger logger = LoggerFactory.getLogger(CommonMediaType.class);
+	
 	public static class CommonMediaType extends MediaType {
 
 		private static final long serialVersionUID = -540693758487754320L;
+		
 
 		/**
 		 * Public constant media type for {@code application/v0+json}.
@@ -201,14 +205,15 @@ public class CommonHttpRequest {
 		return agent;
 	}
 
-	public UserDevice getUserDevice() {
+	public UserDevice getUserDevice() 
+	{
 		Object userDeviceObj = AppContextUtil.get(AppConstants.USER_DEVICE_XKEY);
-		if (!ArgUtil.isEmpty(userDeviceObj)) {
+		if (!ArgUtil.isEmpty(userDeviceObj)) 
+		{
 			return (UserDevice) userDeviceObj;
 		}
 
 		UserDevice userDevice = new UserDevice();
-
 		userDevice.setIp(this.getIPAddress());
 
 		Device currentDevice = this.getCurrentDevice();
@@ -218,95 +223,139 @@ public class CommonHttpRequest {
 		boolean isTablet = false;
 		boolean isAndroid = false;
 		boolean isIOS = false;
-		if (currentDevice != null) {
+		
+		logger.info("CommonHttpRequest :: getUserDevice :: userAgent :" + userAgent);
+		logger.info("CommonHttpRequest :: getUserDevice :: currentDevice :" + currentDevice);
+		
+		if (currentDevice != null) 
+		{
 			isMobile = currentDevice.isMobile();
 			isTablet = currentDevice.isTablet();
 			isAndroid = (currentDevice.getDevicePlatform() == org.springframework.mobile.device.DevicePlatform.ANDROID);
 			isIOS = (currentDevice.getDevicePlatform() == org.springframework.mobile.device.DevicePlatform.IOS);
-		} else {
-			isMobile = userAgent.getOperatingSystem().getDeviceType()
-					.equals(eu.bitwalker.useragentutils.DeviceType.MOBILE);
-			isTablet = userAgent.getOperatingSystem().getDeviceType()
-					.equals(eu.bitwalker.useragentutils.DeviceType.TABLET);
-			isAndroid = userAgent.getOperatingSystem().getGroup()
-					.equals(eu.bitwalker.useragentutils.OperatingSystem.ANDROID);
+		} 
+		else 
+		{
+			isMobile = userAgent.getOperatingSystem().getDeviceType().equals(eu.bitwalker.useragentutils.DeviceType.MOBILE);
+			isTablet = userAgent.getOperatingSystem().getDeviceType().equals(eu.bitwalker.useragentutils.DeviceType.TABLET);
+			isAndroid = userAgent.getOperatingSystem().getGroup().equals(eu.bitwalker.useragentutils.OperatingSystem.ANDROID);
 			isIOS = userAgent.getOperatingSystem().getGroup().equals(eu.bitwalker.useragentutils.OperatingSystem.IOS);
 		}
 
-		userDevice.setType(
-				(isMobile ? UserClient.DeviceType.MOBILE
-						: (isTablet ? UserClient.DeviceType.TABLET
-								: UserClient.DeviceType.COMPUTER)));
-
+		logger.info("CommonHttpRequest :: getUserDevice :: isMobile :" + isMobile);
+		logger.info("CommonHttpRequest :: getUserDevice :: isTablet :" + isTablet);
+		logger.info("CommonHttpRequest :: getUserDevice :: isAndroid :" + isAndroid);
+		logger.info("CommonHttpRequest :: getUserDevice :: isIOS :" + isIOS);
+		
+		userDevice.setType((isMobile ? UserClient.DeviceType.MOBILE : (isTablet ? UserClient.DeviceType.TABLET : UserClient.DeviceType.COMPUTER)));
+		logger.info("CommonHttpRequest :: getUserDevice :: userDevice :" + userDevice.getType());
+		
+		
+		
+		
 		DevicePlatform devicePlatform = DevicePlatform.UNKNOWN;
-		if (isAndroid
-				|| userAgent.getOperatingSystem().getGroup() == OperatingSystem.ANDROID) {
+		if (isAndroid || userAgent.getOperatingSystem().getGroup() == OperatingSystem.ANDROID) 
+		{
 			devicePlatform = DevicePlatform.ANDROID;
-		} else if (isIOS
-				|| userAgent.getOperatingSystem().getGroup() == OperatingSystem.IOS) {
+		} 
+		else if (isIOS || userAgent.getOperatingSystem().getGroup() == OperatingSystem.IOS) 
+		{
 			devicePlatform = DevicePlatform.IOS;
-		} else if (isIOS
-				|| userAgent.getOperatingSystem().getGroup() == OperatingSystem.MAC_OS
-				|| userAgent.getOperatingSystem().getGroup() == OperatingSystem.MAC_OS_X) {
+		} 
+		else if (isIOS || userAgent.getOperatingSystem().getGroup() == OperatingSystem.MAC_OS || userAgent.getOperatingSystem().getGroup() == OperatingSystem.MAC_OS_X) 
+		{
 			devicePlatform = DevicePlatform.MAC;
-		} else if (userAgent.getOperatingSystem().getGroup() == OperatingSystem.WINDOWS) {
+		} 
+		else if (userAgent.getOperatingSystem().getGroup() == OperatingSystem.WINDOWS) 
+		{
 			devicePlatform = DevicePlatform.WINDOWS;
 		}
 		userDevice.setPlatform(devicePlatform);
-
+		logger.info("CommonHttpRequest :: getUserDevice :: getPlatform :" + userDevice.getPlatform());
+		
+		
+		
+		
+		
 		UserClient.DeviceType deviceType = UserClient.DeviceType.UNKNOWN;
-		if (isMobile || userAgent.getOperatingSystem()
-				.getDeviceType() == eu.bitwalker.useragentutils.DeviceType.MOBILE) {
+		if (isMobile || userAgent.getOperatingSystem().getDeviceType() == eu.bitwalker.useragentutils.DeviceType.MOBILE) 
+		{
 			deviceType = UserClient.DeviceType.MOBILE;
-		} else if (isTablet || userAgent.getOperatingSystem()
-				.getDeviceType() == eu.bitwalker.useragentutils.DeviceType.TABLET) {
+		} 
+		else if (isTablet || userAgent.getOperatingSystem().getDeviceType() == eu.bitwalker.useragentutils.DeviceType.TABLET) 
+		{
 			deviceType = UserClient.DeviceType.TABLET;
-			if ((devicePlatform == DevicePlatform.MAC || devicePlatform == DevicePlatform.IOS)) {
+			if ((devicePlatform == DevicePlatform.MAC || devicePlatform == DevicePlatform.IOS)) 
+			{
 				deviceType = UserClient.DeviceType.IPAD;
 			}
-		} else if (userAgent.getOperatingSystem()
-				.getDeviceType() == eu.bitwalker.useragentutils.DeviceType.COMPUTER) {
+		} 
+		else if (userAgent.getOperatingSystem().getDeviceType() == eu.bitwalker.useragentutils.DeviceType.COMPUTER) 
+		{
 			deviceType = UserClient.DeviceType.COMPUTER;
 		}
+		logger.info("CommonHttpRequest :: getUserDevice :: deviceType :" + deviceType);
+		
 		userDevice.setType(deviceType);
-
 		userDevice.setFingerprint(this.getDeviceId());
-
 		userDevice.setId(ArgUtil.parseAsString(userAgent.getId()));
-
 		userDevice.setUserAgent(userAgent);
 		AppType appType = userDevice.getAppType();
 
-		if (appType == null) {
+		if (appType == null) 
+		{
 			appType = null;
-			if (userDevice.getPlatform() == DevicePlatform.ANDROID
-					&& userDevice.getUserAgent().getBrowser() == Browser.UNKNOWN) {
+			if (userDevice.getPlatform() == DevicePlatform.ANDROID && userDevice.getUserAgent().getBrowser() == Browser.UNKNOWN) 
+			{
 				appType = AppType.ANDROID;
-			} else if (userDevice.getPlatform() == DevicePlatform.IOS
-					&& userDevice.getUserAgent().getBrowser() == Browser.UNKNOWN) {
+				logger.info("CommonHttpRequest :: getUserDevice :: appType 1 :" + appType);
+			} 
+			else if (userDevice.getPlatform() == DevicePlatform.IOS && userDevice.getUserAgent().getBrowser() == Browser.UNKNOWN) 
+			{
 				appType = AppType.IOS;
-			} else if (userDevice.getPlatform() == DevicePlatform.UNKNOWN
-					&& userDevice.getUserAgent().getBrowser() == Browser.UNKNOWN
-					&& userDevice.getUserAgent().getOperatingSystem() == OperatingSystem.UNKNOWN) {
+				logger.info("CommonHttpRequest :: getUserDevice :: appType 2 :" + appType);
+			} 
+			else if (userDevice.getPlatform() == DevicePlatform.UNKNOWN && userDevice.getUserAgent().getBrowser() == Browser.UNKNOWN
+					&& userDevice.getUserAgent().getOperatingSystem() == OperatingSystem.UNKNOWN) 
+			{
 				appType = AppType.IOS;
-			} else if (userDevice.getFingerprint() != null
-					&& !Constants.BLANK.equalsIgnoreCase(userDevice.getFingerprint())) {
-				if (userDevice.getFingerprint().length() == 16) {
+				logger.info("CommonHttpRequest :: getUserDevice :: appType 3 :" + appType);
+			} 
+			else if (userDevice.getFingerprint() != null && !Constants.BLANK.equalsIgnoreCase(userDevice.getFingerprint())) 
+			{
+				if (userDevice.getFingerprint().length() == 16) 
+				{
 					appType = AppType.ANDROID;
-				} else if (userDevice.getFingerprint().length() == 40) {
+					logger.info("CommonHttpRequest :: getUserDevice :: appType 4 :" + appType);
+				} 
+				else if (userDevice.getFingerprint().length() == 40) 
+				{
 					appType = AppType.IOS;
-				} else if (userDevice.getFingerprint().length() == 32) {
+					logger.info("CommonHttpRequest :: getUserDevice :: appType 5 :" + appType);
+				} 
+				else if (userDevice.getFingerprint().length() == 32) 
+				{
 					appType = AppType.WEB;
+					logger.info("CommonHttpRequest :: getUserDevice :: appType 6 :" + appType);
 				}
-			} else if (userDevice.getType() == DeviceType.COMPUTER) {
+			} 
+			else if (userDevice.getType() == DeviceType.COMPUTER) 
+			{
 				appType = AppType.WEB;
+				logger.info("CommonHttpRequest :: getUserDevice :: appType 7 :" + appType);
 			}
 		}
+		logger.info("CommonHttpRequest :: getUserDevice :: appType 8 :" + appType);
+		
 		userDevice.setAppType(appType);
 		AppContextUtil.set(AppConstants.USER_DEVICE_XKEY, userDevice);
 		return userDevice;
 	}
 
+	
+	
+	
+	
 	private ApiRequest getApiRequestModel(HttpServletRequest req) {
 		createApiRequestModels();
 		HandlerExecutionChain handlerExeChain;

@@ -71,7 +71,7 @@ public class MetaService implements IMetaService {
 	{
 		logger.info("MetaService :: getUserDeviceInfo :: getIPAddress 1 :" + httpService.getIPAddress());
 		
-		logger.info("MetaService :: getUserDeviceInfo :: getDeviceId 2 :" + httpService.getDeviceId());
+		logger.info("MetaService :: getUserDeviceInfo :: getDeviceId 2 :" + userDeviceInfos.getDeviceId());
 		
 		if (userDeviceInfos.getDeviceId() == null)
 		{
@@ -82,7 +82,7 @@ public class MetaService implements IMetaService {
 		{
 			logger.info("MetaService :: getUserDeviceInfo :: getAppType 3 :" + httpService.getUserDevice().getAppType());
 			
-			if(null == httpService.getUserDevice().getAppType())
+			if(null != httpService.getUserDevice().getAppType())
 			{
 				logger.info("MetaService :: getUserDeviceInfo :: getAppType 4 :" + httpService.getUserDevice().getAppType());
 				
