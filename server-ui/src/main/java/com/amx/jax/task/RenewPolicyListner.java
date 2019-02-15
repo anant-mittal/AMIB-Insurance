@@ -123,7 +123,7 @@ public class RenewPolicyListner implements ITunnelSubscriber<DBEvent> {
 		
 		/*if (!ArgUtil.isEmpty(custName)) {
 			PushMessage pushMessage = new PushMessage();
-			//pushMessage.setITemplate(TemplatesMX.CIVILID_EXPIRY);
+			//pushMessage.setITemplate(TemplatesIB.CIVILID_EXPIRY);
 			pushMessage.setModel(wrapper);
 			pushNotifyClient.send(pushMessage);
 		}*/

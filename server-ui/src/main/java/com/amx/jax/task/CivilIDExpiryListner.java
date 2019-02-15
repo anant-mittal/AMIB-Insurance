@@ -151,16 +151,12 @@ public class CivilIDExpiryListner implements ITunnelSubscriber<DBEvent> {
 			postManClient.sendEmailAsync(email);
 		}
 
-		/*if (!ArgUtil.isEmpty(custName))
-		{
-			PushMessage pushMessage = new PushMessage();
-			if (ArgUtil.areEqual(languageInfo, "0")) {
-				//pushMessage.setITemplate(TemplatesMX.CIVILID_EXPIRY);
-			} else {
-				//pushMessage.setITemplate(TemplatesMX.CIVILID_EXPIRED);
-			}
-			pushMessage.setModel(wrapper);
-			pushNotifyClient.send(pushMessage);
-		}*/
+		/*
+		 * if (!ArgUtil.isEmpty(custName)) { PushMessage pushMessage = new
+		 * PushMessage(); if (ArgUtil.areEqual(languageInfo, "0")) {
+		 * pushMessage.setITemplate(TemplatesIB.CIVILID_EXPIRY); } else {
+		 * pushMessage.setITemplate(TemplatesIB.CIVILID_EXPIRED); }
+		 * pushMessage.setModel(wrapper); pushNotifyClient.send(pushMessage); }
+		 */
 	}
 }
