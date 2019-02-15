@@ -20,6 +20,7 @@ import com.amx.jax.models.CompanySetUp;
 import com.amx.jax.postman.client.PostManClient;
 import com.amx.jax.postman.client.PushNotifyClient;
 import com.amx.jax.postman.model.Email;
+import com.amx.jax.postman.model.PushMessage;
 import com.amx.jax.postman.model.TemplatesIB;
 import com.amx.jax.tunnel.DBEvent;
 import com.amx.jax.tunnel.ITunnelSubscriber;
@@ -44,8 +45,11 @@ public class CivilIDExpiryListner implements ITunnelSubscriber<DBEvent> {
 	@Autowired
 	private CustomerRegistrationDao customerRegistrationDao;
 	
-
+	String languageInfo = "0";
+	
 	private final Logger LOGGER = LoggerFactory.getLogger(getClass());
+	
+	
 
 	private static final String APPL_ID = "APPL_ID";
 	private static final String QUOTE_ID = "QUOTE_ID";
@@ -72,6 +76,7 @@ public class CivilIDExpiryListner implements ITunnelSubscriber<DBEvent> {
 		String emailId = ArgUtil.parseAsString(event.getData().get(EMAIL));
 		String mobile = ArgUtil.parseAsString(event.getData().get(MOBILE));
 		String langId = ArgUtil.parseAsString(event.getData().get(LANG_ID));
+		languageInfo = langId;
 		
 		if (null != langId && !langId.equals("")) 
 		{
@@ -144,30 +149,18 @@ public class CivilIDExpiryListner implements ITunnelSubscriber<DBEvent> {
 				email.setSubject("Al Mulla Insurance Brokerage Quote for your Motor Policy Application :" + applId);
 			}
 			postManClient.sendEmailAsync(email);
-
-			/*
-			 * if (ArgUtil.areEqual(expired, "0")) {
-			 * email.setITemplate(TemplatesMX.CIVILID_EXPIRY);
-			 * email.setSubject("Civil ID Expiry Reminder"); // Given by Umesh } else {
-			 * email.setSubject("Civil ID has been expired"); // Given by Umesh
-			 * email.setITemplate(TemplatesMX.CIVILID_EXPIRED); }
-			 */
- 
 		}
 
-		
-		/*if (!ArgUtil.isEmpty(custId)) 
+		/*if (!ArgUtil.isEmpty(custName))
 		{
 			PushMessage pushMessage = new PushMessage();
-			if (ArgUtil.areEqual(expired, "0")) {
-				pushMessage.setITemplate(TemplatesMX.CIVILID_EXPIRY);
+			if (ArgUtil.areEqual(languageInfo, "0")) {
+				//pushMessage.setITemplate(TemplatesMX.CIVILID_EXPIRY);
 			} else {
-				pushMessage.setITemplate(TemplatesMX.CIVILID_EXPIRED);
+				//pushMessage.setITemplate(TemplatesMX.CIVILID_EXPIRED);
 			}
-			pushMessage.addToUser(custId);
 			pushMessage.setModel(wrapper);
 			pushNotifyClient.send(pushMessage);
 		}*/
-
 	}
 }

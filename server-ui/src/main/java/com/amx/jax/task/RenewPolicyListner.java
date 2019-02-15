@@ -19,6 +19,7 @@ import com.amx.jax.models.CompanySetUp;
 import com.amx.jax.postman.client.PostManClient;
 import com.amx.jax.postman.client.PushNotifyClient;
 import com.amx.jax.postman.model.Email;
+import com.amx.jax.postman.model.PushMessage;
 import com.amx.jax.postman.model.TemplatesIB;
 import com.amx.jax.tunnel.DBEvent;
 import com.amx.jax.tunnel.ITunnelSubscriber;
@@ -117,31 +118,12 @@ public class RenewPolicyListner implements ITunnelSubscriber<DBEvent> {
 			email.setITemplate(TemplatesIB.POLICY_DUE_REMINDER);
 			email.setSubject("Al Mulla Insurance Brokerage Policy Due Reminder");
 			postManClient.sendEmailAsync(email);
-
-			/*
-			 * if (ArgUtil.areEqual(expired, "0")) {
-			 * email.setITemplate(TemplatesMX.CIVILID_EXPIRY);
-			 * email.setSubject("Civil ID Expiry Reminder"); // Given by Umesh } else {
-			 * email.setSubject("Civil ID has been expired"); // Given by Umesh
-			 * email.setITemplate(TemplatesMX.CIVILID_EXPIRED); }
-			 */
-
+			
 		}
-
-		/*
-		 * if (!ArgUtil.isEmpty(custName)) { PushMessage pushMessage = new
-		 * PushMessage(); if (ArgUtil.areEqual(expired, "0")) {
-		 * pushMessage.setITemplate(TemplatesMX.CIVILID_EXPIRY); } else {
-		 * pushMessage.setITemplate(TemplatesMX.CIVILID_EXPIRED); }
-		 * pushMessage.addToUser(custId); pushMessage.setModel(wrapper);
-		 * pushNotifyClient.send(pushMessage); }
-		 */
-
 		
 		/*if (!ArgUtil.isEmpty(custName)) {
 			PushMessage pushMessage = new PushMessage();
-			pushMessage.setITemplate(TemplatesMX.CIVILID_EXPIRY);
-			pushMessage.addToUser(custId);
+			//pushMessage.setITemplate(TemplatesMX.CIVILID_EXPIRY);
 			pushMessage.setModel(wrapper);
 			pushNotifyClient.send(pushMessage);
 		}*/

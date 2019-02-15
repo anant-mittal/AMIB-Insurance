@@ -199,7 +199,7 @@ public class CommonHttpRequest {
 	public UserAgent getUserAgent() {
 		UserAgent agent = new UserAgent(OperatingSystem.UNKNOWN, Browser.UNKNOWN);
 		if (request != null) {
-			String browserDetails = request.getHeader("User-Agent");
+			String browserDetails = request.getHeader("User-Agent");// Android , iPhone , WINDOWS_10-CHROME
 			logger.info("CommonHttpRequest :: getUserAgent :: browserDetails :" + browserDetails);
 			return UserAgent.parseUserAgentString(browserDetails);
 		}
