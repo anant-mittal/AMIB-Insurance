@@ -69,23 +69,15 @@ public class MetaService implements IMetaService {
 	@Override
 	public UserDeviceInfos getUserDeviceInfo() 
 	{
-		logger.info("MetaService :: getUserDeviceInfo :: getIPAddress 1 :" + httpService.getIPAddress());
-		
-		logger.info("MetaService :: getUserDeviceInfo :: getDeviceId 2 :" + userDeviceInfos.getDeviceId());
-		
 		if (userDeviceInfos.getDeviceId() == null)
 		{
 			userDeviceInfos.setDeviceId(httpService.getIPAddress());
 		}
 		
-		//if(userDeviceInfos.getDeviceType() == null)
+		if(userDeviceInfos.getDeviceType() == null)
 		{
-			logger.info("MetaService :: getUserDeviceInfo :: getAppType 3 :" + httpService.getUserDevice().getAppType());
-			
 			if(null != httpService.getUserDevice().getAppType())
 			{
-				logger.info("MetaService :: getUserDeviceInfo :: getAppType 4 :" + httpService.getUserDevice().getAppType());
-				
 				if(httpService.getUserDevice().getAppType().toString().equalsIgnoreCase("WEB"))
 				{
 					userDeviceInfos.setDeviceType(HardCodedValues.DEVICE_TYPE_WEB);
@@ -103,16 +95,16 @@ public class MetaService implements IMetaService {
 					userDeviceInfos.setDeviceType(HardCodedValues.DEVICE_TYPE_WEB);
 				}
 			}
+			logger.info("MetaService :: getUserDeviceInfo :: getDeviceType 5 :" + userDeviceInfos.getDeviceType());
 		}
 		
-		logger.info("MetaService :: getUserDeviceInfo :: getDeviceType 5 :" + userDeviceInfos.getDeviceType());
+		
 		
 		return userDeviceInfos;
 	}
 
 	public BigDecimal laguageSetUp() 
 	{
-		logger.info("MetaService :: laguageSetUp :: getLanguageId :" + userSession.getLanguageId());
 		if(null != userSession.getLanguageId())
 		{
 			return userSession.getLanguageId();
