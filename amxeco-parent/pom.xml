@@ -50,6 +50,11 @@
 			</dependency>
 			<dependency>
 				<groupId>com.amx.jax</groupId>
+				<artifactId>common-db</artifactId>
+				<version>${amx.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.amx.jax</groupId>
 				<artifactId>lib-mcq</artifactId>
 				<version>${amx.version}</version>
 			</dependency>
@@ -88,6 +93,7 @@
 		<!-- Common Libs -->
 		<module>../common-utils</module>
 		<module>../common-lib</module>
+		<module>../common-db</module>
 		<module>../lib-ext-jar</module>
 		<module>../lib-mcq</module>
 		<module>../lib-monitor</module>
@@ -98,6 +104,6 @@
 		<module>../ms-broker</module>
 		<module>../server-payg</module>
 		<module>../server-monitor</module>
-		
+
 	</modules>
 </project>
