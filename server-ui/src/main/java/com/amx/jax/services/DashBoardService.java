@@ -18,9 +18,9 @@ import com.amx.jax.ui.session.UserSession;
 @Service
 public class DashBoardService
 {
-	private static final Logger logger = LoggerFactory.getLogger(RequestQuoteService.class);
+	private static final Logger logger = LoggerFactory.getLogger(DashBoardService.class);
 
-	String TAG = "RequestQuoteService :: ";
+	String TAG = "DashBoardService :: ";
 
 	@Autowired
 	public DashBoardDao dashBoardDao;
@@ -36,6 +36,9 @@ public class DashBoardService
 		
 		try
 		{
+			
+			logger.info(TAG + "getIncompleteApplication :: getCivilId :" + userSession.getCivilId());
+			logger.info(TAG + "getIncompleteApplication :: getCustomerSequenceNumber :" + userSession.getCustomerSequenceNumber());
 			
 			IncompleteApplModel incompleteApplModel = dashBoardDao.getIncompleteApplication(userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber());
 			incompleteApplResponse.setAppSeqNumber(incompleteApplModel.getAppSeqNumber());

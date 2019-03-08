@@ -103,7 +103,7 @@ public class CustomerRegistrationDao
 		}
 		finally
 		{
-			CloseConnection(callableStatement, connection);
+			CloseConnection(callableStatement, connection); 
 		}
 		return arrayResponseModel;
 	}

@@ -109,54 +109,12 @@ public class CustomizeQuoteController {
 		return customizeQuoteService.saveCustomizeQuote(customizeQuoteModel, request);
 	}
 
-	@ApiOperation(value = "submits payment info to server", notes = "this api is not going to be consumed by ui end. this is internal called api for payment gateway")
-	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
-	@RequestMapping(value = "/remit/save-remittance", method = { RequestMethod.POST })
-	//@RequestMapping(value = "/callback/payg/payment/capture", method = { RequestMethod.POST })
-	public PaymentResponseDto onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse) 
-	{
-		try 
-		{
-			setMetaData();
-
-			logger.info(" onPaymentCallback :: paymentResponse :" + paymentResponse.toString());
-			
-			PaymentDetails paymentDetails = new PaymentDetails();
-			paymentDetails.setPaymentId(paymentResponse.getPaymentId());
-			paymentDetails.setApprovalNo(paymentResponse.getAuth_appNo());
-			paymentDetails.setApprovalDate(null);
-			paymentDetails.setResultCd(paymentResponse.getResultCode());
-			paymentDetails.setTransId(paymentResponse.getTransactionId());
-			paymentDetails.setRefId(paymentResponse.getReferenceId());
-			
-			if (null != paymentResponse.getTrackId()) 
-			{
-				BigDecimal paySeqNumber = new BigDecimal(paymentResponse.getTrackId().toString());
-				logger.info(" onPaymentCallback :: paySeqNumber  :" + paySeqNumber);
-				paymentDetails.setPaySeqNum(paySeqNumber);
-				paymentDetails.setPaymentToken(paySeqNumber.toString());
-			} 
-			else 
-			{
-				paymentDetails.setPaySeqNum(null);
-			}
-
-			PaymentDetails updateStatus = payMentService.updatePaymentDetals(paymentDetails);
-			logger.info(" onPaymentCallback :: updateStatus  :" + updateStatus.toString());
-		}
-		catch (Exception e) 
-		{
-			e.printStackTrace();
-		}
-		return paymentResponse;
-	}
-
 	
 	@ApiOperation(value = "submits payment info to server", notes = "this api is not going to be consumed by ui end. this is internal called api for payment gateway")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	//@RequestMapping(value = "/remit/save-remittance", method = { RequestMethod.POST })
 	@RequestMapping(value = "/callback/payg/payment/capture", method = { RequestMethod.POST })
-	public PaymentResponseDto onPaymentCallbackNew(@RequestBody PaymentResponseDto paymentResponse) 
+	public PaymentResponseDto onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse) 
 	{
 		try 
 		{

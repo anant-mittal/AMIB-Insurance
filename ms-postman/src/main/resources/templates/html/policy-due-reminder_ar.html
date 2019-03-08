@@ -1,7 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org" lang="ar" th:fragment="header">
+	xmlns:th="http://www.thymeleaf.org" lang="ar">
 <head>
 <meta name="viewport" content="width=device-width" />
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -192,6 +191,14 @@ a {
 	font-size: 16px;
 }
 
+.upper {
+	text-transform: uppercase;
+}
+
+.capitalize {
+	text-transform: capitalize;
+}
+
 .alert.alert-warning {
 	background-color: #000000;
 }
@@ -228,18 +235,6 @@ a {
 	font-weight: 700;
 }
 
-.upper {
-	text-transform: uppercase;
-}
-
-.capitalize {
-	text-transform: capitalize;
-}
-
-.note {
-	color: green;
-}
-
 @media only screen and (max-width: 640px) {
 	body {
 		padding: 0 !important;
@@ -273,7 +268,7 @@ a {
 }
 </style>
 </head>
-<body id="body" itemtype="http://schema.org/EmailMessage">
+<body itemtype="http://schema.org/EmailMessage">
 
 
 	<table class="body-wrap">
@@ -287,41 +282,39 @@ a {
 								th:attr="src=${'cid:' + _tu.prop('company.logo.path')}" /></td>
 						</tr>
 						<tr>
-
 							<td class="content-wrap">
 								<table width="100%" cellpadding="0" cellspacing="0">
 									<tr>
-										<td class="content-block"><strong>Dear <span
-												th:text="${data.customerName}">User</span>,
-										</strong></td>
+										<td class="content-block"><strong><span
+												th:text="${data.customerName}"></span>عزيزي, </strong></td>
 									</tr>
 									<tr>
-										<td class="content-block">Congratulations! You have
-											successfully completed registration with us, one of the best
-											motor insurance brokerage company!</td>
+										<td class="content-block"><span class="capitalize"><span
+												th:text="${data.companyName}" th:remove="tag"></span>أهلا بك
+												في!</span></td>
 									</tr>
 									<tr>
-										<td class="content-block">Your Online Registration for
-											the request quote and policy renewal facility has been
-											authorized.</td>
+
+										<td class="content-block">وثيقة التأمين الخاص بك <span
+											th:text="${data.makeDesc}" th:remove="tag"></span> -<span
+											th:text="${data.subMakeDesc}" th:remove="tag"></span> متسحقة
+											لتجديد في <span th:text="${data.expiryDate}" th:remove="tag"></span>
+											. <br /> <span>يرجى تسجيل الدخول إلى التطبيق أو
+												التواصل مع فريق الملا للوساطة في التأمين علي <span
+												th:text="${data.contactUsMobile}" th:remove="tag"></span> أو
+												<span th:text="${data.contactUsEmail}" th:remove="tag">or</span>
+										</span>
+										</td>
+
 									</tr>
 									<tr>
-										<td class="content-block"><strong>NOTE:</strong> <br />
-											You can login to the Almulla Insurance Brokerage website <a
-											th:href="@{'https://' +${data.amibWebLink}}"><span
-												th:text="${data.amibWebLink}"></span></a></td>
-									</tr>
-									<tr>
-										<td class="content-block">Please remember your password
-											to enjoy secure and uninterrupted service.</td>
-									</tr>
-									<tr>
-										<td class="content-block">Thanks and Regards,<br /> <strong
+										<td class="content-block">شكراً مع تحيات ,<br /> <strong
 											class="upper"><span th:text="${data.companyName}"
 												th:remove="tag"></span>,</strong><br /> <span
 											th:text="${data.country}" th:remove="tag"></span><br /> <a
 											style="color: black; text-decoration: none"><span
 												th:text="${data.contactUsEmail}"></span></a><br /> <a
+											style="text-decoration: underline; color: #083d8d;"
 											th:href="@{'https://' +${data.amibWebLink}}"><span
 												th:text="${data.amibWebLink}"></span></a>
 										</td>
@@ -330,7 +323,7 @@ a {
 							</td>
 						</tr>
 					</table>
-					<div class="footer" th:fragment="footer"></div>
+					<div class="footer"></div>
 				</div>
 			</td>
 			<td></td>
@@ -339,4 +332,3 @@ a {
 
 </body>
 </html>
-

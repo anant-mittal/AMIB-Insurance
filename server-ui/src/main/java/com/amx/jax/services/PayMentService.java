@@ -29,7 +29,7 @@ import com.amx.jax.utility.Utility;
 @Service
 public class PayMentService
 {
-	String TAG = "com.amx.jax.services :: PayMentService :: ";
+	String TAG = "PayMentService :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(PayMentService.class);
 	
@@ -241,8 +241,6 @@ public class PayMentService
 			ArrayResponseModel arrayResponseModel = payMentDao.getPaymentStatus(paySeqNum);
 			paymentStatus.setPaymentProcedureStatus("N");
 			
-			logger.info(TAG + " getPaymentStatus :: arrayResponseModel :" + arrayResponseModel.getErrorCode());
-			
 			if(null == arrayResponseModel.getErrorCode())
 			{
 				paymentStatus = (PaymentStatus) arrayResponseModel.getObject();
@@ -252,8 +250,6 @@ public class PayMentService
 				{
 					try
 					{
-						logger.info(TAG + " getPaymentStatus :: paymentStatus 4 :" + paymentStatus.toString());
-						
 						AmxApiResponse<? , Object> createAmibResp = payMentService.cretaeAmibCust();
 						if (!createAmibResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 						{
@@ -294,6 +290,7 @@ public class PayMentService
 					
 					try
 					{
+						logger.info(TAG+"getPaymentStatus :: getLanguageId :" + userSession.getLanguageId());
 						emailSmsService.emialToCustonSuccessPg(paymentStatus.getTotalAmount(),
 								paymentStatus.getTransactionId(), paymentStatus.getAppSeqNumber(), receiptData(paySeqNum));
 					}
@@ -303,7 +300,7 @@ public class PayMentService
 					}
 				}
 				
-				logger.info(TAG + " getPaymentStatus :: paymentStatus 12 :" + paymentStatus.toString());
+				
 				resp.setData(paymentStatus);
 				resp.setStatusKey(ApiConstants.SUCCESS);
 			}

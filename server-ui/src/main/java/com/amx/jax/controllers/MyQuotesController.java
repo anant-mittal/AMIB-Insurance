@@ -18,7 +18,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 public class MyQuotesController {
 	private static final Logger logger = LoggerFactory.getLogger(MyQuotesController.class);
-
+	
 	@Autowired
 	private MyQuotesService myQuotesService;
 

@@ -291,32 +291,29 @@ a {
 							<td class="content-wrap">
 								<table width="100%" cellpadding="0" cellspacing="0">
 									<tr>
-										<td class="content-block"><strong>Dear <span
-												th:text="${data.customerName}">User</span>,
-										</strong></td>
+										<td class="content-block"><strong><span
+												th:text="${data.customerName}"></span>عزيزي, </strong></td>
 									</tr>
 									<tr>
-										<td class="content-block">Congratulations! You have
-											successfully completed registration with us, one of the best
-											motor insurance brokerage company!</td>
+										<td class="content-block">تهانيناً !قد أكملت التسجيل معنا
+											بنجاح ، وحدة من أفضل شركة وساطة التأمين على السيارات !</td>
 									</tr>
 									<tr>
-										<td class="content-block">Your Online Registration for
-											the request quote and policy renewal facility has been
-											authorized.</td>
+										<td class="content-block">تم إعتماد تسجيلك عبر الإنترنت
+											لمرفق طلب و تجديد وثيقة التأمين</td>
 									</tr>
 									<tr>
-										<td class="content-block"><strong>NOTE:</strong> <br />
-											You can login to the Almulla Insurance Brokerage website <a
+										<td class="content-block"><strong>ملاحظة :</strong> <br />
+											يمكنك الدخول إلى موقع شركة الملا للوساطة في التأمين <a
 											th:href="@{'https://' +${data.amibWebLink}}"><span
 												th:text="${data.amibWebLink}"></span></a></td>
 									</tr>
 									<tr>
-										<td class="content-block">Please remember your password
-											to enjoy secure and uninterrupted service.</td>
+										<td class="content-block">يرجى تذكر كلمة السر الخاصة بك
+											للإستمتاع بخدمة أمنة و دون إنقطاع .</td>
 									</tr>
 									<tr>
-										<td class="content-block">Thanks and Regards,<br /> <strong
+										<td class="content-block">شكراً مع تحيات ,<br /> <strong
 											class="upper"><span th:text="${data.companyName}"
 												th:remove="tag"></span>,</strong><br /> <span
 											th:text="${data.country}" th:remove="tag"></span><br /> <a
