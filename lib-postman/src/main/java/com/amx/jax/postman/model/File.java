@@ -2,6 +2,7 @@ package com.amx.jax.postman.model;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,22 +14,23 @@ import org.slf4j.Logger;
 import com.amx.jax.dict.Language;
 import com.amx.jax.logger.LoggerService;
 import com.amx.jax.postman.model.ITemplates.ITemplate;
+import com.amx.utils.EnumType;
 import com.amx.utils.JsonUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
-public class File {
+public class File implements Serializable {
 
+	private static final long serialVersionUID = -3165262414318034816L;
 	private static Logger LOGGER = LoggerService.getLogger(File.class);
 
-	public enum Type {
+	public enum Type implements EnumType {
 		PDF("application/pdf"), CSV("text/csv"),
 
 		PNG("image/png"), JPEG("image/jpeg"), JPG("image/jpg"),
 
 		JSON("application/json"), HTML("text/html"), TEXT(
-				"text/plain"
-		);
+				"text/plain");
 
 		String contentType;
 
@@ -80,6 +82,11 @@ public class File {
 		this.setITemplate(template);
 		this.setType(fileType);
 		this.setModel(JsonUtil.fromJson(JsonUtil.toJson(data), Map.class));
+	}
+
+	public File(Object data, Type fileType) {
+		this.setType(fileType);
+		this.setModel(JsonUtil.toJsonMap(data));
 	}
 
 	public Map<String, Object> getModel() {

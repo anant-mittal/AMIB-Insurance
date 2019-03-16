@@ -9,34 +9,33 @@ import java.util.Map;
 import com.amx.jax.dict.Language;
 import com.amx.jax.postman.model.ITemplates.ITemplate;
 import com.amx.utils.JsonUtil;
+import com.amx.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Message implements Serializable {
 
 	private static final long serialVersionUID = 1363933600245334964L;
-
-	private static final String DATA_KEY = "data";
+	public static final String DATA_KEY = "data";
+	public static final String RESULTS_KEY = "results";
 
 	public static enum Status {
-		INIT, SENT, DELIVERED, READ, FAILED
+		INIT, SENT, DELIVERED, READ, NOT_SENT, FAILED
+	}
+
+	public static interface IChannel {
 	}
 
 	protected long timestamp;
-
+	protected int attempt;
 	protected Language lang = null;
-
 	protected String subject;
-
 	protected String message = null;
-
 	protected List<String> to = null;
-
 	private String template = null;
-
 	private Map<String, Object> model = new HashMap<String, Object>();
-
 	private MessageType messageType = null;
-
 	private Status status = null;
 
 	private List<String> lines = new ArrayList<String>();
@@ -68,8 +67,7 @@ public class Message implements Serializable {
 	}
 
 	/**
-	 * @param subject
-	 *            the subject to set
+	 * @param subject the subject to set
 	 */
 	public void setSubject(String subject) {
 		this.subject = subject;
@@ -110,6 +108,7 @@ public class Message implements Serializable {
 	}
 
 	public Message() {
+		this.attempt = 0;
 		this.timestamp = System.currentTimeMillis();
 		this.status = Status.INIT;
 		this.to = new ArrayList<String>();
@@ -123,20 +122,18 @@ public class Message implements Serializable {
 	}
 
 	/**
-	 * @param to
-	 *            the to to set
+	 * @param to the to to set
 	 */
 	public void setTo(List<String> to) {
 		this.to = to;
 	}
 
 	/**
-	 * @param to
-	 *            the to to set
+	 * @param to the to to set
 	 */
 	public void addTo(String... recieverIds) {
 		for (String recieverId : recieverIds) {
-			this.to.add(recieverId);
+			this.to.add(StringUtils.trim(recieverId));
 		}
 	}
 
@@ -176,6 +173,14 @@ public class Message implements Serializable {
 
 	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
+	}
+
+	public int getAttempt() {
+		return attempt;
+	}
+
+	public void setAttempt(int attempt) {
+		this.attempt = attempt;
 	}
 
 }

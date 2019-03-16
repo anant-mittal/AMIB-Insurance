@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 
 import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.dao.CustomerRegistrationDao;
-import com.amx.jax.def.CacheForThis;
 import com.amx.jax.http.CommonHttpRequest;
 import com.amx.jax.meta.IMetaService;
 import com.amx.jax.meta.TenantProfile;
@@ -25,7 +24,7 @@ import com.amx.jax.ui.session.UserSession;
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class MetaService implements IMetaService {
 
-	//private static final Logger logger = LoggerFactory.getLogger(MetaService.class);
+	private static final Logger logger = LoggerFactory.getLogger(MetaService.class);
 	private static final long serialVersionUID = 8260115321460438947L;
 
 	@Autowired
@@ -45,7 +44,7 @@ public class MetaService implements IMetaService {
 
 	@Autowired
 	private CustomerRegistrationDao customerRegistrationDao;
-
+	
 	@Override
 	// @CacheForThis
 	public TenantProfile getTenantProfile() 
@@ -54,7 +53,7 @@ public class MetaService implements IMetaService {
 		{
 			ArrayResponseModel arrayResponseModel = customerRegistrationDao.getCompanySetUp(laguageSetUp(),webConfig.getAppCompCode());
 			ArrayList<CompanySetUp> getCompanySetUp = arrayResponseModel.getDataArray();
-			
+			logger.info("MetaService :: getTenantProfile :: getCompanyName  :" + getCompanySetUp.get(0).getCompanyName());
 			tenantProfile.setCountryId(getCompanySetUp.get(0).getCntryCd());
 			tenantProfile.setCompCd(getCompanySetUp.get(0).getCompCd());
 			tenantProfile.setContactUsHelpLineNumber(getCompanySetUp.get(0).getHelpLineNumber());
@@ -70,9 +69,6 @@ public class MetaService implements IMetaService {
 	@Override
 	public UserDeviceInfos getUserDeviceInfo() 
 	{
-		//logger.info("MetaService :: getUserDeviceInfo :: getIPAddress :" + httpService.getIPAddress());
-		//logger.info("MetaService :: getUserDeviceInfo :: getDeviceId  :" + httpService.getDeviceId());
-		
 		if (userDeviceInfos.getDeviceId() == null)
 		{
 			userDeviceInfos.setDeviceId(httpService.getIPAddress());
@@ -99,7 +95,10 @@ public class MetaService implements IMetaService {
 					userDeviceInfos.setDeviceType(HardCodedValues.DEVICE_TYPE_WEB);
 				}
 			}
+			logger.info("MetaService :: getUserDeviceInfo :: getDeviceType 5 :" + userDeviceInfos.getDeviceType());
 		}
+		
+		
 		
 		return userDeviceInfos;
 	}

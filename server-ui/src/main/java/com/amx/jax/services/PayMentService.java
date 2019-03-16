@@ -29,7 +29,7 @@ import com.amx.jax.utility.Utility;
 @Service
 public class PayMentService
 {
-	String TAG = "com.amx.jax.services :: PayMentService :: ";
+	String TAG = "PayMentService :: ";
 
 	private static final Logger logger = LoggerFactory.getLogger(PayMentService.class);
 	
@@ -102,7 +102,7 @@ public class PayMentService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "insertPaymentDetals :: exception :" + e);
 			e.printStackTrace();
@@ -138,7 +138,7 @@ public class PayMentService
 		catch (Exception e)
 		{
 			e.printStackTrace();
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"cretaeAmibCust :: exception :" + e);
 		}
@@ -166,7 +166,7 @@ public class PayMentService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "processReceipt :: exception :" + e);
 			e.printStackTrace();
@@ -195,7 +195,7 @@ public class PayMentService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "createAmibPolicy :: exception :" + e);
 			e.printStackTrace();
@@ -223,7 +223,7 @@ public class PayMentService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "preparePrintData :: exception :" + e);
 			e.printStackTrace();
@@ -241,8 +241,6 @@ public class PayMentService
 			ArrayResponseModel arrayResponseModel = payMentDao.getPaymentStatus(paySeqNum);
 			paymentStatus.setPaymentProcedureStatus("N");
 			
-			logger.info(TAG + " getPaymentStatus :: arrayResponseModel :" + arrayResponseModel.getErrorCode());
-			
 			if(null == arrayResponseModel.getErrorCode())
 			{
 				paymentStatus = (PaymentStatus) arrayResponseModel.getObject();
@@ -252,8 +250,6 @@ public class PayMentService
 				{
 					try
 					{
-						logger.info(TAG + " getPaymentStatus :: paymentStatus 4 :" + paymentStatus.toString());
-						
 						AmxApiResponse<? , Object> createAmibResp = payMentService.cretaeAmibCust();
 						if (!createAmibResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 						{
@@ -294,6 +290,7 @@ public class PayMentService
 					
 					try
 					{
+						logger.info(TAG+"getPaymentStatus :: getLanguageId :" + userSession.getLanguageId());
 						emailSmsService.emialToCustonSuccessPg(paymentStatus.getTotalAmount(),
 								paymentStatus.getTransactionId(), paymentStatus.getAppSeqNumber(), receiptData(paySeqNum));
 					}
@@ -303,7 +300,7 @@ public class PayMentService
 					}
 				}
 				
-				logger.info(TAG + " getPaymentStatus :: paymentStatus 12 :" + paymentStatus.toString());
+				
 				resp.setData(paymentStatus);
 				resp.setStatusKey(ApiConstants.SUCCESS);
 			}
@@ -315,7 +312,7 @@ public class PayMentService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "getPaymentStatus :: exception :" + e);
 			e.printStackTrace();
@@ -385,7 +382,7 @@ public class PayMentService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "paymentReceiptData :: exception :" + e);
 			e.printStackTrace();

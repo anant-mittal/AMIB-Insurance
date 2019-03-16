@@ -45,7 +45,7 @@ public class MyQuotesService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"getUserQuote :: exception :" + e);
 			e.printStackTrace();

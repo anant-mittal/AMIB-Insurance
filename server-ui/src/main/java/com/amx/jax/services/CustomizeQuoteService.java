@@ -30,6 +30,7 @@ import com.amx.jax.models.QuotationDetails;
 import com.amx.jax.models.QuoteAddPolicyDetails;
 import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.models.TotalPremium;
+import com.amx.jax.payg.PayGParams;
 import com.amx.jax.payg.PayGService;
 import com.amx.jax.payg.Payment;
 import com.amx.jax.ui.session.UserSession;
@@ -188,7 +189,7 @@ public class CustomizeQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"getCustomizedQuoteDetails :: exception :" + e);
 			e.printStackTrace();
@@ -226,7 +227,7 @@ public class CustomizeQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"getQuoteSeqList :: exception :" + e);
 			e.printStackTrace();
@@ -305,7 +306,7 @@ public class CustomizeQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"calculateCutomizeQuote :: exception :" + e);
 			e.printStackTrace();
@@ -334,7 +335,7 @@ public class CustomizeQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"getTermsAndCondition :: exception :" + e);
 			e.printStackTrace();
@@ -388,7 +389,7 @@ public class CustomizeQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"saveCustomizeQuote :: exception :" + e);
 			e.printStackTrace();
@@ -426,15 +427,29 @@ public class CustomizeQuoteService
 					
 					AmxApiResponse<PaymentDetails, Object> respInsertPayment = payMentService.insertPaymentDetals(customizeQuoteInfo.getQuoteSeqNumber(),totalPremium.getTotalAmount());
 					PaymentDetails paymentDetails = respInsertPayment.getData();
+					logger.info("saveCustomizeQuoteDetails :: getPaySeqNum :" + paymentDetails.getPaySeqNum());
 					
-					Payment payment = new Payment();
+					/*Payment payment = new Payment();
 					payment.setDocFinYear(userSession.getCivilId().toString());//Civil Id Added
 					payment.setDocNo(paymentDetails.getPaySeqNum().toString());// PaySeqNum
 					payment.setMerchantTrackId(paymentDetails.getPaySeqNum().toString());// PaySeqNum
 					payment.setNetPayableAmount(totalPremium.getTotalAmount());
 					payment.setPgCode(PayGServiceCode.KNET);
+					String redirctUrl = payGService.getPaymentUrl(payment , HttpUtils.getServerName(request)+"/app/landing/myquotes/quote");
+					logger.info("saveCustomizeQuoteDetails :: redirctUrl :" + redirctUrl);*/
+					
+					
+					PayGParams payment = new PayGParams();
+					payment.setDocFy(userSession.getCivilId());//Civil Id Added
+					payment.setDocNo(paymentDetails.getPaySeqNum().toString());// PaySeqNum
+					payment.setTrackId(paymentDetails.getPaySeqNum().toString());// PaySeqNum
+					payment.setAmount(totalPremium.getTotalAmount());
+					payment.setProduct(userSession.getLanguageId());//Language Selected
+					payment.setServiceCode(PayGServiceCode.KNET);
 					
 					String redirctUrl = payGService.getPaymentUrl(payment , HttpUtils.getServerName(request)+"/app/landing/myquotes/quote");
+					logger.info("saveCustomizeQuoteDetails :: redirctUrl :" + redirctUrl);
+					
 					resp.setRedirectUrl(redirctUrl);
 					
 					/******************************************************PAYMENT GATEWAY***********************************************************/
@@ -449,7 +464,7 @@ public class CustomizeQuoteService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"saveCustomizeQuoteDetails :: exception :" + e);
 			e.printStackTrace();
@@ -506,7 +521,7 @@ public class CustomizeQuoteService
 		}
 		catch (Exception e) 
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "getCompanySetUp :: exception :" + e);
 			e.printStackTrace();

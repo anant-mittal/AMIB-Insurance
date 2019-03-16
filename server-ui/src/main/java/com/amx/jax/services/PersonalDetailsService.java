@@ -86,7 +86,7 @@ public class PersonalDetailsService
 		}
 		catch (Exception e) 
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "getProfileDetails :: exception :" + e);
 			e.printStackTrace();
@@ -266,7 +266,7 @@ public class PersonalDetailsService
 		}
 		catch (Exception e) 
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG + "updateProfileDetails :: exception :" + e);
 			e.printStackTrace();
@@ -293,7 +293,7 @@ public class PersonalDetailsService
 		catch (Exception e)
 		{
 			
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"getBusiness :: exception :" + e);
 			e.printStackTrace();
@@ -319,7 +319,7 @@ public class PersonalDetailsService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"getNationality :: exception :" + e);
 			e.printStackTrace();
@@ -347,7 +347,7 @@ public class PersonalDetailsService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"getGovernorates :: exception :" + e);
 			e.printStackTrace();
@@ -373,7 +373,7 @@ public class PersonalDetailsService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"getArea :: exception :" + e);
 			e.printStackTrace();
@@ -399,7 +399,7 @@ public class PersonalDetailsService
 		}
 		catch (Exception e)
 		{
-			resp.setMessageKey(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			resp.setMessage(e.toString());
 			logger.info(TAG+"getGender :: exception :" + e);
 			e.printStackTrace();

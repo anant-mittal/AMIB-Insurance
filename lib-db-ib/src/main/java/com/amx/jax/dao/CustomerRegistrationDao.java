@@ -96,14 +96,14 @@ public class CustomerRegistrationDao
 		}
 		catch (Exception e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"getCompanySetUp :: exception :" + e);
 			e.printStackTrace();
 		}
 		finally
 		{
-			CloseConnection(callableStatement, connection);
+			CloseConnection(callableStatement, connection); 
 		}
 		return arrayResponseModel;
 	}
@@ -126,7 +126,7 @@ public class CustomerRegistrationDao
 		}
 		catch (SQLException e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"isValidCivilId :: exception :" + e);
 			e.printStackTrace();
@@ -161,7 +161,7 @@ public class CustomerRegistrationDao
 		}
 		catch (SQLException e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"isValidCivilId :: exception :" + e);
 			e.printStackTrace();
@@ -199,7 +199,7 @@ public class CustomerRegistrationDao
 		}
 		catch (SQLException e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"isValidCivilId :: exception :" + e);
 			e.printStackTrace();
@@ -236,7 +236,7 @@ public class CustomerRegistrationDao
 		}
 		catch (SQLException e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"isMobileNumberExist :: exception :" + e);
 			e.printStackTrace();
@@ -270,7 +270,7 @@ public class CustomerRegistrationDao
 		}
 		catch (SQLException e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"isEmailIdExist :: exception :" + e);
 			e.printStackTrace();
@@ -305,7 +305,7 @@ public class CustomerRegistrationDao
 		}
 		catch (SQLException e)
 		{
-			arrayResponseModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
 			logger.info(TAG+"isOtpEnabled :: exception :" + e);
 			e.printStackTrace();
@@ -352,7 +352,7 @@ public class CustomerRegistrationDao
 		}
 		catch (SQLException e)
 		{
-			validate.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			validate.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			validate.setErrorMessage(e.toString());
 			logger.info(TAG+"setOtpCount :: exception :" + e);
 			e.printStackTrace();
@@ -425,7 +425,7 @@ public class CustomerRegistrationDao
 		}
 		catch (Exception e)
 		{
-			customerRegistrationModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			customerRegistrationModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			customerRegistrationModel.setErrorMessage(e.toString());
 			logger.info(TAG+"addNewCustomer :: exception :" + e);
 			e.printStackTrace();
@@ -501,7 +501,7 @@ public class CustomerRegistrationDao
 		}
 		catch (Exception e)
 		{
-			customerDetailModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			customerDetailModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			customerDetailModel.setErrorMessage(e.toString());
 			logger.info(TAG+"getUserDetails :: exception :" + e);
 			e.printStackTrace();
@@ -560,7 +560,7 @@ public class CustomerRegistrationDao
 		}
 		catch (Exception e)
 		{
-			customerLoginModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			customerLoginModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			customerLoginModel.setErrorMessage(e.toString());
 			logger.info(TAG+"validateUserLogin :: exception :" + e);
 			e.printStackTrace();
@@ -618,7 +618,7 @@ public class CustomerRegistrationDao
 		}
 		catch (Exception e)
 		{
-			customerDetailModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			customerDetailModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			customerDetailModel.setErrorMessage(e.toString());
 			logger.info(TAG+"updatePassword :: exception :" + e);
 			e.printStackTrace();
@@ -680,7 +680,7 @@ public class CustomerRegistrationDao
 		}
 		catch (Exception e)
 		{
-			failureException.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			failureException.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			failureException.setErrorMessage(e.toString());
 			logger.info(TAG+"setFailedException :: exception :" + e);
 			e.printStackTrace();

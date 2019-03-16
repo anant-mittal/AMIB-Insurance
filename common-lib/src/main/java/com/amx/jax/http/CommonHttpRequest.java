@@ -140,6 +140,19 @@ public class CommonHttpRequest {
 		return value;
 	}
 
+	//removed code added
+	CommonHttpRequest init(HttpServletRequest request, HttpServletResponse response, AppConfig appConfig) {
+		this.request = request;
+		this.response = response;
+		this.appConfig = appConfig;
+		return this;
+	}
+
+	public CommonHttpRequest instance(HttpServletRequest request, HttpServletResponse response, AppConfig appConfig) {
+		CommonHttpRequest commonHttpRequest = new CommonHttpRequest();
+		return commonHttpRequest.init(request, response, appConfig);
+	}
+
 	public void clearSessionCookie() {
 		Cookie cookie = WebUtils.getCookie(request, AppConstants.SESSIONID);
 		if (cookie != null) {

@@ -17,9 +17,9 @@ import com.amx.jax.models.IncompleteApplModel;
 @Component
 public class DashBoardDao
 {
-	String TAG = "RequestQuoteDao :: ";
+	String TAG = "DashBoardDao :: ";
 
-	private static final Logger logger = LoggerFactory.getLogger(RequestQuoteDao.class);
+	private static final Logger logger = LoggerFactory.getLogger(DashBoardDao.class);
 
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -55,7 +55,8 @@ public class DashBoardDao
 			incompleteApplModel.setErrorCode(callableStatement.getString(8));
 			incompleteApplModel.setErrorMessage(callableStatement.getString(9));
 
-			//logger.info(TAG + " getIncompleteApplication :: getBigDecimal(6) :" + callableStatement.getBigDecimal(6));
+			logger.info(TAG + " getIncompleteApplication :: setErrorCode :" + callableStatement.getString(8));
+			logger.info(TAG + " getIncompleteApplication :: setErrorMessage :" + callableStatement.getString(9));
 
 			if (callableStatement.getString(8) == null)
 			{
@@ -68,7 +69,7 @@ public class DashBoardDao
 		}
 		catch (Exception e)
 		{
-			incompleteApplModel.setErrorCode(ApiConstants.ERROR_OCCURRED_ON_SERVER);
+			incompleteApplModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			incompleteApplModel.setErrorMessage(e.toString());
 			logger.info(TAG+"getIncompleteApplication :: exception :" + e);
 			e.printStackTrace();
