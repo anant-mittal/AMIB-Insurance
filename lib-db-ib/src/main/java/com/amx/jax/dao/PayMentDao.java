@@ -308,6 +308,8 @@ public class PayMentDao
 	public ArrayResponseModel getPaymentStatus(BigDecimal paySeqNum)
 	{
 		logger.info("payseqno is "+paySeqNum);
+		logger.info("countryid "+metaService.getTenantProfile().getCompCd());
+		logger.info("compcd is "+paySeqNum);
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_PAYMENT_STATUS(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
