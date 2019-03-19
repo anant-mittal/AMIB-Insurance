@@ -239,7 +239,7 @@ public class PayMentService
 		try
 		{
 			ArrayResponseModel arrayResponseModel = payMentDao.getPaymentStatus(paySeqNum);
-			logger.info("return from dao "+arrayResponseModel.getData());
+			logger.info("return from dao "+arrayResponseModel.getObject());
 			paymentStatus.setPaymentProcedureStatus("N");
 			
 			if(null == arrayResponseModel.getErrorCode())
@@ -247,7 +247,7 @@ public class PayMentService
 				paymentStatus = (PaymentStatus) arrayResponseModel.getObject();
 				paymentStatus.setPaymentProcedureStatus("N");
 				logger.info("hiiiii");
-				
+				logger.info("Payment status is "+paymentStatus.getPaymentStatus());
 				if(paymentStatus.getPaymentStatus().equalsIgnoreCase("CAPTURED"))
 				{
 					logger.info("hiiiiihelooooo");
@@ -310,8 +310,9 @@ public class PayMentService
 					}
 				}
 				
-				
+				logger.info("came out of if");
 				resp.setData(paymentStatus);
+				logger.info("set payment status");
 				resp.setStatusKey(ApiConstants.SUCCESS);
 				logger.info("Response is this  " +resp);
 			}
