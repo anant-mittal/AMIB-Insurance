@@ -89,8 +89,10 @@ public class PayMentService
 			insertPaymentDetails.setPaymentMethod(HardCodedValues.PAYMENT_METHOD);
 			
 			PaymentDetails paymentDetails = payMentDao.insertPaymentDetals(insertPaymentDetails , userSession.getCivilId());
+			logger.info("Payment details are "+paymentDetails.getPaymentId());
 			if(null == paymentDetails.getErrorCode())
 			{
+				logger.info("details are "+paymentDetails);
 				resp.setData(paymentDetails);
 			}
 			else
