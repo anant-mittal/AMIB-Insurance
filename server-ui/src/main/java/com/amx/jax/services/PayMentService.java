@@ -239,18 +239,22 @@ public class PayMentService
 		try
 		{
 			ArrayResponseModel arrayResponseModel = payMentDao.getPaymentStatus(paySeqNum);
+			logger.info("return from dao "+arrayResponseModel.getData());
 			paymentStatus.setPaymentProcedureStatus("N");
 			
 			if(null == arrayResponseModel.getErrorCode())
 			{
 				paymentStatus = (PaymentStatus) arrayResponseModel.getObject();
 				paymentStatus.setPaymentProcedureStatus("N");
+				logger.info("hiiiii");
 				
 				if(paymentStatus.getPaymentStatus().equalsIgnoreCase("CAPTURED"))
 				{
+					logger.info("hiiiiihelooooo");
 					try
 					{
 						AmxApiResponse<? , Object> createAmibResp = payMentService.cretaeAmibCust();
+						logger.info("createCust : "+createAmibResp.getData());
 						if (!createAmibResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 						{
 							logger.info("hello");
@@ -309,7 +313,7 @@ public class PayMentService
 				
 				resp.setData(paymentStatus);
 				resp.setStatusKey(ApiConstants.SUCCESS);
-				logger.info("Response is  " +resp);
+				logger.info("Response is this  " +resp);
 			}
 			else
 			{
