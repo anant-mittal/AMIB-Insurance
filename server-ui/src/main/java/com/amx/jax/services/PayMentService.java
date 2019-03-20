@@ -249,18 +249,18 @@ public class PayMentService
 			{
 				paymentStatus = (PaymentStatus) arrayResponseModel.getObject();
 				paymentStatus.setPaymentProcedureStatus("N");
-				logger.info("hiiiii");
+				
 				logger.info("Payment status is "+paymentStatus.getPaymentStatus());
 				if(paymentStatus.getPaymentStatus().equalsIgnoreCase("CAPTURED"))
 				{
-					logger.info("hiiiiihelooooo");
+					
 					try
 					{
 						AmxApiResponse<? , Object> createAmibResp = payMentService.cretaeAmibCust();
 						logger.info("createCust : "+createAmibResp.getData());
 						if (!createAmibResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 						{
-							logger.info("hello");
+							
 							emailSmsService.failedPGProcedureAfterCapture(paymentStatus , createAmibResp.getMessageKey() , createAmibResp.getMessage() , "CREATE AMIB PROCEDURE" , paySeqNum.toString());
 							paymentStatus.setPaymentProcedureStatus("Y");
 						}
@@ -269,7 +269,7 @@ public class PayMentService
 							AmxApiResponse<? , Object> processTeceiptResp = payMentService.processReceipt(paySeqNum);
 							if (!processTeceiptResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 							{
-								logger.info("hellohi");
+								
 								emailSmsService.failedPGProcedureAfterCapture(paymentStatus , processTeceiptResp.getMessageKey() , processTeceiptResp.getMessage() , "PROCESS RECEIPT PROCEDURE" , paySeqNum.toString());
 								paymentStatus.setPaymentProcedureStatus("Y");
 							}
@@ -278,17 +278,17 @@ public class PayMentService
 								AmxApiResponse<? , Object> createAmibPolicyResp = payMentService.createAmibPolicy(paySeqNum);
 								if (!createAmibPolicyResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 								{
-									logger.info("hellohihi");
+									
 									emailSmsService.failedPGProcedureAfterCapture(paymentStatus , createAmibPolicyResp.getMessageKey() , createAmibPolicyResp.getMessage() , "CREATE AMIB PLOICY PROCEDURE" , paySeqNum.toString());
 									paymentStatus.setPaymentProcedureStatus("Y");
 								}
 								else
 								{
-									logger.info("hellohihihi");
+									
 									AmxApiResponse<? , Object> preparePrintData = payMentService.preparePrintData(paySeqNum);
 									if (!preparePrintData.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 									{
-										logger.info("hellohihihihi");
+										
 										emailSmsService.failedPGProcedureAfterCapture(paymentStatus , preparePrintData.getMessageKey() , preparePrintData.getMessage() , "PREPARE STATEMENT PROCEDURE" , paySeqNum.toString());
 									}
 								}
@@ -297,7 +297,7 @@ public class PayMentService
 					}
 					catch (Exception e)
 					{
-						logger.info("hellohihihihihello");
+						
 						e.printStackTrace();
 					}
 					
@@ -313,17 +313,17 @@ public class PayMentService
 					}
 				}
 				
-				logger.info("came out of if");
+				
 				resp.setData(paymentStatus);
-				logger.info("set payment status");
+				
 				resp.setStatusKey(ApiConstants.SUCCESS);
-				logger.info("Response is this  " +resp);
+				
 			}
 			else
 			{
 				resp.setStatusKey(arrayResponseModel.getErrorCode());
 				resp.setMessageKey(arrayResponseModel.getErrorCode());
-				logger.info("Hianant");
+				
 				logger.info("Response is  " +resp);
 			}
 		}
