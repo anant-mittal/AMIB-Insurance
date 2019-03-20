@@ -49,6 +49,7 @@ public class PaymentService {
 			paymentResponseDto = generatePaymentResponseDTO(params, payGServiceResponse);
 			LOGGER.info("Calling saveRemittanceTransaction with ...  " + paymentResponseDto.toString());
 			AmxApiResponse<PaymentResponseDto, Object> resp = savePayMentDetails(params, paymentResponseDto);
+			LOGGER.info("response captured from knet is "+resp);
 			if (resp.getResult() != null) {
 				PaymentResponseDto capturedDto = resp.getResult();
 				LOGGER.info("PaymentResponseDto values -- CollectionDocumentCode : "
@@ -75,9 +76,13 @@ public class PaymentService {
 	AppConfig appConfig;
 
 	public AmxApiResponse<PaymentResponseDto, Object> savePayMentDetails(PayGParams params,
-			PaymentResponseDto paymentResponseDto)
-			throws Exception {
+			PaymentResponseDto paymentResponseDto) throws Exception {
+			LOGGER.info("ENtered in save payment details");
+			LOGGER.info("Product value is "+params.getProduct());
 		try {
+			LOGGER.info("PayGparams are : "+params);
+			LOGGER.info("PaymentResponseDto is : "+paymentResponseDto);
+			
 			RequestMetaInfo metaInfo = new RequestMetaInfo();
 			HttpHeaders headers = new HttpHeaders();
 			metaInfo.setTenant(TenantContextHolder.currentSite());
