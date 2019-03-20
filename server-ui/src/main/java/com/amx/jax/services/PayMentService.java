@@ -115,6 +115,7 @@ public class PayMentService
 	
 	public PaymentDetails updatePaymentDetals(PaymentDetails paymentDetails)
 	{
+		logger.info("called from controller "+paymentDetails);
 		return payMentDao.updatePaymentDetals(paymentDetails , userSession.getCivilId());
 	}
 	

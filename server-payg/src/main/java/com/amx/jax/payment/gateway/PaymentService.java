@@ -75,9 +75,11 @@ public class PaymentService {
 	AppConfig appConfig;
 
 	public AmxApiResponse<PaymentResponseDto, Object> savePayMentDetails(PayGParams params,
-			PaymentResponseDto paymentResponseDto)
-			throws Exception {
+			PaymentResponseDto paymentResponseDto) throws Exception {
 		try {
+			LOGGER.info("PayGparams are : "+params);
+			LOGGER.info("PaymentResponseDto is : "+paymentResponseDto);
+			
 			RequestMetaInfo metaInfo = new RequestMetaInfo();
 			HttpHeaders headers = new HttpHeaders();
 			metaInfo.setTenant(TenantContextHolder.currentSite());
