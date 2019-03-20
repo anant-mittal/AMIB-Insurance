@@ -90,6 +90,8 @@ public class PayMentDao
 	
 	public PaymentDetails updatePaymentDetals(PaymentDetails insertPaymentDetails , String civilId)
 	{
+		logger.info("insert payment details are : "+insertPaymentDetails);
+		logger.info("civilId for paymemt is "+civilId);
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_PROCESS_QUOTE.IRB_UPDATE_PAYMENT_DTLS(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
