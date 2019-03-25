@@ -143,6 +143,7 @@ public class PaymentService {
 		}
 
 		paymentResponseDto.setTrackId(payGServiceResponse.getTrackId());
+		LOGGER.debug("Payment response dto track id is  "+paymentResponseDto.getTrackId());
 		paymentResponseDto.setReferenceId(payGServiceResponse.getRef());
 
 		paymentResponseDto.setUdf1(payGServiceResponse.getUdf1());
