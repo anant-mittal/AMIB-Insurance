@@ -15,6 +15,12 @@ public class PaymentGateWayResponse extends PayGModel {
 	String tranxId = null;
 	String auth = null;
 	String ref = null;
+	@Override
+	public String toString() {
+		return "PaymentGateWayResponse [responseCode=" + responseCode + ", result=" + result + ", tranxId=" + tranxId
+				+ ", auth=" + auth + ", ref=" + ref + ", postDate=" + postDate + ", status=" + status + "]";
+	}
+
 	String postDate = null;
 
 	PayGStatus status = PayGStatus.INIT;

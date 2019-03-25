@@ -125,6 +125,7 @@ public class PaymentService {
 	 */
 	public PaymentResponseDto generatePaymentResponseDTO(PayGParams params,
 			PaymentGateWayResponse payGServiceResponse) {
+		LOGGER.info("PayGservice resonse is "+payGServiceResponse.toString());
 		PaymentResponseDto paymentResponseDto = new PaymentResponseDto();
 
 		paymentResponseDto.setApplicationCountryId(payGServiceResponse.getApplicationCountryId());
@@ -143,7 +144,7 @@ public class PaymentService {
 		}
 
 		paymentResponseDto.setTrackId(payGServiceResponse.getTrackId());
-		LOGGER.debug("Payment response dto track id is  "+paymentResponseDto.getTrackId());
+		LOGGER.info("Payment response dto track id is  "+paymentResponseDto.getTrackId());
 		paymentResponseDto.setReferenceId(payGServiceResponse.getRef());
 
 		paymentResponseDto.setUdf1(payGServiceResponse.getUdf1());
