@@ -50,6 +50,13 @@ public class PaymentService {
 			LOGGER.info("Calling saveRemittanceTransaction with ...  " + paymentResponseDto.toString());
 			AmxApiResponse<PaymentResponseDto, Object> resp = savePayMentDetails(params, paymentResponseDto);
 			LOGGER.info("response captured from knet is "+resp);
+			LOGGER.info("response captured from knet value is "+resp.getResult());
+			PaymentResponseDto capturedDtonew = resp.getResult();
+			LOGGER.info("PaymentResponseDto values -- CollectionDocumentCode : "
+					+ capturedDtonew.getCollectionDocumentCode() + " CollectionDocumentNumber : "
+					+ capturedDtonew.getCollectionDocumentNumber() + " CollectionFinanceYear : "
+					+ capturedDtonew.getCollectionFinanceYear());
+
 			if (resp.getResult() != null) {
 				PaymentResponseDto capturedDto = resp.getResult();
 				LOGGER.info("PaymentResponseDto values -- CollectionDocumentCode : "
