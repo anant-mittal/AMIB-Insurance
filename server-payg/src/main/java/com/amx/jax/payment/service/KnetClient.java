@@ -179,6 +179,7 @@ public class KnetClient implements PayGClient {
 		gatewayResponse.setUdf5(request.getParameter("udf5"));
 
 		LOGGER.info("Params captured from KNET : " + JsonUtil.toJson(gatewayResponse));
+		LOGGER.info("Gateway response value is "+gatewayResponse.toString());
 
 		KnetCodes knetCodes = (KnetCodes) PayGCodes.getPayGCode(resultResponse, KnetCodes.UNKNOWN);
 
