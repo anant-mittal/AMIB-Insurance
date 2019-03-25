@@ -44,6 +44,7 @@ public class PaymentService {
 	 * @return
 	 */
 	public PaymentResponseDto capturePayment(PayGParams params, PaymentGateWayResponse payGServiceResponse) {
+		LOGGER.info("Paygserviceresponse values are "+payGServiceResponse.toString());
 		PaymentResponseDto paymentResponseDto = null;
 		try {
 			paymentResponseDto = generatePaymentResponseDTO(params, payGServiceResponse);
