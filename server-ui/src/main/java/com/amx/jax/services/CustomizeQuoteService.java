@@ -444,7 +444,7 @@ public class CustomizeQuoteService
 					payment.setDocNo(paymentDetails.getPaySeqNum().toString());// PaySeqNum
 					payment.setTrackId(paymentDetails.getPaySeqNum().toString());// PaySeqNum
 					payment.setAmount(totalPremium.getTotalAmount());
-					payment.setProduct(userSession.getLanguageId());//Language Selected
+					payment.setProduct("QUOTE");//Language Selected
 					payment.setServiceCode(PayGServiceCode.KNET);
 					
 					String redirctUrl = payGService.getPaymentUrl(payment , HttpUtils.getServerName(request)+"/app/landing/myquotes/quote");
