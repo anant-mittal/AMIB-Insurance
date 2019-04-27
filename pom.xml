@@ -6,15 +6,14 @@
 
 	<name>amxeco</name>
 	<url>http://maven.apache.org</url>
-	<groupId>com.amx.jax</groupId>
 	<artifactId>amxeco</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.5.8.RELEASE</version>
+		<groupId>com.amx.jax</groupId>
+		<artifactId>amxeco-parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>amxeco-parent/pom.xml</relativePath>
 	</parent>
 
 	<properties>
@@ -81,6 +80,7 @@
 	</pluginRepositories>
 
 	<modules>
+		<module>amxeco-parent</module>
 		<module>common-amib</module>
 		<module>lib-ext-jar</module>
 		<module>lib-db</module>
