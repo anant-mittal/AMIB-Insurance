@@ -15,6 +15,7 @@ import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.PaymentDetails;
 import com.amx.jax.models.PaymentReceipt;
 import com.amx.jax.models.PaymentStatus;
+import com.amx.jax.models.PolicyReceiptDetails;
 import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.DateFormats;
@@ -382,99 +383,97 @@ public class PayMentDao
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
-		String callProcedure = "{call IRB_ONLINE_RECEIPT_DATA(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
-		PaymentReceipt paymentReceiptModel = new PaymentReceipt();
+
+		String callProcedure = "{call IRB_ONLINE_POLICY_PRINT(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+		PolicyReceiptDetails policyReceiptDetails = new PolicyReceiptDetails();
 		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
-		
-		try
-		{
+		try {
 			callableStatement = connection.prepareCall(callProcedure);
+
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
-			
-			logger.info(TAG + " paymentReceiptData :: paySeqNum      :" + paySeqNum);
-			
 			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
-			callableStatement.setBigDecimal(3, paySeqNum);
-			callableStatement.setBigDecimal(4, languageId);
-			
-			callableStatement.registerOutParameter(5, java.sql.Types.NUMERIC);
-			callableStatement.registerOutParameter(6, java.sql.Types.NUMERIC);
-			callableStatement.registerOutParameter(7, java.sql.Types.DATE);
-			callableStatement.registerOutParameter(8, java.sql.Types.VARCHAR);
-			
-			callableStatement.registerOutParameter(9, java.sql.Types.NUMERIC);
+			callableStatement.setBigDecimal(3, null);
+			callableStatement.setBigDecimal(4, paySeqNum);
+			callableStatement.setBigDecimal(5, languageId);
+
+			callableStatement.registerOutParameter(6, java.sql.Types.DATE);
+			callableStatement.registerOutParameter(7, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(8, java.sql.Types.DATE);
+			callableStatement.registerOutParameter(9, java.sql.Types.DATE);
 			callableStatement.registerOutParameter(10, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(11, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(12, java.sql.Types.VARCHAR);
-			
 			callableStatement.registerOutParameter(13, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(14, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(15, java.sql.Types.VARCHAR);
-			callableStatement.registerOutParameter(16, java.sql.Types.NUMERIC);
-			
+			callableStatement.registerOutParameter(16, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(17, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(18, java.sql.Types.VARCHAR);
-			callableStatement.registerOutParameter(19, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(19, java.sql.Types.NUMERIC);
 			callableStatement.registerOutParameter(20, java.sql.Types.VARCHAR);
-			
 			callableStatement.registerOutParameter(21, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(22, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(23, java.sql.Types.NUMERIC);
 			callableStatement.registerOutParameter(24, java.sql.Types.VARCHAR);
-			
 			callableStatement.registerOutParameter(25, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(26, java.sql.Types.VARCHAR);
-			
+			callableStatement.registerOutParameter(27, java.sql.Types.NUMERIC);
+			callableStatement.registerOutParameter(28, java.sql.Types.NUMERIC);
+			callableStatement.registerOutParameter(29, java.sql.Types.NUMERIC);
+			callableStatement.registerOutParameter(30, java.sql.Types.NUMERIC);
+			callableStatement.registerOutParameter(31, java.sql.Types.NUMERIC);
+			callableStatement.registerOutParameter(32, java.sql.Types.NUMERIC);
+			callableStatement.registerOutParameter(33, java.sql.Types.NUMERIC);
+			callableStatement.registerOutParameter(34, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(35, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(36, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(37, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
-			
-			paymentReceiptModel.setApplicationId(callableStatement.getBigDecimal(5));
-			paymentReceiptModel.setCustomerId(callableStatement.getBigDecimal(6));
-			
-			String date = null;
-			if (null != callableStatement.getDate(7))
-			{
-				date = DateFormats.uiFormattedDate(callableStatement.getDate(7));
-			}
-			paymentReceiptModel.setPaymentDate(date);
-			paymentReceiptModel.setPaymentMode(callableStatement.getString(8));
-			
-			paymentReceiptModel.setAmountPaidNumber(callableStatement.getBigDecimal(9));
-			paymentReceiptModel.setAmountPaidWord(callableStatement.getString(10));
-			paymentReceiptModel.setPaymentId(callableStatement.getString(11));
-			paymentReceiptModel.setCustomerName(callableStatement.getString(12));
-			
-			paymentReceiptModel.setCivilId(callableStatement.getString(13));
-			paymentReceiptModel.setMobileNumber(callableStatement.getString(14));
-			paymentReceiptModel.setEmialId(callableStatement.getString(15));
-			paymentReceiptModel.setPolicyDuration(callableStatement.getBigDecimal(16));
-			
-			paymentReceiptModel.setGovernate(callableStatement.getString(17));
-			paymentReceiptModel.setAreaDesc(callableStatement.getString(18));
-			String address = callableStatement.getString(17) + " , " + callableStatement.getString(18);
-			paymentReceiptModel.setAddress(address);
-			paymentReceiptModel.setMake(callableStatement.getString(19));
-			paymentReceiptModel.setSubMake(callableStatement.getString(20));
-			
-			paymentReceiptModel.setKtNumber(callableStatement.getString(21));
-			paymentReceiptModel.setChasisNumber(callableStatement.getString(22));
-			paymentReceiptModel.setModelYear(callableStatement.getBigDecimal(23));
-			paymentReceiptModel.setTrnsReceiptRef(callableStatement.getString(24));
-			
-			arrayResponseModel.setErrorCode(callableStatement.getString(25));
-			arrayResponseModel.setErrorMessage(callableStatement.getString(26));
-			arrayResponseModel.setObject(paymentReceiptModel);
-			
-			//logger.info(TAG + " paymentReceiptData :: paymentReceiptModel  :" + paymentReceiptModel.toString());
-		}
-		catch (Exception e)
-		{
+
+			policyReceiptDetails.setPolicyIssueDate(DateFormats.uiFormattedDate(callableStatement.getDate(6)));
+			policyReceiptDetails.setPolicyNumber(callableStatement.getString(7));
+			policyReceiptDetails.setPolicyFromDate(DateFormats.uiFormattedDate(callableStatement.getDate(8)));
+			policyReceiptDetails.setPolicyDueDate(DateFormats.uiFormattedDate(callableStatement.getDate(9)));
+			policyReceiptDetails.setInsuranceCo(callableStatement.getString(10));
+			policyReceiptDetails.setInsuredName(callableStatement.getString(11));
+			policyReceiptDetails.setInsuredAddress(callableStatement.getString(12));
+			// Civil ID
+			policyReceiptDetails.setInsuredMobileNo(callableStatement.getString(14));
+			policyReceiptDetails.setMake(callableStatement.getString(15));
+			policyReceiptDetails.setSubMake(callableStatement.getString(16));
+			policyReceiptDetails.setKtNumber(callableStatement.getString(17));
+			policyReceiptDetails.setChaisisNumber(callableStatement.getString(18));
+			policyReceiptDetails.setModelYear(callableStatement.getBigDecimal(19));
+			policyReceiptDetails.setPurpose(callableStatement.getString(20));
+			policyReceiptDetails.setColour(callableStatement.getString(21));
+			policyReceiptDetails.setShape(callableStatement.getString(22));
+			policyReceiptDetails.setCapacity(callableStatement.getBigDecimal(23));
+			policyReceiptDetails.setFuelType(callableStatement.getString(24));
+			policyReceiptDetails.setVehicleCondition(callableStatement.getString(25));
+			policyReceiptDetails.setAdditionalCoverage(callableStatement.getString(26));
+			policyReceiptDetails.setVehicleValue(callableStatement.getBigDecimal(27));
+			policyReceiptDetails.setPolicyContribution(callableStatement.getBigDecimal(28));
+			policyReceiptDetails.setSupervisionFees(callableStatement.getBigDecimal(29));
+			policyReceiptDetails.setIssueFees(callableStatement.getBigDecimal(30));
+			policyReceiptDetails.setEndrosMentFees(callableStatement.getBigDecimal(31));
+			policyReceiptDetails.setDiscountAmount(callableStatement.getBigDecimal(32));
+			policyReceiptDetails.setAmountPaidInNum(callableStatement.getBigDecimal(33));
+			policyReceiptDetails.setAmountPaidInWord(callableStatement.getString(34));
+			policyReceiptDetails.setReceiptReference(callableStatement.getString(35));
+			arrayResponseModel.setErrorCode(callableStatement.getString(36));
+			arrayResponseModel.setErrorMessage(callableStatement.getString(37));
+
+			logger.info("MyPolicyDao :: downloadPolicyReceipt :: getErrorCode :" + arrayResponseModel.getErrorCode());
+			logger.info(
+					"MyPolicyDao :: downloadPolicyReceipt :: getErrorMessage :" + arrayResponseModel.getErrorMessage());
+
+			arrayResponseModel.setObject(policyReceiptDetails);
+		} catch (Exception e) {
 			e.printStackTrace();
-			logger.info(TAG+"paymentReceiptData :: exception :" + e);
+			logger.info(TAG + "paymentReceiptData :: exception :" + e);
 			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
 			arrayResponseModel.setErrorMessage(e.toString());
-		}
-		finally
-		{
+		} finally {
 			CloseConnection(callableStatement, connection);
 		}
 		return arrayResponseModel;

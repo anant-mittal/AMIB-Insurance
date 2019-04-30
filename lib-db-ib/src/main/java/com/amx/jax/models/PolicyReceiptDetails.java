@@ -58,6 +58,16 @@ public class PolicyReceiptDetails {
 	private BigDecimal amountPaidInNum;
 
 	private String amountPaidInWord;
+	
+	private String receiptReference;
+
+	public String getReceiptReference() {
+		return receiptReference;
+	}
+
+	public void setReceiptReference(String receiptReference) {
+		this.receiptReference = receiptReference;
+	}
 
 	public String getPolicyNumber() {
 		return policyNumber;
@@ -295,7 +305,7 @@ public class PolicyReceiptDetails {
 				+ insuredMobileNo + ", policyContribution=" + policyContribution + ", supervisionFees="
 				+ supervisionFees + ", issueFees=" + issueFees + ", endrosMentFees=" + endrosMentFees
 				+ ", discountAmount=" + discountAmount + ", amountPaidInNum=" + amountPaidInNum + ", amountPaidInWord="
-				+ amountPaidInWord + "]";
+				+ amountPaidInWord + ", reciptReference="+ receiptReference+ "]";
 	}
 	
 }
