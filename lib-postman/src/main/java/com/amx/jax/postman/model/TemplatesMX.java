@@ -46,9 +46,13 @@ public enum TemplatesMX implements ITemplate {
 	FC_ORDER_SUCCESS("order-success"),
 	FC_KNET_SUCCESS("knet-success"),
 	FXO_RECEIPT("FXO_RECEIPT", PDFConverter.JASPER, "fxo-receipt.json"),
+	FXO_RECEIPT_BRANCH("FXO_RECEIPT_BRANCH", PDFConverter.JASPER, "fxo-receipt.json"),
 	FXO_STATMENT("FxoTransactionList"),
 	SUSPICIOUS_USER("suspicious-user"), PROFILE_CHANGE_SMS("profile-change-sms", Channel.ALERTY),
-	EMAIL_CHANGE_OLD_EMAIL("EmailChangeOldEmail");
+	EMAIL_CHANGE_OLD_EMAIL("EmailChangeOldEmail"),
+	FINGERPRINT_LINKED_SUCCESS("FingerprintLinkedSuccess"),
+	FINGERPRINT_DELINKED_SUCCESS("FingerprintDelinkedSuccess"),
+	FINGERPRINT_DELINKED_ATTEMP_SUCCESS("FingerprintDelinkInCorrectAttem");
 
 	String fileName;
 	PDFConverter converter;
