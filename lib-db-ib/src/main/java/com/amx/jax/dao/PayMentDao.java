@@ -190,8 +190,12 @@ public class PayMentDao
 		ResponseInfo validate = new ResponseInfo();
 		try
 		{
-			//logger.info(TAG + " processReceipt :: paySeqNum :" + paySeqNum);
-			//logger.info(TAG + " processReceipt :: civilId   :" + civilId);
+			logger.info(TAG + " processReceipt :: paySeqNum :" + paySeqNum);
+			logger.info(TAG + " processReceipt :: civilId   :" + civilId);
+			logger.info(TAG + " processReceipt :: countryId :" + metaService.getTenantProfile().getCountryId());
+			logger.info(TAG + " processReceipt :: companyCode :" + metaService.getTenantProfile().getCompCd());
+			logger.info(TAG + " processReceipt :: DeviceType :" + metaService.getUserDeviceInfo().getDeviceType());
+			logger.info(TAG + " processReceipt :: UserDeviceInfo :" + metaService.getUserDeviceInfo().getDeviceId());
 			
 			callableStatement = connection.prepareCall(callProcedure);
 			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
