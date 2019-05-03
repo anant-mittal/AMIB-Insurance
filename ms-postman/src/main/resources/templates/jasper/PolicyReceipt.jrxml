@@ -319,7 +319,7 @@
                                     <font fontName="Arial" size="8" isItalic="true"
                                           pdfFontName="fonts/all/arialbd.ttf"/>
                                 </textElement>
-                                <text><![CDATA[Online Receipt Refno]]></text>
+                                <text><![CDATA[Online Receipt Ref No]]></text>
                             </staticText>
 							<textField isStretchWithOverflow="true">
                                 <reportElement x="160" y="4" width="400" height="15"
@@ -785,7 +785,7 @@
                                     <font fontName="Arial" size="8" isItalic="true"
                                           pdfFontName="fonts/all/arialbd.ttf"/>
                                 </textElement>
-                                <text><![CDATA[Civil Id]]></text>
+                                <text><![CDATA[Civil ID]]></text>
                             </staticText>
                             <textField isStretchWithOverflow="true">
                                 <reportElement x="160" y="4" width="400" height="15"
