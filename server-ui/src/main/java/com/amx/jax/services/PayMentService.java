@@ -258,6 +258,7 @@ public class PayMentService
 					{
 						AmxApiResponse<? , Object> createAmibResp = payMentService.cretaeAmibCust();
 						logger.info("createCust : "+createAmibResp.getData());
+						logger.info("create amib resp key "+createAmibResp.getStatusKey());
 						if (!createAmibResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 						{
 							
@@ -267,6 +268,7 @@ public class PayMentService
 						else
 						{
 							AmxApiResponse<? , Object> processTeceiptResp = payMentService.processReceipt(paySeqNum);
+							logger.info("Process Transac resp key "+processTeceiptResp.getStatusKey());
 							if (!processTeceiptResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 							{
 								
@@ -276,6 +278,7 @@ public class PayMentService
 							else
 							{
 								AmxApiResponse<? , Object> createAmibPolicyResp = payMentService.createAmibPolicy(paySeqNum);
+								logger.info("Create AmibPolicy resp key "+createAmibPolicyResp.getStatusKey());
 								if (!createAmibPolicyResp.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 								{
 									
@@ -286,6 +289,7 @@ public class PayMentService
 								{
 									
 									AmxApiResponse<? , Object> preparePrintData = payMentService.preparePrintData(paySeqNum);
+									logger.info("Prepare print data key "+preparePrintData.getStatusKey());
 									if (!preparePrintData.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 									{
 										
