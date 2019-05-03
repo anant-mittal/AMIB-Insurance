@@ -796,7 +796,7 @@
                                           pdfFontName="fonts/all/arial.ttf"/>
                                 </textElement>
                                 <textFieldExpression class="java.lang.String">
-                                    <![CDATA[$F{tranx}.get("civilID","-")]]>
+                                    <![CDATA[$F{tranx}.get("civilId","-")]]>
                                 </textFieldExpression>
                             </textField>
 						</frame>
