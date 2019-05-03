@@ -60,6 +60,16 @@ public class PolicyReceiptDetails {
 	private String amountPaidInWord;
 	
 	private String receiptReference;
+	
+	private String civilId;
+
+	public String getCivilId() {
+		return civilId;
+	}
+
+	public void setCivilId(String civilId) {
+		this.civilId = civilId;
+	}
 
 	public String getReceiptReference() {
 		return receiptReference;
@@ -301,11 +311,11 @@ public class PolicyReceiptDetails {
 				+ ", modelYear=" + modelYear + ", chaisisNumber=" + chaisisNumber + ", ktNumber=" + ktNumber
 				+ ", vehicleValue=" + vehicleValue + ", purpose=" + purpose + ", colour=" + colour + ", shape=" + shape
 				+ ", capacity=" + capacity + ", fuelType=" + fuelType + ", vehicleCondition=" + vehicleCondition
-				+ ", insuredName=" + insuredName + ", insuredAddress=" + insuredAddress + ", insuredMobileNo="
+				+ ", insuredName=" + insuredName + ", insuredAddress=" + insuredAddress + ", civilId= "+civilId+", insuredMobileNo="
 				+ insuredMobileNo + ", policyContribution=" + policyContribution + ", supervisionFees="
 				+ supervisionFees + ", issueFees=" + issueFees + ", endrosMentFees=" + endrosMentFees
 				+ ", discountAmount=" + discountAmount + ", amountPaidInNum=" + amountPaidInNum + ", amountPaidInWord="
-				+ amountPaidInWord + ", reciptReference="+ receiptReference+ "]";
+				+ amountPaidInWord + ", receiptReference="+ receiptReference+ "]";
 	}
 	
 }

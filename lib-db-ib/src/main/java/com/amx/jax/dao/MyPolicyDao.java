@@ -308,7 +308,7 @@ public class MyPolicyDao
 			policyReceiptDetails.setInsuranceCo(callableStatement.getString(10));
 			policyReceiptDetails.setInsuredName(callableStatement.getString(11));
 			policyReceiptDetails.setInsuredAddress(callableStatement.getString(12));
-			//Civil ID
+			policyReceiptDetails.setCivilId(callableStatement.getString(13));
 			policyReceiptDetails.setInsuredMobileNo(callableStatement.getString(14));
 			policyReceiptDetails.setMake(callableStatement.getString(15));
 			policyReceiptDetails.setSubMake(callableStatement.getString(16));
