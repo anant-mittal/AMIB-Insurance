@@ -1126,6 +1126,26 @@
 
                         </frame>
                         <!--#################Amount Paid (in Words) END####################-->
+                         <!--##################FOOTER START####################-->
+                    <frame>
+                        <reportElement x="0" y="767" width="595" height="55"
+                                       forecolor="blue"/>
+
+                        <image evaluationTime="Now" hyperlinkType="None" hyperlinkTarget="Self" isLazy="true" onErrorType="Blank">
+                            <reportElement
+                                    x="0"
+                                    y="0"
+                                    width="595"
+                                    height="55"
+                                    key="image-1"
+                                    stretchType="NoStretch" />
+                            <graphicElement/>
+                            <imageExpression class="java.lang.String">
+                                <![CDATA[$P{TU}.prop("company.insurance.img")]]>
+                            </imageExpression>
+                        </image>
+                    </frame>
+                    <!--##################FOOTER END####################-->
                         
       
                     </c:listContents>
