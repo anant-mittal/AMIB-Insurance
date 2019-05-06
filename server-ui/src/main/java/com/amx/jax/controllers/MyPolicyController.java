@@ -115,6 +115,7 @@ public class MyPolicyController {
 				model.put("vehicleCondition", policyReceiptDetails.getVehicleCondition());
 				model.put("insuredName", policyReceiptDetails.getInsuredName());
 				model.put("insuredAddress", policyReceiptDetails.getInsuredAddress());
+				model.put("civilId", policyReceiptDetails.getCivilId());
 				model.put("insuredMobileNo", policyReceiptDetails.getInsuredMobileNo());
 				model.put("policyContribution", Utility.getAmountInCurrency(policyReceiptDetails.getPolicyContribution(),
 						metaService.getTenantProfile().getDecplc(), metaService.getTenantProfile().getCurrency()));
@@ -129,7 +130,8 @@ public class MyPolicyController {
 				model.put("amountPaidInNum", Utility.getAmountInCurrency(policyReceiptDetails.getAmountPaidInNum(),
 						metaService.getTenantProfile().getDecplc(), metaService.getTenantProfile().getCurrency()));
 				model.put("amountPaidInWord", policyReceiptDetails.getAmountPaidInWord());
-
+				model.put("trnsReceiptRef", policyReceiptDetails.getReceiptReference());
+				logger.info("model is "+model.toString());
 				dataList.add(model);
 				wrapper.put("results", dataList);
 
