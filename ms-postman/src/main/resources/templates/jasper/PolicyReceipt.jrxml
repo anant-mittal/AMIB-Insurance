@@ -330,7 +330,7 @@
                                           pdfFontName="fonts/all/arial.ttf"/>
                                 </textElement>
                                 <textFieldExpression class="java.lang.String">
-                                    <![CDATA[$F{tranx}.get("receiptReference","-")]]>
+                                    <![CDATA[$F{tranx}.get("trnsReceiptRef","-")]]>
                                 </textFieldExpression>
                             </textField>
 					
