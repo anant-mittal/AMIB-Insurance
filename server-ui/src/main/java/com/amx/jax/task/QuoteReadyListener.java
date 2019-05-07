@@ -14,13 +14,11 @@ import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.dict.AmibTunnelEvents;
 import com.amx.jax.dict.Language;
-import com.amx.jax.locale.IAmxLocale;
 import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CompanySetUp;
 import com.amx.jax.postman.client.PostManClient;
 import com.amx.jax.postman.client.PushNotifyClient;
 import com.amx.jax.postman.model.Email;
-import com.amx.jax.postman.model.PushMessage;
 import com.amx.jax.postman.model.TemplatesIB;
 import com.amx.jax.tunnel.DBEvent;
 import com.amx.jax.tunnel.ITunnelSubscriber;
@@ -29,9 +27,9 @@ import com.amx.jax.tunnel.TunnelEventXchange;
 import com.amx.utils.ArgUtil;
 
 @TunnelEventMapping(topic = AmibTunnelEvents.Names.QUOTE_READY, scheme = TunnelEventXchange.TASK_WORKER)
-public class CivilIDExpiryListner implements ITunnelSubscriber<DBEvent> {
+public class QuoteReadyListener implements ITunnelSubscriber<DBEvent> {
 
-	private static final Logger logger = LoggerFactory.getLogger(CivilIDExpiryListner.class);
+	private static final Logger logger = LoggerFactory.getLogger(QuoteReadyListener.class);
 	
 	@Autowired
 	PostManClient postManClient;
