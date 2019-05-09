@@ -394,6 +394,7 @@ public class PayMentService
 		try
 		{
 			ArrayResponseModel arrayResponseModel = payMentDao.paymentReceiptData(paySeqNum, userSession.getLanguageId());
+			logger.info("arrayrespModel is "+arrayResponseModel.toString());
 			if(null == arrayResponseModel.getErrorCode())
 			{
 				resp.setData(arrayResponseModel.getObject());
@@ -412,6 +413,7 @@ public class PayMentService
 			logger.info(TAG + "paymentReceiptData :: exception :" + e);
 			e.printStackTrace();
 		}
+		logger.info("Response data is "+resp.getData());
 		return resp;
 	}
 }
