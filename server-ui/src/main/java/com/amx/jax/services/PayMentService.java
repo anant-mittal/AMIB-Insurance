@@ -348,7 +348,9 @@ public class PayMentService
 		logger.info(TAG + " receiptData :: paySeqNum  :" + paySeqNum);
 		AmxApiResponse<?, Object> receiptData  = payMentService.paymentReceiptData(paySeqNum);
 		logger.info("receipt data success key is "+receiptData.getStatusKey());
-		logger.info("Receipt data is "+receiptData.toString());
+		paymentReceipt = (PaymentReceipt) receiptData.getData();
+		logger.info(TAG + " getPaymentStatus :: paymentReceipt  :" + paymentReceipt.toString());
+		
 		if (receiptData.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 		{
 			paymentReceipt = (PaymentReceipt) receiptData.getData();
