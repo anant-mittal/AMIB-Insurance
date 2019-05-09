@@ -215,6 +215,15 @@ public class CustomizeQuoteController {
 
 			dataList.add(model);
 			wrapper.put("results", dataList);
+			
+			for (Map temp : dataList) {
+				 logger.info("List value is "+temp);
+			}
+			
+			for (Map.Entry<String,Object> entry : wrapper.entrySet()) {  
+	          logger.info("Key = " + entry.getKey() + 
+	                             ", Value = " + entry.getValue()); 
+	    } 
 
 			file = postManService.processTemplate(new File(TemplatesIB.POLICY_RECEIPT, wrapper, File.Type.PDF))
 					.getResult();
