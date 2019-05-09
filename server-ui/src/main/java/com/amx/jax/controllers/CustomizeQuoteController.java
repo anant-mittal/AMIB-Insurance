@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.CustomizeQuoteModel;
 import com.amx.jax.models.PaymentDetails;
 import com.amx.jax.models.PaymentReceipt;
+import com.amx.jax.models.PolicyReceiptDetails;
 import com.amx.jax.payg.PaymentResponseDto;
 import com.amx.jax.postman.PostManService;
 import com.amx.jax.postman.model.File;
@@ -109,19 +112,17 @@ public class CustomizeQuoteController {
 		return customizeQuoteService.saveCustomizeQuote(customizeQuoteModel, request);
 	}
 
-	
 	@ApiOperation(value = "submits payment info to server", notes = "this api is not going to be consumed by ui end. this is internal called api for payment gateway")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
-	//@RequestMapping(value = "/remit/save-remittance", method = { RequestMethod.POST })
+	// @RequestMapping(value = "/remit/save-remittance", method = {
+	// RequestMethod.POST })
 	@RequestMapping(value = "/callback/payg/payment/capture", method = { RequestMethod.POST })
-	public PaymentResponseDto onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse) 
-	{
-		try 
-		{
+	public PaymentResponseDto onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse) {
+		try {
 			setMetaData();
 
 			logger.info(" onPaymentCallbackNew :: paymentResponse :" + paymentResponse.toString());
-			
+
 			PaymentDetails paymentDetails = new PaymentDetails();
 			paymentDetails.setPaymentId(paymentResponse.getPaymentId());
 			paymentDetails.setApprovalNo(paymentResponse.getAuth_appNo());
@@ -129,41 +130,34 @@ public class CustomizeQuoteController {
 			paymentDetails.setResultCd(paymentResponse.getResultCode());
 			paymentDetails.setTransId(paymentResponse.getTransactionId());
 			paymentDetails.setRefId(paymentResponse.getReferenceId());
-			
-			if (null != paymentResponse.getTrackId()) 
-			{
+
+			if (null != paymentResponse.getTrackId()) {
 				BigDecimal paySeqNumber = new BigDecimal(paymentResponse.getTrackId().toString());
 				logger.info(" onPaymentCallbackNew :: paySeqNumber  :" + paySeqNumber);
 				paymentDetails.setPaySeqNum(paySeqNumber);
 				paymentDetails.setPaymentToken(paySeqNumber.toString());
-			} 
-			else 
-			{
+			} else {
 				paymentDetails.setPaySeqNum(null);
 			}
 
 			PaymentDetails updateStatus = payMentService.updatePaymentDetals(paymentDetails);
 			logger.info(" onPaymentCallbackNew :: updateStatus  :" + updateStatus.toString());
-		}
-		catch (Exception e) 
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return paymentResponse;
 	}
-	
-	
+
 	@ApiOperation(value = "return the payment status after payment through payment gateway", notes = "this api is called after payment "
 			+ "gets done by payment gateway and it will return the status of payment done, it will trigger an email to the customer of successfull payment transaction with transaction receipt pdf")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@ApiMockParam(example = "123", value = "pay sequence number of transaction")
 	@RequestMapping(value = "/api/payment-status", method = { RequestMethod.POST })
-	public AmxApiResponse<?, Object> getPaymentStatus(@RequestParam String paySeqNum) 
-	{
+	public AmxApiResponse<?, Object> getPaymentStatus(@RequestParam String paySeqNum) {
 		logger.info("getPaymentStatus :: paySeqNum  :" + paySeqNum);
 		logger.info("getPaymentStatus :: userSession :" + userSession.toString());
 		logger.info("getPaymentStatus :: metaService :" + metaService.getTenantProfile().toString());
-		
+
 		BigDecimal paySeqNumDet = null;
 		if (null != paySeqNum && !paySeqNum.equals("") && !paySeqNum.equalsIgnoreCase("null")) {
 			paySeqNumDet = ArgUtil.parseAsBigDecimal(paySeqNum, null);
@@ -185,9 +179,9 @@ public class CustomizeQuoteController {
 				paySeqNumDet = ArgUtil.parseAsBigDecimal(paySeqNum, null);
 			}
 
-			AmxApiResponse<?, Object> receiptData = payMentService.paymentReceiptData(paySeqNumDet);
+			AmxApiResponse<PolicyReceiptDetails, Object> receiptData = payMentService.paymentReceiptData(paySeqNumDet);
 			if (receiptData.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
-				paymentReceipt = (PaymentReceipt) receiptData.getData();
+				paymentReceipt = receiptData.getData().toPaymentReceipt();
 				logger.info(" getPaymentStatus :: paymentReceipt  :" + paymentReceipt.toString());
 			}
 
@@ -226,23 +220,22 @@ public class CustomizeQuoteController {
 					.getResult();
 			file.create(response, true);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("paymentReceiptDataExt", e);
 		}
 		return null;
 	}
 
-	private void setMetaData() 
-	{
-		
+	private void setMetaData() {
+
 		logger.info("CustomizeQuoteService :: setMetaData :: getLanguageId  :" + userSession.getLanguageId());
 		customerRegistrationService.getCompanySetUp();
-		
-		/*if (null == metaService.getTenantProfile().getCountryId()
-				|| null == metaService.getUserDeviceInfo().getDeviceId()) 
-		{
-			logger.info("CustomizeQuoteService :: setMetaData :: getLanguageId  :" + userSession.getLanguageId());
-			userSession.setLanguageId(new BigDecimal(0));
-			customerRegistrationService.getCompanySetUp();
-		}*/
+
+		/*
+		 * if (null == metaService.getTenantProfile().getCountryId() || null ==
+		 * metaService.getUserDeviceInfo().getDeviceId()) {
+		 * logger.info("CustomizeQuoteService :: setMetaData :: getLanguageId  :" +
+		 * userSession.getLanguageId()); userSession.setLanguageId(new BigDecimal(0));
+		 * customerRegistrationService.getCompanySetUp(); }
+		 */
 	}
 }

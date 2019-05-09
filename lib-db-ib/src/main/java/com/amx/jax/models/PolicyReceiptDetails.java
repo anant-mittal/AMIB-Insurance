@@ -58,9 +58,9 @@ public class PolicyReceiptDetails {
 	private BigDecimal amountPaidInNum;
 
 	private String amountPaidInWord;
-	
+
 	private String receiptReference;
-	
+
 	private String civilId;
 
 	public String getCivilId() {
@@ -302,7 +302,11 @@ public class PolicyReceiptDetails {
 	public void setVehicleCondition(String vehicleCondition) {
 		this.vehicleCondition = vehicleCondition;
 	}
-	
+
+	public PaymentReceipt toPaymentReceipt() {
+		return null;
+	}
+
 	@Override
 	public String toString() {
 		return "PolicyReceiptDetails [policyNumber=" + policyNumber + ", policyIssueDate=" + policyIssueDate
@@ -311,11 +315,11 @@ public class PolicyReceiptDetails {
 				+ ", modelYear=" + modelYear + ", chaisisNumber=" + chaisisNumber + ", ktNumber=" + ktNumber
 				+ ", vehicleValue=" + vehicleValue + ", purpose=" + purpose + ", colour=" + colour + ", shape=" + shape
 				+ ", capacity=" + capacity + ", fuelType=" + fuelType + ", vehicleCondition=" + vehicleCondition
-				+ ", insuredName=" + insuredName + ", insuredAddress=" + insuredAddress + ", civilId= "+civilId+", insuredMobileNo="
-				+ insuredMobileNo + ", policyContribution=" + policyContribution + ", supervisionFees="
-				+ supervisionFees + ", issueFees=" + issueFees + ", endrosMentFees=" + endrosMentFees
-				+ ", discountAmount=" + discountAmount + ", amountPaidInNum=" + amountPaidInNum + ", amountPaidInWord="
-				+ amountPaidInWord + ", receiptReference="+ receiptReference+ "]";
+				+ ", insuredName=" + insuredName + ", insuredAddress=" + insuredAddress + ", civilId= " + civilId
+				+ ", insuredMobileNo=" + insuredMobileNo + ", policyContribution=" + policyContribution
+				+ ", supervisionFees=" + supervisionFees + ", issueFees=" + issueFees + ", endrosMentFees="
+				+ endrosMentFees + ", discountAmount=" + discountAmount + ", amountPaidInNum=" + amountPaidInNum
+				+ ", amountPaidInWord=" + amountPaidInWord + ", receiptReference=" + receiptReference + "]";
 	}
-	
+
 }
