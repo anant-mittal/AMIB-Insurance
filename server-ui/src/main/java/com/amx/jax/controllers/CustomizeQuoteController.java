@@ -216,7 +216,7 @@ public class CustomizeQuoteController {
 			dataList.add(model);
 			wrapper.put("results", dataList);
 
-			file = postManService.processTemplate(new File(TemplatesIB.TRNX_RECEIPT, wrapper, File.Type.PDF))
+			file = postManService.processTemplate(new File(TemplatesIB.POLICY_RECEIPT, wrapper, File.Type.PDF))
 					.getResult();
 			file.create(response, true);
 		} catch (Exception e) {

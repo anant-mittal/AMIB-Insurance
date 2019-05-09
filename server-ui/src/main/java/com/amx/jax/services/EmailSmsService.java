@@ -436,7 +436,7 @@ public class EmailSmsService
 		emailTo.add(customerEmailId);
 		
 		File file = new File();
-		file.setITemplate(TemplatesIB.TRNX_RECEIPT);
+		file.setITemplate(TemplatesIB.POLICY_RECEIPT);
 		file.setType(File.Type.PDF);
 		file.getModel().put("results", receiptData);
 		
