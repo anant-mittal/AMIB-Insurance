@@ -435,7 +435,7 @@ public class PaymentReceipt
 	{
 		this.modelYear = modelYear;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "PaymentReceipt [applicationId=" + applicationId + ", customerId=" + customerId + ", paymentDate="
@@ -445,6 +445,14 @@ public class PaymentReceipt
 				+ ", policyDuration=" + policyDuration + ", governate=" + governate + ", areaDesc=" + areaDesc
 				+ ", address=" + address + ", make=" + make + ", subMake=" + subMake + ", ktNumber=" + ktNumber
 				+ ", chasisNumber=" + chasisNumber + ", modelYear=" + modelYear + ", trnsReceiptRef=" + trnsReceiptRef
-				+ "]";
+				+ ", policyNumber=" + policyNumber + ", policyIssueDate=" + policyIssueDate + ", policyFromDate="
+				+ policyFromDate + ", policyDueDate=" + policyDueDate + ", additionalCoverage=" + additionalCoverage
+				+ ", insuranceCo=" + insuranceCo + ", vehicleValue=" + vehicleValue + ", purpose=" + purpose
+				+ ", colour=" + colour + ", shape=" + shape + ", capacity=" + capacity + ", fuelType=" + fuelType
+				+ ", vehicleCondition=" + vehicleCondition + ", policyContribution=" + policyContribution
+				+ ", supervisionFees=" + supervisionFees + ", issueFees=" + issueFees + ", endorsementFees="
+				+ endorsementFees + ", discountAmount=" + discountAmount + "]";
 	}
+	
+	
 }
