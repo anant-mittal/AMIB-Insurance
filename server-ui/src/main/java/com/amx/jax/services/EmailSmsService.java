@@ -3,6 +3,7 @@ package com.amx.jax.services;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -398,11 +399,24 @@ public class EmailSmsService
 	 ********/
 	public void emialToCustonSuccessPg(BigDecimal amount , String transecionId , BigDecimal policyAppNo ,ArrayList<Map> receiptData)
 	{
+		logger.info("amount is "+amount);
+		logger.info("transecionId is "+transecionId);
+		logger.info("PolicyAppNo is "+policyAppNo);
+		
+		Iterator i = receiptData.iterator();
+
+		while (i.hasNext()) {
+			logger.info("Receipt data is "+i.next());
+		}
+
 		String customerEmailId = userSession.getCustomerEmailId();
 		String customerMobileNumber = userSession.getCustomerMobileNumber();
 		String civilId = userSession.getCivilId();
 
 		metaService.getTenantProfile().setCountryId(null);
+		
+		
+		
 		if(iAmxLocale.getLanguage().equals(Language.AR))
 		{
 			logger.info(TAG+"emialToCustonSuccessPg :: Language : AR");
@@ -433,12 +447,15 @@ public class EmailSmsService
 		wrapper.put("data", model);
 		
 		ArrayList<String> emailTo = new ArrayList<String>();
-		emailTo.add(customerEmailId);
-		
 		File file = new File();
-		file.setITemplate(TemplatesIB.POLICY_RECEIPT);
-		file.setType(File.Type.PDF);
-		file.getModel().put("results", receiptData);
+		emailTo.add(customerEmailId);
+		if(!receiptData.isEmpty()) {
+			
+			file.setITemplate(TemplatesIB.POLICY_RECEIPT);
+			file.setType(File.Type.PDF);
+			file.getModel().put("results", receiptData);
+		}
+		
 		
 		Email email = new Email();
 		email.setTo(emailTo);
@@ -446,7 +463,10 @@ public class EmailSmsService
 		email.setModel(wrapper);
 		email.setITemplate(TemplatesIB.KNET_SUCCESS_EMAIL);
 		email.setHtml(true);
-		email.addFile(file);
+		if(!receiptData.isEmpty()) {
+			email.addFile(file);
+		}
+		
 		email.setLang(iAmxLocale.getLanguage());//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
 		postManClient.sendEmail(email);
 
