@@ -318,6 +318,7 @@ public class PolicyReceiptDetails {
 		paymentReceipt.setMobileNumber(this.insuredMobileNo);
 		paymentReceipt.setAddress(this.insuredAddress);
 		paymentReceipt.setAdditionalCoverage(this.additionalCoverage);
+		paymentReceipt.setInsuranceCo(this.insuranceCo);
 		paymentReceipt.setPolicyNumber(this.policyNumber);
 		paymentReceipt.setPolicyIssueDate(this.policyIssueDate);
 		paymentReceipt.setPolicyFromDate(this.policyFromDate);
