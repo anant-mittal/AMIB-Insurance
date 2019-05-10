@@ -107,7 +107,7 @@ public class DetailsConstants
 
 	public static String paymentMode = "paymentMode";
 
-	public static String amountPaidNumber = "amountPaidInNumber";
+	public static String amountPaidNumber = "amountPaidInNum";
 
 	public static String amountPaidWord = "amountPaidInWord";
 
@@ -135,7 +135,7 @@ public class DetailsConstants
 
 	public static String ktNumber = "ktNumber";
 
-	public static String chasisNumber = "chasisNumber";
+	public static String chasisNumber = "chaisisNumber";
 
 	public static String modelYear = "modelYear";
 	
@@ -143,7 +143,7 @@ public class DetailsConstants
 	
 	public static String discountAmount = "discountAmount";
 	
-	public static String endorsMentFees = "endorsMentFees";
+	public static String endorsMentFees = "endrosMentFees";
 	
 	public static String issueFees = "issueFees";
 	

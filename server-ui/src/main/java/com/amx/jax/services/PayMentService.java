@@ -327,6 +327,27 @@ public class PayMentService {
 		model.put(DetailsConstants.chasisNumber, paymentReceipt.getChasisNumber());
 		model.put(DetailsConstants.modelYear, paymentReceipt.getModelYear());
 		model.put(DetailsConstants.trnsReceiptRef, paymentReceipt.getTrnsReceiptRef());
+		model.put(DetailsConstants.policyNumber, paymentReceipt.getPolicyNumber());
+		model.put(DetailsConstants.policyIssueDate, paymentReceipt.getPolicyIssueDate());
+		model.put(DetailsConstants.policyFromDate, paymentReceipt.getPolicyFromDate());
+		model.put(DetailsConstants.policyDueDate, paymentReceipt.getPolicyDueDate());
+		model.put(DetailsConstants.additionalCoverage, paymentReceipt.getAdditionalCoverage());
+		model.put(DetailsConstants.insuranceCo, paymentReceipt.getInsuranceCo());
+		model.put(DetailsConstants.vehicleValue, paymentReceipt.getVehicleValue());
+		model.put(DetailsConstants.purpose, paymentReceipt.getPurpose());
+		model.put(DetailsConstants.colour, paymentReceipt.getColour());
+		model.put(DetailsConstants.shape, paymentReceipt.getShape());
+		model.put(DetailsConstants.capacity, paymentReceipt.getCapacity());
+		model.put(DetailsConstants.fuelType, paymentReceipt.getFuelType());
+		model.put(DetailsConstants.vehicleCondition, paymentReceipt.getVehicleCondition());
+		model.put(DetailsConstants.insuredName, paymentReceipt.getCustomerName());
+		model.put(DetailsConstants.insuredAddress, paymentReceipt.getAddress());
+		model.put(DetailsConstants.insuredMobileNo, paymentReceipt.getMobileNumber());
+		model.put(DetailsConstants.policyContribution, paymentReceipt.getPolicyContribution());
+		model.put(DetailsConstants.supervisionFees, paymentReceipt.getSupervisionFees());
+		model.put(DetailsConstants.issueFees, paymentReceipt.getIssueFees());
+		model.put(DetailsConstants.endorsMentFees, paymentReceipt.getEndorsementFees());
+		model.put(DetailsConstants.discountAmount, paymentReceipt.getDiscountAmount());
 		dataList.add(model);
 
 		return dataList;
