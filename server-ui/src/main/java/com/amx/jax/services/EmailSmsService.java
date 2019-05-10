@@ -3,6 +3,7 @@ package com.amx.jax.services;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -398,11 +399,24 @@ public class EmailSmsService
 	 ********/
 	public void emialToCustonSuccessPg(BigDecimal amount , String transecionId , BigDecimal policyAppNo ,ArrayList<Map> receiptData)
 	{
+		logger.info("amount is "+amount);
+		logger.info("transecionId is "+transecionId);
+		logger.info("PolicyAppNo is "+policyAppNo);
+		
+		Iterator i = receiptData.iterator();
+
+		while (i.hasNext()) {
+			logger.info("Receipt data is "+i.next());
+		}
+
 		String customerEmailId = userSession.getCustomerEmailId();
 		String customerMobileNumber = userSession.getCustomerMobileNumber();
 		String civilId = userSession.getCivilId();
 
 		metaService.getTenantProfile().setCountryId(null);
+		
+		
+		
 		if(iAmxLocale.getLanguage().equals(Language.AR))
 		{
 			logger.info(TAG+"emialToCustonSuccessPg :: Language : AR");
