@@ -300,11 +300,11 @@ public class PayMentService {
 			paymentReceipt=receiptData.getData().toPaymentReceipt();
 			logger.info(TAG + " getPaymentStatus :: paymentReceipt  :" + paymentReceipt.toString());
 		}
-
+		logger.info("Receipt data is "+paymentReceipt);
 		Map<String, Object> wrapper = new HashMap<String, Object>();
 		Map<String, Object> model = new HashMap<String, Object>();
 		ArrayList<Map> dataList = new ArrayList<>();
-
+		
 		model.put(DetailsConstants.applicationId, paymentReceipt.getApplicationId());
 		model.put(DetailsConstants.customerId, paymentReceipt.getCustomerId());
 		model.put(DetailsConstants.paymentDate, paymentReceipt.getPaymentDate());
@@ -349,7 +349,7 @@ public class PayMentService {
 		model.put(DetailsConstants.endorsMentFees, paymentReceipt.getEndorsementFees());
 		model.put(DetailsConstants.discountAmount, paymentReceipt.getDiscountAmount());
 		dataList.add(model);
-
+		logger.info("Datalist data is "+dataList);
 		return dataList;
 	}
 
