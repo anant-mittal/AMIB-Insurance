@@ -28,6 +28,8 @@ import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.ui.session.UserSession;
 import com.amx.jax.utility.Utility;
 
+import io.netty.util.internal.StringUtil;
+
 @Service
 public class PayMentService {
 	String TAG = "PayMentService :: ";
@@ -294,16 +296,19 @@ public class PayMentService {
 		logger.info(TAG + " receiptData :: paySeqNum  :" + paySeqNum);
 		AmxApiResponse<PolicyReceiptDetails, Object> receiptData = payMentService.paymentReceiptData(paySeqNum);
 		logger.info("receipt data success key is " + receiptData.getStatusKey());
-		
+		Map<String, Object> wrapper = new HashMap<String, Object>();
+		Map<String, Object> model = new HashMap<String, Object>();
+		ArrayList<Map> dataList = new ArrayList<>();
 
 		if (receiptData.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
 			paymentReceipt=receiptData.getData().toPaymentReceipt();
 			logger.info(TAG + " getPaymentStatus :: paymentReceipt  :" + paymentReceipt.toString());
 		}
+		else {
+			return dataList;
+		}
 		logger.info("Receipt data is "+paymentReceipt);
-		Map<String, Object> wrapper = new HashMap<String, Object>();
-		Map<String, Object> model = new HashMap<String, Object>();
-		ArrayList<Map> dataList = new ArrayList<>();
+		
 		
 		model.put(DetailsConstants.applicationId, paymentReceipt.getApplicationId());
 		model.put(DetailsConstants.customerId, paymentReceipt.getCustomerId());
