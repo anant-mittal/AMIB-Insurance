@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.CustomizeQuoteModel;
 import com.amx.jax.models.PaymentDetails;
 import com.amx.jax.models.PaymentReceipt;
+import com.amx.jax.models.PolicyReceiptDetails;
 import com.amx.jax.payg.PaymentResponseDto;
 import com.amx.jax.postman.PostManService;
 import com.amx.jax.postman.model.File;
@@ -109,19 +112,17 @@ public class CustomizeQuoteController {
 		return customizeQuoteService.saveCustomizeQuote(customizeQuoteModel, request);
 	}
 
-	
 	@ApiOperation(value = "submits payment info to server", notes = "this api is not going to be consumed by ui end. this is internal called api for payment gateway")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
-	//@RequestMapping(value = "/remit/save-remittance", method = { RequestMethod.POST })
+	// @RequestMapping(value = "/remit/save-remittance", method = {
+	// RequestMethod.POST })
 	@RequestMapping(value = "/callback/payg/payment/capture", method = { RequestMethod.POST })
-	public PaymentResponseDto onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse) 
-	{
-		try 
-		{
+	public PaymentResponseDto onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse) {
+		try {
 			setMetaData();
 
 			logger.info(" onPaymentCallbackNew :: paymentResponse :" + paymentResponse.toString());
-			
+
 			PaymentDetails paymentDetails = new PaymentDetails();
 			paymentDetails.setPaymentId(paymentResponse.getPaymentId());
 			paymentDetails.setApprovalNo(paymentResponse.getAuth_appNo());
@@ -129,41 +130,34 @@ public class CustomizeQuoteController {
 			paymentDetails.setResultCd(paymentResponse.getResultCode());
 			paymentDetails.setTransId(paymentResponse.getTransactionId());
 			paymentDetails.setRefId(paymentResponse.getReferenceId());
-			
-			if (null != paymentResponse.getTrackId()) 
-			{
+
+			if (null != paymentResponse.getTrackId()) {
 				BigDecimal paySeqNumber = new BigDecimal(paymentResponse.getTrackId().toString());
 				logger.info(" onPaymentCallbackNew :: paySeqNumber  :" + paySeqNumber);
 				paymentDetails.setPaySeqNum(paySeqNumber);
 				paymentDetails.setPaymentToken(paySeqNumber.toString());
-			} 
-			else 
-			{
+			} else {
 				paymentDetails.setPaySeqNum(null);
 			}
 
 			PaymentDetails updateStatus = payMentService.updatePaymentDetals(paymentDetails);
 			logger.info(" onPaymentCallbackNew :: updateStatus  :" + updateStatus.toString());
-		}
-		catch (Exception e) 
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return paymentResponse;
 	}
-	
-	
+
 	@ApiOperation(value = "return the payment status after payment through payment gateway", notes = "this api is called after payment "
 			+ "gets done by payment gateway and it will return the status of payment done, it will trigger an email to the customer of successfull payment transaction with transaction receipt pdf")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
 	@ApiMockParam(example = "123", value = "pay sequence number of transaction")
 	@RequestMapping(value = "/api/payment-status", method = { RequestMethod.POST })
-	public AmxApiResponse<?, Object> getPaymentStatus(@RequestParam String paySeqNum) 
-	{
+	public AmxApiResponse<?, Object> getPaymentStatus(@RequestParam String paySeqNum) {
 		logger.info("getPaymentStatus :: paySeqNum  :" + paySeqNum);
 		logger.info("getPaymentStatus :: userSession :" + userSession.toString());
 		logger.info("getPaymentStatus :: metaService :" + metaService.getTenantProfile().toString());
-		
+
 		BigDecimal paySeqNumDet = null;
 		if (null != paySeqNum && !paySeqNum.equals("") && !paySeqNum.equalsIgnoreCase("null")) {
 			paySeqNumDet = ArgUtil.parseAsBigDecimal(paySeqNum, null);
@@ -185,9 +179,9 @@ public class CustomizeQuoteController {
 				paySeqNumDet = ArgUtil.parseAsBigDecimal(paySeqNum, null);
 			}
 
-			AmxApiResponse<?, Object> receiptData = payMentService.paymentReceiptData(paySeqNumDet);
+			AmxApiResponse<PolicyReceiptDetails, Object> receiptData = payMentService.paymentReceiptData(paySeqNumDet);
 			if (receiptData.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS)) {
-				paymentReceipt = (PaymentReceipt) receiptData.getData();
+				paymentReceipt = receiptData.getData().toPaymentReceipt();
 				logger.info(" getPaymentStatus :: paymentReceipt  :" + paymentReceipt.toString());
 			}
 
@@ -218,31 +212,57 @@ public class CustomizeQuoteController {
 			model.put(DetailsConstants.chasisNumber, paymentReceipt.getChasisNumber());
 			model.put(DetailsConstants.modelYear, paymentReceipt.getModelYear());
 			model.put(DetailsConstants.trnsReceiptRef, paymentReceipt.getTrnsReceiptRef());
-
+			model.put(DetailsConstants.policyNumber, paymentReceipt.getPolicyNumber());
+			model.put(DetailsConstants.policyIssueDate, paymentReceipt.getPolicyIssueDate());
+			model.put(DetailsConstants.policyFromDate, paymentReceipt.getPolicyFromDate());
+			model.put(DetailsConstants.policyDueDate, paymentReceipt.getPolicyDueDate());
+			model.put(DetailsConstants.additionalCoverage, paymentReceipt.getAdditionalCoverage());
+			model.put(DetailsConstants.insuranceCo, paymentReceipt.getInsuranceCo());
+			model.put(DetailsConstants.vehicleValue, paymentReceipt.getVehicleValue());
+			model.put(DetailsConstants.purpose, paymentReceipt.getPurpose());
+			model.put(DetailsConstants.colour, paymentReceipt.getColour());
+			model.put(DetailsConstants.shape, paymentReceipt.getShape());
+			model.put(DetailsConstants.capacity, paymentReceipt.getCapacity());
+			model.put(DetailsConstants.fuelType, paymentReceipt.getFuelType());
+			model.put(DetailsConstants.vehicleCondition, paymentReceipt.getVehicleCondition());
+			model.put(DetailsConstants.insuredName, paymentReceipt.getCustomerName());
+			model.put(DetailsConstants.insuredAddress, paymentReceipt.getAddress());
+			model.put(DetailsConstants.insuredMobileNo, paymentReceipt.getMobileNumber());
+			model.put(DetailsConstants.policyContribution, paymentReceipt.getPolicyContribution());
+			model.put(DetailsConstants.supervisionFees, paymentReceipt.getSupervisionFees());
+			model.put(DetailsConstants.issueFees, paymentReceipt.getIssueFees());
+			model.put(DetailsConstants.endorsMentFees, paymentReceipt.getEndorsementFees());
+			model.put(DetailsConstants.discountAmount, paymentReceipt.getDiscountAmount());
+			
+			
 			dataList.add(model);
 			wrapper.put("results", dataList);
+			
+			
+			for (Map.Entry<String, Object> entry : wrapper.entrySet()) {
+				logger.info("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+			}
 
-			file = postManService.processTemplate(new File(TemplatesIB.TRNX_RECEIPT, wrapper, File.Type.PDF))
+			file = postManService.processTemplate(new File(TemplatesIB.POLICY_RECEIPT, wrapper, File.Type.PDF))
 					.getResult();
 			file.create(response, true);
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("paymentReceiptDataExt", e);
 		}
 		return null;
 	}
 
-	private void setMetaData() 
-	{
-		
+	private void setMetaData() {
+
 		logger.info("CustomizeQuoteService :: setMetaData :: getLanguageId  :" + userSession.getLanguageId());
 		customerRegistrationService.getCompanySetUp();
-		
-		/*if (null == metaService.getTenantProfile().getCountryId()
-				|| null == metaService.getUserDeviceInfo().getDeviceId()) 
-		{
-			logger.info("CustomizeQuoteService :: setMetaData :: getLanguageId  :" + userSession.getLanguageId());
-			userSession.setLanguageId(new BigDecimal(0));
-			customerRegistrationService.getCompanySetUp();
-		}*/
+
+		/*
+		 * if (null == metaService.getTenantProfile().getCountryId() || null ==
+		 * metaService.getUserDeviceInfo().getDeviceId()) {
+		 * logger.info("CustomizeQuoteService :: setMetaData :: getLanguageId  :" +
+		 * userSession.getLanguageId()); userSession.setLanguageId(new BigDecimal(0));
+		 * customerRegistrationService.getCompanySetUp(); }
+		 */
 	}
 }

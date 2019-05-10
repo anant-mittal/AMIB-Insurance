@@ -58,9 +58,9 @@ public class PolicyReceiptDetails {
 	private BigDecimal amountPaidInNum;
 
 	private String amountPaidInWord;
-	
+
 	private String receiptReference;
-	
+
 	private String civilId;
 
 	public String getCivilId() {
@@ -302,7 +302,46 @@ public class PolicyReceiptDetails {
 	public void setVehicleCondition(String vehicleCondition) {
 		this.vehicleCondition = vehicleCondition;
 	}
-	
+
+	public PaymentReceipt toPaymentReceipt() {
+		PaymentReceipt paymentReceipt = new PaymentReceipt();
+		paymentReceipt.setTrnsReceiptRef(this.receiptReference);
+		paymentReceipt.setMake(this.make);
+		paymentReceipt.setSubMake(this.subMake);
+		paymentReceipt.setModelYear(this.modelYear);
+		paymentReceipt.setCivilId(this.civilId);
+		paymentReceipt.setKtNumber(this.ktNumber);
+		paymentReceipt.setChasisNumber(this.chaisisNumber);
+		paymentReceipt.setAmountPaidNumber(this.amountPaidInNum);
+		paymentReceipt.setAmountPaidWord(this.amountPaidInWord);
+		paymentReceipt.setCustomerName(this.insuredName);
+		paymentReceipt.setMobileNumber(this.insuredMobileNo);
+		paymentReceipt.setAddress(this.insuredAddress);
+		paymentReceipt.setAdditionalCoverage(this.additionalCoverage);
+		paymentReceipt.setInsuranceCo(this.insuranceCo);
+		paymentReceipt.setPolicyNumber(this.policyNumber);
+		paymentReceipt.setPolicyIssueDate(this.policyIssueDate);
+		paymentReceipt.setPolicyFromDate(this.policyFromDate);
+		paymentReceipt.setPolicyDueDate(this.policyDueDate);
+		paymentReceipt.setInsuranceCo(this.insuranceCo);
+		paymentReceipt.setPurpose(this.purpose);
+		paymentReceipt.setColour(this.colour);
+		paymentReceipt.setShape(this.shape);
+		paymentReceipt.setCapacity(this.capacity);
+		paymentReceipt.setVehicleCondition(this.vehicleCondition);
+		paymentReceipt.setPolicyContribution(this.policyContribution);
+		paymentReceipt.setSupervisionFees(this.supervisionFees);
+		paymentReceipt.setIssueFees(this.issueFees);
+		paymentReceipt.setEndorsementFees(this.endrosMentFees);
+		paymentReceipt.setDiscountAmount(this.discountAmount);
+		paymentReceipt.setVehicleValue(this.vehicleValue);
+		paymentReceipt.setFuelType(this.fuelType);
+		
+		
+		
+		return paymentReceipt;
+	}
+
 	@Override
 	public String toString() {
 		return "PolicyReceiptDetails [policyNumber=" + policyNumber + ", policyIssueDate=" + policyIssueDate
@@ -311,11 +350,11 @@ public class PolicyReceiptDetails {
 				+ ", modelYear=" + modelYear + ", chaisisNumber=" + chaisisNumber + ", ktNumber=" + ktNumber
 				+ ", vehicleValue=" + vehicleValue + ", purpose=" + purpose + ", colour=" + colour + ", shape=" + shape
 				+ ", capacity=" + capacity + ", fuelType=" + fuelType + ", vehicleCondition=" + vehicleCondition
-				+ ", insuredName=" + insuredName + ", insuredAddress=" + insuredAddress + ", civilId= "+civilId+", insuredMobileNo="
-				+ insuredMobileNo + ", policyContribution=" + policyContribution + ", supervisionFees="
-				+ supervisionFees + ", issueFees=" + issueFees + ", endrosMentFees=" + endrosMentFees
-				+ ", discountAmount=" + discountAmount + ", amountPaidInNum=" + amountPaidInNum + ", amountPaidInWord="
-				+ amountPaidInWord + ", receiptReference="+ receiptReference+ "]";
+				+ ", insuredName=" + insuredName + ", insuredAddress=" + insuredAddress + ", civilId= " + civilId
+				+ ", insuredMobileNo=" + insuredMobileNo + ", policyContribution=" + policyContribution
+				+ ", supervisionFees=" + supervisionFees + ", issueFees=" + issueFees + ", endrosMentFees="
+				+ endrosMentFees + ", discountAmount=" + discountAmount + ", amountPaidInNum=" + amountPaidInNum
+				+ ", amountPaidInWord=" + amountPaidInWord + ", receiptReference=" + receiptReference + "]";
 	}
-	
+
 }

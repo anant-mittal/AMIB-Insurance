@@ -298,7 +298,7 @@
                                           pdfFontName="fonts/all/arial.ttf"/>
                                 </textElement>
                                 <textFieldExpression class="java.lang.String">
-                                    <![CDATA[$F{tranx}.get("insuranceCompany","-")]]>
+                                    <![CDATA[$F{tranx}.get("insuranceCo","-")]]>
                                 </textFieldExpression>
                             </textField>
 
