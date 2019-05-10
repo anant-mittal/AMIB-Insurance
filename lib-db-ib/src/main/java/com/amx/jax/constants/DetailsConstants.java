@@ -107,9 +107,9 @@ public class DetailsConstants
 
 	public static String paymentMode = "paymentMode";
 
-	public static String amountPaidNumber = "amountPaidNumber";
+	public static String amountPaidNumber = "amountPaidInNumber";
 
-	public static String amountPaidWord = "amountPaidWord";
+	public static String amountPaidWord = "amountPaidInWord";
 
 	public static String paymentId = "paymentId";
 
@@ -140,6 +140,50 @@ public class DetailsConstants
 	public static String modelYear = "modelYear";
 	
 	public static String trnsReceiptRef = "trnsReceiptRef";
+	
+	public static String discountAmount = "discountAmount";
+	
+	public static String endorsMentFees = "endorsMentFees";
+	
+	public static String issueFees = "issueFees";
+	
+	public static String supervisionFees = "supervisionFees";
+	
+	public static String policyContribution = "policyContribution";
+	
+	public static String insuredMobileNo = "insuredMobileNo";
+	
+	public static String insuredAddress = "insuredAddress";
+	
+	public static String insuredName = "insuredName";
+	
+	public static String vehicleCondition = "vehicleCondition";
+	
+	public static String fuelType = "fuelType";
+	
+	public static String capacity = "capacity";
+	
+	public static String shape = "shape";
+	
+	public static String colour = "colour";
+	
+	public static String purpose = "purpose";
+	
+	public static String vehicleValue = "vehicleValue";
+	
+	public static String insuranceCo = "insuranceCo";
+	
+	public static String additionalCoverage = "additionalCoverage";
+	
+	public static String policyDueDate = "policyDueDate";
+	
+	public static String policyFromDate = "policyFromDate";
+	
+	public static String policyIssueDate = "policyIssueDate";
+	
+	public static String policyNumber = "policyNumber";
+	
+	
 	
 	/******************************PG RECEIPT CONSTANTS***************************/
 	
