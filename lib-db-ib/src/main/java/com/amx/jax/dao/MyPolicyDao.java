@@ -17,6 +17,7 @@ import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.ActivePolicyModel;
 import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.DateFormats;
+import com.amx.jax.models.InsuranceClaimDetails;
 import com.amx.jax.models.PolicyReceiptDetails;
 import com.amx.jax.utility.Utility;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -353,6 +354,92 @@ public class MyPolicyDao
 		}
 		return arrayResponseModel;
 	}
+	
+	public ArrayResponseModel getInsuranceClaimDetails(BigDecimal userAmibCustRef , String civilId , String userType , BigDecimal custSeqNum , BigDecimal languageId)
+	{
+		getConnection();
+		CallableStatement callableStatement = null;
+		String callProcedure = "{call IRB_GET_INSCOMP_CLAIMCONTACTS(?,?,?,?,?,?)}";
+		ArrayList<InsuranceClaimDetails> claimDetArray = new ArrayList<InsuranceClaimDetails>();
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
+
+		logger.info(TAG + " getInsuranceClaimDetails :: userAmibCustRef :" + userAmibCustRef);
+		try
+		{
+			if(null == userAmibCustRef)
+			{
+				ArrayResponseModel arrayRespCustAmibCode = getCustomerAmibCode(civilId ,userType ,custSeqNum);
+				if(null != arrayRespCustAmibCode)
+				{
+					if(null == arrayRespCustAmibCode.getErrorCode())
+					{
+						userAmibCustRef = arrayRespCustAmibCode.getNumericData();
+						if(null != userAmibCustRef)
+						{
+							logger.info(TAG + " getUserActivePolicy :: userAmibCustRef received :" + userAmibCustRef);
+							arrayResponseModel.setData(userAmibCustRef.toString());
+						}
+					}
+					else
+					{
+						return arrayRespCustAmibCode;
+					}
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		
+		try
+		{
+			callableStatement = connection.prepareCall(callProcedure);
+			
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
+			callableStatement.setBigDecimal(3, languageId);
+			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
+			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
+			callableStatement.executeUpdate();
+
+			ResultSet rs = (ResultSet) callableStatement.getObject(4);
+			logger.info("callableStatement",callableStatement.getObject(5),callableStatement.getObject(4));
+			while (rs.next())
+			{
+				InsuranceClaimDetails insCompDetails=new InsuranceClaimDetails();
+				insCompDetails.setCountryCode(rs.getBigDecimal(1));
+				insCompDetails.setCompanyCode(rs.getBigDecimal(2));
+				insCompDetails.setInsCompanyCode(rs.getBigDecimal(3));
+				insCompDetails.setInscompanyName(rs.getString(5));
+				insCompDetails.setEmailId(rs.getString(11));
+				insCompDetails.setShortInscPrefix(rs.getString(15));
+				insCompDetails.setClaimContactName(rs.getString(16));
+				insCompDetails.setClaimEmailId(rs.getString(17));
+				insCompDetails.setClaimContactNo(rs.getString(18));
+				claimDetArray.add(insCompDetails);
+			}
+			
+		arrayResponseModel.setDataArray(claimDetArray);
+		}
+		catch (Exception e)
+		{
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			
+			logger.error(TAG+"getClaimDetails :: exception :" + e);
+			e.printStackTrace();
+		}
+		finally
+		{
+			CloseConnection(callableStatement, connection);
+		}
+		return arrayResponseModel;
+	}
+	
+	
 
 	private Connection getConnection()
 	{

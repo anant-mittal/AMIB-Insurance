@@ -20,6 +20,7 @@ import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.ActivePolicyModel;
 import com.amx.jax.models.ArrayResponseModel;
+import com.amx.jax.models.InsuranceClaimDetails;
 import com.amx.jax.models.PolicyReceiptDetails;
 import com.amx.jax.postman.PostManService;
 import com.amx.jax.postman.model.File;
@@ -151,5 +152,5 @@ public class MyPolicyController {
 		}
 		return null;
 	}
-
+	
 }
