@@ -210,47 +210,5 @@ public class MyPolicyService {
 		return arrayResponseModel;
 	}
 
-	public AmxApiResponse<InsuranceClaimDetails, Object> getInsuranceClaimDetails() {
-		AmxApiResponse<InsuranceClaimDetails, Object> resp = new AmxApiResponse<InsuranceClaimDetails, Object>();
-		try {
-
-			logger.info("MyPolicyService :: getInsuranceClaimDetails :: getUserAmibCustRef :"
-					+ userSession.getUserAmibCustRef());
-			logger.info("MyPolicyService :: getInsuranceClaimDetails :: getCivilId :" + userSession.getCivilId());
-			logger.info("MyPolicyService :: getInsuranceClaimDetails :: getCustomerSequenceNumber :"
-					+ userSession.getCustomerSequenceNumber());
-			logger.info("MyPolicyService :: getInsuranceClaimDetails :: getLanguageId :" + userSession.getLanguageId());
-
-			ArrayResponseModel userActivePolicyDetails = myPolicyDao.getInsuranceClaimDetails(
-					userSession.getUserAmibCustRef(), userSession.getCivilId(), HardCodedValues.USER_TYPE,
-					userSession.getCustomerSequenceNumber(), userSession.getLanguageId());
-			if (null != userActivePolicyDetails.getErrorCode()) {
-				resp.setMessageKey(userActivePolicyDetails.getErrorCode());
-				resp.setMessage(userActivePolicyDetails.getErrorMessage());
-				return resp;
-			}
-
-			logger.info("MyPolicyService :: getInsuranceClaimDetails :: getUserAmibCustRef 1 :"
-					+ userSession.getUserAmibCustRef());
-			if (null == userSession.getUserAmibCustRef()) {
-				logger.info("MyPolicyService :: getUserActivePolicy :: getUserAmibCustRef 2 :"
-						+ userSession.getUserAmibCustRef());
-				if (null != userActivePolicyDetails.getData()) {
-					BigDecimal amibRef = new BigDecimal(userActivePolicyDetails.getData());
-					logger.info("MyPolicyService :: getUserActivePolicy :: amibRef :" + amibRef);
-					userSession.setUserAmibCustRef(amibRef);
-				}
-			}
-			resp.setResults(userActivePolicyDetails.getDataArray());
-			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
-		} catch (Exception e) {
-			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
-			resp.setMessage(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
-
-			logger.info(TAG + "getUserActivePolicy :: exception :" + e);
-			e.printStackTrace();
-		}
-		return resp;
-	}
+	
 }
