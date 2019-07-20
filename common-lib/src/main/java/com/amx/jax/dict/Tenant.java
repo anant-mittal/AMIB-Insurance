@@ -18,6 +18,8 @@ public enum Tenant {
 
 	KWT("KW", 91, "Kuwait", Currency.KWD), BHR("BH", 104, "Bahrain", Currency.BHD),
 	OMN("OM", 82, "Oman", Currency.OMR),
+	
+	KWTV2("KW", 91, "Kuwait", Currency.KWD),
 
 	NONE("none", 0, null);
 
@@ -71,6 +73,10 @@ public enum Tenant {
 
 	Tenant(String id, int code, String name, Currency currency) {
 		this(id, code, name, true, currency);
+	}
+
+	Tenant() {
+		this(null, 0, null);
 	}
 
 	public String getId() {
@@ -137,6 +143,10 @@ public enum Tenant {
 
 	public Currency getCurrency() {
 		return currency;
+	}
+
+	public String toString() {
+		return this.name();
 	}
 
 }

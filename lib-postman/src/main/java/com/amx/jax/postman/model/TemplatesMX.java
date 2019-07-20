@@ -20,7 +20,7 @@ public enum TemplatesMX implements ITemplate {
 	REMIT_RECEIPT_JASPER("TransactionReceipt_jasper", PDFConverter.JASPER, "TransactionReceipt.json"),
 	REMIT_RECEIPT_COPY_JASPER("TransactionReceiptCopy_jasper", PDFConverter.JASPER, "TransactionReceipt.json"),
 	REMIT_RECEIPT_JASPER_NO_HEADER("TransactionReceiptNoHeader_jasper", PDFConverter.JASPER, "TransactionReceipt.json"),
-
+	REMIT_APPLICATION_RECEIPT_JASPER("ApplicationReceipt_jasper", PDFConverter.JASPER, "ApplicationReceipt.json"),
 
 	REMIT_RECEIPT_COPY("TransactionReceiptCopy"), REMIT_STATMENT("TransactionList"),
 	REMIT_STATMENT_EMAIL("RemittanceStatmentEmail"),
@@ -34,14 +34,15 @@ public enum TemplatesMX implements ITemplate {
 	// Rate Alert, PlaceOrder
 	RATE_ALERT("place-order"), RATE_ALERT_COMPLETION("place-order-executed"),
 
-	BRANCH_SEARCH_EMPTY("BranchSearchEmpty"), TEST("test"), BRANCH_FEEDBACK("trnx-feedback"), TT("tt"), EFT("eft"),
-	CASH("cash"),
+	BRANCH_SEARCH_EMPTY("BranchSearchEmpty"), TEST("test"), BRANCH_FEEDBACK("trnx-feedback", Channel.NOTIPY), TT("tt", Channel.NOTIPY), EFT("eft", Channel.NOTIPY),
+	CASH("cash", Channel.NOTIPY),
 
 	CIVILID_EXPIRY("civilexpiry"), CIVILID_EXPIRED("civilexpired"),
 
 	PARTIAL_REGISTRATION_EMAIL("PartialRegistrationCompletionEMail"), TRANSACTION_FAILURE("TransactionFailure"),
 
 	PROMOTION_WINNER("PromotionWinner"), PROMOTION_COUPON("PromotionCoupon"),
+	WANTIT_BUYIT_PROMOTION("WantITBuyItPromotionCoupon"),
 
 	SERVER_PING("server-ping"),
 
@@ -77,6 +78,11 @@ public enum TemplatesMX implements ITemplate {
 	@Override
 	public String getHtmlFile() {
 		return "html/" + getFileName();
+	}
+
+	@Override
+	public String getSMSFile() {
+		return "html/sms/" + getFileName();
 	}
 
 	@Override
