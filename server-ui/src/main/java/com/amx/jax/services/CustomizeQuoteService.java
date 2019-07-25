@@ -443,7 +443,7 @@ public class CustomizeQuoteService
 					payment.setDocFy(userSession.getCivilId());//Civil Id Added
 					payment.setDocNo(paymentDetails.getPaySeqNum().toString());// PaySeqNum
 					payment.setTrackId(paymentDetails.getPaySeqNum().toString());// PaySeqNum
-					payment.setAmount(totalPremium.getTotalAmount());
+					payment.setAmountObject(totalPremium.getTotalAmount());
 					payment.setProduct("QUOTE");//Language Selected
 					payment.setServiceCode(PayGServiceCode.KNET);
 					
