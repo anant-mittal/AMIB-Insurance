@@ -17,7 +17,9 @@ import org.springframework.beans.factory.annotation.Value;
 
 import com.amx.jax.dict.PayGServiceCode;
 import com.amx.jax.dict.ResponseCodeKWT;
+import com.amx.jax.payg.PayGCodes;
 import com.amx.jax.payg.PayGParams;
+import com.amx.jax.payg.codes.KnetCodes;
 import com.amx.jax.payment.PaymentConstant;
 import com.amx.jax.payment.gateway.PayGClient;
 import com.amx.jax.payment.gateway.PayGConfig;
@@ -222,25 +224,46 @@ public class KnetClientV2 implements PayGClient, InitializingBean {
 		}
 
 		LOGGER.info("Params captured from KNET : " + JsonUtil.toJson(gatewayResponse));
+		
+		
+		/*
+		 * LOGGER.info("CODE NEW KNET WITH ERROR CODE"); //KnetCodes knetCodes =
+		 * (KnetCodes) PayGCodes.getPayGCode(resultResponse, KnetCodes.UNKNOWN);
+		 * 
+		 * LOGGER.info("resultResponse ---> " + resultResponse);
+		 * //gatewayResponse.setErrorCategory(knetCodes.getCategory()); ResponseCodeKWT
+		 * responseCodeEnum = ResponseCodeKWT.getResponseCodeEnumByCode(resultResponse);
+		 * if(responseCodeEnum != null) {
+		 * gatewayResponse.setErrorCategory(responseCodeEnum.name());
+		 * LOGGER.info("Result from response Values IF---> " + responseCodeEnum); }else
+		 * { gatewayResponse.setErrorCategory(ResponseCodeKWT.UNKNOWN.name());
+		 * LOGGER.info("Result from response Values ELSE---> " + responseCodeEnum); }
+		 * 
+		 * LOGGER.info("Result from response Values ---> " +
+		 * gatewayResponse.getErrorCategory());
+		 * gatewayResponse.setError(resultResponse);
+		 * 
+		 * paymentService.capturePayment(params, gatewayResponse);
+		 * 
+		 * // Capturing JAX Response if
+		 * ("CAPTURED".equalsIgnoreCase(gatewayResponse.getResult())) {
+		 * gatewayResponse.setPayGStatus(PayGStatus.CAPTURED); } else if
+		 * ("CANCELED".equalsIgnoreCase(gatewayResponse.getResult())) {
+		 * gatewayResponse.setPayGStatus(PayGStatus.CANCELLED); } else {
+		 * gatewayResponse.setPayGStatus(PayGStatus.ERROR); } return gatewayResponse;
+		 */
+		
+		LOGGER.info("Gateway response value is "+gatewayResponse.toString());
 
-		//KnetCodes knetCodes = (KnetCodes) PayGCodes.getPayGCode(resultResponse, KnetCodes.UNKNOWN);
+		KnetCodes knetCodes = (KnetCodes) PayGCodes.getPayGCode(resultResponse, KnetCodes.UNKNOWN);
 
 		LOGGER.info("resultResponse ---> " + resultResponse);
-		//gatewayResponse.setErrorCategory(knetCodes.getCategory());
-		ResponseCodeKWT responseCodeEnum = ResponseCodeKWT.getResponseCodeEnumByCode(resultResponse);
-		if(responseCodeEnum != null) {
-			gatewayResponse.setErrorCategory(responseCodeEnum.name());
-			LOGGER.info("Result from response Values IF---> " + responseCodeEnum);
-		}else {
-			gatewayResponse.setErrorCategory(ResponseCodeKWT.UNKNOWN.name());
-			LOGGER.info("Result from response Values ELSE---> " + responseCodeEnum);
-		}
+		gatewayResponse.setErrorCategory(knetCodes.getCategory().toString());
 
 		LOGGER.info("Result from response Values ---> " + gatewayResponse.getErrorCategory());
-		gatewayResponse.setError(resultResponse);
+		/* gatewayResponse.setError(resultResponse); */
 
 		paymentService.capturePayment(params, gatewayResponse);
-		
 		// Capturing JAX Response
 		if ("CAPTURED".equalsIgnoreCase(gatewayResponse.getResult())) {
 			gatewayResponse.setPayGStatus(PayGStatus.CAPTURED);
