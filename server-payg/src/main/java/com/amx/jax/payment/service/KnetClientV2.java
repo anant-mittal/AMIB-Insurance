@@ -269,6 +269,8 @@ public class KnetClientV2 implements PayGClient, InitializingBean {
 			gatewayResponse.setPayGStatus(PayGStatus.CAPTURED);
 		} else if ("CANCELED".equalsIgnoreCase(gatewayResponse.getResult())) {
 			gatewayResponse.setPayGStatus(PayGStatus.CANCELLED);
+		} else if ("NOT+CAPTURED".equalsIgnoreCase(gatewayResponse.getResult())) {
+				gatewayResponse.setPayGStatus(PayGStatus.NOT_CAPTURED);
 		} else {
 			gatewayResponse.setPayGStatus(PayGStatus.ERROR);
 		}
