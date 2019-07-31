@@ -39,6 +39,7 @@ import com.amx.jax.swagger.ApiMockParam;
 import com.amx.jax.ui.session.UserSession;
 import com.amx.jax.utility.Utility;
 import com.amx.utils.ArgUtil;
+import com.amx.utils.Constants;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -127,7 +128,11 @@ public class CustomizeQuoteController {
 			paymentDetails.setPaymentId(paymentResponse.getPaymentId());
 			paymentDetails.setApprovalNo(paymentResponse.getAuth_appNo());
 			paymentDetails.setApprovalDate(null);
-			paymentDetails.setResultCd(paymentResponse.getResultCode());
+			if(paymentDetails.getResultCd().equalsIgnoreCase(Constants.NEW_KNET_NOTCAPTURED))
+			{
+				paymentDetails.setResultCd(Constants.NEW_KNET_MODIFIED_RESPONSE);
+			}
+			//paymentDetails.setResultCd(paymentResponse.getResultCode());
 			paymentDetails.setTransId(paymentResponse.getTransactionId());
 			paymentDetails.setRefId(paymentResponse.getReferenceId());
 
