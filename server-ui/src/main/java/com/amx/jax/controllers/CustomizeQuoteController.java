@@ -128,7 +128,7 @@ public class CustomizeQuoteController {
 			paymentDetails.setPaymentId(paymentResponse.getPaymentId());
 			paymentDetails.setApprovalNo(paymentResponse.getAuth_appNo());
 			paymentDetails.setApprovalDate(null);
-			if(paymentDetails.getResultCd().equalsIgnoreCase(Constants.NEW_KNET_NOTCAPTURED))
+			if(paymentResponse.getResultCode().equalsIgnoreCase(Constants.NEW_KNET_NOTCAPTURED))
 			{
 				paymentDetails.setResultCd(Constants.NEW_KNET_MODIFIED_RESPONSE);
 				logger.info(" onPaymentCallbackNew :: paymentResponse2 :" + paymentDetails.toString());
