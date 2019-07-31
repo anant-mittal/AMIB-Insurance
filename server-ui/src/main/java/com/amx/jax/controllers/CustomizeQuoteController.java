@@ -122,7 +122,7 @@ public class CustomizeQuoteController {
 		try {
 			setMetaData();
 
-			logger.info(" onPaymentCallbackNew :: paymentResponse :" + paymentResponse.toString());
+			logger.info(" onPaymentCallbackNew :: paymentResponse1 :" + paymentResponse.toString());
 
 			PaymentDetails paymentDetails = new PaymentDetails();
 			paymentDetails.setPaymentId(paymentResponse.getPaymentId());
@@ -131,20 +131,23 @@ public class CustomizeQuoteController {
 			if(paymentDetails.getResultCd().equalsIgnoreCase(Constants.NEW_KNET_NOTCAPTURED))
 			{
 				paymentDetails.setResultCd(Constants.NEW_KNET_MODIFIED_RESPONSE);
+				logger.info(" onPaymentCallbackNew :: paymentResponse2 :" + paymentDetails.toString());
 			}
 			//paymentDetails.setResultCd(paymentResponse.getResultCode());
 			paymentDetails.setTransId(paymentResponse.getTransactionId());
 			paymentDetails.setRefId(paymentResponse.getReferenceId());
-
+			logger.info(" onPaymentCallbackNew :: paymentResponse3 :" + paymentDetails.toString());
 			if (null != paymentResponse.getTrackId()) {
+				logger.info(" onPaymentCallbackNew :: paymentResponse4 :" + paymentDetails.toString());
 				BigDecimal paySeqNumber = new BigDecimal(paymentResponse.getTrackId().toString());
 				logger.info(" onPaymentCallbackNew :: paySeqNumber  :" + paySeqNumber);
 				paymentDetails.setPaySeqNum(paySeqNumber);
 				paymentDetails.setPaymentToken(paySeqNumber.toString());
 			} else {
+				logger.info(" onPaymentCallbackNew :: paymentResponse5 :" + paymentDetails.toString());
 				paymentDetails.setPaySeqNum(null);
 			}
-
+			logger.info(" onPaymentCallbackNew :: paymentResponse6 :" + paymentDetails.toString());
 			PaymentDetails updateStatus = payMentService.updatePaymentDetals(paymentDetails);
 			logger.info(" onPaymentCallbackNew :: updateStatus  :" + updateStatus.toString());
 		} catch (Exception e) {
