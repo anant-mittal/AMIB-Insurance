@@ -116,6 +116,7 @@ public class PayGController {
 
 		if (!ArgUtil.isEmpty(verify)
 				&& !verify.equals(payGService.getVerifyHash(trckid, amount, docId, docNo, docFy).getVerification())) {
+			LOGGER.info("------ IN PG_SECURITY PAGE CALL ------");
 			return "thymeleaf/pg_security";
 		}
 
