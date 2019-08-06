@@ -244,8 +244,6 @@ public class PayGController {
 		if (paygCode.toString().equals("OMANNET") && channel.equals(Channel.ONLINE)) {
 			return "redirect:" + redirectUrl;
 			// }else if (paygCode.toString().equals("KOMANNET")) {
-		} else if (paygCode.toString().equals("KNET") && channel.equals(Channel.ONLINE)) {
-			return "redirect:" + redirectUrl;
 		} else if (paygCode.toString().equals("OMANNET") && channel.equals(Channel.KIOSK)) {
 			ra.addAttribute("paymentId", payGResponse.getPaymentId());
 			ra.addAttribute("result", payGResponse.getResult());
@@ -261,7 +259,7 @@ public class PayGController {
 			ra.addAttribute("udf5", payGResponse.getUdf5());
 			LOGGER.info("PAYG Response is ----> " + payGResponse.toString());
 			return "redirect:" + kioskOmnRedirectURL;
-		} else if (paygCode.toString().equals("KNET2") && channel.equals(Channel.ONLINE)) {
+		} else if (paygCode.toString().equals("KNET2")) {
 			return "redirect:" + redirectUrl;
 		} else {
 			return "thymeleaf/repback";
