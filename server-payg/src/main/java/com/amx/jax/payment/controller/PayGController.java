@@ -128,7 +128,7 @@ public class PayGController {
 			pg = "BENEFIT";
 			appRedirectUrl = bhrRedirectURL;
 		} else if (tnt.equals(Tenant.KWT)) {
-			if ("KNET2".equalsIgnoreCase(pg)) {
+			if ("KNET".equalsIgnoreCase(pg)) {
 				pg = "KNET2";
 				appRedirectUrl = kwtRedirectURL;
 			} else {
