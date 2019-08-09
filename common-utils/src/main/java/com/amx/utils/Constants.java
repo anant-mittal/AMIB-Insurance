@@ -120,5 +120,5 @@ public class Constants {
 	// New Knet Constants
 	
 	public static final String NEW_KNET_NOTCAPTURED = "NOT+CAPTURED";
-	public static final String NEW_KNET_MODIFIED_RESPONSE = "NOT_CAPTURED";
+	public static final String NEW_KNET_MODIFIED_RESPONSE = "NOT CAPTURED";
 }
