@@ -133,9 +133,10 @@ public class CustomizeQuoteController {
 			{
 				paymentDetails.setResultCd(Constants.NEW_KNET_MODIFIED_RESPONSE);
 				logger.info(" onPaymentCallbackNew :: paymentResponse2 :" + paymentDetails.toString());
+			}else {
+				paymentDetails.setResultCd(paymentResponse.getResultCode());
 			}
-			
-			//paymentDetails.setResultCd(paymentResponse.getResultCode());
+						
 			paymentDetails.setTransId(paymentResponse.getTransactionId());
 			paymentDetails.setRefId(paymentResponse.getReferenceId());
 
