@@ -53,21 +53,21 @@ public class PaymentService {
 			LOGGER.info("response captured from knet is "+resp);
 			LOGGER.info("response captured from knet value is "+resp.getResult());
 			PaymentResponseDto capturedDtonew = resp.getResult();
-			LOGGER.info("PaymentResponseDto values -- CollectionDocumentCode : "
+			/*LOGGER.info("PaymentResponseDto values -- CollectionDocumentCode : "
 					+ capturedDtonew.getCollectionDocumentCode() + " CollectionDocumentNumber : "
 					+ capturedDtonew.getCollectionDocumentNumber() + " CollectionFinanceYear : "
-					+ capturedDtonew.getCollectionFinanceYear());
+					+ capturedDtonew.getCollectionFinanceYear());*/
 
 			if (resp.getResult() != null) {
 				PaymentResponseDto capturedDto = resp.getResult();
-				LOGGER.info("PaymentResponseDto values -- CollectionDocumentCode : "
+				/*LOGGER.info("PaymentResponseDto values -- CollectionDocumentCode : "
 						+ capturedDto.getCollectionDocumentCode() + " CollectionDocumentNumber : "
 						+ capturedDto.getCollectionDocumentNumber() + " CollectionFinanceYear : "
 						+ capturedDto.getCollectionFinanceYear());
 
 				payGServiceResponse.setCollectionDocumentCode(capturedDto.getCollectionDocumentCode());
 				payGServiceResponse.setCollectionDocumentNumber(capturedDto.getCollectionDocumentNumber());
-				payGServiceResponse.setCollectionFinanceYear(capturedDto.getCollectionFinanceYear());
+				payGServiceResponse.setCollectionFinanceYear(capturedDto.getCollectionFinanceYear());*/
 
 				return resp.getResult();
 			}
