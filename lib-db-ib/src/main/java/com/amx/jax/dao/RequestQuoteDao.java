@@ -13,6 +13,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+
+import org.apache.tomcat.util.bcel.classfile.Constant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.meta.IMetaService;
@@ -46,6 +49,7 @@ import com.amx.jax.models.VehicleDetailsGetModel;
 import com.amx.jax.models.VehicleDetailsHeaderModel;
 import com.amx.jax.models.VehicleDetailsUpdateModel;
 import com.amx.jax.utility.Utility;
+import com.amx.utils.Constants;
 
 import oracle.jdbc.OracleTypes;
 
@@ -741,13 +745,14 @@ public class RequestQuoteDao
 		return arrayResponseModel;
 	}
 
-	public ArrayResponseModel getImageDetails(BigDecimal appSeqNumber, BigDecimal languageId)
+	public ArrayResponseModel getImageDetails(BigDecimal appSeqNumber, BigDecimal languageId,String vehicleConditionCode)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
 		String callProcedure = "{call IRB_GET_ONLINE_DOCS(?,?,?,?,?,?)}";
 		ArrayList<ImageDetails> imageMetaInfoArray = new ArrayList<ImageDetails>();
 		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
+		
 
 		try
 		{
@@ -787,6 +792,7 @@ public class RequestQuoteDao
 				imageDetails.setDisplayOrder(rs.getBigDecimal(4));
 				imageDetails.setStatus(rs.getString(5));
 				imageDetails.setImageSubmittedDate(imageStatus.getImageDate());
+				imageDetails.setDisplayVehicleCond(rs.getString(6));
 				
 				if (null != imageStatus.getDocSeqNumber() && !imageStatus.getDocSeqNumber().toString().equals("0") && !imageStatus.getDocSeqNumber().toString().equals(""))
 				{
@@ -800,6 +806,23 @@ public class RequestQuoteDao
 				logger.info("RequestQuoteDao :: getImageDetails :: imageDetails :" + imageDetails.toString());
 				
 				imageMetaInfoArray.add(imageDetails);
+			}
+			int i;
+			
+			if (Constants.NEWCAR.equalsIgnoreCase(vehicleConditionCode)) {
+				for (i=0;i<imageMetaInfoArray.size();i++) {
+					if (imageMetaInfoArray.get(i).getDisplayVehicleCond().equalsIgnoreCase(Constants.DISPLAY_VEHICLE_USED)) {
+						imageMetaInfoArray.remove(i);
+
+					}
+				}
+			} else if("U".equalsIgnoreCase(vehicleConditionCode)){
+				for (i=0;i<imageMetaInfoArray.size();i++) {
+					if (imageMetaInfoArray.get(i).getDisplayVehicleCond().equalsIgnoreCase(Constants.DISPLAY_VEHICLE_NEW)) {
+						imageMetaInfoArray.remove(i);
+
+					}
+				}
 			}
 			arrayResponseModel.setDataArray(imageMetaInfoArray);
 			logger.info("RequestQuoteDao :: getImageDetails :: setErrorCode :" + callableStatement.getString(4));

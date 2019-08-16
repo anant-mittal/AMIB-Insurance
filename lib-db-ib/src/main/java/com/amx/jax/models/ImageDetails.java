@@ -18,6 +18,15 @@ public class ImageDetails
 	
 	private String status;
 	
+	private String displayVehicleCond;
+
+	public String getDisplayVehicleCond() {
+		return displayVehicleCond;
+	}
+
+	public void setDisplayVehicleCond(String displayVehicleCond) {
+		this.displayVehicleCond = displayVehicleCond;
+	}
 
 	public String getStatus() {
 		return status;
