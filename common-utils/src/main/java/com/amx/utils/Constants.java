@@ -116,4 +116,9 @@ public class Constants {
 	}
 	
 	public static final Long ANNUALINCOME_VERIFIED_LIMIT = 25000L;
+	
+	// New Knet Constants
+	
+	public static final String NEW_KNET_NOTCAPTURED = "NOT+CAPTURED";
+	public static final String NEW_KNET_MODIFIED_RESPONSE = "NOT CAPTURED";
 }

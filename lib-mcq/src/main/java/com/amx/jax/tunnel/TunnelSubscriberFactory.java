@@ -13,17 +13,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import com.amx.jax.AppConfig;
 import com.amx.jax.AppContext;
 import com.amx.jax.AppContextUtil;
+import com.amx.jax.AppParam;
 import com.amx.jax.logger.client.AuditServiceClient;
 import com.amx.jax.logger.events.RequestTrackEvent;
 import com.amx.utils.ArgUtil;
 import com.amx.utils.TimeUtils;
 
-@Service
+@Component
 public class TunnelSubscriberFactory {
 
 	private Logger LOGGER = LoggerFactory.getLogger(TunnelSubscriberFactory.class);
@@ -34,8 +35,7 @@ public class TunnelSubscriberFactory {
 	public static final String STATUS_DONE = "D";
 	public static long TIME_TO_EXPIRE_MILLIS = TIME_TO_EXPIRE * 60 * 1000;
 
-	@Autowired
-	AppConfig appConfig;
+	private AppConfig appConfig;
 
 	public static <A extends Annotation> A getAnnotationProxyReady(Class<?> clazz, Class<A> annotationClass) {
 		final A annotation = clazz.getAnnotation(annotationClass);
@@ -48,8 +48,10 @@ public class TunnelSubscriberFactory {
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public TunnelSubscriberFactory(List<ITunnelSubscriber> listeners,
-			@Autowired(required = false) RedissonClient redisson) {
-
+			@Autowired(required = false) RedissonClient redisson,
+			@Autowired(required = true) AppConfig appConfigLocal, @Autowired AppParam loadAppParams) {
+		appConfig = appConfigLocal;
+		LOGGER.info("Subscribing {} tunnel events in {}", listeners.size(), appConfigLocal.getAppEnv());
 		if (redisson == null) {
 			LOGGER.warn("Redisson Not avaiable for {} Listeners", listeners.size());
 		} else {
@@ -111,6 +113,7 @@ public class TunnelSubscriberFactory {
 	public <M> void addShoutListener(String topic, RedissonClient redisson, ITunnelSubscriber<M> listener,
 			boolean integrity, String listentName) {
 		RTopic<TunnelMessage<M>> topicQueue = redisson.getTopic(TunnelEventXchange.SHOUT_LISTNER.getTopic(topic));
+		LOGGER.info("Subscription on Topic : {}", TunnelEventXchange.SHOUT_LISTNER.getTopic(topic));
 		topicQueue.addListener(new WrapperML<M>(listener, integrity) {
 			@Override
 			public void onMessage(String channel, TunnelMessage<M> msg) {
@@ -148,13 +151,16 @@ public class TunnelSubscriberFactory {
 	public <M> void addQueuedListener(String topicName, RedissonClient redisson, ITunnelSubscriber<M> listener,
 			boolean integrity, String listenrName) {
 		RTopic<TunnelMessage<M>> eventTopic = redisson.getTopic(TunnelEventXchange.SEND_LISTNER.getTopic(topicName));
+		LOGGER.info("Subscription on Topic : {}", TunnelEventXchange.SEND_LISTNER.getTopic(topicName));
 		eventTopic.addListener(new WrapperML<M>(listener, integrity) {
 			@Override
 			public void onMessage(String channel, TunnelMessage<M> msg) {
 				tryMessage(channel, msg);
 				RQueue<TunnelMessage<M>> eventAltQueue = redisson
 						.getQueue(TunnelEventXchange.SEND_LISTNER.getQueue(topicName));
-				TunnelMessage<M> msg2 = eventAltQueue.poll();
+
+				TunnelMessage<M> msg2 = pollSafely(channel, eventAltQueue, null);
+
 				if (msg2 != null && !TimeUtils.isDead(msg2.getTimestamp(), TIME_TO_EXPIRE_MILLIS)) {
 					tryMessage(channel, msg2);
 				}
@@ -193,16 +199,20 @@ public class TunnelSubscriberFactory {
 	public <M> void addTaskWorker(String topic, RedissonClient redisson, ITunnelSubscriber<M> listener,
 			boolean integrity, String listentName) {
 		RTopic<String> topicQueue = redisson.getTopic(TunnelEventXchange.TASK_WORKER.getTopic(topic));
+		LOGGER.info("Subscription on Topic : {}", TunnelEventXchange.TASK_WORKER.getTopic(topic));
 		topicQueue.addListener(new MessageListener<String>() {
 			@Override
 			public void onMessage(String channel, String msgId) {
+				if (ArgUtil.isEmpty(msgId)) {
+					LOGGER.warn("NULL msgId Rcvd for EVENT " + channel + " : ");
+				}
 				RQueue<TunnelMessage<M>> topicMessageQueue = redisson
 						.getQueue(TunnelEventXchange.TASK_WORKER.getQueue(topic));
-				onMessage(channel, topicMessageQueue);
+				onMessage(channel, topicMessageQueue, msgId);
 			}
 
-			private void onMessage(String channel, RQueue<TunnelMessage<M>> topicMessageQueue) {
-				TunnelMessage<M> msg = topicMessageQueue.poll();
+			private void onMessage(String channel, RQueue<TunnelMessage<M>> topicMessageQueue, String msgId) {
+				TunnelMessage<M> msg = pollSafely(channel, topicMessageQueue, msgId);
 				if (msg == null) {
 					return;
 				}
@@ -213,12 +223,16 @@ public class TunnelSubscriberFactory {
 					AuditServiceClient.trackStatic(
 							new RequestTrackEvent(RequestTrackEvent.Type.SUB_IN, TunnelEventXchange.TASK_WORKER, msg));
 					try {
-						listener.onMessage(channel, msg.getData());
+						if (ArgUtil.isEmpty(msg.getData())) {
+							LOGGER.warn("NULL Event Rcvd for EVENT " + channel + " : ");
+						} else {
+							listener.onMessage(channel, msg.getData());
+						}
 					} catch (Exception e) {
-						LOGGER.error("EXCEPTION EVENT " + channel + " : " + msg.getId(), e);
+						LOGGER.error("EXCEPTION in EVENT " + channel + " : " + msg.getId(), e);
 					}
 				}
-				onMessage(channel, topicMessageQueue);
+				onMessage(channel, topicMessageQueue, msgId);
 			}
 
 		});
@@ -227,29 +241,49 @@ public class TunnelSubscriberFactory {
 	public <M> void addAuditListener(String topic, RedissonClient redisson, ITunnelSubscriber<M> listener,
 			boolean integrity, String listentName) {
 		RTopic<String> topicQueue = redisson.getTopic(TunnelEventXchange.AUDIT.getTopic(topic));
+		LOGGER.info("Subscription on Topic : {}", TunnelEventXchange.AUDIT.getTopic(topic));
 		topicQueue.addListener(new MessageListener<String>() {
 			@Override
 			public void onMessage(String channel, String msgId) {
+				if (ArgUtil.isEmpty(msgId)) {
+					LOGGER.warn("NULL msgId Rcvd for EVENT " + channel + " : ");
+				}
 				RQueue<TunnelMessage<M>> topicMessageQueue = redisson
 						.getQueue(TunnelEventXchange.AUDIT.getQueue(topic));
-				onMessage(channel, topicMessageQueue);
+				onMessage(channel, topicMessageQueue, msgId);
 			}
 
-			private void onMessage(String channel, RQueue<TunnelMessage<M>> topicMessageQueue) {
-				TunnelMessage<M> msg = topicMessageQueue.poll();
+			private void onMessage(String channel, RQueue<TunnelMessage<M>> topicMessageQueue, String msgId) {
+				TunnelMessage<M> msg = pollSafely(channel, topicMessageQueue, msgId);
+
 				if (msg != null) {
 					AppContext context = msg.getContext();
 					AppContextUtil.setContext(context);
 					AppContextUtil.init();
 					try {
-						listener.onMessage(channel, msg.getData());
+						if (ArgUtil.isEmpty(msg.getData())) {
+							LOGGER.warn("NULL Event Rcvd for EVENT " + channel + " : ");
+						} else {
+							listener.onMessage(channel, msg.getData());
+						}
 					} catch (Exception e) {
-						LOGGER.error("EXCEPTION EVENT " + channel + " : " + msg.getId(), e);
+						LOGGER.error("EXCEPTION in EVENT " + channel + " : " + msg.getId(), e);
 					}
-					onMessage(channel, topicMessageQueue);
+					onMessage(channel, topicMessageQueue, msgId);
 				}
 			}
+
 		});
+	}
+
+	private <M> TunnelMessage<M> pollSafely(String channel, RQueue<TunnelMessage<M>> topicMessageQueue, String msgId) {
+		TunnelMessage<M> msg = null;
+		try {
+			msg = topicMessageQueue.poll();
+		} catch (Exception e) {
+			LOGGER.error("EXCEPTION in EVENT_POLL " + channel + " msg id : " + msgId, e);
+		}
+		return msg;
 	}
 
 }

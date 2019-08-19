@@ -53,21 +53,21 @@ public class PaymentService {
 			LOGGER.info("response captured from knet is "+resp);
 			LOGGER.info("response captured from knet value is "+resp.getResult());
 			PaymentResponseDto capturedDtonew = resp.getResult();
-			LOGGER.info("PaymentResponseDto values -- CollectionDocumentCode : "
+			/*LOGGER.info("PaymentResponseDto values -- CollectionDocumentCode : "
 					+ capturedDtonew.getCollectionDocumentCode() + " CollectionDocumentNumber : "
 					+ capturedDtonew.getCollectionDocumentNumber() + " CollectionFinanceYear : "
-					+ capturedDtonew.getCollectionFinanceYear());
+					+ capturedDtonew.getCollectionFinanceYear());*/
 
 			if (resp.getResult() != null) {
 				PaymentResponseDto capturedDto = resp.getResult();
-				LOGGER.info("PaymentResponseDto values -- CollectionDocumentCode : "
+				/*LOGGER.info("PaymentResponseDto values -- CollectionDocumentCode : "
 						+ capturedDto.getCollectionDocumentCode() + " CollectionDocumentNumber : "
 						+ capturedDto.getCollectionDocumentNumber() + " CollectionFinanceYear : "
 						+ capturedDto.getCollectionFinanceYear());
 
 				payGServiceResponse.setCollectionDocumentCode(capturedDto.getCollectionDocumentCode());
 				payGServiceResponse.setCollectionDocumentNumber(capturedDto.getCollectionDocumentNumber());
-				payGServiceResponse.setCollectionFinanceYear(capturedDto.getCollectionFinanceYear());
+				payGServiceResponse.setCollectionFinanceYear(capturedDto.getCollectionFinanceYear());*/
 
 				return resp.getResult();
 			}
@@ -97,6 +97,8 @@ public class PaymentService {
 			metaInfo.setCountryId(paymentResponseDto.getApplicationCountryId());
 			metaInfo.setCustomerId(paymentResponseDto.getCustomerId());
 			headers.add(AppConstants.META_XKEY, new ObjectMapper().writeValueAsString(metaInfo));
+			LOGGER.info("amount in params :"+params.getAmount());
+			paymentResponseDto.setAmount(params.getAmount());
 
 			if (ArgUtil.isEmpty(params.getProduct())) {
 				return restService.ajax(appConfig.getJaxURL() + "/remit/save-remittance/")
