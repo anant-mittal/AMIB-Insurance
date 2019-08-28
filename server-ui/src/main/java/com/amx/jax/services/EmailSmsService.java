@@ -981,7 +981,7 @@ public class EmailSmsService
 		
 			Email email = new Email();
 			email.setTo(emailTo);
-			email.setSubject(iAmxLocale.email_cust_compile_request_msg());
+			email.setSubject(iAmxLocale.email_amib_claim_info(claimDetails.getInsCompanyDesc()));
 			email.setModel(wrapper);
 			email.setITemplate(TemplatesIB.CLAIM_INFO_AMIB);
 			email.setHtml(true);

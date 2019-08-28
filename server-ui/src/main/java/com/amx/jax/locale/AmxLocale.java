@@ -163,6 +163,26 @@ public class AmxLocale implements IAmxLocale
 		}
 		return "Al Mulla Insurance Brokerage Payment Success";
 	}
+
+
+	@Override
+	public String email_amib_claim_info(String insCompName) {
+		// TODO Auto-generated method stub
+		
+		String finalString;
+
+		if(getLanguage().equals(Language.AR))
+		{
+			finalString="ادارة الحوادث"+insCompName+"يقوم العميل بالاتصال";
+			return "الملا للوساطة في التأمين  الدفع الناجح ";     
+		}
+		finalString="Customer Call to" +insCompName+"Claims Department";
+		
+		return finalString;
+	}
+
+
+	
 	
 	//Test
 }
