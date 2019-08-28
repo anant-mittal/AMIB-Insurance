@@ -159,7 +159,7 @@ public class MyPolicyController {
 	}
 	
 	@ApiOperation(value = "send email to the claim dept" , notes = "send email to the claim dept")
-	@RequestMapping(value = "/api/mypolicy/send-claim", method = RequestMethod.POST)
+	@RequestMapping(value = "/api/mypolicy/send-claimInfo", method = RequestMethod.POST)
 	public AmxApiResponse<BoolRespModel, Object>sendClaimNotification(@RequestBody ClaimDetails claimDetails) {
 		BoolRespModel emailResponse=myPolicyService.sendClaimNotification(claimDetails);
 		return  AmxApiResponse.build(emailResponse);
