@@ -811,8 +811,10 @@ public class RequestQuoteDao
 			
 			if (Constants.NEWCAR.equalsIgnoreCase(vehicleConditionCode)) {
 				for (i=0;i<imageMetaInfoArray.size();i++) {
+					logger.info("Vehicle cond code is "+imageMetaInfoArray.get(i).getDocTypeCode());
 					if (imageMetaInfoArray.get(i).getDisplayVehicleCond().equalsIgnoreCase(Constants.DISPLAY_VEHICLE_USED)) {
 						imageMetaInfoArray.remove(i);
+						i=-1;
 
 					}
 				}

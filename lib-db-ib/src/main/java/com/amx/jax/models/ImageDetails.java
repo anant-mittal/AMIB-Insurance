@@ -96,7 +96,10 @@ public class ImageDetails
 	public String toString() {
 		return "ImageDetails [docTypeCode=" + docTypeCode + ", docTypeDesc=" + docTypeDesc + ", docSeqNumber="
 				+ docSeqNumber + ", imageSubmittedDate=" + imageSubmittedDate + ", isImageMandatory=" + isImageMandatory
-				+ ", displayOrder=" + displayOrder + ", status=" + status + "]";
+				+ ", displayOrder=" + displayOrder + ", status=" + status + ", displayVehicleCond=" + displayVehicleCond
+				+ "]";
 	}
+
+	
 	
 }
