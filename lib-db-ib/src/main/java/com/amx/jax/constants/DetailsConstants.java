@@ -97,6 +97,12 @@ public class DetailsConstants
 	
 	public static String QUOTE_SEQ_NUM = "quoteSeqNumber";
 	
+	public static String POLICY_NO = "policyNo";
+
+	public static String CLAIM_PHONE_NO = "claimPhoneNo";
+	
+	public static String INS_COMP_NAME = "insCompName";
+
 	/******************************PG RECEIPT CONSTANTS***************************/
 	
 	public static String applicationId = "applicationId";

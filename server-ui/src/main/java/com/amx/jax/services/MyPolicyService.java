@@ -9,14 +9,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import com.amx.jax.WebAppStatus.WebAppStatusCodes;
 import com.amx.jax.api.AmxApiResponse;
+import com.amx.jax.api.BoolRespModel;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.dao.MyPolicyDao;
 import com.amx.jax.models.ActivePolicyModel;
 import com.amx.jax.models.ArrayResponseModel;
+import com.amx.jax.models.ClaimDetails;
 import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.InsuranceClaimDetails;
 import com.amx.jax.models.PersonalDetails;
@@ -39,6 +42,10 @@ public class MyPolicyService {
 
 	@Autowired
 	public RequestQuoteService requestQuoteService;
+	
+	@Autowired
+	private EmailSmsService emailSmsService;
+
 
 	public AmxApiResponse<ActivePolicyModel, Object> getUserActivePolicy() {
 		AmxApiResponse<ActivePolicyModel, Object> resp = new AmxApiResponse<ActivePolicyModel, Object>();
@@ -209,6 +216,13 @@ public class MyPolicyService {
 		}
 		return arrayResponseModel;
 	}
+	public BoolRespModel sendClaimNotification(ClaimDetails claimDetails)
+	{
+		 Boolean emailResp=emailSmsService.claimDetailsEmailToAmib(claimDetails);
+		 if(emailResp == true)
+			 return new BoolRespModel(Boolean.TRUE);
+			 else
+		    return new BoolRespModel(Boolean.FALSE);
+	}
 
-	
 }

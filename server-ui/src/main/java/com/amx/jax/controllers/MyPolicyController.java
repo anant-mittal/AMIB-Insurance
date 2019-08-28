@@ -8,18 +8,23 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.amx.jax.WebAppStatus.ApiWebAppStatus;
 import com.amx.jax.WebAppStatus.WebAppStatusCodes;
 import com.amx.jax.api.AmxApiResponse;
+import com.amx.jax.api.BoolRespModel;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.ActivePolicyModel;
 import com.amx.jax.models.ArrayResponseModel;
+import com.amx.jax.models.ClaimDetails;
+import com.amx.jax.models.CustomerLoginRequest;
 import com.amx.jax.models.InsuranceClaimDetails;
 import com.amx.jax.models.PolicyReceiptDetails;
 import com.amx.jax.postman.PostManService;
@@ -152,5 +157,14 @@ public class MyPolicyController {
 		}
 		return null;
 	}
+	
+	@ApiOperation(value = "send email to the claim dept" , notes = "send email to the claim dept")
+	@RequestMapping(value = "/api/mypolicy/send-claim", method = RequestMethod.POST)
+	public AmxApiResponse<BoolRespModel, Object>sendClaimNotification(@RequestBody ClaimDetails claimDetails) {
+		BoolRespModel emailResponse=myPolicyService.sendClaimNotification(claimDetails);
+		return  AmxApiResponse.build(emailResponse);
+
+	}
+	
 	
 }
