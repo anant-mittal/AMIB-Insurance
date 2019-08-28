@@ -173,10 +173,10 @@ public class AmxLocale implements IAmxLocale
 
 		if(getLanguage().equals(Language.AR))
 		{
-			finalString="ادارة الحوادث"+insCompName+"يقوم العميل بالاتصال";
+			finalString="ادارة الحوادث"+" "+insCompName+" "+"يقوم العميل بالاتصال";
 			return "الملا للوساطة في التأمين  الدفع الناجح ";     
 		}
-		finalString="Customer Call to" +insCompName+"Claims Department";
+		finalString="Customer Call to " +insCompName+ " Claims Department ";
 		
 		return finalString;
 	}
