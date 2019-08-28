@@ -176,10 +176,32 @@ public class AmxLocale implements IAmxLocale
 			finalString="ادارة الحوادث"+" "+insCompName+" "+"يقوم العميل بالاتصال";
 			return "الملا للوساطة في التأمين  الدفع الناجح ";     
 		}
-		finalString="Customer Call to " +insCompName+ " Claims Department ";
+		finalString="Customer Call to " +toCamelCase(insCompName)+ " Claims Department ";
 		
 		return finalString;
 	}
+	
+	public static String toCamelCase(String inputString) {
+	       String result = "";
+	       if (inputString.length() == 0) {
+	           return result;
+	       }
+	       char firstChar = inputString.charAt(0);
+	       char firstCharToUpperCase = Character.toUpperCase(firstChar);
+	       result = result + firstCharToUpperCase;
+	       for (int i = 1; i < inputString.length(); i++) {
+	           char currentChar = inputString.charAt(i);
+	           char previousChar = inputString.charAt(i - 1);
+	           if (previousChar == ' ') {
+	               char currentCharToUpperCase = Character.toUpperCase(currentChar);
+	               result = result + currentCharToUpperCase;
+	           } else {
+	               char currentCharToLowerCase = Character.toLowerCase(currentChar);
+	               result = result + currentCharToLowerCase;
+	           }
+	       }
+	       return result;
+	   }
 
 
 	
