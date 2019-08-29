@@ -165,6 +165,12 @@ public class MyPolicyController {
 		return  AmxApiResponse.build(emailResponse);
 
 	}
+	@ApiOperation(value = "returns the list of claim policy of the customer" , notes = "based on customer_sequence_number which you get from user details will return list of policy details, here customer sequence number is taken from session so no need to send it in api.")
+	@RequestMapping(value = "/api/mypolicy/get-claimPolicy", method = RequestMethod.POST)
+	public AmxApiResponse<ActivePolicyModel, Object> getClaimDetailsPolicy() {
+		return myPolicyService.getClaimPolicyDetails();
+	}
+	
 	
 	
 }
