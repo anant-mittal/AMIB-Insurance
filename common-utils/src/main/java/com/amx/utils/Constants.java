@@ -121,4 +121,10 @@ public class Constants {
 	
 	public static final String NEW_KNET_NOTCAPTURED = "NOT+CAPTURED";
 	public static final String NEW_KNET_MODIFIED_RESPONSE = "NOT CAPTURED";
+	
+	// Insurance image constants
+	
+	public static final String NEWCAR = "N";
+	public static final String DISPLAY_VEHICLE_USED = "U";
+	public static final String DISPLAY_VEHICLE_NEW = "N";
 }

@@ -34,4 +34,6 @@ public interface IAmxLocale
 	
 	public String email_cust_success_payment_subject();
 	
+	public String email_amib_claim_info(String insCompName);
+	
 }

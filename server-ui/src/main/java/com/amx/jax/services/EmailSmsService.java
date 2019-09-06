@@ -24,11 +24,13 @@ import com.amx.jax.dict.Language;
 import com.amx.jax.locale.IAmxLocale;
 import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.ArrayResponseModel;
+import com.amx.jax.models.ClaimDetails;
 import com.amx.jax.models.CustomerDetailModel;
 import com.amx.jax.models.PaymentStatus;
 import com.amx.jax.models.RequestOtpModel;
 import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.models.ResponseOtpModel;
+import com.amx.jax.postman.PostManException;
 import com.amx.jax.postman.PostManService;
 import com.amx.jax.postman.client.PostManClient;
 import com.amx.jax.postman.model.Email;
@@ -950,7 +952,48 @@ public class EmailSmsService
 	}
 	
 	
-	
+	/************* EMAIL TO AMIB FOR CLAIM **********/
+	public Boolean claimDetailsEmailToAmib(ClaimDetails claimDetails)
+	{
+		
+		try {
+			String customerEmailId = userSession.getCustomerEmailId();
+			String customerMobileNumber = userSession.getCustomerMobileNumber();
+			String amibEmailId = metaService.getTenantProfile().getContactUsEmail();
+			String civilId = userSession.getCivilId();
+
+			Map<String, Object> wrapper = new HashMap<String, Object>();
+			Map<String, Object> model = new HashMap<String, Object>();
+			model.put(DetailsConstants.CUSTOMER_NAME, customerName());
+			model.put(DetailsConstants.CONTACT_US_EMAIL, metaService.getTenantProfile().getContactUsEmail());
+			model.put(DetailsConstants.AMIB_WEBSITE_LINK, metaService.getTenantProfile().getAmibWebsiteLink());
+			model.put(DetailsConstants.CONTACT_US_EMAIL, metaService.getTenantProfile().getContactUsEmail());
+			model.put(DetailsConstants.COMPANY_NAME, getCompanyName());
+			model.put(DetailsConstants.COUNTRY_NAME, iAmxLocale.getCountry());
+			model.put(DetailsConstants.POLICY_NO, claimDetails.getPolicyNo());
+			model.put(DetailsConstants.CLAIM_PHONE_NO, claimDetails.getClaimPhoneNo());
+			model.put(DetailsConstants.INS_COMP_NAME, claimDetails.getInsCompanyDesc());
+			wrapper.put("data", model);
+		
+		
+			ArrayList<String> emailTo = new ArrayList<String>();
+			emailTo.add(amibEmailId);
+		
+			Email email = new Email();
+			email.setTo(emailTo);
+			email.setSubject(iAmxLocale.email_amib_claim_info(claimDetails.getInsCompanyDesc()));
+			email.setModel(wrapper);
+			email.setITemplate(TemplatesIB.CLAIM_INFO_AMIB);
+			email.setHtml(true);
+			email.setLang(iAmxLocale.getLanguage());//TODO : LANGUAGE IS PASSED HARD CODED HERE NEED TO CONFIGURE
+			postManClient.sendEmail(email);
+			return true;
+		}catch(PostManException e) {
+			return false;
+		}
+
+
+	}
 	
 	
 	

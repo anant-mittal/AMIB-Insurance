@@ -3,6 +3,7 @@ package com.amx.jax.services;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -346,6 +347,9 @@ public class RequestQuoteService
 		try
 		{
 			IncompleteApplModel incompleteApplModel = requestQuoteDao.getIncompleteApplication(userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber());
+			
+			
+			
 			if(incompleteApplModel.getErrorCode() != null)
 			{
 				resp.setMessageKey(incompleteApplModel.getErrorCode());
@@ -393,6 +397,9 @@ public class RequestQuoteService
 			}
 
 			AmxApiResponse<?, Object> respImageDetails = getImageDetails(appSeqNumber);
+			
+			
+			
 			if (!respImageDetails.getStatusKey().equalsIgnoreCase(ApiConstants.SUCCESS))
 			{
 				return respImageDetails;
@@ -424,7 +431,7 @@ public class RequestQuoteService
 		return resp;
 	}
 
-	public AmxApiResponse<?, Object> getAppVehicleDetails(BigDecimal appSeqNumber)
+	public AmxApiResponse<VehicleDetails, Object> getAppVehicleDetails(BigDecimal appSeqNumber)
 	{
 		AmxApiResponse<VehicleDetails, Object> resp = new AmxApiResponse<VehicleDetails, Object>();
 		VehicleDetails vehicleDetails = new VehicleDetails();
@@ -726,9 +733,20 @@ public class RequestQuoteService
 	public AmxApiResponse<?, Object> getImageDetails(BigDecimal appSeqNumber)
 	{
 		AmxApiResponse<?, Object> resp = new AmxApiResponse<Object, Object>();
+		ArrayResponseModel arrayResponseModel =null;
 		try
 		{
-			ArrayResponseModel arrayResponseModel = requestQuoteDao.getImageDetails(appSeqNumber, userSession.getLanguageId());
+			
+			
+			AmxApiResponse<VehicleDetails, Object> respVehicleDetails = getAppVehicleDetails(appSeqNumber);
+			IncompleteApplModel incompleteApplModel = requestQuoteDao.getIncompleteApplication(userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber());
+			if(incompleteApplModel!=null) {
+				arrayResponseModel = requestQuoteDao.getImageDetails(appSeqNumber, userSession.getLanguageId(),respVehicleDetails.getData().getVehicleConditionCode());
+			}else {
+				arrayResponseModel = requestQuoteDao.getImageDetails(appSeqNumber, userSession.getLanguageId(),null);
+			}
+			
+			
 			if (null == arrayResponseModel.getErrorCode())
 			{
 				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
