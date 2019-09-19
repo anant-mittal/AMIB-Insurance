@@ -127,4 +127,11 @@ public class Constants {
 	public static final String NEWCAR = "N";
 	public static final String DISPLAY_VEHICLE_USED = "U";
 	public static final String DISPLAY_VEHICLE_NEW = "N";
+	
+	// Insurance Payment Link Status
+	
+	public static final String PAYMENT_LINK_INVALID = "D";
+	public static final String PAYMENT_LINK_EXPIRED = "E";
+	public static final String PAYMENT_LINK_PAID = "P";
+	public static final String PAYMENT_LINK_ACTIVE = "Y";
 }

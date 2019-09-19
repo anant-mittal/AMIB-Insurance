@@ -11,6 +11,16 @@ public class CustomizeQuoteModel
 	ArrayList<QuoteAddPolicyDetails> quoteAddPolicyDetails;
 
 	private TotalPremium totalPremium;
+	
+	private String paymentLinkStatus;
+
+	public String getPaymentLinkStatus() {
+		return paymentLinkStatus;
+	}
+
+	public void setPaymentLinkStatus(String paymentLinkStatus) {
+		this.paymentLinkStatus = paymentLinkStatus;
+	}
 
 	public QuotationDetails getQuotationDetails()
 	{

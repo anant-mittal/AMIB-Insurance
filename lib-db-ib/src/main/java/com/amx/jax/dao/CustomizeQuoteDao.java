@@ -5,6 +5,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.TreeMap;
@@ -14,14 +15,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
+import com.amx.jax.dbmodel.PaymentLinkModel;
 import com.amx.jax.meta.IMetaService;
 import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CustomizeQuoteAddPol;
+import com.amx.jax.models.CustomizeQuoteModel;
 import com.amx.jax.models.CustomizeQuoteSave;
 import com.amx.jax.models.QuoteAddPolicyDetails;
 import com.amx.jax.models.ReplacementTypeList;
 import com.amx.jax.models.TermsCondition;
+import com.amx.jax.repository.IPaymentLinkRepository;
 import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.utility.Utility;
 
@@ -39,6 +44,10 @@ public class CustomizeQuoteDao
 
 	@Autowired
 	IMetaService metaService;
+	
+	@Autowired
+	IPaymentLinkRepository iPaymentLinkRepository;
+	
 
 	Connection connection;
 
@@ -330,6 +339,11 @@ public class CustomizeQuoteDao
 		}
 		return validate;
 	}
+	
+	
+		
+		
+	
 
 	private Connection getConnection()
 	{

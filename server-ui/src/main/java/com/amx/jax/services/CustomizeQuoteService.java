@@ -33,6 +33,7 @@ import com.amx.jax.models.TotalPremium;
 import com.amx.jax.payg.PayGParams;
 import com.amx.jax.payg.PayGService;
 import com.amx.jax.payg.Payment;
+import com.amx.jax.paymentlink.dao.PaymentLinkDao;
 import com.amx.jax.ui.session.UserSession;
 import com.amx.jax.utility.CalculateUtility;
 import com.amx.jax.utility.Utility;
@@ -60,9 +61,13 @@ public class CustomizeQuoteService
 	@Autowired
 	PayMentService payMentService;
 	
-	public AmxApiResponse<?, Object> getCustomizedQuoteDetails(BigDecimal quoteSeqNumber)
+	@Autowired
+	PaymentLinkDao paymentLinkDao;
+	
+	public AmxApiResponse<CustomizeQuoteModel, Object> getCustomizedQuoteDetails(BigDecimal quoteSeqNumber)
 	{
 		boolean quoteAvailableToCustomer = false;
+		BigDecimal custId = userSession.getCustomerSequenceNumber();
 		
 		AmxApiResponse<CustomizeQuoteModel, Object> resp = new AmxApiResponse<CustomizeQuoteModel, Object>();
 		CustomizeQuoteModel customizeQuoteModel = new CustomizeQuoteModel();
@@ -84,11 +89,13 @@ public class CustomizeQuoteService
 					MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
 					if (null != quoteSeqNumber && !quoteSeqNumber.toString().equals("") && !myQuoteModelFromDb.getPaymentProcessError().equalsIgnoreCase("Y"))
 					{
+						logger.info("Quote seq no "+myQuoteModelFromDb.getQuoteSeqNumber());
 						if (null != myQuoteModelFromDb.getQuoteSeqNumber() && myQuoteModelFromDb.getQuoteSeqNumber().equals(quoteSeqNumber))
 						{
 							myQuoteModel = myQuoteModelFromDb;
 							customizeQuoteInfo.setQuoteSeqNumber(quoteSeqNumber);
 							quoteAvailableToCustomer = true;
+							logger.info("flag is true");
 						}
 					}
 				}
@@ -528,5 +535,11 @@ public class CustomizeQuoteService
 			e.printStackTrace();
 		}
 		return resp;
+	}
+	
+	public CustomizeQuoteModel validatePaymentLink(BigDecimal linkId , String verifyCode, BigDecimal languageId){
+		CustomizeQuoteModel customizeQuoteModel = paymentLinkDao.validatePaymentLink(linkId, verifyCode,languageId);
+		return customizeQuoteModel;
+		
 	}
 }

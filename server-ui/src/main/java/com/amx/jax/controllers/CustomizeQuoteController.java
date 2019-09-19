@@ -115,8 +115,6 @@ public class CustomizeQuoteController {
 
 	@ApiOperation(value = "submits payment info to server", notes = "this api is not going to be consumed by ui end. this is internal called api for payment gateway")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
-	// @RequestMapping(value = "/remit/save-remittance", method = {
-	// RequestMethod.POST })
 	@RequestMapping(value = "/callback/payg/payment/capture", method = { RequestMethod.POST })
 	public PaymentResponseDto onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse) {
 		try {
@@ -260,6 +258,16 @@ public class CustomizeQuoteController {
 		}
 		return null;
 	}
+	
+	
+	@ApiOperation(value = "Validate payment link")
+	@ApiWebAppStatus({WebAppStatusCodes.SUCCESS , WebAppStatusCodes.TECHNICAL_ERROR})
+	@RequestMapping(value="/pub/payment-validatelink", method= {RequestMethod.POST})
+	public AmxApiResponse<CustomizeQuoteModel, Object> validatePaymentLink(@RequestParam BigDecimal linkId, @RequestParam String verifyCode, @RequestParam BigDecimal languageId){
+		CustomizeQuoteModel customizeQuoteModel = customizeQuoteService.validatePaymentLink(linkId,verifyCode,languageId);
+		return AmxApiResponse.build(customizeQuoteModel);
+		
+	}
 
 	private void setMetaData() {
 
@@ -274,4 +282,6 @@ public class CustomizeQuoteController {
 		 * customerRegistrationService.getCompanySetUp(); }
 		 */
 	}
+	
+	
 }
