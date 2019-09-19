@@ -143,17 +143,19 @@ public class PayMentDao
 			logger.info(TAG + " updatePaymentDetals :: Error Code :" + callableStatement.getString(14));
 			logger.info(TAG + " updatePaymentDetals :: Error Msg  :" + callableStatement.getString(15));
 			
-			OnlinePaymentModel onlinePaymentModel = iOnlinePaymentRepository.findByPaySeqNo(insertPaymentDetails.getPaySeqNum());
-			if(onlinePaymentModel.getResultCode().equals("CAPTURED")) {
-				PaymentLinkModel paymentLinkModel = iPaymentLinkRepository.findByQuoteSeqNo(onlinePaymentModel.getQuoteSeqNo());
-				if(!ArgUtil.isEmpty(paymentLinkModel)) {
-					paymentLinkModel.setPaymentDate(new Date());
-					paymentLinkModel.setIsActive(Constants.PAYMENT_LINK_PAID);
-					iPaymentLinkRepository.save(paymentLinkModel);
-				}
-			}
 			
 			// If payment done through PaymentLink
+			OnlinePaymentModel onlinePaymentModel = iOnlinePaymentRepository
+					.findByPaySeqNo(insertPaymentDetails.getPaySeqNum());
+			PaymentLinkModel paymentLinkModel = iPaymentLinkRepository
+					.findByQuoteSeqNo(onlinePaymentModel.getQuoteSeqNo());
+			if (!ArgUtil.isEmpty(paymentLinkModel)) {
+				if ("CAPTURED".equals(onlinePaymentModel.getResultCode())) {
+					paymentLinkModel.setPaymentDate(new Date());
+					iPaymentLinkRepository.save(paymentLinkModel);
+				} 
+
+			} 
 			
 			
 			
