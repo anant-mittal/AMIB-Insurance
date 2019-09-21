@@ -87,6 +87,7 @@ public class CustomizeQuoteService
 				for (int i = 0; i < getUserQuote.size(); i++)
 				{
 					MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
+					logger.info("Quote seq no is ",myQuoteModelFromDb.getQuoteSeqNumber());
 					if (null != quoteSeqNumber && !quoteSeqNumber.toString().equals("") && !myQuoteModelFromDb.getPaymentProcessError().equalsIgnoreCase("Y"))
 					{
 						logger.info("Quote seq no "+myQuoteModelFromDb.getQuoteSeqNumber());
@@ -537,8 +538,8 @@ public class CustomizeQuoteService
 		return resp;
 	}
 	
-	public CustomizeQuoteModel validatePaymentLink(BigDecimal linkId , String verifyCode, BigDecimal languageId){
-		CustomizeQuoteModel customizeQuoteModel = paymentLinkDao.validatePaymentLink(linkId, verifyCode,languageId);
+	public CustomizeQuoteModel validatePaymentLink(BigDecimal linkId , String verifyCode, BigDecimal languageId,HttpServletRequest request){
+		CustomizeQuoteModel customizeQuoteModel = paymentLinkDao.validatePaymentLink(linkId, verifyCode,languageId,request);
 		return customizeQuoteModel;
 		
 	}

@@ -40,6 +40,7 @@ import com.amx.jax.ui.session.UserSession;
 import com.amx.jax.utility.Utility;
 import com.amx.utils.ArgUtil;
 import com.amx.utils.Constants;
+import com.amx.utils.JsonUtil;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -120,7 +121,7 @@ public class CustomizeQuoteController {
 		try {
 			setMetaData();
 
-			logger.info(" onPaymentCallbackNew :: paymentResponse :" + paymentResponse.toString());
+			logger.info(" onPaymentCallbackNew :: paymentResponse :" + JsonUtil.toJson(paymentResponse));
 
 			PaymentDetails paymentDetails = new PaymentDetails();
 			paymentDetails.setPaymentId(paymentResponse.getPaymentId());
@@ -263,8 +264,8 @@ public class CustomizeQuoteController {
 	@ApiOperation(value = "Validate payment link")
 	@ApiWebAppStatus({WebAppStatusCodes.SUCCESS , WebAppStatusCodes.TECHNICAL_ERROR})
 	@RequestMapping(value="/pub/payment-validatelink", method= {RequestMethod.POST})
-	public AmxApiResponse<CustomizeQuoteModel, Object> validatePaymentLink(@RequestParam BigDecimal linkId, @RequestParam String verifyCode, @RequestParam BigDecimal languageId){
-		CustomizeQuoteModel customizeQuoteModel = customizeQuoteService.validatePaymentLink(linkId,verifyCode,languageId);
+	public AmxApiResponse<CustomizeQuoteModel, Object> validatePaymentLink(@RequestParam BigDecimal linkId, @RequestParam String verifyCode, @RequestParam BigDecimal languageId,HttpServletRequest request){
+		CustomizeQuoteModel customizeQuoteModel = customizeQuoteService.validatePaymentLink(linkId,verifyCode,languageId,request);
 		return AmxApiResponse.build(customizeQuoteModel);
 		
 	}

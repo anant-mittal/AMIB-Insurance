@@ -9,4 +9,5 @@ import com.amx.jax.dbmodel.OnlinePaymentModel;
 
 public interface IOnlinePaymentRepository extends CrudRepository<OnlinePaymentModel, Serializable>{
 		OnlinePaymentModel findByPaySeqNo(BigDecimal paySeqNo);
+		OnlinePaymentModel findByQuoteSeqNo(BigDecimal quoteSeqNo);
 }
