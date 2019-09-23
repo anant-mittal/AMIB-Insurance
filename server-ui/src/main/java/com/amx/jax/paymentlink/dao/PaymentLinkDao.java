@@ -2,6 +2,7 @@ package com.amx.jax.paymentlink.dao;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
@@ -68,8 +69,6 @@ public class PaymentLinkDao {
 		userSession.setCivilId(customerModel.getIdNo());
 		userSession.setLanguageId(languageId);
 
-		
-
 		AmxApiResponse<CustomizeQuoteModel, Object> customizeQuoteDetails = customizeQuoteService
 				.getCustomizedQuoteDetails(paymentLinkModel.getQuoteSeqNo());
 
@@ -80,38 +79,45 @@ public class PaymentLinkDao {
 				linkId);
 		// First parameter is function output parameter type.
 		String verifyHashCode = jdbcCall.executeFunction(String.class, paramMap);
-		BigDecimal totalQuoteAmount =new BigDecimal(0);
-		if(customizeQuoteDetails.getData()!=null) {
-			 totalQuoteAmount = customizeQuoteDetails.getData().getTotalPremium().getTotalAmount();
+		BigDecimal totalQuoteAmount = new BigDecimal(0);
+		if (customizeQuoteDetails.getData() != null) {
+			totalQuoteAmount = customizeQuoteDetails.getData().getTotalPremium().getTotalAmount();
 		}
-		
-		
+
 		Date now = new Date();
 		Date linkDate = paymentLinkModel.getLinkDate();
 		long diffInMilli = Math.abs(now.getTime() - linkDate.getTime());
 		long diffInDays = TimeUnit.DAYS.convert(diffInMilli, TimeUnit.MILLISECONDS);
-		
+		AmxApiResponse<PaymentStatus, Object> resp = null;
 
-		if (!(customizeQuoteDetails.getData()==null||(paymentLinkModel.getVerifyCode().equals(verifyHashCode)
+		if (!(customizeQuoteDetails.getData() == null || (paymentLinkModel.getVerifyCode().equals(verifyHashCode)
 				&& paymentLinkModel.getPaymentAmount().compareTo(totalQuoteAmount) == 0))) {
 			paymentLinkModel.setIsActive(Constants.PAYMENT_LINK_INVALID);
 			customizeQuoteModel.setPaymentLinkStatus(Constants.PAYMENT_LINK_INVALID);
-		}else if (paymentLinkModel.getPaymentDate() != null) {
+		} else if (paymentLinkModel.getPaymentDate() != null) {
 			paymentLinkModel.setIsActive(Constants.PAYMENT_LINK_PAID);
 			customizeQuoteModel.setPaymentLinkStatus(Constants.PAYMENT_LINK_PAID);
-			OnlinePaymentModel onlinePaymentModel = iOnlinePaymentRepository.findByQuoteSeqNo(paymentLinkModel.getQuoteSeqNo());
-			AmxApiResponse<PaymentStatus, Object> resp=payMentService.getPaymentStatus(onlinePaymentModel.getPaySeqNo());
-			customizeQuoteModel.setPaymentStatus(resp.getData());
+			List<OnlinePaymentModel> onlinePaymentModelList = iOnlinePaymentRepository
+					.findByQuoteSeqNo(paymentLinkModel.getQuoteSeqNo());
+			for (OnlinePaymentModel onlinePaymentModel : onlinePaymentModelList) {
+				if ("CAPTURED".equalsIgnoreCase(onlinePaymentModel.getResultCode())) {
+					resp = payMentService.getPaymentStatus(onlinePaymentModel.getPaySeqNo());
+				}
+			}
+			if (resp.getData() != null) {
+				customizeQuoteModel.setPaymentStatus(resp.getData());
+			}
+
 		} else if (diffInDays > 1) {
 			paymentLinkModel.setIsActive(Constants.PAYMENT_LINK_EXPIRED);
 			customizeQuoteModel.setPaymentLinkStatus(Constants.PAYMENT_LINK_EXPIRED);
-		}  else {
+		} else {
 			customizeQuoteModel.setPaymentLinkStatus(Constants.PAYMENT_LINK_ACTIVE);
 			customizeQuoteModel.setCustomizeQuoteInfo(customizeQuoteDetails.getData().getCustomizeQuoteInfo());
 			customizeQuoteModel.setQuotationDetails(customizeQuoteDetails.getData().getQuotationDetails());
 			customizeQuoteModel.setQuoteAddPolicyDetails(customizeQuoteDetails.getData().getQuoteAddPolicyDetails());
 			customizeQuoteModel.setTotalPremium(customizeQuoteDetails.getData().getTotalPremium());
-			AmxApiResponse<?, Object> response=customizeQuoteService.saveCustomizeQuote(customizeQuoteModel, request);
+			AmxApiResponse<?, Object> response = customizeQuoteService.saveCustomizeQuote(customizeQuoteModel, request);
 			customizeQuoteModel.setRedirectUrl(response.getRedirectUrl());
 		}
 		iPaymentLinkRepository.save(paymentLinkModel);
