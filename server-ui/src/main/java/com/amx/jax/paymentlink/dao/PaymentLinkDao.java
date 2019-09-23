@@ -102,6 +102,7 @@ public class PaymentLinkDao {
 			for (OnlinePaymentModel onlinePaymentModel : onlinePaymentModelList) {
 				if ("CAPTURED".equalsIgnoreCase(onlinePaymentModel.getResultCode())) {
 					resp = payMentService.getPaymentStatus(onlinePaymentModel.getPaySeqNo());
+					break;
 				}
 			}
 			if (resp.getData() != null) {
