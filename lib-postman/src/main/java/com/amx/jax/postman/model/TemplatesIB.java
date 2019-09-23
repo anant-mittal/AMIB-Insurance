@@ -22,6 +22,10 @@ public enum TemplatesIB implements ITemplate {
 	TRNX_RECEIPT("TransactionReceipt", PDFConverter.JASPER, "TransactionReceipt.json"),
 	POLICY_RECEIPT("PolicyReceipt", PDFConverter.JASPER, "PolicyReceipt.json"),
 	CONTACT_US("ContactForm"),
+	// Payment Link
+	PAYMENT_LINK("payment-link"),
+	PAYMENT_LINK_SMS("payment-link-sms"),
+
 	REMIT_RECEIPT_JASPER("TransactionReceipt_jasper", PDFConverter.JASPER, "TransactionReceipt.json");
 		
 	
