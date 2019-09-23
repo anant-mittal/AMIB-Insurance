@@ -1,6 +1,7 @@
 package com.amx.jax.task;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,10 +9,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.amx.jax.WebConfig;
+import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.dao.CustomerRegistrationDao;
+import com.amx.jax.dbmodel.OnlinePaymentModel;
+import com.amx.jax.dbmodel.PaymentLinkModel;
 import com.amx.jax.dict.AmibTunnelEvents;
 import com.amx.jax.dict.Language;
+import com.amx.jax.models.ArrayResponseModel;
+import com.amx.jax.models.CompanySetUp;
 import com.amx.jax.models.CustomerDetailModel;
 import com.amx.jax.postman.PostManService;
 import com.amx.jax.postman.client.PostManClient;
@@ -20,6 +27,8 @@ import com.amx.jax.postman.model.Email;
 import com.amx.jax.postman.model.PushMessage;
 import com.amx.jax.postman.model.SMS;
 import com.amx.jax.postman.model.TemplatesMX;
+import com.amx.jax.repository.IOnlinePaymentRepository;
+import com.amx.jax.repository.IPaymentLinkRepository;
 import com.amx.jax.tunnel.DBEvent;
 import com.amx.jax.tunnel.ITunnelSubscriber;
 import com.amx.jax.tunnel.TunnelEventMapping;
@@ -46,6 +55,13 @@ public class DirectLinkListener implements ITunnelSubscriber<DBEvent> {
 	
 	@Autowired
 	PushNotifyClient pushNotifyClient;
+	
+	@Autowired
+	IPaymentLinkRepository iPaymentLinkRepository;
+	
+	@Autowired
+	WebConfig webConfig;
+
 
 	private static final String LINK_ID = "LINK_ID";
 	private static final String QUOTE_ID = "QUOTE_ID";
@@ -67,7 +83,10 @@ public class DirectLinkListener implements ITunnelSubscriber<DBEvent> {
 		BigDecimal langId = ArgUtil.parseAsBigDecimal(message.getData().get(LANG_ID), new BigDecimal(0));
 		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(userSession.getCivilId(),
 				HardCodedValues.USER_TYPE, userSession.getUserSequenceNumber(), userSession.getLanguageId());
-
+		PaymentLinkModel paymentLinkModel = iPaymentLinkRepository.findOne(linkId);
+		ArrayResponseModel arrayResponseModel = customerRegistrationDao.getCompanySetUp(langId , webConfig.getAppCompCode());
+		ArrayList<CompanySetUp> getCompanySetUp = arrayResponseModel.getDataArray();
+		
 		logger.debug("Customer object is " + customerDetailModel.toString());
 		String emailId = customerDetailModel.getEmail();
 		String smsNo = customerDetailModel.getMobile();
@@ -84,14 +103,23 @@ public class DirectLinkListener implements ITunnelSubscriber<DBEvent> {
 		modelData.put("linkid", linkId);
 		modelData.put("code", code);
 		modelData.put("quoteid", quoteId);
+		modelData.put("linkDate", paymentLinkModel.getLinkDate());
+		modelData.put("amount", paymentLinkModel.getPaymentAmount());
+		modelData.put(DetailsConstants.COMPANY_NAME, getCompanySetUp.get(0).getCompanyName());
+		modelData.put(DetailsConstants.CONTACT_US_EMAIL, getCompanySetUp.get(0).getEmail());
+		modelData.put(DetailsConstants.CONTACT_US_MOBILE, getCompanySetUp.get(0).getHelpLineNumber());
+		modelData.put(DetailsConstants.AMIB_WEBSITE_LINK, getCompanySetUp.get(0).getWebSite());
+		
 		
 		Email email = new Email();
 		if ("2".equals(langId)) {
 			email.setLang(Language.AR);
 			modelData.put("languageid", Language.AR);
+			modelData.put(DetailsConstants.COUNTRY_NAME, "الكويت");
 		} else {
 			email.setLang(Language.EN);
 			modelData.put("languageid", Language.EN);
+			modelData.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
 		}
 		wrapper.put("data", modelData);
 		if (!ArgUtil.isEmpty(emailId)) {
