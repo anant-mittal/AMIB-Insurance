@@ -116,7 +116,16 @@ public class HomeController {
 		// model.addAttribute("fcmSenderId", fcmSenderId);
 		return "app";
 	}
-
+	@RequestMapping(value = { "/pub/app/**" }, method = { RequestMethod.GET })
+	public String defaultPubPage(Model model) {
+		model.addAttribute("lang", httpService.getLanguage());
+		model.addAttribute("applicationTitle", webConfig.getAppTitle());
+		model.addAttribute("cdnUrl", appConfig.getCdnURL());
+		model.addAttribute( getVersion());
+		/* model.addAttribute(AppConstants.DEVICE_ID_KEY, userDevice.getUserDevice().getFingerprint());
+		model.addAttribute("fcmSenderId", webAppConfig.getFcmSenderId()); */
+		return "pay";
+	}
 	@RequestMapping(value = "/login/**", method = { RequestMethod.GET, RequestMethod.POST }, headers = {
 			"Accept=application/json", "Accept=application/v0+json" })
 	@ResponseBody
