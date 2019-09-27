@@ -26,6 +26,7 @@ import com.amx.jax.postman.client.PushNotifyClient;
 import com.amx.jax.postman.model.Email;
 import com.amx.jax.postman.model.PushMessage;
 import com.amx.jax.postman.model.SMS;
+import com.amx.jax.postman.model.TemplatesIB;
 import com.amx.jax.postman.model.TemplatesMX;
 import com.amx.jax.repository.IOnlinePaymentRepository;
 import com.amx.jax.repository.IPaymentLinkRepository;
@@ -124,7 +125,7 @@ public class DirectLinkListener implements ITunnelSubscriber<DBEvent> {
 		wrapper.put("data", modelData);
 		if (!ArgUtil.isEmpty(emailId)) {
 			logger.debug("Json value of wrapper is " + JsonUtil.toJson(wrapper));
-			email.setITemplate(TemplatesMX.PAYMENT_LINK);
+			email.setITemplate(TemplatesIB.PAYMENT_LINK);
 			email.setModel(wrapper);
 			email.addTo(emailId);
 			email.setHtml(true);
@@ -141,20 +142,13 @@ public class DirectLinkListener implements ITunnelSubscriber<DBEvent> {
 				sms.setLang(Language.EN);
 				modelData.put("languageid", Language.EN);
 			}
-			sms.setITemplate(TemplatesMX.PAYMENT_LINK);
+			sms.setITemplate(TemplatesIB.PAYMENT_LINK_SMS);
 			sms.addTo(smsNo);
 			sms.setModel(wrapper);
 			postmanClient.sendSMS(sms);
 		}
 		
-		if(!ArgUtil.isEmpty(custId)) {
-			PushMessage pushMessage = new PushMessage();
-			pushMessage.setITemplate(TemplatesMX.PAYMENT_LINK);
-			pushMessage.setModel(wrapper);
-			pushMessage.addToUser(custId);
-			
-			pushNotifyClient.send(pushMessage);
-		}
+		
 	}
 	
 	
