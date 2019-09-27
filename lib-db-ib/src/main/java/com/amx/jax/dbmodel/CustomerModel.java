@@ -42,6 +42,15 @@ public class CustomerModel implements Serializable {
 	@Column(name="USER_SEQNO")
 	private BigDecimal userSeqNo;
 	
+	@Column(name="CUST_NAME")
+	private String customerName;
+	
+	public String getCustomerName() {
+		return customerName;
+	}
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
+	}
 	public BigDecimal getUserSeqNo() {
 		return userSeqNo;
 	}

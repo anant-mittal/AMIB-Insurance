@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.amx.jax.WebConfig;
 import com.amx.jax.constants.DetailsConstants;
-import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.dbmodel.CustomerModel;
 import com.amx.jax.dbmodel.PaymentLinkModel;
@@ -19,7 +18,6 @@ import com.amx.jax.dict.AmibTunnelEvents;
 import com.amx.jax.dict.Language;
 import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CompanySetUp;
-import com.amx.jax.models.CustomerDetailModel;
 import com.amx.jax.postman.PostManService;
 import com.amx.jax.postman.client.PostManClient;
 import com.amx.jax.postman.client.PushNotifyClient;
@@ -81,17 +79,11 @@ public class DirectLinkListener implements ITunnelSubscriber<DBEvent> {
 		BigDecimal langId = ArgUtil.parseAsBigDecimal(message.getData().get(LANG_ID), new BigDecimal(0));
 		PaymentLinkModel paymentLinkModel = iPaymentLinkRepository.findOne(linkId);
 		CustomerModel customerModel = iCustomerRepository.findByCustSeqNo(paymentLinkModel.getCustSeqNo());
-		
-		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(customerModel.getIdNo(),
-				HardCodedValues.USER_TYPE, customerModel.getUserSeqNo(), langId);
-		
 		ArrayResponseModel arrayResponseModel = customerRegistrationDao.getCompanySetUp(langId , webConfig.getAppCompCode());
 		ArrayList<CompanySetUp> getCompanySetUp = arrayResponseModel.getDataArray();
-		
-		logger.info("Customer object is " + customerDetailModel.toString());
-		String emailId = customerDetailModel.getEmail();
-		String smsNo = customerDetailModel.getMobile();
-		String custName = customerDetailModel.getUserName();
+		String emailId = customerModel.getEmail();
+		String smsNo = customerModel.getMobile();
+		String custName = customerModel.getCustomerName();
 
 		Map<String, Object> modelData = new HashMap<String, Object>();
 		Map<String, Object> wrapper = new HashMap<String, Object>();
