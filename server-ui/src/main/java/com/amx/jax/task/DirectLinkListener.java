@@ -13,7 +13,6 @@ import com.amx.jax.WebConfig;
 import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.dao.CustomerRegistrationDao;
-import com.amx.jax.dbmodel.OnlinePaymentModel;
 import com.amx.jax.dbmodel.PaymentLinkModel;
 import com.amx.jax.dict.AmibTunnelEvents;
 import com.amx.jax.dict.Language;
@@ -24,11 +23,8 @@ import com.amx.jax.postman.PostManService;
 import com.amx.jax.postman.client.PostManClient;
 import com.amx.jax.postman.client.PushNotifyClient;
 import com.amx.jax.postman.model.Email;
-import com.amx.jax.postman.model.PushMessage;
 import com.amx.jax.postman.model.SMS;
 import com.amx.jax.postman.model.TemplatesIB;
-import com.amx.jax.postman.model.TemplatesMX;
-import com.amx.jax.repository.IOnlinePaymentRepository;
 import com.amx.jax.repository.IPaymentLinkRepository;
 import com.amx.jax.tunnel.DBEvent;
 import com.amx.jax.tunnel.ITunnelSubscriber;
@@ -73,7 +69,7 @@ public class DirectLinkListener implements ITunnelSubscriber<DBEvent> {
 	@Override
 	public void onMessage(String channel, DBEvent message) {
 
-		logger.debug("======onMessage1==={} ====  {}", channel, JsonUtil.toJson(message));
+		logger.info("======onMessage1==={} ====  {}", channel, JsonUtil.toJson(message));
 
 		BigDecimal linkId = ArgUtil.parseAsBigDecimal(message.getData().get(LINK_ID), new BigDecimal(0));
 		BigDecimal quoteId =ArgUtil.parseAsBigDecimal(message.getData().get(QUOTE_ID), new BigDecimal(0));
@@ -88,7 +84,7 @@ public class DirectLinkListener implements ITunnelSubscriber<DBEvent> {
 		ArrayResponseModel arrayResponseModel = customerRegistrationDao.getCompanySetUp(langId , webConfig.getAppCompCode());
 		ArrayList<CompanySetUp> getCompanySetUp = arrayResponseModel.getDataArray();
 		
-		logger.debug("Customer object is " + customerDetailModel.toString());
+		logger.info("Customer object is " + customerDetailModel.toString());
 		String emailId = customerDetailModel.getEmail();
 		String smsNo = customerDetailModel.getMobile();
 		BigDecimal custId = customerDetailModel.getCustSequenceNumber();

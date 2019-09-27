@@ -5,6 +5,17 @@ import java.sql.Date;
 
 public class CustomerDetailModel
 {
+	@Override
+	public String toString() {
+		return "CustomerDetailModel [userType=" + userType + ", civilId=" + civilId + ", password=" + password
+				+ ", createdDeviceId=" + createdDeviceId + ", userSequenceNumber=" + userSequenceNumber
+				+ ", custSequenceNumber=" + custSequenceNumber + ", countryId=" + countryId + ", compCd=" + compCd
+				+ ", mobile=" + mobile + ", email=" + email + ", languageId=" + languageId + ", status=" + status
+				+ ", errorMessage=" + errorMessage + ", errorCode=" + errorCode + ", deviceType=" + deviceType
+				+ ", mobileVerify=" + mobileVerify + ", mailVerify=" + mailVerify + ", lastLogin=" + lastLogin
+				+ ", deviceId=" + deviceId + ", dbStatus=" + dbStatus + ", otp=" + otp + ", userName=" + userName + "]";
+	}
+
 	private String userType;
 
 	private String civilId;
