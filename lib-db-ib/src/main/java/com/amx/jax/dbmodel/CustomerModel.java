@@ -36,6 +36,24 @@ public class CustomerModel implements Serializable {
 	@Column(name="ID_NO")
 	private String idNo;
 	
+	@Column(name="MOBILE")
+	private String mobile;
+	
+	@Column(name="USER_SEQNO")
+	private BigDecimal userSeqNo;
+	
+	public BigDecimal getUserSeqNo() {
+		return userSeqNo;
+	}
+	public void setUserSeqNo(BigDecimal userSeqNo) {
+		this.userSeqNo = userSeqNo;
+	}
+	public String getMobile() {
+		return mobile;
+	}
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
 	public BigDecimal getCustSeqNo() {
 		return custSeqNo;
 	}

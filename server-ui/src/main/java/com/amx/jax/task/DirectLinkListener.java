@@ -13,6 +13,7 @@ import com.amx.jax.WebConfig;
 import com.amx.jax.constants.DetailsConstants;
 import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.dao.CustomerRegistrationDao;
+import com.amx.jax.dbmodel.CustomerModel;
 import com.amx.jax.dbmodel.PaymentLinkModel;
 import com.amx.jax.dict.AmibTunnelEvents;
 import com.amx.jax.dict.Language;
@@ -25,12 +26,12 @@ import com.amx.jax.postman.client.PushNotifyClient;
 import com.amx.jax.postman.model.Email;
 import com.amx.jax.postman.model.SMS;
 import com.amx.jax.postman.model.TemplatesIB;
+import com.amx.jax.repository.ICustomerRepository;
 import com.amx.jax.repository.IPaymentLinkRepository;
 import com.amx.jax.tunnel.DBEvent;
 import com.amx.jax.tunnel.ITunnelSubscriber;
 import com.amx.jax.tunnel.TunnelEventMapping;
 import com.amx.jax.tunnel.TunnelEventXchange;
-import com.amx.jax.ui.session.UserSession;
 import com.amx.utils.ArgUtil;
 import com.amx.utils.JsonUtil;
 
@@ -45,9 +46,6 @@ public class DirectLinkListener implements ITunnelSubscriber<DBEvent> {
 	PostManService postmanService;
 
 	@Autowired
-	UserSession userSession;
-
-	@Autowired
 	CustomerRegistrationDao customerRegistrationDao;
 	
 	@Autowired
@@ -58,6 +56,9 @@ public class DirectLinkListener implements ITunnelSubscriber<DBEvent> {
 	
 	@Autowired
 	WebConfig webConfig;
+	
+	@Autowired
+	ICustomerRepository iCustomerRepository;
 
 
 	private static final String LINK_ID = "LINK_ID";
@@ -78,18 +79,18 @@ public class DirectLinkListener implements ITunnelSubscriber<DBEvent> {
 		// BigDecimal(0));
 		String code = ArgUtil.parseAsString(message.getData().get(CODE));
 		BigDecimal langId = ArgUtil.parseAsBigDecimal(message.getData().get(LANG_ID), new BigDecimal(0));
-		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(userSession.getCivilId(),
-				HardCodedValues.USER_TYPE, userSession.getUserSequenceNumber(), userSession.getLanguageId());
 		PaymentLinkModel paymentLinkModel = iPaymentLinkRepository.findOne(linkId);
+		CustomerModel customerModel = iCustomerRepository.findByCustSeqNo(paymentLinkModel.getCustSeqNo());
+		
+		CustomerDetailModel customerDetailModel = customerRegistrationDao.getUserDetails(customerModel.getIdNo(),
+				HardCodedValues.USER_TYPE, customerModel.getUserSeqNo(), langId);
+		
 		ArrayResponseModel arrayResponseModel = customerRegistrationDao.getCompanySetUp(langId , webConfig.getAppCompCode());
 		ArrayList<CompanySetUp> getCompanySetUp = arrayResponseModel.getDataArray();
 		
 		logger.info("Customer object is " + customerDetailModel.toString());
 		String emailId = customerDetailModel.getEmail();
 		String smsNo = customerDetailModel.getMobile();
-		BigDecimal custId = customerDetailModel.getCustSequenceNumber();
-		
-		
 		String custName = customerDetailModel.getUserName();
 
 		Map<String, Object> modelData = new HashMap<String, Object>();
