@@ -126,10 +126,10 @@ public class DirectLinkListener implements ITunnelSubscriber<DBEvent> {
 			SMS sms = new SMS();
 			if ("2".equals(langId)) {
 				sms.setLang(Language.AR);
-				modelData.put("languageid", Language.AR);
+				modelData.put("languageid", langId);
 			} else {
 				sms.setLang(Language.EN);
-				modelData.put("languageid", Language.EN);
+				modelData.put("languageid", langId);
 			}
 			sms.setITemplate(TemplatesIB.PAYMENT_LINK_SMS);
 			sms.addTo(smsNo);
