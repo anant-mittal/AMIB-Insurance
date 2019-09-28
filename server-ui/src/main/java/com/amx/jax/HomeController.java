@@ -121,9 +121,7 @@ public class HomeController {
 		model.addAttribute("lang", httpService.getLanguage());
 		model.addAttribute("applicationTitle", webConfig.getAppTitle());
 		model.addAttribute("cdnUrl", appConfig.getCdnURL());
-		model.addAttribute( getVersion());
-		/* model.addAttribute(AppConstants.DEVICE_ID_KEY, userDevice.getUserDevice().getFingerprint());
-		model.addAttribute("fcmSenderId", webAppConfig.getFcmSenderId()); */
+		model.addAttribute( "cdnVerion", getVersion());
 		return "pay";
 	}
 	@RequestMapping(value = "/login/**", method = { RequestMethod.GET, RequestMethod.POST }, headers = {
