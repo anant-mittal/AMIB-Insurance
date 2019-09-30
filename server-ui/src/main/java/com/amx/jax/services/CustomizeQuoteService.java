@@ -357,7 +357,7 @@ public class CustomizeQuoteService
 		return customizeQuoteDao.getTermsAndConditionTest(userSession.getLanguageId());
 	}
 
-	public AmxApiResponse<?, Object> saveCustomizeQuote(CustomizeQuoteModel customizeQuoteModel , HttpServletRequest request)
+	public AmxApiResponse<?, Object> saveCustomizeQuote(CustomizeQuoteModel customizeQuoteModel , HttpServletRequest request, String paygRedirectUrl)
 	{
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
 		try
@@ -392,7 +392,7 @@ public class CustomizeQuoteService
 				return respQuoteAddModel;
 			}
 			
-			return saveCustomizeQuoteDetails(customizeQuoteModel, myQuoteModel ,customizeQuoteInfo ,request);
+			return saveCustomizeQuoteDetails(customizeQuoteModel, myQuoteModel ,customizeQuoteInfo ,request, paygRedirectUrl);
 		
 		}
 		catch (Exception e)
@@ -405,7 +405,7 @@ public class CustomizeQuoteService
 		return resp;
 	}
 
-	public AmxApiResponse<?, Object> saveCustomizeQuoteDetails(CustomizeQuoteModel customizeQuoteModel, MyQuoteModel myQuoteModel ,CustomizeQuoteInfo customizeQuoteInfo , HttpServletRequest request)
+	public AmxApiResponse<?, Object> saveCustomizeQuoteDetails(CustomizeQuoteModel customizeQuoteModel, MyQuoteModel myQuoteModel ,CustomizeQuoteInfo customizeQuoteInfo , HttpServletRequest request, String paygRedirectUrl)
 	{
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
 		try
@@ -456,7 +456,7 @@ public class CustomizeQuoteService
 					payment.setProduct("QUOTE");//Language Selected
 					payment.setServiceCode(PayGServiceCode.KNET);
 					
-					String redirctUrl = payGService.getPaymentUrl(payment , HttpUtils.getServerName(request)+"/app/landing/myquotes/quote");
+					String redirctUrl = payGService.getPaymentUrl(payment , paygRedirectUrl);
 					logger.info("saveCustomizeQuoteDetails :: redirctUrl :" + redirctUrl);
 					
 					resp.setRedirectUrl(redirctUrl);

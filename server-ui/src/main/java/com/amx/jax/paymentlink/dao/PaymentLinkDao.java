@@ -1,6 +1,10 @@
 package com.amx.jax.paymentlink.dao;
 
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.queryParam;
+
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -30,6 +34,8 @@ import com.amx.jax.services.CustomizeQuoteService;
 import com.amx.jax.services.PayMentService;
 import com.amx.jax.ui.session.UserSession;
 import com.amx.utils.Constants;
+import com.amx.utils.HttpUtils;
+import com.amx.utils.Urly;
 
 @Component
 public class PaymentLinkDao {
@@ -118,7 +124,17 @@ public class PaymentLinkDao {
 			customizeQuoteModel.setQuotationDetails(customizeQuoteDetails.getData().getQuotationDetails());
 			customizeQuoteModel.setQuoteAddPolicyDetails(customizeQuoteDetails.getData().getQuoteAddPolicyDetails());
 			customizeQuoteModel.setTotalPremium(customizeQuoteDetails.getData().getTotalPremium());
-			AmxApiResponse<?, Object> response = customizeQuoteService.saveCustomizeQuote(customizeQuoteModel, request);
+			String paygRedirectUrl=null;
+			try {
+				paygRedirectUrl = Urly.parse(HttpUtils.getServerName(request)).path("/pub/app/pay/{linkId}")
+						.pathParam("linkId", linkId).queryParam("v", verifyCode).queryParam("langId", languageId).getURL();
+			} catch (MalformedURLException e) {
+				logger.info("Url is not formed correctly",e);
+				
+			} catch (URISyntaxException e) {
+				logger.info("Syntax error in url formation",e);
+			}
+			AmxApiResponse<?, Object> response = customizeQuoteService.saveCustomizeQuote(customizeQuoteModel, request,paygRedirectUrl);
 			customizeQuoteModel.setRedirectUrl(response.getRedirectUrl());
 		}
 		iPaymentLinkRepository.save(paymentLinkModel);

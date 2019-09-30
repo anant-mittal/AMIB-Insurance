@@ -1,7 +1,9 @@
 package com.amx.jax.task;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -84,6 +86,11 @@ public class DirectLinkListener implements ITunnelSubscriber<DBEvent> {
 		String emailId = customerModel.getEmail();
 		String smsNo = customerModel.getMobile();
 		String custName = customerModel.getCustomerName();
+		Date date = new Date(paymentLinkModel.getLinkDate().getTime());
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
+		String linkDate = simpleDateFormat.format(date);
+		
+		
 
 		Map<String, Object> modelData = new HashMap<String, Object>();
 		Map<String, Object> wrapper = new HashMap<String, Object>();
@@ -93,7 +100,7 @@ public class DirectLinkListener implements ITunnelSubscriber<DBEvent> {
 		modelData.put("linkid", linkId);
 		modelData.put("code", code);
 		modelData.put("quoteid", quoteId);
-		modelData.put("linkDate", paymentLinkModel.getLinkDate());
+		modelData.put("linkDate", linkDate);
 		modelData.put("amount", paymentLinkModel.getPaymentAmount());
 		modelData.put(DetailsConstants.COMPANY_NAME, getCompanySetUp.get(0).getCompanyName());
 		modelData.put(DetailsConstants.CONTACT_US_EMAIL, getCompanySetUp.get(0).getEmail());
