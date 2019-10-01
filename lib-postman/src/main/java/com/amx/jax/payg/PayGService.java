@@ -18,6 +18,7 @@ import com.amx.jax.rest.RestService;
 import com.amx.utils.CryptoUtil;
 import com.amx.utils.JsonUtil;
 import com.amx.utils.URLBuilder;
+import com.amx.utils.Urly;
 
 @Component
 public class PayGService {
@@ -60,11 +61,11 @@ public class PayGService {
 
 		URLBuilder builder = new URLBuilder(appConfig.getPaygURL());
 
-		String callbackUrl = callback
-				+ "?docNo=" + payment.getDocNo()
-				+ "&docFy=" + payment.getDocFy()
-				+ "&docId=" + payment.getDocId()
-				+ "&trckid=" + payment.getTrackId();
+		String callbackUrl = Urly.parse(callback)
+				.queryParam("docNo", payment.getDocNo())
+				.queryParam("docFy", payment.getDocFy())
+				.queryParam("docId", payment.getDocId())
+				.queryParam("trckid", payment.getTrackId()).getURL();
 
 		if (PayGServiceCode.WT.equals(payment.getServiceCode())) {
 			return callbackUrl;

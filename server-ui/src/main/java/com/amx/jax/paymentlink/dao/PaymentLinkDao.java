@@ -1,7 +1,5 @@
 package com.amx.jax.paymentlink.dao;
 
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.queryParam;
-
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -127,7 +125,7 @@ public class PaymentLinkDao {
 			String paygRedirectUrl=null;
 			try {
 				paygRedirectUrl = Urly.parse(HttpUtils.getServerName(request)).path("/pub/app/pay/{linkId}")
-						.pathParam("linkId", linkId).queryParam("v", verifyCode).queryParam("langId", languageId).getURL();
+						.pathParam("linkId", linkId).queryParam("v", verifyCode).queryParam("l", languageId).getURL();
 			} catch (MalformedURLException e) {
 				logger.info("Url is not formed correctly",e);
 				
