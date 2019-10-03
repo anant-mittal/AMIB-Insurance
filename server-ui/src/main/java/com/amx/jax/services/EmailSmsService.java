@@ -42,6 +42,7 @@ import com.amx.jax.postman.model.SupportEmail;
 import com.amx.jax.postman.model.TemplatesIB;
 import com.amx.jax.ui.session.UserSession;
 import com.amx.jax.utility.Utility;
+import com.amx.utils.JsonUtil;
 import com.amx.utils.Random;
 import com.amx.utils.Utils;
 
@@ -135,6 +136,8 @@ public class EmailSmsService
 		email.setITemplate(TemplatesIB.OTP_EMAIL);
 		email.setHtml(true);
 		email.setLang(iAmxLocale.getLanguage());
+		
+		logger.info("Language id is "+JsonUtil.toJson(email)+iAmxLocale.getLanguage());
 		postManClient.sendEmail(email);
 
 		return emailOtpPrefix;
