@@ -96,6 +96,9 @@ public class PaymentLinkDao {
 		logger.info("Result is "+paymentLinkModel.getVerifyCode());
 		logger.info("Result hash is "+verifyHashCode);
 		logger.info("Result of comparison is "+paymentLinkModel.getVerifyCode().equals(verifyHashCode));
+		logger.info("Customize quote details "+customizeQuoteDetails.getData());
+		logger.info("Customize quote details are "+paymentLinkModel.getPaymentAmount().compareTo(totalQuoteAmount));
+		
 		
 		if (!(customizeQuoteDetails.getData() == null || (paymentLinkModel.getVerifyCode().equals(verifyHashCode)
 				&& paymentLinkModel.getPaymentAmount().compareTo(totalQuoteAmount) == 0))) {
