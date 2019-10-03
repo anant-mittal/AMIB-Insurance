@@ -93,7 +93,10 @@ public class PaymentLinkDao {
 		long diffInMilli = Math.abs(now.getTime() - linkDate.getTime());
 		long diffInDays = TimeUnit.DAYS.convert(diffInMilli, TimeUnit.MILLISECONDS);
 		AmxApiResponse<PaymentStatus, Object> resp = null;
-
+		logger.info("Result is "+paymentLinkModel.getVerifyCode());
+		logger.info("Result hash is "+verifyHashCode);
+		logger.info("Result of comparison is "+paymentLinkModel.getVerifyCode().equals(verifyHashCode));
+		
 		if (!(customizeQuoteDetails.getData() == null || (paymentLinkModel.getVerifyCode().equals(verifyHashCode)
 				&& paymentLinkModel.getPaymentAmount().compareTo(totalQuoteAmount) == 0))) {
 			paymentLinkModel.setIsActive(Constants.PAYMENT_LINK_INVALID);
