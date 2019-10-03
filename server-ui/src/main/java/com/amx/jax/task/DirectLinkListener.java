@@ -111,11 +111,11 @@ public class DirectLinkListener implements ITunnelSubscriber<DBEvent> {
 		Email email = new Email();
 		if ("2".equals(langId)) {
 			email.setLang(Language.AR);
-			modelData.put("languageid", langId);
+			modelData.put("languageid", Language.AR);
 			modelData.put(DetailsConstants.COUNTRY_NAME, "الكويت");
 		} else {
 			email.setLang(Language.EN);
-			modelData.put("languageid", langId);
+			modelData.put("languageid", Language.EN);
 			modelData.put(DetailsConstants.COUNTRY_NAME, "KUWAIT");
 		}
 		wrapper.put("data", modelData);
@@ -133,10 +133,10 @@ public class DirectLinkListener implements ITunnelSubscriber<DBEvent> {
 			SMS sms = new SMS();
 			if ("2".equals(langId)) {
 				sms.setLang(Language.AR);
-				modelData.put("languageid", langId);
+				modelData.put("languageid", Language.AR);
 			} else {
 				sms.setLang(Language.EN);
-				modelData.put("languageid", langId);
+				modelData.put("languageid", Language.EN);
 			}
 			sms.setITemplate(TemplatesIB.PAYMENT_LINK_SMS);
 			sms.addTo(smsNo);
