@@ -109,7 +109,7 @@ public class DirectLinkListener implements ITunnelSubscriber<DBEvent> {
 		
 		
 		Email email = new Email();
-		if ("2".equals(langId)) {
+		if ("1".equals(langId)) {
 			email.setLang(Language.AR);
 			modelData.put("languageid", Language.AR);
 			modelData.put(DetailsConstants.COUNTRY_NAME, "الكويت");
