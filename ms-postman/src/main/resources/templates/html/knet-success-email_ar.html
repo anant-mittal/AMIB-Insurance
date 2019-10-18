@@ -235,6 +235,7 @@ a {
 .capitalize{
 	text-transform: capitalize;
 }
+.table td{ border: 1px solid #e6e6e6; }
 
 @media only screen and (max-width: 640px) {
 	body {
@@ -297,10 +298,31 @@ a {
 									<tr>
 										
 										 <td class="content-block">
-										دفعتك لمبلغ القسط <span th:text="${data.policyAmount}" th:remove="tag"></span> يتم دفعه بنجاح لشركة الملا للوساطة .رقم مرجع معاملتك هو<span th:text="${data.transactionId}" th:remove="tag"></span> 
-										و رقم الطلب الوثيقة هو  <span th:text="${data.policyAppNo}" th:remove="tag"></span> .
+										دفعتك لمبلغ القسط <span th:text="${data.policyAmount}" th:remove="tag"></span> يتم دفعه بنجاح لشركة الملا للوساطة .رقم مرجع معاملتك هو
 										     
 										 </td>
+									</tr>
+									<tr>
+									<td class="content-block">تفاصيل التحويل على النحو التالي.</td>
+									</tr>
+									<tr>
+										<td class="content-block" align="center">
+										<table class="table" width="100%" border="1" cellpadding="5" cellspacing="0">
+											<tr>
+												<td>رقم مرجع المعاملة</td>
+												<td th:text="${data.transactionId}"></td>
+											</tr>
+											<tr>
+												<td>رقم التطبيق</td>
+												<td th:text="${data.policyAppNo}"></td>
+											</tr>
+											 <tr>
+												<td>معرف الدفع</td>
+												<td th:text="${data.paymentId}"></td>
+											</tr>  
+											
+										</table>	
+										</td>
 									</tr>
 									<tr>
 										<td class="content-block note">ملاحظة: في حال كنت تواجه مشكلة تحميل / عرض إيصال المعاملة ، يرجى التواصل مع فريق الملا للوساطة في التأمين على

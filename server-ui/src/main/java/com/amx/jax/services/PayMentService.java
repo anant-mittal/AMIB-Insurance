@@ -265,7 +265,7 @@ public class PayMentService {
 						logger.info(TAG + "getPaymentStatus :: getLanguageId :" + userSession.getLanguageId());
 						emailSmsService.emialToCustonSuccessPg(paymentStatus.getTotalAmount(),
 								paymentStatus.getTransactionId(), paymentStatus.getAppSeqNumber(),
-								receiptData(paySeqNum));
+								receiptData(paySeqNum),paymentStatus.getPayId());
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
