@@ -235,6 +235,8 @@ a {
 .capitalize{
 	text-transform: capitalize;
 }
+.table td{ border: 1px solid #e6e6e6; }
+
 
 @media only screen and (max-width: 640px) {
 	body {
@@ -288,14 +290,38 @@ a {
 										<td class="content-block"><strong>Dear <span  th:text="${data.customerName}">User</span>,</strong>
 										</td>
 									</tr>
-									<tr>
+									 <tr>
 										<td class="content-block">Welcome to 
 										<span class="capitalize"><span th:text="${data.companyName}" th:remove="tag"></span>!</span></td>
 									</tr>
+									
 									<tr>
 										<td class="content-block">Your payment for premium amount <span th:text="${data.policyAmount}" th:remove="tag"></span> is paid successfully to Al Mulla<br/> 
-										 Insurance Brokerage.Your transaction reference ID is - <span th:text="${data.transactionId}" th:remove="tag"></span> and policy 
-										application number is - <span th:text="${data.policyAppNo}" th:remove="tag"></span>
+										 Insurance Brokerage.
+										</td>
+									</tr>
+
+									
+									<tr>
+									<td class="content-block">The transaction details are as below.</td>
+									</tr>
+									<tr>
+										<td class="content-block" align="center">
+										<table class="table" width="100%" border="1" cellpadding="5" cellspacing="0">
+											<tr>
+												<td>Transaction Reference No</td>
+												<td th:text="${data.transactionId}"></td>
+											</tr>
+											<tr>
+												<td>Application No.</td>
+												<td th:text="${data.policyAppNo}"></td>
+											</tr>
+											 <tr>
+												<td>Payment ID </td>
+												<td th:text="${data.paymentId}"></td>
+											</tr>  
+											
+										</table>	
 										</td>
 									</tr>
 									<tr>
