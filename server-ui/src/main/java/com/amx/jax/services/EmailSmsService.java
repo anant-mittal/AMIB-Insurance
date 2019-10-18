@@ -399,7 +399,7 @@ public class EmailSmsService
 	/*********
 	 * EMAIL TO CUSTOMER AFTER SUCCESSFULL PG TRANSACTION
 	 ********/
-	public void emialToCustonSuccessPg(BigDecimal amount , String transecionId , BigDecimal policyAppNo ,ArrayList<Map> receiptData)
+	public void emialToCustonSuccessPg(BigDecimal amount , String transecionId , BigDecimal policyAppNo ,ArrayList<Map> receiptData, String payId)
 	{
 		logger.info("amount is "+amount);
 		logger.info("transecionId is "+transecionId);
@@ -446,6 +446,7 @@ public class EmailSmsService
 		model.put(DetailsConstants.POLICY_AMOUNT, amountWithCurrency);
 		model.put(DetailsConstants.TRANSACTION_ID, transecionId);
 		model.put(DetailsConstants.POLICY_APP_NO, policyAppNo);
+		model.put(DetailsConstants.paymentId, payId);
 		wrapper.put("data", model);
 		
 		ArrayList<String> emailTo = new ArrayList<String>();
