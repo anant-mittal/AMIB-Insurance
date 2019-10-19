@@ -461,7 +461,7 @@ public class RequestQuoteService
 					vehicleDetails.setChasis(vehicleDetailsGetModel.getChasis());
 					vehicleDetails.setVehicleConditionCode(vehicleDetailsGetModel.getVehicleConditionCode());
 					vehicleDetails.setKtNumber(vehicleDetailsGetModel.getKtNumber());
-					
+					vehicleDetails.setPolicyStartDate(vehicleDetailsGetModel.getPolicyStartDate());
 					if (null != vehicleDetailsGetModel.getApplicationType())
 					{
 						vehicleDetails.setApplicationType(vehicleDetailsGetModel.getApplicationType().toUpperCase());
@@ -590,6 +590,12 @@ public class RequestQuoteService
 			personalDetails.setMobile(customerProfileDetailModel.getMobile());
 			personalDetails.setNatyCode(customerProfileDetailModel.getNatyCode());
 			personalDetails.setNativeArabicName(customerProfileDetailModel.getNativeArabicName());
+			personalDetails.setAddressType(customerProfileDetailModel.getAddressType());
+			personalDetails.setAddressDesc(customerProfileDetailModel.getAddressDesc());
+			personalDetails.setBuilding(customerProfileDetailModel.getBuilding());
+			personalDetails.setBlock(customerProfileDetailModel.getBlock());
+			personalDetails.setFlat(customerProfileDetailModel.getFlat());
+			personalDetails.setStreet(customerProfileDetailModel.getStreet());
 			
 			userSession.setCustomerEmailId(customerProfileDetailModel.getEmail());
 
@@ -646,6 +652,11 @@ public class RequestQuoteService
 			customerProfileDetailModel.setAreaCode(personalDetails.getAreaCode());
 			customerProfileDetailModel.setMobile(personalDetails.getMobile());
 			customerProfileDetailModel.setEmail(personalDetails.getEmail());
+			customerProfileDetailModel.setAddressType(personalDetails.getAddressType());
+			customerProfileDetailModel.setBlock(personalDetails.getBlock());
+			customerProfileDetailModel.setBuilding(personalDetails.getBuilding());
+			customerProfileDetailModel.setFlat(personalDetails.getFlat());
+			customerProfileDetailModel.setStreet(personalDetails.getStreet());
 
 			if (null == userSession.getCustomerSequenceNumber() || userSession.getCustomerSequenceNumber().toString().equals(""))
 			{

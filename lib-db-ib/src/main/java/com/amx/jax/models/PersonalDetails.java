@@ -31,6 +31,66 @@ public class PersonalDetails
 	private String mobile;
 
 	private String email;
+	
+	private String addressType;
+	
+	private String addressDesc;
+
+	private String block;
+	
+	private String street;
+	
+	private String building;
+	
+	private String flat;
+	
+	public String getAddressType() {
+		return addressType;
+	}
+
+	public void setAddressType(String addressType) {
+		this.addressType = addressType;
+	}
+	
+	public String getAddressDesc() {
+		return addressDesc;
+	}
+
+	public void setAddressDesc(String addressDesc) {
+		this.addressDesc = addressDesc;
+	}
+	
+	public String getBlock() {
+		return block;
+	}
+
+	public void setBlock(String block) {
+		this.block = block;
+	}
+
+	public String getStreet() {
+		return street;
+	}
+
+	public void setStreet(String street) {
+		this.street = street;
+	}
+
+	public String getBuilding() {
+		return building;
+	}
+
+	public void setBuilding(String building) {
+		this.building = building;
+	}
+
+	public String getFlat() {
+		return flat;
+	}
+
+	public void setFlat(String flat) {
+		this.flat = flat;
+	}
 
 	public String getEnglishName()
 	{

@@ -1,6 +1,8 @@
 package com.amx.jax.models;
 
 import java.math.BigDecimal;
+import java.sql.Date;
+
 
 public class VehicleDetailsGetModel
 {
@@ -76,6 +78,16 @@ private String applicationDate;
 
 	public String vehicleTypeDesc;
 	
+	private Date policyStartDate;
+	
+
+	public Date getPolicyStartDate() {
+		return policyStartDate;
+	}
+
+	public void setPolicyStartDate(Date policyStartDate) {
+		this.policyStartDate = policyStartDate;
+	}
 
 	public String getApplicationDate()
 	{

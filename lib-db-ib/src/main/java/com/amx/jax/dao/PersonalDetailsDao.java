@@ -6,13 +6,18 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
+
+import org.hibernate.boot.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.messaging.simp.user.UserSessionRegistry;
 import org.springframework.stereotype.Repository;
 
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.meta.IMetaService;
+import com.amx.jax.models.AddressTypeDto;
 import com.amx.jax.models.Area;
 import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.Business;
@@ -20,6 +25,7 @@ import com.amx.jax.models.CustomerProfileDetailModel;
 import com.amx.jax.models.Gender;
 import com.amx.jax.models.Governorates;
 import com.amx.jax.models.Nationality;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import oracle.jdbc.OracleTypes;
@@ -38,12 +44,14 @@ public class PersonalDetailsDao
 	IMetaService metaService;
 	
 	Connection connection;
+	
+
 
 	public CustomerProfileDetailModel getProfileDetails(String civilId , String userType , BigDecimal custSeqNum, BigDecimal languageId)
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
-		String callProcedure = "{call IRB_GET_PROFILE_DTLS(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+		String callProcedure = "{call IRB_GET_PROFILE_DTLS(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
 		CustomerProfileDetailModel customerProfileDetailModel = null;
 
 		try
@@ -74,6 +82,12 @@ public class PersonalDetailsDao
 			callableStatement.registerOutParameter(22, java.sql.Types.INTEGER);
 			callableStatement.registerOutParameter(23, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(24, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(25, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(26, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(27, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(28, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(29, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(30, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
 
 			customerProfileDetailModel = new CustomerProfileDetailModel();
@@ -94,8 +108,14 @@ public class PersonalDetailsDao
 			customerProfileDetailModel.setMobile(callableStatement.getString(20));
 			customerProfileDetailModel.setEmail(callableStatement.getString(21));
 			customerProfileDetailModel.setLanguageId(callableStatement.getBigDecimal(22));
-			customerProfileDetailModel.setErrorCode(callableStatement.getString(23));
-			customerProfileDetailModel.setErrorMessage(callableStatement.getString(24));
+			customerProfileDetailModel.setAddressType(callableStatement.getString(23));
+			customerProfileDetailModel.setAddressDesc(callableStatement.getString(24));
+			customerProfileDetailModel.setBlock(callableStatement.getString(25));
+			customerProfileDetailModel.setStreet(callableStatement.getString(26));
+			customerProfileDetailModel.setBuilding(callableStatement.getString(27));
+			customerProfileDetailModel.setFlat(callableStatement.getString(28));
+			customerProfileDetailModel.setErrorCode(callableStatement.getString(29));
+			customerProfileDetailModel.setErrorMessage(callableStatement.getString(30));
 		}
 		catch (Exception e)
 		{
@@ -115,7 +135,7 @@ public class PersonalDetailsDao
 	{
 		getConnection();
 		CallableStatement callableStatement = null;
-		String callProcedure = "{call IRB_UPDINS_PERSONALPROF_DTLS(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+		String callProcedure = "{call IRB_UPDINS_PERSONALPROF_DTLS(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
 
 		try
 		{
@@ -140,10 +160,15 @@ public class PersonalDetailsDao
 			callableStatement.setString(17, metaService.getUserDeviceInfo().getDeviceId());
 			callableStatement.setString(18, metaService.getUserDeviceInfo().getDeviceType());
 			callableStatement.setString(19, civilId);
+			callableStatement.setString(20, customerProfileDetailModel.getAddressType());
+			callableStatement.setString(21, customerProfileDetailModel.getBlock());
+			callableStatement.setString(22, customerProfileDetailModel.getStreet());
+			callableStatement.setString(23, customerProfileDetailModel.getBuilding());
+			callableStatement.setString(24, customerProfileDetailModel.getFlat());
 
 			callableStatement.registerOutParameter(5, java.sql.Types.NUMERIC);
-			callableStatement.registerOutParameter(20, java.sql.Types.VARCHAR);
-			callableStatement.registerOutParameter(21, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(25, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(26, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
 
 			customerProfileDetailModel = new CustomerProfileDetailModel();
@@ -153,8 +178,8 @@ public class PersonalDetailsDao
 				customerProfileDetailModel.setCustSequenceNumber(callableStatement.getBigDecimal(5));
 			}
 
-			customerProfileDetailModel.setErrorCode(callableStatement.getString(20));
-			customerProfileDetailModel.setErrorMessage(callableStatement.getString(21));
+			customerProfileDetailModel.setErrorCode(callableStatement.getString(25));
+			customerProfileDetailModel.setErrorMessage(callableStatement.getString(26));
 		}
 		catch (Exception e)
 		{
@@ -415,6 +440,49 @@ public class PersonalDetailsDao
 			CloseConnection(callableStatement, connection);
 		}
 
+		return arrayResponseModel;
+	}
+	
+	public ArrayResponseModel getAddressType(BigDecimal languageId) {
+		getConnection();
+		CallableStatement callableStatement = null;
+		String callProcedure = "{call IRB_GET_ADDRTYPE(?,?,?,?,?,?)}";
+		
+		ArrayResponseModel arrayResponseModel = new ArrayResponseModel();
+		try
+		{
+			callableStatement = connection.prepareCall(callProcedure);
+
+			callableStatement.setBigDecimal(1, metaService.getTenantProfile().getCountryId());
+			callableStatement.setBigDecimal(2, metaService.getTenantProfile().getCompCd());
+			callableStatement.setBigDecimal(3, languageId);
+			callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
+			callableStatement.registerOutParameter(5, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(6, java.sql.Types.VARCHAR);
+			callableStatement.executeUpdate();
+			
+			ResultSet rs = (ResultSet) callableStatement.getObject(4);
+			ArrayList<AddressTypeDto> addressTypeDtoList = new ArrayList<>();
+			while (rs.next())
+			{
+				AddressTypeDto addressTypeDto = new AddressTypeDto();
+				addressTypeDto.setAddressType(rs.getString(1));
+				addressTypeDto.setAddressDesc(rs.getString(2));
+				addressTypeDtoList.add(addressTypeDto);
+				
+			}
+			arrayResponseModel.setErrorCode(callableStatement.getString(5));
+			arrayResponseModel.setErrorCode(callableStatement.getString(6));
+			arrayResponseModel.setDataArray(addressTypeDtoList);
+			
+			
+		}catch(Exception e) {
+			arrayResponseModel.setErrorCode(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
+			arrayResponseModel.setErrorMessage(e.toString());
+			logger.info(TAG+"getAddressType :: exception :" + e);
+			e.printStackTrace();
+		}
+		
 		return arrayResponseModel;
 	}
 	

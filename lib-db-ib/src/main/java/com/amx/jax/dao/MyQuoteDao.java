@@ -102,6 +102,8 @@ public class MyQuoteDao
 				myQuoteModel.setPolCondition(rs.getString(40));
 				myQuoteModel.setVehicleType(rs.getString(41));
 				myQuoteModel.setPaymentProcessError(rs.getString(42));// if 'Y' error has occurred while payment and same error message is shown on Quote
+				myQuoteModel.setPolicyStartDate(rs.getDate(43));
+				logger.info("MyQuoteModel is "+myQuoteModel.getQuoteSeqNumber());
 				activePolicyArray.add(myQuoteModel);
 				
 				//logger.info(TAG + " getUserQuote :: myQuoteModel :" + myQuoteModel.toString());

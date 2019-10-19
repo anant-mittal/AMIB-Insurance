@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.amx.jax.WebAppStatus.ApiWebAppStatus;
 import com.amx.jax.WebAppStatus.WebAppStatusCodes;
 import com.amx.jax.api.AmxApiResponse;
+import com.amx.jax.models.AddressTypeDto;
 import com.amx.jax.models.CustomerProfileDetailResponse;
 import com.amx.jax.models.CustomerProfileUpdateRequest;
 import com.amx.jax.services.PersonalDetailsService;
@@ -81,5 +82,13 @@ public class PersonalDetailsController {
 	@RequestMapping(value = "/api/personal/gender", method = RequestMethod.GET)
 	public AmxApiResponse<?, Object> getGender() {
 		return personalDetailsService.getGender();
+	}
+	
+	@ApiOperation(value = "returns types of addresses")
+	@ApiWebAppStatus({WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS})
+	@RequestMapping(value = "/api/personal/address", method = RequestMethod.GET)
+	public AmxApiResponse<AddressTypeDto, Object> getAddressTypes() {
+		AmxApiResponse<AddressTypeDto, Object> addresstypeDto = personalDetailsService.getAddressType();
+		return addresstypeDto;
 	}
 }

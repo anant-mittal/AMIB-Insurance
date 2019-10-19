@@ -15,19 +15,16 @@ import org.springframework.stereotype.Repository;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.dbmodel.OnlinePaymentModel;
 import com.amx.jax.dbmodel.PaymentLinkModel;
-import com.amx.jax.dict.ResponseCodeKWT;
 import com.amx.jax.meta.IMetaService;
+import com.amx.jax.models.ArrayResponseModel;
+import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.PaymentDetails;
-import com.amx.jax.models.PaymentReceipt;
 import com.amx.jax.models.PaymentStatus;
 import com.amx.jax.models.PolicyReceiptDetails;
 import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.repository.IOnlinePaymentRepository;
 import com.amx.jax.repository.IPaymentLinkRepository;
 import com.amx.utils.ArgUtil;
-import com.amx.utils.Constants;
-import com.amx.jax.models.ArrayResponseModel;
-import com.amx.jax.models.DateFormats;
 
 @Repository
 public class PayMentDao
@@ -153,7 +150,9 @@ public class PayMentDao
 				if ("CAPTURED".equals(onlinePaymentModel.getResultCode())) {
 					paymentLinkModel.setPaymentDate(new Date());
 					iPaymentLinkRepository.save(paymentLinkModel);
+
 				} 
+
 
 			} 
 			
