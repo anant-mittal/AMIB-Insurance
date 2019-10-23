@@ -2,6 +2,8 @@
 package com.amx.jax.services;
 
 import java.math.BigDecimal;
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +19,7 @@ import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.dao.PersonalDetailsDao;
 import com.amx.jax.dao.RequestQuoteDao;
+import com.amx.jax.models.AddressTypeDto;
 import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CustomerProfileDetailModel;
 import com.amx.jax.models.DateFormats;
@@ -34,6 +37,7 @@ import com.amx.jax.models.VehicleDetailsHeaderModel;
 import com.amx.jax.models.VehicleDetailsUpdateModel;
 import com.amx.jax.ui.session.UserSession;
 import com.amx.jax.utility.CodeAvaibility;
+import com.amx.utils.ArgUtil;
 
 @Service
 public class RequestQuoteService
@@ -494,6 +498,16 @@ public class RequestQuoteService
 	public AmxApiResponse<?, Object> setAppVehicleDetails(BigDecimal appSeqNumber, VehicleDetails vehicleDetails, BigDecimal oldDocNumber)
 	{
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
+		LocalDate localExpiryDate = vehicleDetails.getPolicyStartDate().toLocalDate();
+		long time = System.currentTimeMillis();
+		java.sql.Date date = new java.sql.Date(time);
+		LocalDate localCurrentDate = date.toLocalDate();
+
+		if (localExpiryDate.getDayOfMonth() < localCurrentDate.getDayOfMonth()) {
+			resp.setStatusEnum(WebAppStatusCodes.TECHNICAL_ERROR);
+			resp.setError("Start date should be greater than current date");
+			return resp;
+		}
 		RequestQuoteModel requestQuoteModel = new RequestQuoteModel();
 		RequestQuoteInfo requestQuoteInfo = new RequestQuoteInfo();
 
@@ -622,9 +636,46 @@ public class RequestQuoteService
 		return resp;
 	}
 
+	@SuppressWarnings("unchecked")
 	public AmxApiResponse<?, Object> setProfileDetails(BigDecimal appSeqNumber, PersonalDetails personalDetails)
 	{
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
+		ArrayResponseModel arrayResponseModel = personalDetailsDao.getAddressType(userSession.getLanguageId());
+		List<AddressTypeDto> addressList = arrayResponseModel.getDataArray();
+		boolean flag = false;
+		if (ArgUtil.isEmpty(arrayResponseModel.getErrorCode())) {
+			for(AddressTypeDto addressTypeDto:addressList) {
+				if(addressTypeDto.getAddressType().contains(personalDetails.getAddressType())) {
+					flag=true;
+				}
+			}
+			if(!flag){
+				resp.setStatusEnum(WebAppStatusCodes.TECHNICAL_ERROR);
+				resp.setError("Address type is not valid");
+				return resp;
+			}
+			
+
+		} else {
+			resp.setStatusEnum(WebAppStatusCodes.TECHNICAL_ERROR);
+			resp.setError(arrayResponseModel.getErrorMessage());
+		}
+		if(personalDetails.getBlock().length()>4) {
+			resp.setStatusEnum(WebAppStatusCodes.TECHNICAL_ERROR);
+			resp.setError("Block max length is 4");
+			return resp;
+		}
+		if(personalDetails.getBuilding().length()>4) {
+			resp.setStatusEnum(WebAppStatusCodes.TECHNICAL_ERROR);
+			resp.setError("Buillding max length is 4");
+			return resp;
+		}
+		
+		if(personalDetails.getFlat().length()>4) {
+			resp.setStatusEnum(WebAppStatusCodes.TECHNICAL_ERROR);
+			resp.setError("Flat max length is 4");
+			return resp;
+		}
 		CustomerProfileDetailModel customerProfileDetailModel = new CustomerProfileDetailModel();
 		RequestQuoteModel requestQuoteModel = new RequestQuoteModel();
 		RequestQuoteInfo requestQuoteInfo = new RequestQuoteInfo();

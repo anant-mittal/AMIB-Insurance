@@ -2,6 +2,7 @@
 package com.amx.jax.services;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,9 +104,48 @@ public class PersonalDetailsService
 		return resp;
 	}
 
+	@SuppressWarnings("unchecked")
 	public AmxApiResponse<?, Object> updateProfileDetails(String mOtp, String eOtp, CustomerProfileUpdateRequest customerProfileUpdateRequest)
 	{
 		AmxApiResponse<?, Object> resp = new AmxApiResponse<CustomerProfileUpdateResponse, Object>();
+		ArrayResponseModel arrayResponseModel = personalDetailsDao.getAddressType(userSession.getLanguageId());
+		List<AddressTypeDto> addressList = arrayResponseModel.getDataArray();
+		boolean flag = false;
+		if (ArgUtil.isEmpty(arrayResponseModel.getErrorCode())) {
+			for(AddressTypeDto addressTypeDto:addressList) {
+				if(addressTypeDto.getAddressType().contains(customerProfileUpdateRequest.getAddressType())) {
+					flag=true;
+				}
+			}
+			if(!flag){
+				resp.setStatusEnum(WebAppStatusCodes.TECHNICAL_ERROR);
+				resp.setError("Address type is not valid");
+				return resp;
+			}
+			
+
+		} else {
+			resp.setStatusEnum(WebAppStatusCodes.TECHNICAL_ERROR);
+			resp.setError(arrayResponseModel.getErrorMessage());
+		}
+		
+		if(customerProfileUpdateRequest.getBlock().length()>4) {
+			resp.setStatusEnum(WebAppStatusCodes.TECHNICAL_ERROR);
+			resp.setError("Block max length is 4");
+			return resp;
+		}
+		if(customerProfileUpdateRequest.getBuilding().length()>4) {
+			resp.setStatusEnum(WebAppStatusCodes.TECHNICAL_ERROR);
+			resp.setError("Buillding max length is 4");
+			return resp;
+		}
+		
+		if(customerProfileUpdateRequest.getFlat().length()>4) {
+			resp.setStatusEnum(WebAppStatusCodes.TECHNICAL_ERROR);
+			resp.setError("Flat max length is 4");
+			return resp;
+		}
+		
 		CustomerProfileDetailModel customerProfileDetailModel = new CustomerProfileDetailModel();
 		CustomerProfileDetailModel customerProfileDetailModelCheck = new CustomerProfileDetailModel();
 		CustomerProfileUpdateResponse customerProfileUpdateResponse = new CustomerProfileUpdateResponse();

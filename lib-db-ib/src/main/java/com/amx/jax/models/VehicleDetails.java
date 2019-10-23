@@ -52,7 +52,7 @@ public class VehicleDetails
 	@ApiMockModelProperty(example = "NEW", value = "Vehicle KT Number")
 	private String applicationType;
 	
-	@ApiMockModelProperty(example = "dd-mm-yyyy", value = "Expected Policy Start Date")
+	@ApiMockModelProperty(example = "yyyy-dd-mm", value = "Expected Policy Start Date")
 	private Date policyStartDate;
 
 	public Date getPolicyStartDate() {
