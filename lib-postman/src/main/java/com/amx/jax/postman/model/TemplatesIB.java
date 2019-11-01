@@ -9,7 +9,7 @@ import com.amx.jax.postman.model.Notipy.Channel;
 public enum TemplatesIB implements ITemplate {
 	
 	OTP_SMS("otp-sms", Channel.NOTIPY),
-	OTP_EMAIL("otp-email"),
+	OTP_EMAIL("otp-email",Channel.NOTIPY),
 	REG_SUCCESS_EMAIL("reg-success-email"),
 	REG_INCOMPLETE_EMAIL("reg-incomplete-email"),
 	TERMS("terms"),
