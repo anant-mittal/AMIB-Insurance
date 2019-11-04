@@ -31,6 +31,7 @@ import com.amx.jax.repository.IPaymentLinkRepository;
 import com.amx.jax.services.CustomizeQuoteService;
 import com.amx.jax.services.PayMentService;
 import com.amx.jax.ui.session.UserSession;
+import com.amx.utils.ArgUtil;
 import com.amx.utils.Constants;
 import com.amx.utils.HttpUtils;
 import com.amx.utils.Urly;
@@ -93,7 +94,7 @@ public class PaymentLinkDao {
 		long diffInMilli = Math.abs(now.getTime() - linkDate.getTime());
 		long diffInDays = TimeUnit.DAYS.convert(diffInMilli, TimeUnit.MILLISECONDS);
 		AmxApiResponse<PaymentStatus, Object> resp = null;
-		logger.info("Result is "+paymentLinkModel.getVerifyCode());
+		//logger.info("Result is "+paymentLinkModel.getVerifyCode());
 		logger.info("Result hash is "+verifyHashCode);
 		logger.info("Result of comparison is "+paymentLinkModel.getVerifyCode().equals(verifyHashCode));
 		logger.info("Customize quote details "+customizeQuoteDetails.getData());
@@ -128,6 +129,20 @@ public class PaymentLinkDao {
 			customizeQuoteModel.setQuotationDetails(customizeQuoteDetails.getData().getQuotationDetails());
 			customizeQuoteModel.setQuoteAddPolicyDetails(customizeQuoteDetails.getData().getQuoteAddPolicyDetails());
 			customizeQuoteModel.setTotalPremium(customizeQuoteDetails.getData().getTotalPremium());
+			
+			// error code for knet by paymentlink
+			
+			List<OnlinePaymentModel> onlinePaymentModelList = iOnlinePaymentRepository
+					.findByQuoteSeqNoCreation(paymentLinkModel.getQuoteSeqNo());
+			for (OnlinePaymentModel onlinePaymentModel : onlinePaymentModelList) {
+				if (!("CAPTURED".equalsIgnoreCase(onlinePaymentModel.getResultCode())||ArgUtil.isEmpty(onlinePaymentModel.getResultCode()))) {
+					resp = payMentService.getPaymentStatus(onlinePaymentModel.getPaySeqNo());
+					customizeQuoteModel.setPaymentStatus(resp.getData());
+					break;
+				}
+			}
+			
+			
 			String paygRedirectUrl=null;
 			try {
 				paygRedirectUrl = Urly.parse(HttpUtils.getServerName(request)).path("/pub/app/pay/{linkId}")
