@@ -4,6 +4,7 @@ package com.amx.jax.services;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -498,12 +499,7 @@ public class RequestQuoteService
 	public AmxApiResponse<?, Object> setAppVehicleDetails(BigDecimal appSeqNumber, VehicleDetails vehicleDetails, BigDecimal oldDocNumber)
 	{
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
-		LocalDate localExpiryDate = vehicleDetails.getPolicyStartDate().toLocalDate();
-		long time = System.currentTimeMillis();
-		java.sql.Date date = new java.sql.Date(time);
-		LocalDate localCurrentDate = date.toLocalDate();
-
-		if (localExpiryDate.getDayOfMonth() < localCurrentDate.getDayOfMonth()) {
+		if (DateFormats.checkExpiryDate(vehicleDetails.getPolicyStartDate())) {
 			resp.setStatusEnum(WebAppStatusCodes.TECHNICAL_ERROR);
 			resp.setError("Start date should be greater than current date");
 			return resp;

@@ -573,7 +573,7 @@ public class RequestQuoteDao
 				vehicleDetailsModel.setReplacementTypeDesc(rs.getString(34));
 				vehicleDetailsModel.setMaxInsmat(Utility.round(rs.getBigDecimal(35), metaService.getTenantProfile().getDecplc()));
 				vehicleDetailsModel.setVehicleTypeDesc(rs.getString(36));
-				vehicleDetailsModel.setPolicyStartDate(rs.getDate(37));
+				vehicleDetailsModel.setPolicyStartDate(DateFormats.uiFormattedDate(rs.getDate(37)));
 				//logger.info(TAG + " getAppVehicleDetails :: vehicleDetailsModel :" + vehicleDetailsModel.toString());
 				vehicleDetailsArray.add(vehicleDetailsModel);
 			}
@@ -682,7 +682,7 @@ public class RequestQuoteDao
 			callableStatement.setString(20, metaService.getUserDeviceInfo().getDeviceType());
 			callableStatement.setString(21, metaService.getUserDeviceInfo().getDeviceId());
 			callableStatement.setString(22, civilId);
-			callableStatement.setDate(23, vehicleDetails.getPolicyStartDate());
+			callableStatement.setDate(23, DateFormats.setDbSqlFormatDate(vehicleDetails.getPolicyStartDate().toString()));
 			callableStatement.registerOutParameter(24, java.sql.Types.VARCHAR);
 			callableStatement.registerOutParameter(25, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
@@ -1292,7 +1292,7 @@ public class RequestQuoteDao
 				vehicleDetails.setFuelCode(rs.getString(25));
 				vehicleDetails.setVehicleTypeDesc(rs.getString(27));
 				vehicleDetails.setPolicyDuration(rs.getBigDecimal(28));
-				vehicleDetails.setPolicyStartDate(rs.getDate(29));
+				vehicleDetails.setPolicyStartDate(DateFormats.uiFormattedDate(rs.getDate(29)));
 				vehicleDetailsArray.add(vehicleDetails);
 			}
 

@@ -78,14 +78,14 @@ private String applicationDate;
 
 	public String vehicleTypeDesc;
 	
-	private Date policyStartDate;
+	private String policyStartDate;
 	
 
-	public Date getPolicyStartDate() {
+	public String getPolicyStartDate() {
 		return policyStartDate;
 	}
 
-	public void setPolicyStartDate(Date policyStartDate) {
+	public void setPolicyStartDate(String policyStartDate) {
 		this.policyStartDate = policyStartDate;
 	}
 
