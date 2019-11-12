@@ -573,6 +573,7 @@ public class RequestQuoteDao
 				vehicleDetailsModel.setReplacementTypeDesc(rs.getString(34));
 				vehicleDetailsModel.setMaxInsmat(Utility.round(rs.getBigDecimal(35), metaService.getTenantProfile().getDecplc()));
 				vehicleDetailsModel.setVehicleTypeDesc(rs.getString(36));
+				vehicleDetailsModel.setPolicyStartDate(DateFormats.uiFormattedDate(rs.getDate(37)));
 				//logger.info(TAG + " getAppVehicleDetails :: vehicleDetailsModel :" + vehicleDetailsModel.toString());
 				vehicleDetailsArray.add(vehicleDetailsModel);
 			}
@@ -655,7 +656,7 @@ public class RequestQuoteDao
 		getConnection();
 		CallableStatement callableStatement = null;
 		VehicleDetailsUpdateModel vehicleDetailsUpdateModel = new VehicleDetailsUpdateModel();
-		String callProcedure = "{call IRB_INSUPD_VEHDTLS(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
+		String callProcedure = "{call IRB_INSUPD_VEHDTLS(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)}";
 		try
 		{
 			callableStatement = connection.prepareCall(callProcedure);
@@ -681,11 +682,12 @@ public class RequestQuoteDao
 			callableStatement.setString(20, metaService.getUserDeviceInfo().getDeviceType());
 			callableStatement.setString(21, metaService.getUserDeviceInfo().getDeviceId());
 			callableStatement.setString(22, civilId);
-			callableStatement.registerOutParameter(23, java.sql.Types.VARCHAR);
+			callableStatement.setDate(23, DateFormats.setDbSqlFormatDate(vehicleDetails.getPolicyStartDate().toString()));
 			callableStatement.registerOutParameter(24, java.sql.Types.VARCHAR);
+			callableStatement.registerOutParameter(25, java.sql.Types.VARCHAR);
 			callableStatement.executeUpdate();
-			vehicleDetailsUpdateModel.setErrorCode(callableStatement.getString(23));
-			vehicleDetailsUpdateModel.setErrorMessage(callableStatement.getString(24));
+			vehicleDetailsUpdateModel.setErrorCode(callableStatement.getString(24));
+			vehicleDetailsUpdateModel.setErrorMessage(callableStatement.getString(25));
 		}
 		catch (Exception e)
 		{
@@ -1290,6 +1292,7 @@ public class RequestQuoteDao
 				vehicleDetails.setFuelCode(rs.getString(25));
 				vehicleDetails.setVehicleTypeDesc(rs.getString(27));
 				vehicleDetails.setPolicyDuration(rs.getBigDecimal(28));
+				vehicleDetails.setPolicyStartDate(DateFormats.uiFormattedDate(rs.getDate(29)));
 				vehicleDetailsArray.add(vehicleDetails);
 			}
 

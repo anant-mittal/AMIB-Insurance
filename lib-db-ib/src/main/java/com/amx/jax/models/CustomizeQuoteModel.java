@@ -11,6 +11,36 @@ public class CustomizeQuoteModel
 	ArrayList<QuoteAddPolicyDetails> quoteAddPolicyDetails;
 
 	private TotalPremium totalPremium;
+	
+	private String paymentLinkStatus;
+	
+	private PaymentStatus paymentStatus;
+	
+	private String redirectUrl;
+
+	public String getRedirectUrl() {
+		return redirectUrl;
+	}
+
+	public void setRedirectUrl(String redirectUrl) {
+		this.redirectUrl = redirectUrl;
+	}
+
+	public PaymentStatus getPaymentStatus() {
+		return paymentStatus;
+	}
+
+	public void setPaymentStatus(PaymentStatus paymentStatus) {
+		this.paymentStatus = paymentStatus;
+	}
+
+	public String getPaymentLinkStatus() {
+		return paymentLinkStatus;
+	}
+
+	public void setPaymentLinkStatus(String paymentLinkStatus) {
+		this.paymentLinkStatus = paymentLinkStatus;
+	}
 
 	public QuotationDetails getQuotationDetails()
 	{

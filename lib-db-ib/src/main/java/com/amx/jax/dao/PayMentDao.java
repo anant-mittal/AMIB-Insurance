@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Statement;
+import java.util.Date;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,14 +13,18 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.amx.jax.constants.ApiConstants;
+import com.amx.jax.dbmodel.OnlinePaymentModel;
+import com.amx.jax.dbmodel.PaymentLinkModel;
 import com.amx.jax.meta.IMetaService;
+import com.amx.jax.models.ArrayResponseModel;
+import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.PaymentDetails;
-import com.amx.jax.models.PaymentReceipt;
 import com.amx.jax.models.PaymentStatus;
 import com.amx.jax.models.PolicyReceiptDetails;
 import com.amx.jax.models.ResponseInfo;
-import com.amx.jax.models.ArrayResponseModel;
-import com.amx.jax.models.DateFormats;
+import com.amx.jax.repository.IOnlinePaymentRepository;
+import com.amx.jax.repository.IPaymentLinkRepository;
+import com.amx.utils.ArgUtil;
 
 @Repository
 public class PayMentDao
@@ -32,6 +38,12 @@ public class PayMentDao
 
 	@Autowired
 	IMetaService metaService;
+	
+	@Autowired
+	IPaymentLinkRepository iPaymentLinkRepository;
+	
+	@Autowired
+	IOnlinePaymentRepository iOnlinePaymentRepository;
 	
 	Connection connection;
 	
@@ -127,6 +139,25 @@ public class PayMentDao
 
 			logger.info(TAG + " updatePaymentDetals :: Error Code :" + callableStatement.getString(14));
 			logger.info(TAG + " updatePaymentDetals :: Error Msg  :" + callableStatement.getString(15));
+			
+			
+			// If payment done through PaymentLink
+			OnlinePaymentModel onlinePaymentModel = iOnlinePaymentRepository
+					.findByPaySeqNo(insertPaymentDetails.getPaySeqNum());
+			PaymentLinkModel paymentLinkModel = iPaymentLinkRepository
+					.findByQuoteSeqNo(onlinePaymentModel.getQuoteSeqNo());
+			if (!ArgUtil.isEmpty(paymentLinkModel)) {
+				if ("CAPTURED".equals(onlinePaymentModel.getResultCode())) {
+					paymentLinkModel.setPaymentDate(new Date());
+					iPaymentLinkRepository.save(paymentLinkModel);
+
+				} 
+
+
+			} 
+			
+			
+			
 			
 		}
 		catch (Exception e)

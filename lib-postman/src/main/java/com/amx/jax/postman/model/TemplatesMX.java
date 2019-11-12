@@ -60,6 +60,9 @@ public enum TemplatesMX implements ITemplate {
 	FINGERPRINT_LINKED_SUCCESS("FingerprintLinkedSuccess"),
 	FINGERPRINT_DELINKED_SUCCESS("FingerprintDelinkedSuccess"),
 	FINGERPRINT_DELINKED_ATTEMP_SUCCESS("FingerprintDelinkInCorrectAttem"),
+	
+	// Payment Link
+	PAYMENT_LINK("PAYMENT_LINK"),
 
 	// Default add enums above this
 	DEFAULT("default");

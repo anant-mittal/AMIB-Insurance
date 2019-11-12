@@ -198,7 +198,7 @@ public class PayMentService {
 		return resp;
 	}
 
-	public AmxApiResponse<?, Object> getPaymentStatus(BigDecimal paySeqNum) {
+	public AmxApiResponse<PaymentStatus, Object> getPaymentStatus(BigDecimal paySeqNum) {
 		AmxApiResponse<PaymentStatus, Object> resp = new AmxApiResponse<>();
 		PaymentStatus paymentStatus = new PaymentStatus();
 

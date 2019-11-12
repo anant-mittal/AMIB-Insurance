@@ -33,6 +33,7 @@ import com.amx.jax.models.TotalPremium;
 import com.amx.jax.payg.PayGParams;
 import com.amx.jax.payg.PayGService;
 import com.amx.jax.payg.Payment;
+import com.amx.jax.paymentlink.dao.PaymentLinkDao;
 import com.amx.jax.ui.session.UserSession;
 import com.amx.jax.utility.CalculateUtility;
 import com.amx.jax.utility.Utility;
@@ -60,9 +61,13 @@ public class CustomizeQuoteService
 	@Autowired
 	PayMentService payMentService;
 	
-	public AmxApiResponse<?, Object> getCustomizedQuoteDetails(BigDecimal quoteSeqNumber)
+	@Autowired
+	PaymentLinkDao paymentLinkDao;
+	
+	public AmxApiResponse<CustomizeQuoteModel, Object> getCustomizedQuoteDetails(BigDecimal quoteSeqNumber)
 	{
 		boolean quoteAvailableToCustomer = false;
+		BigDecimal custId = userSession.getCustomerSequenceNumber();
 		
 		AmxApiResponse<CustomizeQuoteModel, Object> resp = new AmxApiResponse<CustomizeQuoteModel, Object>();
 		CustomizeQuoteModel customizeQuoteModel = new CustomizeQuoteModel();
@@ -82,13 +87,16 @@ public class CustomizeQuoteService
 				for (int i = 0; i < getUserQuote.size(); i++)
 				{
 					MyQuoteModel myQuoteModelFromDb = getUserQuote.get(i);
+					logger.info("Quote seq no is ",myQuoteModelFromDb.getQuoteSeqNumber());
 					if (null != quoteSeqNumber && !quoteSeqNumber.toString().equals("") && !myQuoteModelFromDb.getPaymentProcessError().equalsIgnoreCase("Y"))
 					{
+						logger.info("Quote seq no "+myQuoteModelFromDb.getQuoteSeqNumber());
 						if (null != myQuoteModelFromDb.getQuoteSeqNumber() && myQuoteModelFromDb.getQuoteSeqNumber().equals(quoteSeqNumber))
 						{
 							myQuoteModel = myQuoteModelFromDb;
 							customizeQuoteInfo.setQuoteSeqNumber(quoteSeqNumber);
 							quoteAvailableToCustomer = true;
+							logger.info("flag is true");
 						}
 					}
 				}
@@ -349,7 +357,7 @@ public class CustomizeQuoteService
 		return customizeQuoteDao.getTermsAndConditionTest(userSession.getLanguageId());
 	}
 
-	public AmxApiResponse<?, Object> saveCustomizeQuote(CustomizeQuoteModel customizeQuoteModel , HttpServletRequest request)
+	public AmxApiResponse<?, Object> saveCustomizeQuote(CustomizeQuoteModel customizeQuoteModel , HttpServletRequest request, String paygRedirectUrl)
 	{
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
 		try
@@ -384,7 +392,7 @@ public class CustomizeQuoteService
 				return respQuoteAddModel;
 			}
 			
-			return saveCustomizeQuoteDetails(customizeQuoteModel, myQuoteModel ,customizeQuoteInfo ,request);
+			return saveCustomizeQuoteDetails(customizeQuoteModel, myQuoteModel ,customizeQuoteInfo ,request, paygRedirectUrl);
 		
 		}
 		catch (Exception e)
@@ -397,7 +405,7 @@ public class CustomizeQuoteService
 		return resp;
 	}
 
-	public AmxApiResponse<?, Object> saveCustomizeQuoteDetails(CustomizeQuoteModel customizeQuoteModel, MyQuoteModel myQuoteModel ,CustomizeQuoteInfo customizeQuoteInfo , HttpServletRequest request)
+	public AmxApiResponse<?, Object> saveCustomizeQuoteDetails(CustomizeQuoteModel customizeQuoteModel, MyQuoteModel myQuoteModel ,CustomizeQuoteInfo customizeQuoteInfo , HttpServletRequest request, String paygRedirectUrl)
 	{
 		AmxApiResponse<Object, Object> resp = new AmxApiResponse<Object, Object>();
 		try
@@ -448,7 +456,7 @@ public class CustomizeQuoteService
 					payment.setProduct("QUOTE");//Language Selected
 					payment.setServiceCode(PayGServiceCode.KNET);
 					
-					String redirctUrl = payGService.getPaymentUrl(payment , HttpUtils.getServerName(request)+"/app/landing/myquotes/quote");
+					String redirctUrl = payGService.getPaymentUrl(payment , paygRedirectUrl);
 					logger.info("saveCustomizeQuoteDetails :: redirctUrl :" + redirctUrl);
 					
 					resp.setRedirectUrl(redirctUrl);
@@ -528,5 +536,11 @@ public class CustomizeQuoteService
 			e.printStackTrace();
 		}
 		return resp;
+	}
+	
+	public CustomizeQuoteModel validatePaymentLink(BigDecimal linkId , String verifyCode, BigDecimal languageId,HttpServletRequest request){
+		CustomizeQuoteModel customizeQuoteModel = paymentLinkDao.validatePaymentLink(linkId, verifyCode,languageId,request);
+		return customizeQuoteModel;
+		
 	}
 }

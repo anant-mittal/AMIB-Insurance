@@ -9,7 +9,7 @@ import com.amx.jax.postman.model.Notipy.Channel;
 public enum TemplatesIB implements ITemplate {
 	
 	OTP_SMS("otp-sms", Channel.NOTIPY),
-	OTP_EMAIL("otp-email"),
+	OTP_EMAIL("otp-email",Channel.NOTIPY),
 	REG_SUCCESS_EMAIL("reg-success-email"),
 	REG_INCOMPLETE_EMAIL("reg-incomplete-email"),
 	TERMS("terms"),
@@ -22,6 +22,10 @@ public enum TemplatesIB implements ITemplate {
 	TRNX_RECEIPT("TransactionReceipt", PDFConverter.JASPER, "TransactionReceipt.json"),
 	POLICY_RECEIPT("PolicyReceipt", PDFConverter.JASPER, "PolicyReceipt.json"),
 	CONTACT_US("ContactForm"),
+	// Payment Link
+	PAYMENT_LINK("payment-link"),
+	PAYMENT_LINK_SMS("payment-link-sms"),
+
 	REMIT_RECEIPT_JASPER("TransactionReceipt_jasper", PDFConverter.JASPER, "TransactionReceipt.json");
 		
 	

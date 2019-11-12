@@ -40,6 +40,8 @@ import com.amx.jax.ui.session.UserSession;
 import com.amx.jax.utility.Utility;
 import com.amx.utils.ArgUtil;
 import com.amx.utils.Constants;
+import com.amx.utils.HttpUtils;
+import com.amx.utils.JsonUtil;
 
 import io.swagger.annotations.ApiOperation;
 
@@ -110,19 +112,18 @@ public class CustomizeQuoteController {
 	@RequestMapping(value = "/api/customize-quote/submit-quote", method = RequestMethod.POST)
 	public AmxApiResponse<?, Object> saveCustomizeQuote(@RequestBody CustomizeQuoteModel customizeQuoteModel,
 			HttpServletRequest request) {
-		return customizeQuoteService.saveCustomizeQuote(customizeQuoteModel, request);
+		String paygRedirectUrl = HttpUtils.getServerName(request)+"/app/landing/myquotes/quote";
+		return customizeQuoteService.saveCustomizeQuote(customizeQuoteModel, request, paygRedirectUrl);
 	}
 
 	@ApiOperation(value = "submits payment info to server", notes = "this api is not going to be consumed by ui end. this is internal called api for payment gateway")
 	@ApiWebAppStatus({ WebAppStatusCodes.TECHNICAL_ERROR, WebAppStatusCodes.SUCCESS })
-	// @RequestMapping(value = "/remit/save-remittance", method = {
-	// RequestMethod.POST })
 	@RequestMapping(value = "/callback/payg/payment/capture", method = { RequestMethod.POST })
 	public PaymentResponseDto onPaymentCallback(@RequestBody PaymentResponseDto paymentResponse) {
 		try {
 			setMetaData();
 
-			logger.info(" onPaymentCallbackNew :: paymentResponse :" + paymentResponse.toString());
+			logger.info(" onPaymentCallbackNew :: paymentResponse :" + JsonUtil.toJson(paymentResponse));
 
 			PaymentDetails paymentDetails = new PaymentDetails();
 			paymentDetails.setPaymentId(paymentResponse.getPaymentId());
@@ -260,6 +261,16 @@ public class CustomizeQuoteController {
 		}
 		return null;
 	}
+	
+	
+	@ApiOperation(value = "Validate payment link")
+	@ApiWebAppStatus({WebAppStatusCodes.SUCCESS , WebAppStatusCodes.TECHNICAL_ERROR})
+	@RequestMapping(value="/pub/payment-validatelink", method= {RequestMethod.POST})
+	public AmxApiResponse<CustomizeQuoteModel, Object> validatePaymentLink(@RequestParam BigDecimal linkId, @RequestParam String verifyCode, @RequestParam BigDecimal languageId,HttpServletRequest request){
+		CustomizeQuoteModel customizeQuoteModel = customizeQuoteService.validatePaymentLink(linkId,verifyCode,languageId,request);
+		return AmxApiResponse.build(customizeQuoteModel);
+		
+	}
 
 	private void setMetaData() {
 
@@ -274,4 +285,6 @@ public class CustomizeQuoteController {
 		 * customerRegistrationService.getCompanySetUp(); }
 		 */
 	}
+	
+	
 }

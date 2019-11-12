@@ -1,6 +1,7 @@
 package com.amx.jax.models;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import com.amx.jax.swagger.ApiMockModelProperty;
 
@@ -131,6 +132,17 @@ public class MyQuoteModel
 	
 	@ApiMockModelProperty(example = "N", value = "Vehicle Type")
 	private String paymentProcessError;
+	
+	@ApiMockModelProperty(example = "DD-MM-YYYY", value = "Policy Start Date")
+	private Date policyStartDate;
+
+	public Date getPolicyStartDate() {
+		return policyStartDate;
+	}
+
+	public void setPolicyStartDate(Date policyStartDate) {
+		this.policyStartDate = policyStartDate;
+	}
 
 	public String getPaymentProcessError() 
 	{

@@ -2,6 +2,7 @@
 package com.amx.jax.services;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,7 @@ import com.amx.jax.constants.Message;
 import com.amx.jax.constants.MessageKey;
 import com.amx.jax.dao.CustomerRegistrationDao;
 import com.amx.jax.dao.PersonalDetailsDao;
+import com.amx.jax.models.AddressTypeDto;
 import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CustomerProfileDetailModel;
 import com.amx.jax.models.CustomerProfileDetailResponse;
@@ -25,6 +27,7 @@ import com.amx.jax.models.CustomerProfileUpdateResponse;
 import com.amx.jax.models.DateFormats;
 import com.amx.jax.models.ResponseInfo;
 import com.amx.jax.ui.session.UserSession;
+import com.amx.utils.ArgUtil;
 
 @Service
 public class PersonalDetailsService
@@ -80,6 +83,13 @@ public class PersonalDetailsService
 			customerProfileDetailResponse.setNatyCode(customerProfileDetailModel.getNatyCode());
 			customerProfileDetailResponse.setNatyDesc(customerProfileDetailModel.getNatyDesc());
 			customerProfileDetailResponse.setNativeArabicName(customerProfileDetailModel.getNativeArabicName());
+			customerProfileDetailResponse.setAddressType(customerProfileDetailModel.getAddressType());
+			customerProfileDetailResponse.setAddressDesc(customerProfileDetailModel.getAddressDesc());
+			customerProfileDetailResponse.setBlock(customerProfileDetailModel.getBlock());
+			customerProfileDetailResponse.setBuilding(customerProfileDetailModel.getBuilding());
+			customerProfileDetailResponse.setFlat(customerProfileDetailModel.getFlat());
+			customerProfileDetailResponse.setStreet(customerProfileDetailModel.getStreet());
+			
 			
 			resp.setData(customerProfileDetailResponse);
 			resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
@@ -94,9 +104,48 @@ public class PersonalDetailsService
 		return resp;
 	}
 
+	@SuppressWarnings("unchecked")
 	public AmxApiResponse<?, Object> updateProfileDetails(String mOtp, String eOtp, CustomerProfileUpdateRequest customerProfileUpdateRequest)
 	{
 		AmxApiResponse<?, Object> resp = new AmxApiResponse<CustomerProfileUpdateResponse, Object>();
+		ArrayResponseModel arrayResponseModel = personalDetailsDao.getAddressType(userSession.getLanguageId());
+		List<AddressTypeDto> addressList = arrayResponseModel.getDataArray();
+		boolean flag = false;
+		if (ArgUtil.isEmpty(arrayResponseModel.getErrorCode())) {
+			for(AddressTypeDto addressTypeDto:addressList) {
+				if(addressTypeDto.getAddressType().contains(customerProfileUpdateRequest.getAddressType())) {
+					flag=true;
+				}
+			}
+			if(!flag){
+				resp.setStatusEnum(WebAppStatusCodes.TECHNICAL_ERROR);
+				resp.setError("Address type is not valid");
+				return resp;
+			}
+			
+
+		} else {
+			resp.setStatusEnum(WebAppStatusCodes.TECHNICAL_ERROR);
+			resp.setError(arrayResponseModel.getErrorMessage());
+		}
+		
+		if(customerProfileUpdateRequest.getBlock().length()>4) {
+			resp.setStatusEnum(WebAppStatusCodes.TECHNICAL_ERROR);
+			resp.setError("Block max length is 4");
+			return resp;
+		}
+		if(customerProfileUpdateRequest.getBuilding().length()>4) {
+			resp.setStatusEnum(WebAppStatusCodes.TECHNICAL_ERROR);
+			resp.setError("Buillding max length is 4");
+			return resp;
+		}
+		
+		if(customerProfileUpdateRequest.getFlat().length()>4) {
+			resp.setStatusEnum(WebAppStatusCodes.TECHNICAL_ERROR);
+			resp.setError("Flat max length is 4");
+			return resp;
+		}
+		
 		CustomerProfileDetailModel customerProfileDetailModel = new CustomerProfileDetailModel();
 		CustomerProfileDetailModel customerProfileDetailModelCheck = new CustomerProfileDetailModel();
 		CustomerProfileUpdateResponse customerProfileUpdateResponse = new CustomerProfileUpdateResponse();
@@ -238,6 +287,13 @@ public class PersonalDetailsService
 			customerProfileDetailModel.setAreaCode(customerProfileUpdateRequest.getAreaCode());
 			customerProfileDetailModel.setMobile(customerProfileUpdateRequest.getMobile());
 			customerProfileDetailModel.setEmail(customerProfileUpdateRequest.getEmail());
+			customerProfileDetailModel.setAddressType(customerProfileUpdateRequest.getAddressType());
+			customerProfileDetailModel.setAddressDesc(customerProfileUpdateRequest.getAddressDesc());
+			customerProfileDetailModel.setBlock(customerProfileUpdateRequest.getBlock());
+			customerProfileDetailModel.setBuilding(customerProfileUpdateRequest.getBuilding());
+			customerProfileDetailModel.setFlat(customerProfileUpdateRequest.getFlat());
+			customerProfileDetailModel.setStreet(customerProfileUpdateRequest.getStreet());
+			
 			
 			customerProfileDetailModel = personalDetailsDao.updateProfileDetails(customerProfileDetailModel , userSession.getCivilId() , HardCodedValues.USER_TYPE , userSession.getCustomerSequenceNumber(), userSession.getLanguageId());
 			if (customerProfileDetailModel.getErrorCode() != null)
@@ -406,6 +462,26 @@ public class PersonalDetailsService
 		}
 		return resp;
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public AmxApiResponse<AddressTypeDto, Object> getAddressType() {
+
+		AmxApiResponse<AddressTypeDto, Object> addressTypeDto = new AmxApiResponse<AddressTypeDto, Object>();
+
+		ArrayResponseModel arrayResponseModel = personalDetailsDao.getAddressType(userSession.getLanguageId());
+
+		if (ArgUtil.isEmpty(arrayResponseModel.getErrorCode())) {
+			addressTypeDto.setResults(arrayResponseModel.getDataArray());
+			addressTypeDto.setStatusEnum(WebAppStatusCodes.SUCCESS);
+
+		} else {
+			addressTypeDto.setStatusEnum(WebAppStatusCodes.TECHNICAL_ERROR);
+			addressTypeDto.setError(arrayResponseModel.getErrorMessage());
+		}
+
+		return addressTypeDto;
+
 	}
 	
 	public boolean checkMandatory(ArrayList<Object> details)

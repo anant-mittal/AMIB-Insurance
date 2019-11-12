@@ -1,0 +1,1 @@
+<html th:inline="text" th:remove="tag">Your remittance request for a value of [[${_tu.prop('company.currency')}]] [[${data.amount}]] is ready for payment.[[${_tu.prop('company.app.tinyurl')+ '/papr/' + data.linkid +'?v='+data.code}]]</html>

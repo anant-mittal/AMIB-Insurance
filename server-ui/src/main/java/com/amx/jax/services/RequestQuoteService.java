@@ -2,6 +2,9 @@
 package com.amx.jax.services;
 
 import java.math.BigDecimal;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +20,7 @@ import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.constants.HardCodedValues;
 import com.amx.jax.dao.PersonalDetailsDao;
 import com.amx.jax.dao.RequestQuoteDao;
+import com.amx.jax.models.AddressTypeDto;
 import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.CustomerProfileDetailModel;
 import com.amx.jax.models.DateFormats;
@@ -34,6 +38,7 @@ import com.amx.jax.models.VehicleDetailsHeaderModel;
 import com.amx.jax.models.VehicleDetailsUpdateModel;
 import com.amx.jax.ui.session.UserSession;
 import com.amx.jax.utility.CodeAvaibility;
+import com.amx.utils.ArgUtil;
 
 @Service
 public class RequestQuoteService
@@ -461,7 +466,7 @@ public class RequestQuoteService
 					vehicleDetails.setChasis(vehicleDetailsGetModel.getChasis());
 					vehicleDetails.setVehicleConditionCode(vehicleDetailsGetModel.getVehicleConditionCode());
 					vehicleDetails.setKtNumber(vehicleDetailsGetModel.getKtNumber());
-					
+					vehicleDetails.setPolicyStartDate(vehicleDetailsGetModel.getPolicyStartDate());
 					if (null != vehicleDetailsGetModel.getApplicationType())
 					{
 						vehicleDetails.setApplicationType(vehicleDetailsGetModel.getApplicationType().toUpperCase());
@@ -494,6 +499,11 @@ public class RequestQuoteService
 	public AmxApiResponse<?, Object> setAppVehicleDetails(BigDecimal appSeqNumber, VehicleDetails vehicleDetails, BigDecimal oldDocNumber)
 	{
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
+		if (DateFormats.checkExpiryDate(vehicleDetails.getPolicyStartDate())) {
+			resp.setStatusEnum(WebAppStatusCodes.TECHNICAL_ERROR);
+			resp.setError("Start date should be greater than current date");
+			return resp;
+		}
 		RequestQuoteModel requestQuoteModel = new RequestQuoteModel();
 		RequestQuoteInfo requestQuoteInfo = new RequestQuoteInfo();
 
@@ -590,6 +600,12 @@ public class RequestQuoteService
 			personalDetails.setMobile(customerProfileDetailModel.getMobile());
 			personalDetails.setNatyCode(customerProfileDetailModel.getNatyCode());
 			personalDetails.setNativeArabicName(customerProfileDetailModel.getNativeArabicName());
+			personalDetails.setAddressType(customerProfileDetailModel.getAddressType());
+			personalDetails.setAddressDesc(customerProfileDetailModel.getAddressDesc());
+			personalDetails.setBuilding(customerProfileDetailModel.getBuilding());
+			personalDetails.setBlock(customerProfileDetailModel.getBlock());
+			personalDetails.setFlat(customerProfileDetailModel.getFlat());
+			personalDetails.setStreet(customerProfileDetailModel.getStreet());
 			
 			userSession.setCustomerEmailId(customerProfileDetailModel.getEmail());
 
@@ -616,9 +632,46 @@ public class RequestQuoteService
 		return resp;
 	}
 
+	@SuppressWarnings("unchecked")
 	public AmxApiResponse<?, Object> setProfileDetails(BigDecimal appSeqNumber, PersonalDetails personalDetails)
 	{
 		AmxApiResponse<RequestQuoteModel, Object> resp = new AmxApiResponse<RequestQuoteModel, Object>();
+		ArrayResponseModel arrayResponseModel = personalDetailsDao.getAddressType(userSession.getLanguageId());
+		List<AddressTypeDto> addressList = arrayResponseModel.getDataArray();
+		boolean flag = false;
+		if (ArgUtil.isEmpty(arrayResponseModel.getErrorCode())) {
+			for(AddressTypeDto addressTypeDto:addressList) {
+				if(addressTypeDto.getAddressType().contains(personalDetails.getAddressType())) {
+					flag=true;
+				}
+			}
+			if(!flag){
+				resp.setStatusEnum(WebAppStatusCodes.TECHNICAL_ERROR);
+				resp.setError("Address type is not valid");
+				return resp;
+			}
+			
+
+		} else {
+			resp.setStatusEnum(WebAppStatusCodes.TECHNICAL_ERROR);
+			resp.setError(arrayResponseModel.getErrorMessage());
+		}
+		if(personalDetails.getBlock().length()>4) {
+			resp.setStatusEnum(WebAppStatusCodes.TECHNICAL_ERROR);
+			resp.setError("Block max length is 4");
+			return resp;
+		}
+		if(personalDetails.getBuilding().length()>4) {
+			resp.setStatusEnum(WebAppStatusCodes.TECHNICAL_ERROR);
+			resp.setError("Buillding max length is 4");
+			return resp;
+		}
+		
+		if(personalDetails.getFlat().length()>4) {
+			resp.setStatusEnum(WebAppStatusCodes.TECHNICAL_ERROR);
+			resp.setError("Flat max length is 4");
+			return resp;
+		}
 		CustomerProfileDetailModel customerProfileDetailModel = new CustomerProfileDetailModel();
 		RequestQuoteModel requestQuoteModel = new RequestQuoteModel();
 		RequestQuoteInfo requestQuoteInfo = new RequestQuoteInfo();
@@ -646,6 +699,11 @@ public class RequestQuoteService
 			customerProfileDetailModel.setAreaCode(personalDetails.getAreaCode());
 			customerProfileDetailModel.setMobile(personalDetails.getMobile());
 			customerProfileDetailModel.setEmail(personalDetails.getEmail());
+			customerProfileDetailModel.setAddressType(personalDetails.getAddressType());
+			customerProfileDetailModel.setBlock(personalDetails.getBlock());
+			customerProfileDetailModel.setBuilding(personalDetails.getBuilding());
+			customerProfileDetailModel.setFlat(personalDetails.getFlat());
+			customerProfileDetailModel.setStreet(personalDetails.getStreet());
 
 			if (null == userSession.getCustomerSequenceNumber() || userSession.getCustomerSequenceNumber().toString().equals(""))
 			{
