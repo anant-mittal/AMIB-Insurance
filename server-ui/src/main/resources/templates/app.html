@@ -14,7 +14,7 @@ window.CONST = {
 	    dev: false,
 	    remoteServerUrl: '',
 	    remoteJsUrl: '<div th:text="${cdnUrl}" th:remove="tag"></div>', //
-	    remoteJsVersion: '<div th:text="${CDN_VERSION}" th:remove="tag"></div>', //
+	    remoteJsVersion: '<div th:text="${cdnVerion}" th:remove="tag"></div>', //
 	    dummyApi: false,
 //	    fpath : '<div th:text="${cdnUrl}" th:remove="tag"></div>/dist/fingerprint.js',
 //	    did : '<div th:text="${did}" th:remove="tag"></div>',
@@ -39,19 +39,21 @@ window.CONST = {
     window.CONST.dummyApi = config.dummyApi || false;
     window.CONST.remoteServerUrl = config.remoteServerUrl || '';
     window.CONST.remoteJsUrl = config.remoteJsUrl || '';
+    window.CONST.remoteJsVersion = "dev"
+
   }
 
-  // add css and js
+   // add css and js
   var head = document.getElementsByTagName('head')[0];
   var js = document.createElement('script');
   js.type = 'text/javascript';
-  js.src = window.CONST.remoteJsUrl + '/dist/main.bundle.js?_=' + window.CONST.remoteJsVersion;
-  //js.src = window.CONST.remoteJsUrl + '/dist/bundle.js?_=' + window.CONST.remoteJsVersion;
+  js.src = window.CONST.remoteJsUrl + '/dist/main.bundle.'+ window.CONST.remoteJsVersion +'.js?_=' + window.CONST.remoteJsVersion;
   var css = document.createElement('link');
   css.rel = 'stylesheet';
-  css.href = window.CONST.remoteJsUrl + '/dist/style.css?_=' + window.CONST.remoteJsVersion;
+  css.href = window.CONST.remoteJsUrl + '/dist/main.'+ window.CONST.remoteJsVersion +'.css?_=' + window.CONST.remoteJsVersion;
   head.appendChild(css);
   head.appendChild(js);
+
 
   // add favicon
   var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
@@ -63,3 +65,4 @@ window.CONST = {
 </script>
 </body>
 </html>
+

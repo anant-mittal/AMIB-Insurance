@@ -2,28 +2,32 @@ package com.amx.jax.logger.events;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map.Entry;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import com.amx.jax.AppContext;
 import com.amx.jax.logger.AuditEvent;
+import com.amx.jax.tunnel.TunnelEventXchange;
 import com.amx.jax.tunnel.TunnelMessage;
+import com.amx.utils.ArgUtil;
+import com.amx.utils.ContextUtil;
 import com.amx.utils.HttpUtils;
-import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonInclude(Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RequestTrackEvent extends AuditEvent {
 
 	private static final long serialVersionUID = -8735500343787196557L;
@@ -38,26 +42,26 @@ public class RequestTrackEvent extends AuditEvent {
 		}
 	}
 
-	private MultiValueMap<String, String> header;
+	@JsonIgnore
 	private AppContext context;
+
+	@JsonProperty("rspTym")
 	private long responseTime;
+
 	private String ip;
 
-	public MultiValueMap<String, String> getHeader() {
-		return header;
-	}
-
-	public void setHeader(MultiValueMap<String, String> header) {
-		this.header = header;
-	}
+	private Map<String, String> topic;
 
 	public RequestTrackEvent(Type type) {
 		super(type);
 	}
 
-	public <T> RequestTrackEvent(Type type, TunnelMessage<T> message) {
+	public <T> RequestTrackEvent(Type type, TunnelEventXchange xchange, TunnelMessage<T> message) {
 		super(type);
-		this.description = String.format("%s %s", this.type, message.getTopic());
+		this.topic = new HashMap<String, String>();
+		this.description = String.format("%s %s=%s", this.type, xchange, message.getTopic());
+		topic.put("id", message.getId());
+		topic.put("name", message.getTopic());
 		this.context = message.getContext();
 	}
 
@@ -88,57 +92,39 @@ public class RequestTrackEvent extends AuditEvent {
 
 	public RequestTrackEvent track(HttpServletResponse response, HttpServletRequest request) {
 		this.description = String.format("%s %s=%s", this.type, response.getStatus(), request.getRequestURI());
-		this.header = new LinkedMultiValueMap<String, String>();
 
-		Collection<String> headerNames = response.getHeaderNames();
-		for (String headerName : headerNames) {
-			List<String> values = (List<String>) response.getHeaders(headerName);
-			header.put(headerName, values);
+		ApiAuditEvent apiEventObject = (ApiAuditEvent) ContextUtil.map().getOrDefault("api_event", null);
+
+		if (!ArgUtil.isEmpty(apiEventObject)) {
+			this.result = apiEventObject.getResult();
+			this.message = apiEventObject.getMessage();
+			this.details = apiEventObject.getDetails();
+			this.errorCode = apiEventObject.getErrorCode();
 		}
+
 		return this;
 	}
 
 	public RequestTrackEvent track(HttpServletRequest request) {
 		this.description = String.format("%s %s=%s", this.type, request.getMethod(), request.getRequestURI());
-		this.header = new LinkedMultiValueMap<String, String>();
-		Enumeration<String> headerNames = request.getHeaderNames();
-		while (headerNames.hasMoreElements()) {
-			String headerName = headerNames.nextElement();
-			Enumeration<String> headerValues = request.getHeaders(headerName);
-			while (headerValues.hasMoreElements()) {
-				String headerValue = headerValues.nextElement();
-				header.add(headerName, headerValue);
-			}
-		}
 		this.ip = HttpUtils.getIPAddress(request);
 		return this;
 	}
 
 	public RequestTrackEvent track(HttpRequest request) {
 		this.description = String.format("%s %s=%s", this.type, request.getMethod(), request.getURI());
-		// this.header = request.getHeaders();
-
-		this.header = new LinkedMultiValueMap<String, String>();
-		Collection<Entry<String, List<String>>> headers = request.getHeaders().entrySet();
-		for (Entry<String, List<String>> header : headers) {
-			this.header.put(header.getKey(), header.getValue());
-		}
 		return this;
 	}
 
 	public RequestTrackEvent track(ClientHttpResponse response, URI uri) {
+		String statusCode = "000";
 		try {
-			this.description = String.format("%s %s=%s", this.type, response.getStatusCode(), uri);
+			statusCode = ArgUtil.parseAsString(response.getStatusCode());
 		} catch (IOException e) {
 			LOGGER.error("RequestTrackEvent.track while logging response in", e);
 			this.description = String.format("%s %s=%s", this.type, "EXCEPTION", uri);
 		}
-		// this.header = response.getHeaders();
-		this.header = new LinkedMultiValueMap<String, String>();
-		Collection<Entry<String, List<String>>> headers = response.getHeaders().entrySet();
-		for (Entry<String, List<String>> header : headers) {
-			this.header.put(header.getKey(), header.getValue());
-		}
+		this.description = String.format("%s %s=%s", this.type, statusCode, uri);
 		return this;
 	}
 
@@ -166,20 +152,20 @@ public class RequestTrackEvent extends AuditEvent {
 		this.ip = ip;
 	}
 
+	public RequestTrackEvent debug(boolean isDebugOnly) {
+		this.debugEvent = isDebugOnly;
+		return this;
+	}
+
 	public void clean() {
-		if (this.header != null) {
-			this.header.remove("connection");
-			this.header.remove("accept");
-			this.header.remove("Accept");
-			this.header.remove("accept-encoding");
-			this.header.remove("accept-language");
-			this.header.remove("Content-Length");
-			this.header.remove("X-Application-Context");
-			this.header.remove("Content-Type");
-			this.header.remove("Transfer-Encoding");
-			this.header.remove("Date");
-			this.header.remove("Connection");
-		}
+	}
+
+	public Map<String, String> getTopic() {
+		return topic;
+	}
+
+	public void setTopic(Map<String, String> topic) {
+		this.topic = topic;
 	}
 
 }

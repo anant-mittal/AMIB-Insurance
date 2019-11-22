@@ -173,9 +173,6 @@ public class DateFormats
 		return false;
 	}
 	
-	
-	
-
 	public static java.sql.Date setDbSqlFormatDate(String idExpiryDate)
 	{
 		if (null != idExpiryDate && !idExpiryDate.equals(""))
@@ -225,10 +222,8 @@ public class DateFormats
 
 	public static String convertTimeStampToEpoc(String inDate)
 	{
-		//System.out.println("convertTimeStampToEpoc :: inDate1 :"+inDate);
 		if (null != inDate && !inDate.equals(""))
 		{
-			//System.out.println("convertTimeStampToEpoc :: inDate2 :"+inDate);
 			try
 			{
 				DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
@@ -236,8 +231,6 @@ public class DateFormats
 				Instant instant = dt.toInstant(ZoneOffset.UTC);
 				long epochLong = instant.toEpochMilli();
 				
-				//System.out.println("convertTimeStampToEpoc :: epochLong :"+epochLong);
-				//System.out.println("convertTimeStampToEpoc :: String.valueOf(epochLong) :"+String.valueOf(epochLong));
 				return String.valueOf(epochLong);
 			}
 			catch (Exception e)

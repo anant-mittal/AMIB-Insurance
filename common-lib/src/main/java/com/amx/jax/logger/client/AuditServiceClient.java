@@ -1,5 +1,7 @@
 package com.amx.jax.logger.client;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,10 +21,12 @@ import com.amx.jax.AppContextUtil;
 import com.amx.jax.logger.AbstractEvent;
 import com.amx.jax.logger.AbstractEvent.EventMarker;
 import com.amx.jax.logger.AbstractEvent.EventType;
+import com.amx.jax.logger.events.ApiAuditEvent;
 import com.amx.jax.logger.AuditEvent;
 import com.amx.jax.logger.AuditLoggerResponse;
 import com.amx.jax.logger.AuditService;
 import com.amx.jax.tunnel.ITunnelService;
+import com.amx.utils.ContextUtil;
 import com.amx.utils.JsonUtil;
 import com.amx.utils.TimeUtils;
 
@@ -38,6 +42,7 @@ public class AuditServiceClient implements AuditService {
 	private static final Marker excepmarker = MarkerFactory.getMarker(EventMarker.EXCEP.toString());
 	private static final Marker noticemarker = MarkerFactory.getMarker(EventMarker.NOTICE.toString());
 	private static final Marker alertmarker = MarkerFactory.getMarker(EventMarker.ALERT.toString());
+	private static final Marker debugmarker = MarkerFactory.getMarker("DEBUG");
 	private static final Map<String, Boolean> allowedMarkersMap = new HashMap<String, Boolean>();
 	private final Map<String, AuditFilter<AuditEvent>> filtersMap = new HashMap<>();
 	private static boolean FILTER_MAP_DONE = false;
@@ -48,7 +53,8 @@ public class AuditServiceClient implements AuditService {
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Autowired
-	public AuditServiceClient(AppConfig appConfig, List<AuditFilter> filters,
+	public AuditServiceClient(
+			AppConfig appConfig, List<AuditFilter> filters,
 			@Autowired(required = false) ITunnelService iTunnelService) {
 
 		String[] allowedMarkersList = appConfig.getPrintableAuditMarkers();
@@ -64,7 +70,7 @@ public class AuditServiceClient implements AuditService {
 
 		if (!FILTER_MAP_DONE) {
 			APP_NAME = appConfig.getAppName();
-			AUDIT_LOGGER_ENABLED = appConfig.isLogger();
+			AUDIT_LOGGER_ENABLED = appConfig.isAudit();
 			for (AuditFilter filter : filters) {
 				Matcher matcher = pattern.matcher(filter.getClass().getGenericInterfaces()[0].getTypeName());
 				if (matcher.find()) {
@@ -104,15 +110,16 @@ public class AuditServiceClient implements AuditService {
 		}
 		event.setEventTime(TimeUtils.timeSince(event.getTimestamp()));
 		event.setActorId(AppContextUtil.getActorId());
+		event.setFlow(AppContextUtil.getFlow());
 		return event;
 	}
 
 	public static void publishAbstractEvent(Map<String, Object> map) {
 		try {
 			AppContext appContext = AppContextUtil.getContext();
-			map.put("traceId", appContext.getTraceId());
-			map.put("tranxId", appContext.getTranxId());
-			map.put("tenant", appContext.getTenant());
+			map.put(AbstractEvent.PROP_TRC_ID, appContext.getTraceId());
+			map.put(AbstractEvent.PROP_TRX_ID, appContext.getTranxId());
+			map.put("tnt", appContext.getTenant());
 			ITUNNEL_SERVICE.audit(AUDIT_EVENT_TOPIC, map);
 		} catch (Exception e) {
 			LOGGER2.error("Exception while Publishing Event", e);
@@ -124,15 +131,24 @@ public class AuditServiceClient implements AuditService {
 		event.clean();
 		String json = JsonUtil.toJson(event);
 
-		String marketName = marker.getName();
-		if (allowedMarkersMap.getOrDefault(marketName, Boolean.FALSE).booleanValue()) {
-			LOGGER.info(marker, json);
+		if (event instanceof ApiAuditEvent) {
+			ContextUtil.map().put("api_event", event);
+		} else {
+			String marketName = marker.getName();
+			if (allowedMarkersMap.getOrDefault(marketName, Boolean.FALSE).booleanValue()) {
+				if (event.isDebugEvent()) {
+					LOGGER.debug(debugmarker, json);
+				} else {
+					LOGGER.info(marker, json);
+				}
+			}
+			if (capture && ITUNNEL_SERVICE != null && AUDIT_LOGGER_ENABLED) {
+				@SuppressWarnings("unchecked")
+				Map<String, Object> map = JsonUtil.fromJson(json, Map.class);
+				publishAbstractEvent(map);
+			}
 		}
-		if (capture && ITUNNEL_SERVICE != null && AUDIT_LOGGER_ENABLED) {
-			@SuppressWarnings("unchecked")
-			Map<String, Object> map = JsonUtil.fromJson(json, Map.class);
-			publishAbstractEvent(map);
-		}
+
 		return null;
 	}
 
@@ -140,16 +156,17 @@ public class AuditServiceClient implements AuditService {
 	 * 
 	 * @param marker
 	 * @param event
-	 * @param capture
-	 *            - true to capture value in logger service, default is false
+	 * @param capture - true to capture value in logger service, default is false
 	 * @return
 	 */
 	public static AuditLoggerResponse logAuditEvent(Marker marker, AuditEvent event, boolean capture) {
 		try {
 			captureDetails(event);
+			event.setClient(AppContextUtil.getUserClient());
+			event.setTranxId(AppContextUtil.getTranxId());
 			return logAbstractEvent(marker, event, capture);
 		} catch (Exception e) {
-			LOGGER2.error("Exception while logAuditEvent {}", JsonUtil.toJson(event));
+			LOGGER2.error("Exception while logAuditEvent {}", event.getType(), e);
 		}
 		return null;
 	}
@@ -193,10 +210,10 @@ public class AuditServiceClient implements AuditService {
 	public static AuditLoggerResponse logStatic(AuditEvent event) {
 		EventType eventType = event.getType();
 		if (eventType == null) {
-			LOGGER2.error("Exception while logAuditEvent {}", JsonUtil.toJson(event));
+			LOGGER2.error("Exception while logStatic {}", JsonUtil.toJson(event));
 			return null;
 		}
-		EventMarker eventMarker = eventType.marker();
+		EventMarker eventMarker = event.getTypeMarker();
 		if (eventMarker == null) {
 			eventMarker = EventMarker.AUDIT;
 		}
@@ -261,9 +278,19 @@ public class AuditServiceClient implements AuditService {
 	}
 
 	@Override
+	public AuditLoggerResponse log(AuditEvent event, Exception e) {
+		AuditServiceClient.captureException(event, e);
+		return this.log(event);
+	}
+
+	@Override
 	public AuditLoggerResponse excep(AuditEvent event, Logger logger, Exception e) {
 		logger.error(event.getType().toString(), e);
 		return this.excep(event, e);
+	}
+
+	public static boolean isDebugEnabled() {
+		return LOGGER.isDebugEnabled();
 	}
 
 }

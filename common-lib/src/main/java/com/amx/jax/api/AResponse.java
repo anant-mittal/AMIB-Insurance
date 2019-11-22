@@ -1,14 +1,18 @@
 package com.amx.jax.api;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
 
+import com.amx.jax.api.AmxResponseSchemes.ApiMetaResponse;
+import com.amx.jax.exception.ApiHttpExceptions.ApiStatusCodes;
 import com.amx.jax.exception.IExceptionEnum;
+import com.amx.jax.swagger.ApiMockModelProperty;
 import com.amx.utils.ArgUtil;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public abstract class AResponse<T> {
+public abstract class AResponse<M> implements ApiMetaResponse<M> {
 
 	protected Long timestamp;
 
@@ -17,15 +21,27 @@ public abstract class AResponse<T> {
 	protected String error; // Bad Request
 	protected String exception; // org.springframework.http.converter.HttpMessageNotReadableException
 	protected String message;// JSON parse error
-	protected String path; // postman/email/send
+	protected String warningKey;
+
+	@ApiMockModelProperty(example = "/postman/email/send")
+	protected String path;
+
+	@ApiMockModelProperty(example = "/go/to/some/other/url.html")
+	protected String redirectUrl;
+
+	public static enum Target {
+		_BLANK, _SELF, _PARENT, _TOP, _IFRAME
+	}
+
 	protected String messageKey;
 
 	/** The status key. */
-	protected String statusKey = "SUCCESS";
+	protected String statusKey = ApiStatusCodes.SUCCESS.toString();
 
 	// Amx Specs
-	protected T meta;
+	protected M meta;
 	protected List<AmxFieldError> errors = null;
+	protected List<AmxFieldError> warnings = null;
 
 	public AResponse() {
 		this.timestamp = System.currentTimeMillis();
@@ -33,10 +49,29 @@ public abstract class AResponse<T> {
 	}
 
 	/**
+	 * target="_blank|_self|_parent|_top|framename"
+	 * 
+	 * @param redirectUrl
+	 */
+	@JsonIgnore
+	public void setTargetUrl(String redirectUrl, Target target) {
+		this.redirectUrl = target + ":" + redirectUrl;
+	}
+
+	public String getRedirectUrl() {
+		return redirectUrl;
+	}
+
+	public void setRedirectUrl(String redirectUrl) {
+		this.redirectUrl = redirectUrl;
+	}
+
+	/**
 	 * Gets the timestamp.
 	 *
 	 * @return the timestamp
 	 */
+	@Override
 	public Long getTimestamp() {
 		return timestamp;
 	}
@@ -44,9 +79,9 @@ public abstract class AResponse<T> {
 	/**
 	 * Sets the timestamp.
 	 *
-	 * @param timestamp
-	 *            the new timestamp
+	 * @param timestamp the new timestamp
 	 */
+	@Override
 	public void setTimestamp(Long timestamp) {
 		this.timestamp = timestamp;
 	}
@@ -56,6 +91,7 @@ public abstract class AResponse<T> {
 	 * 
 	 * @return
 	 */
+	@Override
 	public String getStatus() {
 		return status;
 	}
@@ -65,6 +101,7 @@ public abstract class AResponse<T> {
 	 * 
 	 * @param status
 	 */
+	@Override
 	public void setStatus(String status) {
 		this.status = status;
 	}
@@ -82,6 +119,7 @@ public abstract class AResponse<T> {
 	 *
 	 * @return the status key
 	 */
+	@Override
 	public String getStatusKey() {
 		return statusKey;
 	}
@@ -89,26 +127,27 @@ public abstract class AResponse<T> {
 	/**
 	 * Sets the status key.
 	 *
-	 * @param statusKey
-	 *            the new status key
+	 * @param statusKey the new status key
 	 */
+	@Override
 	public void setStatusKey(String statusKey) {
+		// this.setStatusEnum(ApiStatusCodes.NO_STATUS);
 		this.statusKey = statusKey;
 	}
 
 	/**
 	 * Sets the status.
 	 *
-	 * @param status
-	 *            the new status
+	 * @param status the new status
 	 */
 	@JsonIgnore
 	public void setHttpStatus(HttpStatus status) {
 		if (status.is5xxServerError() || status.is4xxClientError() || status.is3xxRedirection()) {
 			this.statusKey = status.series().name();
+			this.error = status.getReasonPhrase();
 		}
 		this.status = ArgUtil.parseAsString(status.value());
-		this.message = status.getReasonPhrase();
+
 	}
 
 	/**
@@ -152,6 +191,7 @@ public abstract class AResponse<T> {
 	 * 
 	 * @return
 	 */
+	@Override
 	public String getMessage() {
 		return message;
 	}
@@ -161,8 +201,17 @@ public abstract class AResponse<T> {
 	 * 
 	 * @param message
 	 */
+	@Override
 	public void setMessage(String message) {
 		this.message = message;
+	}
+
+	public String getWarningKey() {
+		return this.warningKey;
+	}
+
+	public void setWarningKey(String warningKey) {
+		this.warningKey = warningKey;
 	}
 
 	/**
@@ -183,11 +232,13 @@ public abstract class AResponse<T> {
 		this.path = path;
 	}
 
-	public T getMeta() {
+	@Override
+	public M getMeta() {
 		return meta;
 	}
 
-	public void setMeta(T meta) {
+	@Override
+	public void setMeta(M meta) {
 		this.meta = meta;
 	}
 
@@ -203,19 +254,45 @@ public abstract class AResponse<T> {
 	/**
 	 * Sets the errors.
 	 *
-	 * @param errors
-	 *            the new errors
+	 * @param errors the new errors
 	 */
 	public void setErrors(List<AmxFieldError> errors) {
 		this.errors = errors;
 	}
 
+	@Override
 	public String getMessageKey() {
 		return messageKey;
 	}
 
+	@Override
 	public void setMessageKey(String messageKey) {
 		this.messageKey = messageKey;
+	}
+
+	public List<AmxFieldError> getWarnings() {
+		return warnings;
+	}
+
+	public void setWarnings(List<AmxFieldError> warnings) {
+		this.warnings = warnings;
+	}
+
+	protected AResponse<M> warnings() {
+		if (this.warnings == null) {
+			this.warnings = new ArrayList<AmxFieldError>();
+		}
+		return this;
+	}
+
+	public void addWarning(AmxFieldError warning) {
+		this.warnings().getWarnings().add(warning);
+	}
+
+	public void addWarning(String warning) {
+		AmxFieldError w = new AmxFieldError();
+		w.setDescription(warning);
+		this.warnings().getWarnings().add(w);
 	}
 
 }

@@ -22,9 +22,13 @@ public class TunnelMessage<M> implements Serializable {
 		this.data = data;
 	}
 
-	TunnelMessage(M data, AppContext context) {
+	public TunnelMessage(M data, AppContext context) {
 		this(data);
 		this.context = context;
+	}
+
+	public TunnelMessage() {
+		this(null);
 	}
 
 	public String getId() {

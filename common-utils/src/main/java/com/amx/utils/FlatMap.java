@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+
 /**
  * The Class FlatMap.
  */
@@ -59,6 +60,20 @@ public class FlatMap {
 		return jsonPath.load(this.map, defaultValue);
 	}
 
+	public String getNumber(String key, String format) {
+		JsonPath jsonPath = getJsonPath(key);
+		return String.format (format, jsonPath.load(this.map,0.0));
+	}
+	
+	public String getNumber(String key) {
+		return this.getNumber(key, "%.2f");
+	}
+
+	public String getValue(String key, String defaultValue) {
+		JsonPath jsonPath = getJsonPath(key);
+		String s = jsonPath.load(this.map, Constants.BLANK);
+		return s.equals("") ? "" : defaultValue;
+	}
 	/**
 	 * Gets the integer.
 	 *
@@ -74,8 +89,7 @@ public class FlatMap {
 	/**
 	 * Gets the flat map.
 	 *
-	 * @param key
-	 *            the key
+	 * @param key the key
 	 * @return the flat map
 	 */
 	public FlatMap getFlatMap(String key) {
@@ -112,8 +126,7 @@ public class FlatMap {
 	/**
 	 * Sets the map.
 	 *
-	 * @param map
-	 *            the map
+	 * @param map the map
 	 */
 	public void setMap(Map<String, Object> map) {
 		this.map = map;

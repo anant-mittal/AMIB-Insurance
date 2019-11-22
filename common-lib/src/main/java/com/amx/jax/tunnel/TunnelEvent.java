@@ -1,23 +1,17 @@
 package com.amx.jax.tunnel;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+public class TunnelEvent implements ITunnelEvent {
 
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
+	private static final long serialVersionUID = 1L;
 
-import com.amx.jax.async.ExecutorConfig;
+	protected String eventCode;
 
-@Component
-@Async(ExecutorConfig.EXECUTER_WORKER)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface TunnelEvent {
+	public String getEventCode() {
+		return eventCode;
+	}
 
-	TunnelEventXchange scheme() default TunnelEventXchange.SHOUT_LISTNER;
+	public void setEventCode(String eventCode) {
+		this.eventCode = eventCode;
+	}
 
-	String topic();
-
-	boolean integrity() default true;
-
-	boolean queued() default false;
 }

@@ -7,7 +7,9 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,13 +88,14 @@ public final class ArgUtil {
 		for (Object element : enumValue.getClass().getEnumConstants()) {
 			if (element instanceof EnumById) {
 				list.add(((EnumById) element).getId().toLowerCase());
+			} else if (element instanceof EnumType) {
+				list.add(((EnumType) element).name().toLowerCase());
 			} else {
 				list.add(((Enum) element).name().toLowerCase());
 			}
 		}
 		return list.toArray(new String[list.size()]);
 	}
-
 
 	/**
 	 * Parse as T.
@@ -147,8 +150,11 @@ public final class ArgUtil {
 		return (T) ret;
 	}
 
-	public static Object parseAsObject(Class clazz, Object objectvalue) {
+	public static Object parseAsObject(Class clazz, Object objectvalue, boolean required) {
 		String value = ArgUtil.parseAsString(objectvalue);
+		String typeName = clazz.getTypeName();
+		if (String.class == clazz)
+			return value;
 		if (Boolean.class == clazz)
 			return Boolean.parseBoolean(value);
 		if (Byte.class == clazz)
@@ -165,6 +171,12 @@ public final class ArgUtil {
 			return Double.parseDouble(value);
 		if (BigDecimal.class == clazz)
 			return parseAsBigDecimal(value);
+		if (clazz.isEnum())
+			return ArgUtil.parseAsEnumIgnoreCase(value, clazz);
+
+		if (required) {
+			throw new IllegalArgumentException("Cannot parse Object : " + objectvalue + " as " + typeName);
+		}
 		return value;
 	}
 
@@ -299,11 +311,10 @@ public final class ArgUtil {
 		} else if (value instanceof Number) {
 			return Boolean.valueOf(((Number) value).intValue() != 0);
 		} else if (value instanceof String) {
-			return Boolean.valueOf(((String) value).equalsIgnoreCase("true"));
+			return Boolean.valueOf(((String) value).trim().equalsIgnoreCase("true"));
 		}
 		return null;
 	}
-	
 
 	/**
 	 * Parses the as boolean.
@@ -553,10 +564,18 @@ public final class ArgUtil {
 	public static Enum parseAsEnum(Object value, Enum defaultValue) {
 		String enumString = parseAsString(value);
 		if (enumString == null) {
-			return null;
+			return defaultValue;
 		}
 		String enumStringCaps = enumString.toUpperCase();
-		if (defaultValue instanceof EnumById) {
+		if (defaultValue instanceof EnumType) {
+			for (Object enumValue : defaultValue.getClass().getEnumConstants()) {
+				if (enumString.equals(((EnumType) enumValue).name())
+						|| enumStringCaps.equals(((EnumType) enumValue).name())) {
+					return (Enum) enumValue;
+				}
+			}
+			return defaultValue;
+		} else if (defaultValue instanceof EnumById) {
 			for (Object enumValue : defaultValue.getClass().getEnumConstants()) {
 				if (enumString.equals(((EnumById) enumValue).getId())
 						|| enumStringCaps.equals(((EnumById) enumValue).getId())) {
@@ -577,8 +596,9 @@ public final class ArgUtil {
 	}
 
 	public static Enum parseAsEnum(Object value, Type type) {
+		String enumString = null;
 		try {
-			String enumString = parseAsString(value);
+			enumString = parseAsString(value);
 			if (enumString == null) {
 				return null;
 			}
@@ -587,9 +607,35 @@ public final class ArgUtil {
 				return Enum.valueOf(clazz, enumString);
 			}
 		} catch (Exception e) {
-			LOGGER.error("Enum Cast Exception", e);
+			LOGGER.error("Enum Cast Exception for " + enumString, e);
 		}
 		return null;
+	}
+
+	public static <T extends Enum> T parseAsEnumIgnoreCase(Object source, Class<T> enumType) {
+		String sourceStr = parseAsString(source);
+		if (sourceStr.isEmpty()) {
+			return null;
+		}
+		sourceStr = sourceStr.trim();
+		try {
+			return (T) Enum.valueOf(enumType, sourceStr);
+		} catch (Exception ex) {
+			String name = getLettersAndDigits(sourceStr);
+			for (T candidate : (Set<T>) EnumSet.allOf(enumType)) {
+				if (getLettersAndDigits(candidate.name()).equals(name)) {
+					return candidate;
+				}
+			}
+			throw new IllegalArgumentException("No enum constant " + enumType.getCanonicalName() + "." + source);
+		}
+	}
+
+	private static String getLettersAndDigits(String name) {
+		StringBuilder canonicalName = new StringBuilder(name.length());
+		name.chars().map((c) -> (char) c).filter(Character::isLetterOrDigit).map(Character::toLowerCase)
+				.forEach(canonicalName::append);
+		return canonicalName.toString();
 	}
 
 	public static <T extends Enum<T>> T[] parseAsEnumArray(Object value, Type componentType) {
@@ -663,6 +709,18 @@ public final class ArgUtil {
 			}
 		}
 		return null;
+	}
+
+	public static boolean nullAsFalse(Boolean a) {
+		return !ArgUtil.isEmpty(a) && a;
+	}
+
+	public static boolean nullAsTrue(Boolean a) {
+		return ArgUtil.isEmpty(a) || a;
+	}
+
+	public static <T> T assignDefaultIfNull(T assignee, T defaultVal) {
+		return (null == assignee) ? defaultVal : assignee;
 	}
 
 }

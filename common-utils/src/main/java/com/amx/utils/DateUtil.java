@@ -7,14 +7,18 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class DateUtil.
  */
-// Needs further Customizations 
+// Needs further Customizations
 public final class DateUtil {
 
 	/** The Constant GMT. */
@@ -27,7 +31,10 @@ public final class DateUtil {
 	public static final long ONEDAY = 86400L * 1000L;
 
 	/** The Constant DEFAULT_DATE_FORMAT. */
-	private static final String DEFAULT_DATE_FORMAT = "MM/dd/yyyy";
+	private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
+
+	/** The Constant DEFAULT_DATE_TIME_FORMAT. */
+	private static final String DEFAULT_DATE_TIME_FORMAT = "dd/MM/yyyy HH:mm";
 
 	/** The Constant DATE_FORMAT. */
 	private static final String DATE_FORMAT = "dd MMM yyyy";
@@ -56,6 +63,8 @@ public final class DateUtil {
 	/** The Constant COMMA. */
 	private static final String COMMA = ",";
 
+	/** The Constant DEFAULT_DATE_FORMAT. */
+	public static final String DATE_FORMAT_DD_MM_YYYYY = "dd/MM/yyyy";
 
 	/**
 	 * Instantiates a new date util.
@@ -139,6 +148,48 @@ public final class DateUtil {
 	}
 
 	/**
+	 * Format date time.
+	 *
+	 * @param date
+	 *            the date
+	 * @return the string
+	 */
+	public static String formatDateTime(Date date) {
+		SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_DATE_TIME_FORMAT);
+		return sdf.format(date);
+	}
+
+	/**
+	 * Format date time.
+	 *
+	 * @param date
+	 *            the date
+	 * @return the string
+	 */
+	public static String formatDateTime(ZonedDateTime date) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT);
+		return date.format(formatter);
+	}
+
+	/**
+	 * Format date time.
+	 *
+	 * @param epoch the epoch
+	 * @param timezone the timezone
+	 * @return the string
+	 */
+	public static String formatDateTime(long epoch, String timezone) {
+
+		Date date = new Date(epoch);
+
+		DateFormat df = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+		df.setTimeZone(TimeZone.getTimeZone(timezone));
+
+		return df.format(date);
+
+	}
+
+	/**
 	 * Forward date.
 	 *
 	 * @param date
@@ -174,8 +225,8 @@ public final class DateUtil {
 	}
 
 	/**
-	 * This function returns date in required timezone. This doesn't return
-	 * correct time.
+	 * This function returns date in required timezone. This doesn't return correct
+	 * time.
 	 *
 	 * @param id
 	 *            the id
@@ -187,8 +238,8 @@ public final class DateUtil {
 	}
 
 	/**
-	 * This function returns date in required timezone. This doesn't return
-	 * correct time.
+	 * This function returns date in required timezone. This doesn't return correct
+	 * time.
 	 *
 	 * @param timeZone
 	 *            the time zone
@@ -226,12 +277,12 @@ public final class DateUtil {
 	/**
 	 * Gets the current date with time.
 	 *
-	 * @param ID
+	 * @param timezoneId
 	 *            the id
 	 * @return : unix timestamp for the current time
 	 */
-	public static long getCurrentDateWithTime(String ID) {
-		TimeZone timeZone = TimeZone.getTimeZone(ID);
+	public static long getCurrentDateWithTime(String timezoneId) {
+		TimeZone timeZone = TimeZone.getTimeZone(timezoneId);
 		return getCurrentDateWithTime(timeZone);
 	}
 
@@ -260,7 +311,7 @@ public final class DateUtil {
 	public static long getOffSetWithDst(String id) {
 		TimeZone timeZone = TimeZone.getTimeZone(id);
 		long utc = getCurrentDateWithTimeAndOffset(TimeZone.getTimeZone(GMT));
-		/*return (timeZone.getOffset(utc) + timeZone.getDSTSavings());*/
+		/* return (timeZone.getOffset(utc) + timeZone.getDSTSavings()); */
 		return timeZone.getOffset(utc);
 	}
 
@@ -394,6 +445,34 @@ public final class DateUtil {
 	}
 
 	/**
+	 * returns current Date Set with.
+	 *
+	 * @param hour
+	 *            the hour
+	 * @param minutes
+	 *            the minutes
+	 * @param seconds
+	 *            the seconds
+	 * @param milliSecs
+	 *            the milli secs
+	 * @return the current date at time
+	 */
+	public static Date getCurrentDateAtTime(int hour, int minutes, int seconds, int milliSecs) {
+
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(new Date());
+
+		// Set time fields to zero
+		cal.set(Calendar.HOUR_OF_DAY, hour);
+		cal.set(Calendar.MINUTE, minutes);
+		cal.set(Calendar.SECOND, seconds);
+		cal.set(Calendar.MILLISECOND, milliSecs);
+
+		// Put it back in the Date object
+		return cal.getTime();
+	}
+
+	/**
 	 * Parse the date. Set the time as GMT 12 noon.
 	 *
 	 * @param date
@@ -520,8 +599,7 @@ public final class DateUtil {
 	 *
 	 * @param ts
 	 *            : timestamp
-	 * @return true (if ts < start timestamp of the next day), false
-	 *         (otherwise).
+	 * @return true (if ts < start timestamp of the next day), false (otherwise).
 	 */
 	public static boolean todayOrBefore(long ts) {
 		boolean before = false;
@@ -590,23 +668,23 @@ public final class DateUtil {
 
 		return before;
 	}
-	
 
 	/**
 	 * As date.
 	 *
-	 * @param localDate the local date
+	 * @param localDate
+	 *            the local date
 	 * @return the date
 	 */
 	public static Date asDate(LocalDate localDate) {
-		return Date.from(localDate.atStartOfDay().atZone(ZoneId.of("UTC"))
-				.toInstant());
+		return Date.from(localDate.atStartOfDay().atZone(ZoneId.of("UTC")).toInstant());
 	}
 
 	/**
 	 * As date.
 	 *
-	 * @param localDateTime the local date time
+	 * @param localDateTime
+	 *            the local date time
 	 * @return the date
 	 */
 	public static Date asDate(LocalDateTime localDateTime) {
@@ -616,35 +694,201 @@ public final class DateUtil {
 	/**
 	 * As local date.
 	 *
-	 * @param date the date
+	 * @param date
+	 *            the date
 	 * @return the local date
 	 */
 	public static LocalDate asLocalDate(Date date) {
-		return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.of("UTC"))
-				.toLocalDate();
+		return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.of("UTC")).toLocalDate();
 	}
 
 	/**
 	 * As local date time.
 	 *
-	 * @param date the date
+	 * @param date
+	 *            the date
 	 * @return the local date time
 	 */
 	public static LocalDateTime asLocalDateTime(Date date) {
-		return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.of("UTC"))
-				.toLocalDateTime();
+		return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.of("UTC")).toLocalDateTime();
 	}
 
 	/**
-	 * Returns timestamp according to timezone and DST. 
+	 * Returns timestamp according to timezone and DST.
 	 *
-	 * @param id the id
-	 * @param timestamp the timestamp
+	 * @param id
+	 *            the id
+	 * @param timestamp
+	 *            the timestamp
 	 * @return the date with time and offset DST
 	 */
-	public static long getDateWithTimeAndOffsetDST(String id, long timestamp) { 
-		TimeZone timeZone = TimeZone.getTimeZone(id); 
-		Calendar userTimeZoneCal = Calendar.getInstance(timeZone); 
-		return getTimeAndOffset(userTimeZoneCal, timestamp); 
+	public static long getDateWithTimeAndOffsetDST(String id, long timestamp) {
+		TimeZone timeZone = TimeZone.getTimeZone(id);
+		Calendar userTimeZoneCal = Calendar.getInstance(timeZone);
+		return getTimeAndOffset(userTimeZoneCal, timestamp);
 	}
+
+	/**
+	 * Use this function if you want to treat local Date as UTC.
+	 *
+	 * @param date
+	 *            the date
+	 * @return the long
+	 * @throws ParseException
+	 *             the parse exception
+	 */
+	public static Long toUTC(Date date) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+		String oldString = sdf.format(date);
+		sdf.setTimeZone(new SimpleTimeZone(SimpleTimeZone.UTC_TIME, "UTC"));
+		return sdf.parse(oldString).getTime();
+	}
+
+	/**
+	 * Critical : Used By PROBOT For Date/Time Computations. <br>
+	 * <strong> DO NOT CHANGE or MODIFY </strong> <br>
+	 * 
+	 * Returns Next-Day Date for the given Zoned Date. <B> Time is Reset to ZERO #
+	 * Hr:Min:Sec:Nano :: 00:00:00:000 </B>
+	 *
+	 * @param fromDateTime
+	 *            the from date time
+	 * @return the next zoned day
+	 */
+	public static ZonedDateTime getNextZonedDay(ZonedDateTime fromDateTime) {
+
+		ZonedDateTime dPlusOne = fromDateTime.plusDays(1);
+
+		return dPlusOne.withHour(0).withMinute(0).withSecond(0).withNano(0);
+
+	}
+
+	/**
+	 * * Critical : Used By PROBOT For Date/Time Computations. <br>
+	 * <strong> DO NOT CHANGE or MODIFY </strong> <br>
+	 * 
+	 * Converts ArabicDayOfWeek to ISO-DayOfWeek.
+	 *
+	 * @param arabicDayOfWeek
+	 *            the arabic day of week
+	 * @return the int
+	 */
+	public static int arabicToISODayOfWeek(int arabicDayOfWeek) {
+
+		switch (arabicDayOfWeek) {
+		case 1:
+			return 7;
+		case 2:
+			return 1;
+		case 3:
+			return 2;
+		case 4:
+			return 3;
+		case 5:
+			return 4;
+		case 6:
+			return 5;
+		case 7:
+			return 6;
+		default:
+			return -1;
+		}
+
+	}
+
+	/**
+	 * * Critical : Used By PROBOT For Date/Time Computations. <br>
+	 * <strong> DO NOT CHANGE or MODIFY </strong> <br>
+	 * 
+	 * Converts ISO-DayOfWeek to ArabicDayOfWeek.
+	 *
+	 * @param ISODayOfWeek
+	 *            the ISO day of week
+	 * @return the int
+	 */
+	public static int ISOToArabicDayOfWeek(int ISODayOfWeek) {
+
+		switch (ISODayOfWeek) {
+		case 1:
+			return 2;
+		case 2:
+			return 3;
+		case 3:
+			return 4;
+		case 4:
+			return 5;
+		case 5:
+			return 6;
+		case 6:
+			return 7;
+		case 7:
+			return 1;
+		default:
+			return -1;
+		}
+
+	}
+
+	/**
+	 * * Critical : Used By PROBOT For Date/Time Computations. <br>
+	 * <strong> DO NOT CHANGE or MODIFY </strong> <br>
+	 * 
+	 * Checks if is valid day of week.
+	 *
+	 * @param dayOfWeek
+	 *            the day of week
+	 * @return true, if is valid day of week
+	 */
+	public static boolean isValidDayOfWeek(int dayOfWeek) {
+		if (dayOfWeek >= 1 && dayOfWeek <= 7)
+			return true;
+
+		return false;
+	}
+
+	/**
+	 * * Critical : Used By PROBOT For Date/Time Computations. <br>
+	 * <strong> DO NOT CHANGE or MODIFY </strong> <br>
+	 * 
+	 * Gets the hr min int val.
+	 *
+	 * @param hourOfDay
+	 *            the hour of day
+	 * @param minOfHr
+	 *            the min of hr
+	 * @return the hr min int val
+	 */
+	public static int getHrMinIntVal(int hourOfDay, int minOfHr) {
+
+		int modifiedHr = hourOfDay + minOfHr / 60;
+		int modifiedMin = minOfHr % 60;
+
+		return modifiedHr * 100 + modifiedMin;
+
+	}
+
+	/**
+	 * * Critical : Used By PROBOT For Date/Time Computations. <br>
+	 * <strong> DO NOT CHANGE or MODIFY </strong> <br>
+	 * 
+	 * Gets the hr min int val.
+	 *
+	 * @param hrMinStr
+	 *            the hr min str
+	 * @return the hr min int val
+	 */
+	public static int getHrMinIntVal(String hrMinStr) {
+
+		String[] hrMinArray = hrMinStr.split("\\.");
+
+		int hourOfDay = Integer.parseInt(hrMinArray[0]);
+		int minOfHr = 0;
+		if (hrMinArray.length > 1) {
+			minOfHr = Integer.parseInt(hrMinArray[1]);
+		}
+
+		return getHrMinIntVal(hourOfDay, minOfHr);
+
+	}
+
 }

@@ -3,15 +3,16 @@ package com.amx.jax.swagger;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import com.amx.jax.AppConfig;
 import com.amx.jax.AppConstants;
-import com.amx.jax.def.MockParamBuilder;
-import com.amx.jax.def.MockParamBuilder.MockParam;
 import com.amx.jax.dict.Tenant;
 import com.amx.jax.scope.TenantContextHolder;
+import com.amx.jax.swagger.MockParamBuilder.MockParam;
 
 import springfox.documentation.builders.ParameterBuilder;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -50,7 +51,7 @@ public class SampleSwaggerConfig {
 			Parameter parameter = new ParameterBuilder().name(mockParam.getName())
 					.description(mockParam.getDescription()).defaultValue(mockParam.getDefaultValue())
 					.modelRef(new ModelRef(PARAM_STRING)).parameterType(mockParam.getType().toString().toLowerCase())
-					.allowableValues(allowableValues).required(true).build();
+					.allowableValues(allowableValues).required(mockParam.isRequired()).build();
 			operationParameters.add(parameter);
 		}
 
@@ -58,7 +59,6 @@ public class SampleSwaggerConfig {
 				.modelRef(new ModelRef(PARAM_STRING)).parameterType(PARAM_HEADER).required(false).build());
 		operationParameters.add(new ParameterBuilder().name(AppConstants.TRACE_ID_XKEY).description("Trace Id")
 				.modelRef(new ModelRef(PARAM_STRING)).parameterType(PARAM_HEADER).required(false).build());
-
 		docket.globalOperationParameters(operationParameters);
 		docket.apiInfo(metaData());
 		return docket;
@@ -72,8 +72,13 @@ public class SampleSwaggerConfig {
 
 	}
 
+	@Autowired
+	AppConfig appConfig;
+
 	private ApiInfo metaData() {
-		return new ApiInfo("AMX UI Server Rest API", "Spring Boot REST API for Online Store", "1.0", "Terms of service",
+		return new ApiInfo(appConfig.getAppName(),
+				appConfig.getAppEnv() + "#" + appConfig.getAppGroup() + "#" + appConfig.getAppId(), "1.0",
+				"Terms of service",
 				new Contact("Lalit Tanwar", "https://springframework.guru/about/", "lalit.tanwar@almullaexchange.com"),
 				"Apache License Version 2.0", "https://www.apache.org/licenses/LICENSE-2.0");
 	}

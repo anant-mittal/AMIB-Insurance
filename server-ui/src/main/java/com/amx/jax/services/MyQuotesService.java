@@ -1,40 +1,27 @@
 package com.amx.jax.services;
 
-import java.math.BigDecimal;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.amx.jax.WebAppStatus.WebAppStatusCodes;
 import com.amx.jax.api.AmxApiResponse;
 import com.amx.jax.constants.ApiConstants;
 import com.amx.jax.dao.MyQuoteDao;
-import com.amx.jax.models.ActivePolicyModel;
-import com.amx.jax.models.CustomizeQuoteModel;
-import com.amx.jax.models.DateFormats;
-import com.amx.jax.models.MetaData;
+import com.amx.jax.models.ArrayResponseModel;
 import com.amx.jax.models.MyQuoteModel;
-import com.amx.jax.models.QuotationDetails;
-import com.amx.jax.models.QuoteAddPolicyDetails;
-import com.amx.jax.models.RegSession;
-import com.amx.jax.models.ReplacementTypeList;
-import com.amx.jax.models.TotalPremium;
+import com.amx.jax.ui.session.UserSession;
 
 @Service
 public class MyQuotesService
 {
-	String TAG = "com.amx.jax.services :: MyQuotesService :: ";
-
 	private static final Logger logger = LoggerFactory.getLogger(MyQuotesService.class);
-
+	
+	String TAG = "MyQuotesService :: ";
+	
 	@Autowired
-	RegSession regSession;
-
-	@Autowired
-	MetaData metaData;
+	UserSession userSession;
 
 	@Autowired
 	private MyQuoteDao myQuoteDao;
@@ -44,14 +31,24 @@ public class MyQuotesService
 		AmxApiResponse<MyQuoteModel, Object> resp = new AmxApiResponse<MyQuoteModel, Object>();
 		try
 		{
-			resp.setStatusKey(ApiConstants.SUCCESS);
-			resp.setResults(myQuoteDao.getUserQuote());
+			ArrayResponseModel arrayResponseModel = myQuoteDao.getUserQuote(userSession.getCustomerSequenceNumber(), userSession.getLanguageId());
+			if(arrayResponseModel.getErrorCode() == null)
+			{
+				resp.setResults(arrayResponseModel.getDataArray());
+				resp.setStatusEnum(WebAppStatusCodes.SUCCESS);
+			}
+			else
+			{
+				resp.setMessageKey(arrayResponseModel.getErrorCode());
+				resp.setMessage(arrayResponseModel.getErrorMessage());
+			}
 		}
 		catch (Exception e)
 		{
+			resp.setMessageKey(ApiConstants.TECHNICAL_ERROR_ON_SERVER);
+			resp.setMessage(e.toString());
+			logger.info(TAG+"getUserQuote :: exception :" + e);
 			e.printStackTrace();
-			resp.setException(e.toString());
-			resp.setStatusKey(ApiConstants.FAILURE);
 		}
 		return resp;
 	}
